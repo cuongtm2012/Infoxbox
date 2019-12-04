@@ -1,0 +1,27 @@
+{
+  "name": "infobox",
+  "version": "1.0.0",
+  "description": "Project for CIC Scraping",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "lint": "tslint"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "dateformat": "^3.0.3",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-myconnection": "^1.0.4",
+    "express-session": "^1.16.2",
+    "express-validator": "^5.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mysql": "^2.17.1"
+  }
+}
