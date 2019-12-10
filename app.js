@@ -5,6 +5,13 @@ var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var myConnection = require('express-myconnection');
 
+const db = require('./config/db.config.js');
+
+var winston = require('./config/winston');
+var morgan = require('morgan');
+var fs = require('file-system');
+var logger = require('./shared/logs/logger');
+
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
@@ -14,7 +21,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-var users = require('./routes/users');
+var cics11a = require('./routes/cics11a.route');
 
 // Config DB
 var config = require('./config/config');
@@ -53,7 +60,62 @@ app.use(session({
 	}
 }));
 app.use(flash());
-app.use('/users', users);
+
+//logging winston
+app.use(morgan('combined', { stream: winston.stream }));
+//configure log
+var createFolder = function ensureDirSync(dirpath) {
+		try {
+			return fs.mkdirSync(dirpath)
+		} catch (err) {
+			if (err.code !== 'EEXIST') throw err
+		}
+	};
+
+// LOGS
+var uuid = require('node-uuid');
+var createNamespace = require('continuation-local-storage').createNamespace;
+var myRequest = createNamespace('my request');
+// initialize log folder
+createFolder(config.log.orgLog);
+
+// Run the context for each request. Assign a unique identifier to each request
+app.use(function(req, res, next) {
+		myRequest.run(function() {
+			myRequest.set('reqId', uuid.v1());
+			next();
+		});
+});
+
+
+
+// validator
+app.use(expressValidator());
+
+app.use('/cic', cics11a);
+
+
+// force: true will drop the table if it already exists
+// db.sequelize.sync({force: true}).then(() => {
+// 	console.log('Drop and Resync with { force: true }');
+//   });
+
+require('./routes/customer.route.js')(app);
+
+// error handler
+app.use(function (err, req, res, next) {
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+	// add this line to include winston logging
+	winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+
+	// render the error page
+	res.status(err.status || 500);
+	res.render('error');
+});
+
 app.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });

@@ -4,12 +4,25 @@ var config = {
 		user: 'root',
 		password: 'infocity12!@',
 		port: 3969,
-		database: 'tland'
+		database: 'scrap',
+		dialect: 'mysql',
+		pool: {
+			max: 5,
+			min: 0,
+			acquire: 30000,
+			idle: 10000
+		  }
 	},
 	server: {
 		host: '127.0.0.1',
 		port: '3000'
-	}
+	},
+	log: {
+		orgLog: './logs'
+	},
+	authprefix: 'Bearer ',
+	jwtExpiresIn: 864000000000,
+	secret: 'apisecretinfoplus12!@',
 };
 
 module.exports = config;
