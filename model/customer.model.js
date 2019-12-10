@@ -9,6 +9,11 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         field: 'CUS_AGE',
         allowNull: true
+      },
+      cusAdd: {
+        type: Sequelize.STRING,
+        field: 'CUS_ADD',
+        allowNull: true
       }
     });
     Customer.removeAttribute('id');

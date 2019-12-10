@@ -14,6 +14,8 @@ const Customer = db.customers;
 
 const logger = require('../shared/logs/logger');
 
+const axios = require('axios');
+
 exports.validate = (method) => {
 	switch (method) {
 		case 'cics11a': {
@@ -36,7 +38,8 @@ exports.cics11a = function (req, res, next) {
 		}
 		var requestData = {
 			name: req.body.nameReq,
-			age: req.body.age
+			age: req.body.age,
+			add: req.body.address
 		};
 
 		const getdataReq = new Cics11aModelReq(requestData);
@@ -44,74 +47,32 @@ exports.cics11a = function (req, res, next) {
 
 		//Logging request
 		logger.debug('Log request parameters from routes after manage request');
-		logger.info(getdataReq);
+		logger.info(req.body);
 
-		request.post({
-			uri: 'http://localhost:3000/cic/customers/create',
-			// {
-			body: getdataReq,
-			json: true
-			// },
-		}, function (error, res1, body) {
-			if (error) {
-				console.error(error)
-				return
-			}
-			console.log(`statusCode: ${res1.statusCode}`)
-			console.log("body:", body)
-			logger.debug('LogPost from routes after manage request');
-			logger.debug(body);
-			//  using Sequelize
-			Customer.findAll(
-				{ attributes: { exclude: [] } }
-			)
-				.then(customer => {
-					if (!customer) {
-						return res.status(404).json({ message: "Customer Not Found" })
-					}
-					var data = new cics11aModelRes(body, body);
-					console.log("log data output")
-					console.log(data)
-					logger.debug('LogFindAl; from routes after manage request');
-					logger.debug(data);
-					return res.status(200).json(customer)
-				}
+		axios.post('http://localhost:3000/cic/customers/create', getdataReq)
+			.then((body) => {
+				console.log("body data:", body.data)
+				logger.debug('LogPost from routes after manage request');
+				logger.debug(body.data);
+				//  using Sequelize
+				Customer.findAll(
+					{ attributes: { exclude: [] } }
 				)
-				.catch(error => res.status(400).send(error));
-
-			// var QUERY_INSERT = 'INSERT INTO scrap.TB_ITCUST(CUST_GB, CUST_CD, WORK_ID)';
-			// var QUERY_VALUE = ' VALUES(?, ?, ?)';
-
-			// const workId = body.cusAge;
-			// const custGB = body.cusAge;
-			// const custCD = body.cusName;
-
-			// req.getConnection(function (error, conn) {
-			// 	if (!conn) {
-			// 		res.status(404).send();
-			// 		return;
-			// 	}
-			// 	conn.query(QUERY_INSERT + QUERY_VALUE, [custGB, custCD, workId], function (err, rows) {
-			// 		if (err || validation.isEmptyJson(rows)) {
-			// 			console.log(err);
-			// 			res.status(404).json({
-			// 				'msg': err
-			// 			});
-			// 		} else {
-			// 			// console.log("OK", { code: rows[0].CUST_CD, db: rows[0].CUST_GB, name: rows[0].CUST_NM });
-			// 			var data = new cics11aModelRes(body, body);
-			// 			console.log("log data output")
-			// 			console.log(data)
-			// 			res.status(200).send(data);
-			// 			// res.status(200).json ({
-			// 			// 	'result': new cics11aModelRes(body, body)
-			// 			// });
-
-			// 		}
-			// 	});
-			// });
-		});
-
+					.then(customer => {
+						if (!customer) {
+							return res.status(404).json({ message: "Customer Not Found" })
+						}
+						var data = new cics11aModelRes(body.data, body.data);
+						console.log("log data output")
+						console.log(data)
+						logger.debug('LogFindAl; from routes after manage request');
+						logger.debug(data);
+						return res.status(200).json(data)
+					})
+					.catch(error => res.status(400).send(error));
+			}).catch((error) => {
+				console.log(error)
+			});
 
 	} catch (err) {
 		return next(err)
