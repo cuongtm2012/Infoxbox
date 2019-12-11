@@ -16,6 +16,8 @@ const logger = require('../shared/logs/logger');
 
 const axios = require('axios');
 
+const URI = require('../shared/URI');
+
 exports.validate = (method) => {
 	switch (method) {
 		case 'cics11a': {
@@ -49,7 +51,7 @@ exports.cics11a = function (req, res, next) {
 		logger.debug('Log request parameters from routes after manage request');
 		logger.info(req.body);
 
-		axios.post('http://localhost:3000/cic/customers/create', getdataReq)
+		axios.post(URI.createCustomer, getdataReq)
 			.then((body) => {
 				console.log("body data:", body.data)
 				logger.debug('LogPost from routes after manage request');
