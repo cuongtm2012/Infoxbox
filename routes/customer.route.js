@@ -1,14 +1,26 @@
-module.exports = function(app) {
- 
-    const customerService = require('../services/customer.service.js');
-    
-    // Create a new Customer
-    app.post('/cic/customers/create', customerService.create);
+// module.exports = function (app) {
 
-    // Retrieve all Customer
-    app.get('/cic/customers', customerService.findAll);
+//     const customerService = require('../services/customer.service.js');
+//     const customerController = require('../controllers/customer.comtroller');
 
-    // Retrieve customer by id
-    app.get('cic/customerbyId',);
- 
-}
+//     // Create a new Customer
+//     // app.post('/cic/customers/create', customerService.create);
+
+//     // Retrieve all Customer
+//     app.get('/cic/customers', customerService.findAll);
+
+//     // Retrieve customer by id
+//     app.get('/cic/customerbyId');
+
+//     app.post('/customers/create', customerController.runs);
+
+// }
+
+var express = require('express');
+var router = express.Router();
+
+const customerController = require('../controllers/customer.comtroller');
+
+router.post('/customers/create', customerController.runInsert);
+
+module.exports = router;

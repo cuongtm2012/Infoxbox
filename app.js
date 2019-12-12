@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var cics11a = require('./routes/cics11a.route');
+var customer = require('./routes/customer.route');
 
 // Config DB
 var config = require('./config/config');
@@ -93,6 +94,7 @@ app.use(function(req, res, next) {
 app.use(expressValidator());
 
 app.use('/cic', cics11a);
+app.use('/cic', customer);
 
 
 // force: true will drop the table if it already exists
@@ -100,7 +102,7 @@ app.use('/cic', cics11a);
 // 	console.log('Drop and Resync with { force: true }');
 //   });
 
-require('./routes/customer.route.js')(app);
+// require('./routes/customer.route.js')(app);
 
 // error handler
 app.use(function (err, req, res, next) {

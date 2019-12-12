@@ -8,8 +8,6 @@ const db = require('../config/db.config.js');
 
 const { validationResult } = require('express-validator/check');
 
-const request = require('request');
-
 const Customer = db.customers;
 
 const logger = require('../shared/logs/logger');
@@ -17,6 +15,9 @@ const logger = require('../shared/logs/logger');
 const axios = require('axios');
 
 const URI = require('../shared/URI');
+
+
+const customerService = require('../services/customer.service');
 
 exports.validate = (method) => {
 	switch (method) {
@@ -32,6 +33,7 @@ exports.validate = (method) => {
 
 exports.cics11a = function (req, res, next) {
 	try {
+
 		// Finds the validation errors in this request and wraps them in an object with handy functions
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
@@ -39,9 +41,9 @@ exports.cics11a = function (req, res, next) {
 			return;
 		}
 		var requestData = {
-			name: req.body.nameReq,
+			name: req.body.name,
 			age: req.body.age,
-			add: req.body.address
+			add: req.body.add
 		};
 
 		const getdataReq = new Cics11aModelReq(requestData);
@@ -54,24 +56,18 @@ exports.cics11a = function (req, res, next) {
 		axios.post(URI.createCustomer, getdataReq)
 			.then((body) => {
 				console.log("body data:", body.data)
-				logger.debug('LogPost from routes after manage request');
-				logger.debug(body.data);
-				//  using Sequelize
-				Customer.findAll(
-					{ attributes: { exclude: [] } }
-				)
-					.then(customer => {
-						if (!customer) {
-							return res.status(404).json({ message: "Customer Not Found" })
-						}
-						var data = new cics11aModelRes(body.data, body.data);
-						console.log("log data output")
-						console.log(data)
-						logger.debug('LogFindAl; from routes after manage request');
-						logger.debug(data);
-						return res.status(200).json(data)
-					})
-					.catch(error => res.status(400).send(error));
+				//  using oracledb
+				customerService.runSelectById(req, res).then(resultFinal => {
+					console.log("resultFinal:::", resultFinal)
+
+					var data = new cics11aModelRes(resultFinal[0], resultFinal[0]);
+					console.log("log data output")
+					console.log(data)
+					logger.debug('LogFindAl; from routes after manage request')
+					logger.debug(data)
+					return res.status(200).json(data)
+				});
+
 			}).catch((error) => {
 				console.log(error)
 			});
