@@ -21,6 +21,8 @@ var router = express.Router();
 
 const customerController = require('../controllers/customer.comtroller');
 
-router.post('/customers/create', customerController.runInsert);
+router.post('/customer/create', customerController.runInsert);
+
+router.get('/customer/customers', customerController. runSelectById);
 
 module.exports = router;

@@ -13,3 +13,12 @@ exports.runInsert = async function (req, res, next) {
         return res.status(200).json(resultFinal.rowsAffected);
     });
 }
+
+exports.runSelectById = async function (req, res, next) {
+    customerService.runSelectById(req, res).then(resultFinal => {
+        // console.log("resultFinalInsert:::", resultFinal)
+        logger.debug('Log Insert from routes after manage request')
+        // logger.debug(resultFinal)
+        return res.status(200).json(resultFinal);
+    });
+}
