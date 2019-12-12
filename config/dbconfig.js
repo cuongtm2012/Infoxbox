@@ -10,7 +10,8 @@ module.exports = {
   
     // For information on connection strings see:
     // https://oracle.github.io/node-oracledb/doc/api.html#connectionstrings
-    connectString : "localhost/infobox",
+    // connectString : "localhost/infobox",
+    connectString : "192.168.22.144/xe",
   
     // Setting externalAuth is optional.  It defaults to false.  See:
     // https://oracle.github.io/node-oracledb/doc/api.html#extauth

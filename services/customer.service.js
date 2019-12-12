@@ -72,21 +72,22 @@ async function runSelectById(req, res) {
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `SELECT CUS_AGE, CUS_NM, CUS_ADD
-        FROM TB_CUSTOMER
-        where CUS_ID = :CUS_ID`;
+        FROM TB_CUSTOMER`;
+        // where CUS_ID = :CUS_ID`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
-            [90],
+            {},
+            // [1],
             // The "bind value" 3 for the bind variable ":idbv"
             // Options argument.  Since the query only returns one
             // row, we can optimize memory usage by reducing the default
             // maxRows value.  For the complete list of other options see
             // the documentation.
             {
-                maxRows: 1
-                , outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
+                // maxRows: 1,
+                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
                 //, extendedMetaData: true                 // get extra metadata
                 //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
