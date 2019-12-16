@@ -4,6 +4,8 @@ var URI = {
 
     cicB0001: 'https://13.124.75.145:9401/rest/ext',
 
+    cicB0001Json: 'https://1.234.53.23:9401/rest/extJson ',
+
     internal_cicB0001: 'http://localhost:3000/cic/cicB0001'
 };
 

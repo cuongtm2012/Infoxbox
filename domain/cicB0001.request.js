@@ -19,19 +19,19 @@ module.exports = function cicB0001Request(parameters) {
     } = parameters;
 
     this.appCd = APP_CODE;
-    this.orgCd = ORIGIN_CODE ;
+    this.orgCd = ORIGIN_CODE;
     this.svcCd = SERVICE_CODE;
     this.dispNm = DISP_NAME;
     this.userId = USER_ID;
     this.userPw = USER_PASSWORD;
-    this.customerType = CUSTOMER_TYPE;
+    this.customerType = CUSTOMER_TYPE ? CUSTOMER_TYPE : "";
     this.cicNo = CIC_NO ? CIC_NO : "";
     this.taxNo = TAX_NO ? TAX_NO : "";
-    this.cmtNo = CMT_NO;
+    this.cmtNo = CMT_NO ? CMT_NO : "";
     this.reportType = REPORT_TYPE ? REPORT_TYPE : "";
     this.voteNo = VOTE_NO ? VOTE_NO : "";
     this.reqStatus = REQ_STATUS ? REQ_STATUS : "";
-    this.inqDt1 = INQDT1;
-    this.inqDt2 = INQDT2;
+    this.inqDt1 = INQDT1 ? INQDT1 : "";
+    this.inqDt2 = INQDT2 ? INQDT2 : "";
 
 };

@@ -12,6 +12,8 @@ const converJsonURL = require('../util/convertURLEndcoded');
 
 const cicService = require('../services/cic.service');
 
+const validation = require('../util/validation');
+
 // Validate parameters
 exports.validate = (method) => {
     switch (method) {
@@ -38,18 +40,41 @@ exports.cicB0001 = function (req, res, next) {
 
         const config = {
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/json'
             }
         }
         console.log(" req.body:::", req.body);
         // var querystrings = qs.stringify(req.body).substring(0, qs.stringify(req.body).length - 1);
-        var querystrings = converJsonURL.convertJsonURL(req.body);
-        console.log(" querystrings:::", querystrings);
+        // var querystrings = converJsonURL.convertJsonURL(req.body);
+        // console.log(" querystrings:::", querystrings);
 
         // "?inJsonList=%5B" + querystrings + "%5D"
-        axios.post(URI.cicB0001 + querystrings, config)
+        // URI.cicB0001 + querystrings
+        axios.post(URI.cicB0001Json, req.body, config)
             .then((body) => {
                 console.log("body result~~~~~", body.data);
+
+                //update trycount + 1
+                cicService.updateTryCount(req.body, res).then(resultUpdated => {
+                    console.log("update try count ++1:::", resultUpdated);
+                })
+                    .catch(err => {
+                        console.log("errrrrr", err)
+                    });
+
+                // update process status = 9 update process completed
+                if (!validation.isEmptyJson(body.data.outJson.outB0001) && body.data.outJson.outB0001.errYn == "N") {
+                    //update process status = 9, sucecssful send request to cic server
+                    cicService.updateComplete(req.body, res).then(resultUpdated => {
+                        console.log("update completed proccess:::", resultUpdated);
+                    });
+                } else {
+                    //update process status = 1, sucecssful send request to cic server
+                    cicService.updateProcess(req.body, res).then(resultUpdated => {
+                        console.log("sent request to cic:::", resultUpdated);
+                    });
+
+                }
 
                 return res.status(200).json(body.data);
 
@@ -62,51 +87,39 @@ exports.cicB0001 = function (req, res, next) {
     }
 };
 
-exports.cicB0001Test = function (req, res, next) {
+exports.InternalCICB0001 = function (req, res, next) {
     try {
-
-        // var data = {
-        //     appCd: "infotechDev",
-        //     orgCd: "cic.vn",
-        //     svcCd: "B0001",
-        //     dispNm: "cic.org.vn",
-        //     userId: "h01663001phu",
-        //     userPw: "RILO2018",
-        //     customerType: "2",
-        //     cicNo: "",
-        //     cmtNo: "012772175",
-        //     taxNo: "",
-        //     reportType: "06",
-        //     voteNo: "",
-        //     reqStatus: "",
-        //     inqDt1: "20191212",
-        //     inqDt2: "20191212"
-
-        // }
-        cicService.select(req, res).then(data => {
-
-
-            console.log(" data:::", data[0]);
-
-            var fnData = new cicB0001Req(data[0]);
-
-            const config = {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
             }
+        }
 
-            // "?inJsonList=%5B" + querystrings + "%5D"
-            axios.post(URI.internal_cicB0001, fnData, config)
-                .then((body) => {
-                    console.log("body result~~~~~", body.data);
+        cicService.select(req, res).then(data => {
+            // Get each object in array data
+            if (validation.isEmptyJson(data))
+                return next();
+            data.forEach(element => {
+                // let fnData = data[i].child;
+                console.log("element::::", element);
 
-                    return res.status(200).json(body.data);
+                //Convert data to format cic site
+                var fnData = new cicB0001Req(element);
 
-                }).catch((error) => {
-                    console.log(error)
-                });
-        });
+                // "?inJsonList=%5B" + querystrings + "%5D"
+                axios.post(URI.internal_cicB0001, fnData, config)
+                    .then((body) => {
+                        console.log("body result222~~~~~", body.data);
+
+                        return res.status(200).json(body.data);
+
+                    }).catch((error) => {
+                        console.log(error)
+                    });
+            });
+        }).catch((error) => {
+            console.log(error)
+        });;
 
     } catch (err) {
         return next(err)
