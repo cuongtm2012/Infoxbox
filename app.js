@@ -12,6 +12,9 @@ var morgan = require('morgan');
 var fs = require('file-system');
 var logger = require('./shared/logs/logger');
 
+//Turn of SSL SSL certificate verification
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
@@ -23,6 +26,7 @@ app.use(bodyParser.json());
 
 var cics11a = require('./routes/cics11a.route');
 var customer = require('./routes/customer.route');
+var cicroute = require('./routes/cic.route');
 
 // Config DB
 var config = require('./config/config');
@@ -95,6 +99,7 @@ app.use(expressValidator());
 
 app.use('/cic', cics11a);
 app.use('/cic', customer);
+app.use('/cic', cicroute);
 
 
 // force: true will drop the table if it already exists

@@ -1,12 +1,11 @@
 
 var cics11aModelRes = require('../domain/cics11a.response');
 
-const { body } = require('express-validator/check');
 const Cics11aModelReq = require('../domain/customer.request');
 
 const db = require('../config/db.config.js');
 
-const { validationResult } = require('express-validator/check');
+const { validationResult, body } = require('express-validator/check');
 
 const Customer = db.customers;
 
@@ -58,7 +57,7 @@ exports.cics11a = function (req, res, next) {
 				console.log("body data:", body.data)
 				//  using oracledb
 				customerService.runSelectById(req, res).then(resultFinal => {
-					console.log("resultFinal:::", resultFinal)
+					// console.log("resultFinal:::", resultFinal)
 
 					var data = new cics11aModelRes(resultFinal[0], resultFinal[0]);
 					console.log("log data output")

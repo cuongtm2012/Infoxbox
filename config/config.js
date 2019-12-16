@@ -20,6 +20,9 @@ var config = {
 	log: {
 		orgLog: './logs'
 	},
+	batch: {
+		TIME_OUT: 5000
+	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
 	secret: 'apisecretinfoplus12!@',
