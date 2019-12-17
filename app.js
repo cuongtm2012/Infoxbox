@@ -97,7 +97,7 @@ app.use(function(req, res, next) {
 // validator
 app.use(expressValidator());
 
-app.use('/cic', cics11a);
+app.use('/external', cics11a);
 app.use('/cic', customer);
 app.use('/cic', cicroute);
 

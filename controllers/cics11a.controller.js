@@ -1,36 +1,31 @@
 
-var cics11aModelRes = require('../domain/cics11a.response');
-
-const Cics11aModelReq = require('../domain/customer.request');
-
-const db = require('../config/db.config.js');
-
 const { validationResult, body } = require('express-validator/check');
-
-const Customer = db.customers;
 
 const logger = require('../shared/logs/logger');
 
-const axios = require('axios');
+const cics11aRQSTReq = require('../domain/CIC_S11A_RQST.request');
 
-const URI = require('../shared/URI');
+const cicExternalService = require('../services/cicExternal.service');
 
-
-const customerService = require('../services/customer.service');
+const cics11aRQSTRes = require('../domain/CIC_S11A_RQST.response');
 
 exports.validate = (method) => {
 	switch (method) {
-		case 'cics11a': {
+		case 'cics11aRQST': {
 			return [
-				body('taxCode', 'taxCode does not exists').exists(),
-				body('natId', 'natId does not exists').exists(),
-				body('cicId', 'cicId does not exists').exists()
+				body('fiCode', 'fiCode does not exists').exists(),
+				body('taskCode', 'taskCode does not exists').exists(),
+				body('loginId', 'cicId does not exists').exists(),
+				body('loginPw', 'loginPw does not exists').exists(),
+				body('cicGoodCode', 'cicGoodCode does not exists').exists(),
+				body('inquiryDate', 'inquiryDate does not exists').exists(),
+				body('infoProvConcent', 'infoProvConcent does not exists').exists()
 			]
 		}
 	}
 };
 
-exports.cics11a = function (req, res, next) {
+exports.cics11aRQST = function (req, res, next) {
 	try {
 
 		// Finds the validation errors in this request and wraps them in an object with handy functions
@@ -39,37 +34,39 @@ exports.cics11a = function (req, res, next) {
 			res.status(422).json({ errors: errors.array() });
 			return;
 		}
-		var requestData = {
-			name: req.body.name,
-			age: req.body.age,
-			add: req.body.add
-		};
 
-		const getdataReq = new Cics11aModelReq(requestData);
-		JSON.stringify(getdataReq);
+		const getdataReq = new cics11aRQSTReq(req.body);
+		// JSON.stringify(getdataReq);
+		console.log("getdataReq=====", getdataReq);
 
 		//Logging request
 		logger.debug('Log request parameters from routes after manage request');
-		logger.info(req.body);
+		logger.info(getdataReq);
 
-		axios.post(URI.createCustomer, getdataReq)
-			.then((body) => {
-				console.log("body data:", body.data)
-				//  using oracledb
-				customerService.runSelectById(req, res).then(resultFinal => {
-					// console.log("resultFinal:::", resultFinal)
+		cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
+			console.log("result cics11aRQST: ", result);
 
-					var data = new cics11aModelRes(resultFinal[0], resultFinal[0]);
-					console.log("log data output")
-					console.log(data)
-					logger.debug('LogFindAl; from routes after manage request')
-					logger.debug(data)
-					return res.status(200).json(data)
-				});
+			let preResponse1 = {
+				responseMessage: "REQUEST IS PROCESSING	",
+				niceSessionKey: getdataReq.fiSessionKey,
+				responseTime: "0.2S",
+				responseCode: "0000"
+			}
 
-			}).catch((error) => {
-				console.log(error)
-			});
+			let preResponse2 = {
+				responseMessage: "REQUEST IS FAILED",
+				niceSessionKey: getdataReq.fiSessionKey,
+				responseTime: "0.2S",
+				responseCode: "P000"
+			}
+			if (result == 1) {
+				let responseData = new cics11aRQSTRes(getdataReq, preResponse1);
+				return res.status(200).json(responseData);
+			} else {
+				let responseData = new cics11aRQSTRes(getdataReq, preResponse2);
+				return res.status(200).json(responseData);
+			}
+		});
 
 	} catch (err) {
 		return next(err)

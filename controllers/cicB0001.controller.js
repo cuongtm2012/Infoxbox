@@ -52,7 +52,7 @@ exports.cicB0001 = function (req, res, next) {
         // URI.cicB0001 + querystrings
         axios.post(URI.cicB0001Json, req.body, config)
             .then((body) => {
-                console.log("body result~~~~~", body.data);
+                // console.log("body result~~~~~", body.data);
 
                 //update trycount + 1
                 cicService.updateTryCount(req.body, res).then(resultUpdated => {

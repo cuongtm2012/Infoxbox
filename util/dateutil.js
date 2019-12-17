@@ -1,3 +1,5 @@
+const dateFormat = require('dateformat');
+
 module.exports = {
     formatDate: function (date) {
         var d = new Date(date),
@@ -10,5 +12,11 @@ module.exports = {
         if (day.length < 2)
             day = '0' + day;
         return year + month + day;
+    },
+
+    timeStamp: function () {
+        var timeStamp = dateFormat(new Date(), "yyyymmddHHMMss");
+        
+        return timeStamp;
     }
 };
