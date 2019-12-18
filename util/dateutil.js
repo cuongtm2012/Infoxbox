@@ -18,5 +18,9 @@ module.exports = {
         var timeStamp = dateFormat(new Date(), "yyyymmddHHMMss");
         
         return timeStamp;
+    },
+
+    getSeconds: function(start) {
+        return ((new Date() - start) % 60000 / 1000).toFixed(2) + "s";
     }
 };

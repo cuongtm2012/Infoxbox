@@ -6,7 +6,7 @@ var URI = {
 
     cicB0001Json: 'https://1.234.53.23:9401/rest/extJson ',
 
-    internal_cicB0001: 'http://localhost:3000/cic/cicB0001'
+    internal_cicB0001: 'http://localhost:3000/internal/cicB0001'
 };
 
 module.exports = URI;

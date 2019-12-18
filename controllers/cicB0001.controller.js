@@ -10,7 +10,7 @@ const { validationResult, body } = require('express-validator/check');
 
 const converJsonURL = require('../util/convertURLEndcoded');
 
-const cicService = require('../services/cic.service');
+const cicService = require('../services/cicInternal.service');
 
 const validation = require('../util/validation');
 

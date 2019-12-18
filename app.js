@@ -24,9 +24,9 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-var cics11a = require('./routes/cics11a.route');
-var customer = require('./routes/customer.route');
-var cicroute = require('./routes/cic.route');
+var cicExternalRoute = require('./routes/cicExternal.route');
+var cicInternalroute = require('./routes/cicInternal.route');
+var cicMobileRoute= require('./routes/cicMobile.route');
 
 // Config DB
 var config = require('./config/config');
@@ -97,9 +97,9 @@ app.use(function(req, res, next) {
 // validator
 app.use(expressValidator());
 
-app.use('/external', cics11a);
-app.use('/cic', customer);
-app.use('/cic', cicroute);
+app.use('/external', cicExternalRoute);
+app.use('/internal', cicInternalroute);
+app.use('/mobile', cicMobileRoute);
 
 
 // force: true will drop the table if it already exists

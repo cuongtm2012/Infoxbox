@@ -5,10 +5,10 @@ var router = express.Router();
 
 var cicB0001Controller = require('../controllers/cicB0001.controller');
 
-// cicB0001Controller.validate('cicB0001')
+// request to cic server
 router.post('/cicB0001', cicB0001Controller.cicB0001);
 
-router.post('/InternalCICB0001', cicB0001Controller.InternalCICB0001);
+router.post('/RequestCICB0001', cicB0001Controller.InternalCICB0001);
 
 // router.post('/create/cics11a', )
 

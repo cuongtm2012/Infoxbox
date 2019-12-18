@@ -2,12 +2,14 @@ const oracledb = require('oracledb');
 const dbconfig = require('../config/dbconfig');
 
 const convertTime = require('../util/dateutil');
+const random = require('../util/niceSessionKey');
 
 async function insertSCRPLOG(req, res, next) {
     try {
         let sql, binds, options, result;
 
         let sysDim = convertTime.timeStamp();
+        let niceSessionKey = random.makeNiceSessionKey(req.cicGoodCode);
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -18,7 +20,7 @@ async function insertSCRPLOG(req, res, next) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: { val: req.fiSessionKey },
+                NICE_SSIN_ID: { val: niceSessionKey },
                 CUST_SSID_ID: { val: req.fiSessionKey },
                 CUST_CD: { val: req.fiCode },
                 LOGIN_ID: { val: req.loginId },
@@ -36,7 +38,7 @@ async function insertSCRPLOG(req, res, next) {
 
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
 
-        return result.rowsAffected;
+        return result.rowsAffected, niceSessionKey;
         // return res.status(200).json(result.rows);
 
 
