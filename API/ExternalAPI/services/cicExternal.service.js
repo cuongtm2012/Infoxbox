@@ -13,8 +13,8 @@ async function insertSCRPLOG(req, res, next) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, AGR_FG, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :AGR_FG, :SYS_DTIM)`;
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :SYS_DTIM)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -30,6 +30,7 @@ async function insertSCRPLOG(req, res, next) {
                 OLD_NATL_ID: { val: req.oldNatId },
                 PSPT_NO: { val: req.passportNumber },
                 CIC_ID: { val: req.cicId },
+                SCRP_STAT_CD: {val: '01'},
                 AGR_FG: { val: req.infoProvConcent },
                 SYS_DTIM: { val: sysDim }
             },

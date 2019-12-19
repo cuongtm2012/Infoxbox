@@ -8,6 +8,10 @@ const cicService = require('../services/cicInternal.service');
 
 const validation = require('../../shared/util/validation');
 
+const defaultParams = require('../domain/defaultParams.request');
+
+const dateutil = require('../util/dateutil');
+
 // Validate parameters
 // exports.validate = (method) => {
 //     switch (method) {
@@ -38,6 +42,7 @@ exports.cicB0002 = function (req, res, next) {
             }
         }
         console.log(" req.body:::", req.body);
+
         // var querystrings = qs.stringify(req.body).substring(0, qs.stringify(req.body).length - 1);
         // var querystrings = converJsonURL.convertJsonURL(req.body);
         // console.log(" querystrings:::", querystrings);
@@ -48,25 +53,15 @@ exports.cicB0002 = function (req, res, next) {
             .then((body) => {
                 // console.log("body result~~~~~", body.data);
 
-                //update trycount + 1
-                cicService.updateTryCount(req.body, res).then(resultUpdated => {
-                    console.log("update try count ++1:::", resultUpdated);
-                })
-                    .catch(err => {
-                        console.log("errrrrr", err)
-                    });
-
                 // update process status = 9 update process completed
                 if (!validation.isEmptyJson(body.data.outJson.outB0001) && body.data.outJson.outB0001.errYn == "N") {
                     //update process status = 9, sucecssful send request to cic server
-                    cicService.updateComplete(req.body, res).then(resultUpdated => {
-                        console.log("update completed proccess");
+                    cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
+                        console.log("CIC report inquiry successful!");
+                        //TODO Update response to table
                     });
                 } else {
-                    //update process status = 1, sucecssful send request to cic server
-                    cicService.updateProcess(req.body, res).then(resultUpdated => {
-                        console.log("sent request to cic:::", resultUpdated);
-                    });
+                    return next(body);
 
                 }
 
@@ -89,7 +84,7 @@ exports.InternalCICB0002 = function (req, res, next) {
             }
         }
 
-        cicService.select(req, res).then(data => {
+        cicService.select01(req, res).then(data => {
             // Get each object in array data
             if (validation.isEmptyJson(data)) {
                 console.log('No request!');
@@ -98,9 +93,13 @@ exports.InternalCICB0002 = function (req, res, next) {
             data.forEach(element => {
                 // let fnData = data[i].child;
                 console.log("element::::", element);
+                let inqDt1 = dateutil.getDate();
+                let inqDt2 = dateutil.getDate();
+
+                let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
                 //Convert data to format cic site
-                var fnData = new cicB0002Req(element);
+                var fnData = new cicB0002Req(element, defaultValue);
 
                 // "?inJsonList=%5B" + querystrings + "%5D"
                 axios.post(URI.internal_cicB0002, fnData, config)
@@ -112,6 +111,33 @@ exports.InternalCICB0002 = function (req, res, next) {
                     }).catch((error) => {
                         console.log(error)
                     });
+            });
+        }).catch((error) => {
+            console.log(error)
+        });;
+
+    } catch (err) {
+        return next(err)
+    }
+};
+
+exports.InternalCICB0002NotExist = function (req, res, next) {
+    try {
+        cicService.select04NotExist(req, res).then(data => {
+            // Get each object in array data
+            if (validation.isEmptyJson(data)) {
+                console.log('No request!');
+                return next();
+            }
+            data.forEach(element => {
+                // let fnData = data[i].child;
+                console.log("element::::", element);
+
+                //Updatinh Scraping target report does not exist
+                cicService.updateScrapingTargetRepostNotExist(element).then(result => {
+                    return next();
+                });
+
             });
         }).catch((error) => {
             console.log(error)

@@ -3,6 +3,6 @@ module.exports = {
         return !Object.keys(obj).length > 0;
     },
     isEmptyStr:function(str) {
-        return (!str || 0 === str.length || str === undefined || str === null || str.trim() ==="");
+        return (!str || 0 === str.length || str === undefined || str === null );
     }
 };
