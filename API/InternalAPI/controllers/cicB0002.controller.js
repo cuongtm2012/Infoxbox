@@ -1,4 +1,4 @@
-const cicB0001Req = require('../domain/cicB0001.request');
+const cicB0002Req = require('../domain/cicB0002.request');
 
 const axios = require('axios');
 
@@ -23,7 +23,7 @@ const validation = require('../../shared/util/validation');
 //     }
 // };
 
-exports.cicB0001 = function (req, res, next) {
+exports.cicB0002 = function (req, res, next) {
     try {
         // Finds the validation errors in this request and wraps them in an object with handy functions
         // const errors = validationResult(req);
@@ -44,7 +44,7 @@ exports.cicB0001 = function (req, res, next) {
 
         // "?inJsonList=%5B" + querystrings + "%5D"
         // URI.cicB0001 + querystrings
-        axios.post(URI.cicB0001Json, req.body, config)
+        axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
                 // console.log("body result~~~~~", body.data);
 
@@ -81,7 +81,7 @@ exports.cicB0001 = function (req, res, next) {
     }
 };
 
-exports.InternalCICB0001 = function (req, res, next) {
+exports.InternalCICB0002 = function (req, res, next) {
     try {
         const config = {
             headers: {
@@ -100,10 +100,10 @@ exports.InternalCICB0001 = function (req, res, next) {
                 console.log("element::::", element);
 
                 //Convert data to format cic site
-                var fnData = new cicB0001Req(element);
+                var fnData = new cicB0002Req(element);
 
                 // "?inJsonList=%5B" + querystrings + "%5D"
-                axios.post(URI.internal_cicB0001, fnData, config)
+                axios.post(URI.internal_cicB0002, fnData, config)
                     .then((body) => {
                         console.log("body result222~~~~~", body.data);
 

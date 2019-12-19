@@ -3,12 +3,12 @@ var router = express.Router();
 // var verifyToken = require('../shared/auth/verifyToken');
 
 
-var cicB0001Controller = require('../controllers/cicB0001.controller');
+var cicB0002Controller = require('../controllers/cicB0002.controller');
 
 // request to cic server
-router.post('/cicB0001', cicB0001Controller.cicB0001);
+router.post('/cicB0002', cicB0002Controller.cicB0002);
 
-router.post('/RequestCICB0001', cicB0001Controller.InternalCICB0001);
+router.post('/RequestCICB0002', cicB0002Controller.InternalCICB0002);
 
 // router.post('/create/cics11a', )
 

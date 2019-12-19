@@ -1,6 +1,6 @@
 
 
-module.exports = function cicB0001Request(parameters) {
+module.exports = function cicB0002Request(parameters) {
     const { APP_CODE,
         CIC_NO,
         CMT_NO,
