@@ -13,7 +13,7 @@ const validation = require('../util/validation');
 const dateutil = require('../util/dateutil');
 const validRequest = require('../util/validateParamRequest');
 
-const responcodeEXT = require('../shared/response/responseCodeExternal');
+const responcodeEXT = require('../shared/constant/responseCodeExternal');
 
 exports.validate = (method) => {
 	switch (method) {

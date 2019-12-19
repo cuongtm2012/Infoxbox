@@ -137,7 +137,6 @@ async function updateTryCount(req, res, next) {
         sql = `UPDATE TB_CIC_B0001
                 SET try_count = try_count + 1
                 WHERE app_code =:app_code`;
-        // where CUS_ID = :CUS_ID`;
 
         result = await connection.execute(
             // The statement to execute

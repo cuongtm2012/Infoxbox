@@ -6,7 +6,7 @@ var RESCODEEXT = {
     NICICCODE: { value: 2, name: "Need to input mandatory item(CIC product  code)", code: "F002" },
     IVFICODE: { value: 3, name: "Invalid FI code", code: "F003" },
     IVCICCODE: { value: 4, name: "Invalid CIC product code", code: "F004" },
-    INLOGINID: { value: 5, name: "Need to input mandatory item(log in ID)", code: "F005" },
+    NILOGINID: { value: 5, name: "Need to input mandatory item(log in ID)", code: "F005" },
     NIPASSWORD: { value: 6, name: "Need to input mandatory item(log in Password)", code: "F006" },
     UNKNOW: { value: 400, name: "UNKNOW", code: "400" }
 };

@@ -1,6 +1,6 @@
 const validation = require('./validation');
 
-const responcodeEXT = require('../shared/response/responseCodeExternal');
+const responcodeEXT = require('../shared/constant/responseCodeExternal');
 
 module.exports = {
     checkParamRequest: function (getdataReq) {
@@ -22,8 +22,8 @@ module.exports = {
         }
         if (validation.isEmptyStr(getdataReq.loginId)) {
             response = {
-                responseMessage : responcodeEXT.RESCODEEXT.INLOGINID.name,
-                responseCode : responcodeEXT.RESCODEEXT.INLOGINID.code
+                responseMessage : responcodeEXT.RESCODEEXT.NILOGINID.name,
+                responseCode : responcodeEXT.RESCODEEXT.NILOGINID.code
             }
             return response;
         }

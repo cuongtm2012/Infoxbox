@@ -2,6 +2,7 @@ const util = require('./dateutil');
 
 module.exports = {
     makeNiceSessionKey: function (cicGoodCode) {
+        //Total 25 Length: “IB”(2) + NICE Product Code(5) + YYYYMMDDhhmmsss (15) + random(3)
         return "IB" + niceProductCode(cicGoodCode) + util.timeStamp() + generate(3);
     }
 };

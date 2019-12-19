@@ -18,13 +18,13 @@ module.exports = function cicB0001Request(parameters) {
         VOTE_NO
     } = parameters;
 
-    this.appCd = APP_CODE;
-    this.orgCd = ORIGIN_CODE;
+    this.appCd = APP_CODE ? APP_CODE : 'infotechDev';
+    this.orgCd = ORIGIN_CODE ? ORIGIN_CODE : 'cic.vn';
     this.svcCd = SERVICE_CODE;
     this.dispNm = DISP_NAME;
     this.userId = USER_ID;
     this.userPw = USER_PASSWORD;
-    this.customerType = CUSTOMER_TYPE ? CUSTOMER_TYPE : "";
+    this.customerType = CUSTOMER_TYPE ? CUSTOMER_TYPE : '2';
     this.cicNo = CIC_NO ? CIC_NO : "";
     this.taxNo = TAX_NO ? TAX_NO : "";
     this.cmtNo = CMT_NO ? CMT_NO : "";
