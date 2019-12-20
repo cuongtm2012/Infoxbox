@@ -70,31 +70,33 @@ exports.cics11aRQST = function (req, res, next) {
 			return res.status(200).json(responseData);
 		}
 		//End check params request
+		cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
+			console.log('insertINQLOG::', res1);
+			cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
+				console.log("result cics11aRQST: ", result);
 
-		cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
-			console.log("result cics11aRQST: ", result);
+				let response = {
+					responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
+					niceSessionKey: result,
+					responseTime: dateutil.getSeconds(start),
+					responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
+				}
 
-			let response = {
-				responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
-				niceSessionKey: result,
-				responseTime: dateutil.getSeconds(start),
-				responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
-			}
+				let responseUnknow = {
+					responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
+					niceSessionKey: result,
+					responseTime: dateutil.getSeconds(start),
+					responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
+				}
 
-			let responseUnknow = {
-				responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-				niceSessionKey: result,
-				responseTime: dateutil.getSeconds(start),
-				responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-			}
-
-			if (!validation.isEmptyStr(result)) {
-				let responseData = new cics11aRQSTRes(getdataReq, response);
-				return res.status(200).json(responseData);
-			} else {
-				let responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
-				return res.status(400).json(responseData);
-			}
+				if (!validation.isEmptyStr(result)) {
+					let responseData = new cics11aRQSTRes(getdataReq, response);
+					return res.status(200).json(responseData);
+				} else {
+					let responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
+					return res.status(400).json(responseData);
+				}
+			});
 		});
 
 	} catch (err) {

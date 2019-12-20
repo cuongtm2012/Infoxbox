@@ -112,16 +112,20 @@ async function updateCICReportInquirySuccessful(req, res, next) {
     try {
         let sql, binds, options, result;
 
+        let sysDim = dateUtil.timeStamp();
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD = '04'
+                SET SCRP_STAT_CD = '04', SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:niceSessionKey `;
 
         result = await connection.execute(
             // The statement to execute
             sql,
-            [req.niceSessionKey],
+            {
+                sysDim: { val: sysDim },
+                niceSessionKey: { val: req.niceSessionKey }
+            },
             { autoCommit: true }
         );
 
@@ -149,17 +153,22 @@ async function updateScrapingTargetRepostNotExist(req, res, next) {
     try {
         let sql, binds, options, result;
 
+        let sysDim = dateUtil.timeStamp();
+
         connection = await oracledb.getConnection(dbconfig);
 
 
         sql = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD = '24'
+                SET SCRP_STAT_CD = '24', SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
 
         result = await connection.execute(
             // The statement to execute
             sql,
-            [req.NICE_SSIN_ID],
+            {
+                sysDim: { val: sysDim },
+                NICE_SSIN_ID: { val: req.NICE_SSIN_ID }
+            },
             { autoCommit: true },
         );
 

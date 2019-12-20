@@ -20,6 +20,12 @@ module.exports = {
         return timeStamp;
     },
 
+    timeStamp2: function () {
+        var timeStamp = dateFormat(new Date(), "yyyymmddHHMMl");
+        
+        return timeStamp;
+    },
+
     getSeconds: function(start) {
         return ((new Date() - start) % 60000 / 1000).toFixed(2) + "s";
     }
