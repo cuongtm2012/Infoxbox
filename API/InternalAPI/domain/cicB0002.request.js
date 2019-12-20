@@ -1,6 +1,6 @@
 
 
-module.exports = function cicB0002Request(parameters, defaultValue) {
+module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     const {
         NICE_SSIN_ID,
         CIC_ID,
@@ -30,7 +30,7 @@ module.exports = function cicB0002Request(parameters, defaultValue) {
     this.svcCd = svcCd;
     this.dispNm = dispNm;
     this.userId = LOGIN_ID;
-    this.userPw = LOGIN_PW;
+    this.userPw = decryptPW ? decryptPW : LOGIN_PW;
     this.customerType = customerType;
     this.cicNo = CIC_ID ? CIC_ID : "";
     this.taxNo = TAX_ID ? TAX_ID : "";

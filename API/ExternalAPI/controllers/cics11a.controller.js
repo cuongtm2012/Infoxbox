@@ -12,6 +12,7 @@ const cics11aRQSTRes = require('../domain/CIC_S11A_RQST.response');
 const validation = require('../../shared/util/validation');
 const dateutil = require('../util/dateutil');
 const validRequest = require('../util/validateParamRequest');
+const encryptPassword = require('../util/encryptPassword');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
@@ -41,7 +42,10 @@ exports.cics11aRQST = function (req, res, next) {
 		// 	return;
 		// }
 
-		const getdataReq = new cics11aRQSTReq(req.body);
+		// encrypt password
+		let password = encryptPassword.encrypt(req.body.loginPw);
+
+		const getdataReq = new cics11aRQSTReq(req.body, password);
 		// JSON.stringify(getdataReq);
 		console.log("getdataReq=====", getdataReq);
 

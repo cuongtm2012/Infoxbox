@@ -7,6 +7,7 @@ const URI = require('../../shared/URI');
 const cicService = require('../services/cicInternal.service');
 
 const validation = require('../../shared/util/validation');
+const decrypt = require('../util/encryptPassword');
 
 const defaultParams = require('../domain/defaultParams.request');
 
@@ -99,7 +100,9 @@ exports.InternalCICB0002 = function (req, res, next) {
                 let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
                 //Convert data to format cic site
-                var fnData = new cicB0002Req(element, defaultValue);
+                //decrypt password
+                var decryptPW = decrypt.decrypt(element.LOGIN_PW);
+                var fnData = new cicB0002Req(element, defaultValue, decryptPW);
 
                 // "?inJsonList=%5B" + querystrings + "%5D"
                 axios.post(URI.internal_cicB0002, fnData, config)

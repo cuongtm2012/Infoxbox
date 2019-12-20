@@ -1,5 +1,5 @@
 
-module.exports = function CIC_S11A_RQSTRequest(parameters) {
+module.exports = function CIC_S11A_RQSTRequest(parameters, password) {
     const { fiSessionKey,
         fiCode,
         taskCode,
@@ -19,8 +19,7 @@ module.exports = function CIC_S11A_RQSTRequest(parameters) {
     this.fiCode = fiCode;
     this.taskCode = taskCode;
     this.loginId = loginId;
-    this.loginPw = loginPw;
-    this.userPw = loginPw;
+    this.loginPw = password ? password : loginPw;
     this.cicGoodCode = cicGoodCode;
     this.taxCode = taxCode;
     this.natId = natId;
