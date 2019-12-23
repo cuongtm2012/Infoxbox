@@ -4,9 +4,10 @@ var router = express.Router();
 
 
 var cicB0002Controller = require('../controllers/cicB0002.controller');
+var internalCIC_controller = require('../controllers/internalCIC.controller');
 
 // request to cic server
-router.post('/cicB0002', cicB0002Controller.cicB0002);
+router.post('/cic', internalCIC_controller.internalCIC);
 
 router.post('/RequestCICB0002', cicB0002Controller.InternalCICB0002);
 router.post('/RequestCICB0002NotExist', cicB0002Controller.InternalCICB0002NotExist);
