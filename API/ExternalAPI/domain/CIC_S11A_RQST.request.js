@@ -1,5 +1,5 @@
 
-module.exports = function CIC_S11A_RQSTRequest(parameters, password) {
+module.exports = function CIC_S11A_RQSTRequest(parameters, password, niceSessionKey) {
     const { fiSessionKey,
         fiCode,
         taskCode,
@@ -28,5 +28,6 @@ module.exports = function CIC_S11A_RQSTRequest(parameters, password) {
     this.cicId = cicId;
     this.inquiryDate = inquiryDate ;
     this.infoProvConcent = infoProvConcent;
+    this.niceSessionKey = niceSessionKey;
 
 };

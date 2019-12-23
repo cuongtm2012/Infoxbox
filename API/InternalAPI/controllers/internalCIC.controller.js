@@ -52,7 +52,7 @@ exports.internalCIC = function (req, res, next) {
                         //TODO Update response to table
                     });
                 } else {
-                    return next(body);
+                    return next();
 
                 }
 

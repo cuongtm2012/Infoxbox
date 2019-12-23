@@ -1,33 +1,37 @@
+const cicService = require('../services/cicInternal.service');
+const validation = require('../../shared/util/validation');
+const decrypt = require('../util/encryptPassword');
+const URI = require('../../shared/URI');
+const dateutil = require('../util/dateutil');
+const defaultParams = require('../domain/defaultParams.request');
+
 const cicB0002Req = require('../domain/cicB0002.request');
 
 const axios = require('axios');
 
-const URI = require('../../shared/URI');
+module.exports = class internalJob {
+    //Cron request internal scraping
+    cron(oncomplete) {
 
-const cicService = require('../services/cicInternal.service');
-
-const validation = require('../../shared/util/validation');
-const decrypt = require('../util/encryptPassword');
-
-const defaultParams = require('../domain/defaultParams.request');
-
-const dateutil = require('../util/dateutil');
-
-
-exports.InternalCICB0002 = function (req, res, next) {
-    try {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             }
         }
 
-        cicService.select01(req, res).then(data => {
+        cicService.select01().then(data => {
             // Get each object in array data
             if (validation.isEmptyJson(data)) {
                 console.log('No request!');
-                return next();
+                // return next();
+                oncomplete(0,0)
+                // return;
             }
+
+            var count = 0;
+            var maxLength = data.length;
+            console.log("maxLength11~~~", maxLength);
+
             data.forEach(element => {
                 // let fnData = data[i].child;
                 console.log("element::::", element);
@@ -46,7 +50,10 @@ exports.InternalCICB0002 = function (req, res, next) {
                     .then((body) => {
                         console.log("body result222~~~~~", body.data);
 
-                        return res.status(200).json(body.data);
+                        count++;
+                        // next process until data ending
+                        oncomplete(count, maxLength);
+                        // return res.status(200).json(body.data);
 
                     }).catch((error) => {
                         console.log(error)
@@ -55,35 +62,5 @@ exports.InternalCICB0002 = function (req, res, next) {
         }).catch((error) => {
             console.log(error)
         });
-
-    } catch (err) {
-        return next(err)
     }
-};
-
-exports.InternalCICB0002NotExist = function (req, res, next) {
-    try {
-        cicService.select04NotExist(req, res).then(data => {
-            // Get each object in array data
-            if (validation.isEmptyJson(data)) {
-                console.log('No request!');
-                return next();
-            }
-            data.forEach(element => {
-                // let fnData = data[i].child;
-                console.log("element::::", element);
-
-                //Updatinh Scraping target report does not exist
-                cicService.updateScrapingTargetRepostNotExist(element).then(result => {
-                    return next();
-                });
-
-            });
-        }).catch((error) => {
-            console.log(error)
-        });;
-
-    } catch (err) {
-        return next(err)
-    }
-};
+}

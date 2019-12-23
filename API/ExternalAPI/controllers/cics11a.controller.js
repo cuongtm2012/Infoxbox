@@ -15,6 +15,7 @@ const validRequest = require('../util/validateParamRequest');
 const encryptPassword = require('../util/encryptPassword');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
+const nicekey = require('../util/niceSessionKey');
 
 // exports.validate = (method) => {
 // 	switch (method) {
@@ -44,8 +45,9 @@ exports.cics11aRQST = function (req, res, next) {
 
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
+		let niceSessionKey = nicekey.makeNiceSessionKey();
 
-		const getdataReq = new cics11aRQSTReq(req.body, password);
+		const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
 		// JSON.stringify(getdataReq);
 		console.log("getdataReq=====", getdataReq);
 
@@ -70,6 +72,7 @@ exports.cics11aRQST = function (req, res, next) {
 			return res.status(200).json(responseData);
 		}
 		//End check params request
+
 		cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
 			console.log('insertINQLOG::', res1);
 			cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {

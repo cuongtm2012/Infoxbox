@@ -5,8 +5,7 @@ const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../util/getIPGateWay');
 
-
-let niceSessionKey = nicekey.makeNiceSessionKey();
+// let niceSessionKey = nicekey.makeNiceSessionKey();
 
 async function insertSCRPLOG(req, res, next) {
     try {
@@ -14,8 +13,9 @@ async function insertSCRPLOG(req, res, next) {
 
         let sysDim = convertTime.timeStamp();
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let niceSessionKey = req.niceSessionKey;
 
-            connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(dbconfig);
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, SYS_DTIM) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :SYS_DTIM)`;
@@ -43,7 +43,7 @@ async function insertSCRPLOG(req, res, next) {
 
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
 
-        return result.rowsAffected, niceSessionKey;
+        return producCode + niceSessionKey;
         // return res.status(200).json(result.rows);
 
 
@@ -79,7 +79,7 @@ async function insertINQLOG(req, res, next) {
             // The statement to execute
             sql,
             {
-                INQ_LOG_ID: { val: niceSessionKey },
+                INQ_LOG_ID: { val: req.niceSessionKey },
                 CUST_CD: { val: req.fiCode },
                 TX_GB_CD: { val: TX_GB_CD },
                 NATL_ID: { val: req.natId },

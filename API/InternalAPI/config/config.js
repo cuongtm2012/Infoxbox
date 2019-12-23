@@ -21,7 +21,8 @@ var config = {
 		orgLog: './logs'
 	},
 	batch: {
-		TIME_OUT: 5000
+		TIME_OUT: 30000, // 30 seconds
+		TIME_OUT2: 900000, // 15 minutes
 	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
