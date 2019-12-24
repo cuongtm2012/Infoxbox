@@ -21,13 +21,15 @@ module.exports = class internalJob {
                 // let fnData = data[i].child;
                 console.log("element::::", element);
 
-                //Updatinh Scraping target report does not exist
-                cicService.updateScrapingTargetRepostNotExist(element).then(result => {
-                    // return next();
-                    count++;
-                    oncomplete(count, maxLength)
-                });
-
+                // update SCRP_MOD_CD = 01 before
+                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
+                    //Updatinh Scraping target report does not exist
+                    cicService.updateScrapingTargetRepostNotExist(element).then(() => {
+                        // return next();
+                        count++;
+                        oncomplete(count, maxLength)
+                    });
+                })
             });
         }).catch((error) => {
             console.log(error)

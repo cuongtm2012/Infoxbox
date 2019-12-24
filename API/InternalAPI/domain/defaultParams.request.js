@@ -1,13 +1,13 @@
 module.exports = {
     defaultParams: function(inqDt1, inqDt2, step_input, step_data) {
         let data = {
-            appCd: 'infotechDev',
+            appCd: 'INFOBOX',
             orgCd: 'cic.vn',
             svcCd: 'B0002',
             dispNm: 'cic.org.vn',
             customerType: '2',
             reportType: '06',
-            voteNo: '1',
+            voteNo: '111',
             reqStatus: '1',
             inqDt1: inqDt1  ? inqDt1 : "",
             inqDt2: inqDt2 ? inqDt2 : "",

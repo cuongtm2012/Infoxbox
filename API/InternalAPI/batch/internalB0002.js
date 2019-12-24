@@ -24,7 +24,7 @@ module.exports = class internalJob {
             if (validation.isEmptyJson(data)) {
                 console.log('No request!');
                 // return next();
-                oncomplete(0,0)
+                oncomplete(0, 0)
                 // return;
             }
 
@@ -45,19 +45,21 @@ module.exports = class internalJob {
                 var decryptPW = decrypt.decrypt(element.LOGIN_PW);
                 var fnData = new cicB0002Req(element, defaultValue, decryptPW);
 
-                // "?inJsonList=%5B" + querystrings + "%5D"
-                axios.post(URI.internal_cic, fnData, config)
-                    .then((body) => {
-                        console.log("body result222~~~~~", body.data);
+                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
+                    // "?inJsonList=%5B" + querystrings + "%5D"
+                    axios.post(URI.internal_cic, fnData, config)
+                        .then((body) => {
+                            console.log("body result222~~~~~", body.data);
 
-                        count++;
-                        // next process until data ending
-                        oncomplete(count, maxLength);
-                        // return res.status(200).json(body.data);
+                            count++;
+                            // next process until data ending
+                            oncomplete(count, maxLength);
+                            // return res.status(200).json(body.data);
 
-                    }).catch((error) => {
-                        console.log(error)
-                    });
+                        }).catch((error) => {
+                            console.log(error)
+                        });
+                });
             });
         }).catch((error) => {
             console.log(error)

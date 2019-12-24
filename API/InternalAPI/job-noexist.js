@@ -1,5 +1,5 @@
 
-var internalCIC = require('./batch/internalB0003');
+var internalCIC = require('./batch/internalNoexist');
 var internalCIC = new internalCIC();
 var config = require('./config/config');
 
@@ -8,7 +8,7 @@ module.exports.start = function () {
         internalCIC.cron((current, max) => {
             if (current == max) {
                 // finish
-                console.log("call internall batch B0003~~~");
+                console.log("call internall batch noexist~~~");
 
                 this.start();
             }

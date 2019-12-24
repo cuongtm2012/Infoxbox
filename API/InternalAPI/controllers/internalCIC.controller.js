@@ -46,14 +46,16 @@ exports.internalCIC = function (req, res, next) {
 
                 // update process status = 9 update process completed
                 if (!validation.isEmptyJson(body.data.outJson.outB0001) && body.data.outJson.outB0001.errYn == "N") {
-                    //update process status = 9, sucecssful send request to cic server
+                    //update process status = 04, sucecssful recieve response from scraping service
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
                         console.log("CIC report inquiry successful!");
                         //TODO Update response to table
                     });
                 } else {
-                    return next();
-
+                    cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
+                        console.log("update SCRP_MOD_CD = 00 ");
+                        return next();
+                    });
                 }
 
                 return res.status(200).json(body.data);
