@@ -7,7 +7,8 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
         LOGIN_ID,
         LOGIN_PW,
         PSPT_NO,
-        TAX_ID
+        TAX_ID,
+        SYS_DTIM
     } = parameters;
 
     const {
@@ -43,5 +44,6 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     this.step_input = step_input;
     this.step_data = step_data;
     this.niceSessionKey = NICE_SSIN_ID;
+    this.sendTime = SYS_DTIM;
 
 };

@@ -3,7 +3,7 @@ const dbconfig = require('../config/dbconfig');
 
 const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
-const ipGateWay = require('../util/getIPGateWay');
+const ipGateWay = require('../../shared/util/getIPGateWay');
 
 // let niceSessionKey = nicekey.makeNiceSessionKey();
 
