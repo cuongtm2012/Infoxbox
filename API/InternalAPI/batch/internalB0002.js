@@ -57,7 +57,8 @@ module.exports = class internalJob {
                             // return res.status(200).json(body.data);
 
                         }).catch((error) => {
-                            console.log(error)
+                            console.log("error call to internal_cic url~~",error);
+                            return;
                         });
                 });
             });

@@ -49,7 +49,7 @@ async function insertSCRPLOG(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -102,7 +102,7 @@ async function insertINQLOG(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {

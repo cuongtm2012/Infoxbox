@@ -47,7 +47,7 @@ async function select01(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -102,7 +102,7 @@ async function select04NotExist(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -143,7 +143,7 @@ async function updateCICReportInquirySuccessful(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -186,7 +186,7 @@ async function updateScrapingTargetRepostNotExist(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -226,7 +226,7 @@ async function updateScrpModCdPreRequestToScraping(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -266,7 +266,7 @@ async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        return res.status(400);
+        // return res.status(400);
     } finally {
         if (connection) {
             try {

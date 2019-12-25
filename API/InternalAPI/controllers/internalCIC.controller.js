@@ -48,7 +48,7 @@ exports.internalCIC = function (req, res, next) {
             .then((body) => {
                 // console.log("body result~~~~~", body.data);
 
-                // update process status = 9 update process completed
+                // update process status = 04 update process completed
                 if (!validation.isEmptyJson(body.data.outJson.outB0001) && body.data.outJson.outB0001.errYn == "N") {
                     //update process status = 04, sucecssful recieve response from scraping service
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
@@ -65,6 +65,7 @@ exports.internalCIC = function (req, res, next) {
                         let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password);
                         cicServiceRes.updateScrapingTranslog(dataTransSave).then(() => {
                             console.log("Updated to scraping transaction log!");
+                            return next();
                         });
 
                     });
@@ -78,10 +79,15 @@ exports.internalCIC = function (req, res, next) {
                 return res.status(200).json(body.data);
 
             }).catch((error) => {
-                console.log(error)
+                console.log("error scraping service~~", error);
+                //Update ScrpModCd 00
+                cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
+                    console.log("update SCRP_MOD_CD = 00 ");
+                    return next();
+                });
             });
 
     } catch (err) {
-        return next(err)
+        console.log("error cicInternalJson", err);
     }
 };
