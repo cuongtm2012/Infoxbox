@@ -112,5 +112,49 @@ async function insertINQLOG(req, res, next) {
     }
 }
 
+async function selectCICS11aRSLT(req, res, next) {
+    try {
+        let sql, binds, options, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
+                FROM TB_SCRP_TRLOG
+                where NICE_SSIN_ID = :niceSessionKey`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                niceSessionKey: { val: req.niceSessionKey }
+            },
+            {
+                // maxRows: 1,
+                outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
+                //, extendedMetaData: true                 // get extra metadata
+                //, fetchArraySize: 100                    // internal buffer allocation size for tuning
+            });
+
+        console.log("rows::", result.rows);
+
+        return result.rows;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
+module.exports.selectCICS11aRSLT = selectCICS11aRSLT;

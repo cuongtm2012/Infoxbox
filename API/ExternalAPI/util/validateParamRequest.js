@@ -35,6 +35,14 @@ module.exports = {
             return response;
         }
 
+        if (validation.isEmptyStr(getdataReq.niceSessionKey)) {
+            response = {
+                responseMessage : responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,
+                responseCode : responcodeEXT.RESCODEEXT.NINICESESSIONKEY.code
+            }
+            return response;
+        }
+
         else
             response = {};
 
