@@ -15,7 +15,9 @@ const validRequest = require('../util/validateParamRequest');
 const encryptPassword = require('../util/encryptPassword');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
-const nicekey = require('../util/niceSessionKey');
+
+const util = require('../util/dateutil');
+const common_service = require('../services/common.service');
 
 // exports.validate = (method) => {
 // 	switch (method) {
@@ -45,60 +47,64 @@ exports.cics11aRQST = function (req, res, next) {
 
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
-		let niceSessionKey = nicekey.makeNiceSessionKey();
+		// let niceSessionKey = nicekey.makeNiceSessionKey();
+		let niceSessionKey;
+		common_service.getSequence().then(resSeq => {
+			niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
 
-		const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
-		// JSON.stringify(getdataReq);
-		console.log("getdataReq=====", getdataReq);
+			const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
+			// JSON.stringify(getdataReq);
+			console.log("getdataReq=====", getdataReq);
 
-		//Logging request
-		logger.debug('Log request parameters from routes after manage request');
-		logger.info(getdataReq);
+			//Logging request
+			logger.debug('Log request parameters from routes after manage request');
+			logger.info(getdataReq);
 
-		/*
-		* Checking parameters request
-		* Request data
-		*/
-		let rsCheck = validRequest.checkParamRequest(getdataReq);
-		let preResponse = {
-			responseMessage: rsCheck.responseMessage,
-			niceSessionKey: "",
-			responseTime: dateutil.getSeconds(start),
-			responseCode: rsCheck.responseCode
-		}
+			/*
+			* Checking parameters request
+			* Request data
+			*/
+			let rsCheck = validRequest.checkParamRequest(getdataReq);
+			let preResponse = {
+				responseMessage: rsCheck.responseMessage,
+				niceSessionKey: "",
+				responseTime: dateutil.getSeconds(start),
+				responseCode: rsCheck.responseCode
+			}
 
-		if (!validation.isEmptyJson(rsCheck)) {
-			let responseData = new cics11aRQSTRes(getdataReq, preResponse);
-			return res.status(200).json(responseData);
-		}
-		//End check params request
+			if (!validation.isEmptyJson(rsCheck)) {
+				let responseData = new cics11aRQSTRes(getdataReq, preResponse);
+				return res.status(200).json(responseData);
+			}
+			//End check params request
 
-		cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
-			console.log('insertINQLOG::', res1);
-			cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
-				console.log("result cics11aRQST: ", result);
+			cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
+				console.log('insertINQLOG::', res1);
+				cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
+					console.log("result cics11aRQST: ", result);
 
-				let response = {
-					responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
-					niceSessionKey: result,
-					responseTime: dateutil.getSeconds(start),
-					responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
-				}
+					let response = {
+						responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
+						niceSessionKey: result,
+						responseTime: dateutil.getSeconds(start),
+						responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
+					}
 
-				let responseUnknow = {
-					responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-					niceSessionKey: result,
-					responseTime: dateutil.getSeconds(start),
-					responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-				}
+					let responseUnknow = {
+						responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
+						niceSessionKey: result,
+						responseTime: dateutil.getSeconds(start),
+						responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
+					}
 
-				if (!validation.isEmptyStr(result)) {
-					let responseData = new cics11aRQSTRes(getdataReq, response);
-					return res.status(200).json(responseData);
-				} else {
-					let responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
-					return res.status(400).json(responseData);
-				}
+					if (!validation.isEmptyStr(result)) {
+						let responseData = new cics11aRQSTRes(getdataReq, response);
+						return res.status(200).json(responseData);
+					} else {
+						let responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
+						return res.status(400).json(responseData);
+					}
+				});
 			});
 		});
 

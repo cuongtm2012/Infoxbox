@@ -5,8 +5,6 @@ const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 
-// let niceSessionKey = nicekey.makeNiceSessionKey();
-
 async function insertSCRPLOG(req, res, next) {
     try {
         let sql, binds, options, result;
