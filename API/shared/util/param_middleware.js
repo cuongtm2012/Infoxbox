@@ -5,22 +5,22 @@ const validateParams = function (requestParams) {
                 let reqParam = req.params[param.param_key];
                 if (!checkParamType(reqParam, param)) {
                     return res.send(400, {
-                        status: 400,
-                        result: `${param.param_key} is of type ` +
+                        responseCode: `${param.code_mandatory}`,
+                        responseMessage: `${param.param_key} is of type ` +
                         `${typeof reqParam} but should be ${param.type}`
                     });
                 } else {
                     if (!runValidators(reqParam, param)) {
                         return res.send(400, {
-                            status: 400,
-                            result: `Validation failed for ${param.param_key}`
+                            responseCode: 400,
+                            responseMessage: `Validation failed for ${param.param_key}`
                         });
                     }
                 }
             } else if (param.required){
                 return res.send(400, {
-                    status: 400,
-                    result: `Missing Parameter ${param.param_key}`
+                    responseCode: `${param.code_mandatory}`,
+                    responseMessage: `Missing Parameter ${param.param_key}`
                 });
             }
         }
@@ -34,7 +34,8 @@ const checkParamPresent = function (reqParams, paramObj) {
 
 const checkParamType = function (reqParam, paramObj) {
     const reqParamType = typeof reqParam;
-    return reqParamType === paramObj.type;
+    // return reqParamType === paramObj.type;
+    return reqParamType === paramObj;
 };
 
 const runValidators = function (reqParam, paramObj) {
@@ -47,5 +48,6 @@ const runValidators = function (reqParam, paramObj) {
 };
 
 module.exports = {
-    validateParams: validateParams
+    validateParams: validateParams,
+    checkParamType: checkParamType
 };

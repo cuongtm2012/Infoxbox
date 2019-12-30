@@ -35,6 +35,7 @@ exports.internalCIC = function (req, res, next) {
             headers: {
                 'Content-Type': 'application/json'
             }
+            // timeout: 6000
         }
         console.log(" req.body:::", req.body);
 

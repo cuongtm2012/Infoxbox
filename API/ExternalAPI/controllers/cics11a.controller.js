@@ -65,14 +65,15 @@ exports.cics11aRQST = function (req, res, next) {
 			* Request data
 			*/
 			let rsCheck = validRequest.checkParamRequest(getdataReq);
-			let preResponse = {
-				responseMessage: rsCheck.responseMessage,
-				niceSessionKey: "",
-				responseTime: dateutil.getSeconds(start),
-				responseCode: rsCheck.responseCode
-			}
 
 			if (!validation.isEmptyJson(rsCheck)) {
+				let preResponse = {
+					responseMessage: rsCheck.responseMessage,
+					niceSessionKey: "",
+					responseTime: dateutil.getSeconds(start),
+					responseCode: rsCheck.responseCode
+				}
+
 				let responseData = new cics11aRQSTRes(getdataReq, preResponse);
 				return res.status(200).json(responseData);
 			}
@@ -128,14 +129,15 @@ exports.cics11aRSLT = function (req, res) {
 		* Request data
 		*/
 		let rsCheck = validS11ARQLT.checkParamResponse(getdataReq);
-		let preResponse = {
-			responseMessage: rsCheck.responseMessage,
-			responseTime: dateutil.getSeconds(start),
-			responseCode: rsCheck.responseCode
-
-		}
 
 		if (!validation.isEmptyJson(rsCheck)) {
+			let preResponse = {
+				responseMessage: rsCheck.responseMessage,
+				responseTime: dateutil.getSeconds(start),
+				responseCode: rsCheck.responseCode
+
+			}
+
 			let responseData = new cics11aRSLTRes(getdataReq, preResponse, {});
 			return res.status(200).json(responseData);
 		}
