@@ -1,5 +1,5 @@
 
-const logger = require('../../InternalAPI/config/logger');
+const logger = require('../config/logger');
 
 const cics37RQSTReq = require('../domain/CIC_S37_RQST.request');
 
