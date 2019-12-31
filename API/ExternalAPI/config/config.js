@@ -18,7 +18,7 @@ var config = {
 		port: '3100'
 	},
 	log: {
-		orgLog: './logs'
+		orgLog: '../../logs/External'
 	},
 	batch: {
 		TIME_OUT: 5000
