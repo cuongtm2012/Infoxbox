@@ -1,4 +1,4 @@
-module.exports = function CIC_S11A_RSLT_Request(requestParams) {
+module.exports = function CIC_37_RSLT_Request(requestParams) {
     const {
         fiSessionKey,
         fiCode,

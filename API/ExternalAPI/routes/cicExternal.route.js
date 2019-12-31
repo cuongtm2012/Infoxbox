@@ -11,7 +11,9 @@ router.post('/cics11aRQST',  cics11a_controller.cics11aRQST);
 
 router.post('/cics11aRSLT',  cics11a_controller.cics11aRSLT);
 
-router.post('/cicS37RQST', cicS37Rqst_controller.cics37Rqst);
+router.post('/cics37RQST', cicS37Rqst_controller.cics37Rqst);
+
+router.post('/cics37RSLT',  cics11a_controller.cics11aRSLT);
 //TODO
 router.post('/cicProcSTAT', cicProcStat_controller.cicProcStat);
 

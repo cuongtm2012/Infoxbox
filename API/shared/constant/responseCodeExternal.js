@@ -8,6 +8,7 @@ var RESCODEEXT = {
     IVCICCODE: { value: 4, name: "Invalid CIC product code", code: "F004" },
     NILOGINID: { value: 5, name: "Need to input mandatory item(log in ID)", code: "F005" },
     NIPASSWORD: { value: 6, name: "Need to input mandatory item(log in Password)", code: "F006" },
+    NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     UNKNOW: { value: 400, name: "UNKNOW", code: "400" }
 };

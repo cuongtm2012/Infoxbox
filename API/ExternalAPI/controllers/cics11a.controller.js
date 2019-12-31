@@ -17,32 +17,10 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const util = require('../util/dateutil');
 const common_service = require('../services/common.service');
 
-// exports.validate = (method) => {
-// 	switch (method) {
-// 		case 'cics11aRQST': {
-// 			return [
-// 				body('fiCode', 'fiCode does not exists').exists(),
-// 				body('taskCode', 'taskCode does not exists').exists(),
-// 				body('loginId', 'cicId does not exists').exists(),
-// 				body('loginPw', 'loginPw does not exists').exists(),
-// 				body('cicGoodCode', 'cicGoodCode does not exists').exists(),
-// 				body('inquiryDate', 'inquiryDate does not exists').exists(),
-// 				body('infoProvConcent', 'infoProvConcent does not exists').exists()
-// 			]
-// 		}
-// 	}
-// };
-
 exports.cics11aRQST = function (req, res, next) {
 	try {
 		var start = new Date();
-		// Finds the validation errors in this request and wraps them in an object with handy functions
-		// const errors = validationResult(req);
-		// if (!errors.isEmpty()) {
-		// 	res.status(422).json({ errors: errors.array() });
-		// 	return;
-		// }
-
+	
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
 		// let niceSessionKey = nicekey.makeNiceSessionKey();
@@ -114,7 +92,7 @@ exports.cics11aRQST = function (req, res, next) {
 
 const cics11aRSLTReq = require('../domain/CIC_S11A_RSLT.request');
 const cics11aRSLTRes = require('../domain/CIC_S11A_RSLT.response');
-const validS11ARQLT = require('../util/validS11AResponse');
+const validS11ARQLT = require('../util/validRequestS11AResponse');
 
 exports.cics11aRSLT = function (req, res) {
 	try {
@@ -126,7 +104,7 @@ exports.cics11aRSLT = function (req, res) {
 		* Checking parameters request
 		* Request data
 		*/
-		let rsCheck = validS11ARQLT.checkParamResponse(getdataReq);
+		let rsCheck = validS11ARQLT.checkParamRequestForResponse(getdataReq);
 
 		if (!validation.isEmptyJson(rsCheck)) {
 			let preResponse = {
