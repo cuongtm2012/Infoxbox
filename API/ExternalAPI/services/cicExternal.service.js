@@ -67,7 +67,6 @@ async function insertINQLOG(req, res, next) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        let TX_GB_CD = "CIC_S11A_RQST";
         let gateway = ipGateWay.getIPGateWay(req);
 
         sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
@@ -79,7 +78,7 @@ async function insertINQLOG(req, res, next) {
             {
                 INQ_LOG_ID: { val: req.niceSessionKey },
                 CUST_CD: { val: req.fiCode },
-                TX_GB_CD: { val: TX_GB_CD },
+                TX_GB_CD: { val: req.taskCode },
                 NATL_ID: { val: req.natId },
                 TAX_ID: { val: req.taxCode },
                 OTR_ID: { val: req.oldNatId + "," + req.passportNumber },

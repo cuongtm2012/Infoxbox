@@ -1,6 +1,4 @@
 
-// const { validationResult, body } = require('express-validator/check');
-
 const logger = require('../../InternalAPI/config/logger');
 
 const cics11aRQSTReq = require('../domain/CIC_S11A_RQST.request');
