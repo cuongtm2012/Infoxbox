@@ -28,7 +28,7 @@ exports.login = function (req, res) {
                 });
 
                 var resdata = reslt[0];
-                console.log("OK password");
+                console.log("OK password~~~");
                 var userData = new IUser(resdata, true, token);
 
                 return res.status(200).json(userData);
