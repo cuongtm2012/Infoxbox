@@ -18,14 +18,15 @@ exports.login = function (req, res) {
             userid: userid,
             user_pwd: user_pwd
         };
-        var token = jwt.sign(payload, config.secret, {
-            expiresIn: config.jwtExpiresIn
-        });
 
         authService.getUser(req, res).then(reslt => {
-            console.log("result getUser: ", reslt[0]);
+            console.log("result getUser: ", reslt);
 
-            if (!validation.isEmptyStr(reslt[0])) {
+            if (!validation.isEmptyStr(reslt)) {
+                var token = jwt.sign(payload, config.secret, {
+                    expiresIn: config.jwtExpiresIn
+                });
+
                 var resdata = reslt[0];
                 console.log("OK password");
                 var userData = new IUser(resdata, true, token);
