@@ -1,22 +1,28 @@
 const oracledb = require('oracledb');
 const dbconfig = require('../config/dbconfig');
 
+const bcrypt = require('bcrypt');
+const saltRounds = 12;
+var salt = bcrypt.genSaltSync(saltRounds);
+const config = require('../config/config')
+
 async function getUser(req, res, next) {
     try {
         let sql, binds, options, result;
+
+        var user_pwd = req.body.password;
 
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `SELECT  * 
                 FROM TB_USER
-                where USER_NAME = :user_name and PASSWORD = :user_password`;
+                where USER_NAME = :user_name`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
-                user_name: { val: req.body.username },
-                user_password: { val: req.body.password }
+                user_name: { val: req.body.username }
             },
             {
                 // maxRows: 1,
@@ -27,7 +33,13 @@ async function getUser(req, res, next) {
 
         console.log("rows::", result.rows);
 
-        return result.rows;
+        if (bcrypt.compareSync(user_pwd, result.rows[0].PASSWORD)) {
+            console.log("OK password");
+
+            return result.rows;
+        } else {
+            return;
+        }
         // return res.status(200).json(result.rows);
 
 
