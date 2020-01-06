@@ -6,14 +6,13 @@ const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 
 
-let niceSessionKey = nicekey.makeNiceSessionKey();
-
 async function insertSCRPLOG(req, res, next) {
     try {
         let sql, binds, options, result;
 
         let sysDim = convertTime.timeStamp();
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let niceSessionKey = req.niceSessionKey;
 
             connection = await oracledb.getConnection(dbconfig);
 
@@ -69,9 +68,8 @@ async function insertSCRPLOG(req, res, next) {
 
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
 
-        return result.rowsAffected, niceSessionKey;
-        // return res.status(200).json(result.rows);
-
+        return producCode + niceSessionKey;
+        
 
     } catch (err) {
         console.log(err);
@@ -92,6 +90,8 @@ async function insertINQLOG(req, res, next) {
         let sql, binds, options, result;
 
         let sysDim = convertTime.timeStamp();
+        let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let niceSessionKey = req.niceSessionKey;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -144,9 +144,8 @@ async function insertINQLOG(req, res, next) {
 
         console.log("row insert INQLOG::", result.rowsAffected);
 
-        return result.rowsAffected;
-        // return res.status(200).json(result.rows);
-
+        return producCode + niceSessionKey;
+       
 
     } catch (err) {
         console.log(err);

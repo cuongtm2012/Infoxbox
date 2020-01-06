@@ -1,4 +1,4 @@
-//
+
 const logger = require('../config/logger');
 const cicMacrRQSTReq = require('../domain/CIC_MACR_RQST.request');
 
@@ -10,6 +10,8 @@ const validation = require('../../shared/util/validation');
 const dateutil = require('../util/dateutil');
 const validRequest = require('../util/validateMacrParamRequest');
 
+const util = require('../util/dateutil');
+const common_service = require('../services/common.service');
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
 
@@ -17,6 +19,12 @@ exports.cicMACRRQST = function (req, res) {
     
     try {
         var start = new Date();
+
+        let niceSessionKey;
+
+        common_service.getSequence().then(resSeq => {
+            niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
+        
 
         const getdataReq = new cicMacrRQSTReq(req.body);
          //JSON.stringify(getdataReq);
@@ -72,7 +80,7 @@ exports.cicMACRRQST = function (req, res) {
                 }
             });
         });
-
+    });
 
     } catch (error) {
         console.log(error);
