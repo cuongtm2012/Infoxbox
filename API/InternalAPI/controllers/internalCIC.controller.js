@@ -40,6 +40,11 @@ exports.internalCIC = function (req, res, next) {
                             return next();
                         });
 
+                        cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
+                            console.log("update SCRP_MOD_CD = 00 ");
+                            return next();
+                        });
+
                     });
                 } else {
                     cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
@@ -51,7 +56,7 @@ exports.internalCIC = function (req, res, next) {
                 return res.status(200).json(body.data);
 
             }).catch((error) => {
-                console.log("error scraping service~~", error);
+                console.log("error scraping service B0002~~", error);
                 //Update ScrpModCd 00
                 cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
                     console.log("update SCRP_MOD_CD = 00 ");
@@ -109,16 +114,24 @@ exports.internalCICB0003 = function (req, res, next) {
                         return;
                     });
                 } else {
-                    return next();
+                    cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
+                        console.log("update SCRP_MOD_CD = 00 ");
+                        return next();
+                    });
                 }
 
                 return res.status(200).json(body.data);
 
             }).catch((error) => {
-                console.log("error scraping service~~", error);
+                console.log("error scraping service B0003~~", error);
+                //Update ScrpModCd 00
+                cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
+                    console.log("update SCRP_MOD_CD = 00 ");
+                    return next();
+                });
             });
 
     } catch (err) {
-        console.log("error cicInternalJson", err);
+        console.log("error internalCICB0003", err);
     }
 };

@@ -344,6 +344,7 @@ async function startProcessB0003(req, res, next) {
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '04' 
                 and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
+                and SCRP_MOD_CD = '00'
                 and ROWNUM <= 20
             ORDER BY a.SYS_DTIM ASC`;
         // and (SCRP_MOD_CD = '00' or SCRP_MOD_CD is null)

@@ -48,21 +48,20 @@ module.exports = class internalJob {
                 var decryptPW = decrypt.decrypt(element.LOGIN_PW);
                 var fnData = new cicB0003Req(element, defaultValue, decryptPW);
 
-                // cicService.insertLoanDetailInfor(element).then(() => {
-                // "?inJsonList=%5B" + querystrings + "%5D"
-                axios.post(URI.internal_cicB0003, fnData, config)
-                    .then((body) => {
-                        console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
-                        count++;
-                        // next process until data ending
-                        oncomplete(count, maxLength);
-                        // return res.status(200).json(body.data);
+                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
+                    axios.post(URI.internal_cicB0003, fnData, config)
+                        .then((body) => {
+                            console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
+                            count++;
+                            // next process until data ending
+                            oncomplete(count, maxLength);
+                            // return res.status(200).json(body.data);
 
-                    }).catch((error) => {
-                        console.log("error call to internal_cic url B0003~~", error);
-                        return;
-                    });
-                // });
+                        }).catch((error) => {
+                            console.log("error call to internal_cic url B0003~~", error);
+                            return;
+                        });
+                });
             });
         }).catch((error) => {
             console.log(error)
