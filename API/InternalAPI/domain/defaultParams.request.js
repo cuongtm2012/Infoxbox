@@ -3,7 +3,6 @@ module.exports = {
         let data = {
             appCd: 'INFOBOX',
             orgCd: 'cic.vn',
-            svcCd: 'B0002',
             dispNm: 'cic.org.vn',
             customerType: '2',
             reportType: '06',

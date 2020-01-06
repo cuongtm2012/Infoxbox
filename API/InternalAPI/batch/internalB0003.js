@@ -5,7 +5,7 @@ const URI = require('../../shared/URI');
 const dateutil = require('../util/dateutil');
 const defaultParams = require('../domain/defaultParams.request');
 
-const cicB0002Req = require('../domain/cicB0002.request');
+const cicB0003Req = require('../domain/cicB0003.request');
 
 const axios = require('axios');
 
@@ -19,7 +19,7 @@ module.exports = class internalJob {
             }
         }
 
-        cicService.select01().then(data => {
+        cicService.startProcessB0003().then(data => {
             // Get each object in array data
             if (validation.isEmptyJson(data)) {
                 console.log('No request!');
@@ -30,37 +30,39 @@ module.exports = class internalJob {
 
             var count = 0;
             var maxLength = data.length;
-            console.log("maxLength11~~~", maxLength);
 
             data.forEach(element => {
                 // let fnData = data[i].child;
                 console.log("element::::", element);
-                let inqDt1 = dateutil.getDate();
-                let inqDt2 = dateutil.getDate();
+                // let inqDt1 = dateutil.getDate();
+                // let inqDt2 = dateutil.getDate();
+
+                // DEBUG
+                let inqDt1 = '20191219';
+                let inqDt2 = '20191219';
 
                 let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
                 //Convert data to format cic site
                 //decrypt password
                 var decryptPW = decrypt.decrypt(element.LOGIN_PW);
-                var fnData = new cicB0002Req(element, defaultValue, decryptPW);
+                var fnData = new cicB0003Req(element, defaultValue, decryptPW);
 
-                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
-                    // "?inJsonList=%5B" + querystrings + "%5D"
-                    axios.post(URI.internal_cic, fnData, config)
-                        .then((body) => {
-                            console.log("body resultB0002~~~~~", body.data);
+                // cicService.insertLoanDetailInfor(element).then(() => {
+                // "?inJsonList=%5B" + querystrings + "%5D"
+                axios.post(URI.internal_cicB0003, fnData, config)
+                    .then((body) => {
+                        console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
+                        count++;
+                        // next process until data ending
+                        oncomplete(count, maxLength);
+                        // return res.status(200).json(body.data);
 
-                            count++;
-                            // next process until data ending
-                            oncomplete(count, maxLength);
-                            // return res.status(200).json(body.data);
-
-                        }).catch((error) => {
-                            console.log("error call to internal_cic url B0002~~",error);
-                            return;
-                        });
-                });
+                    }).catch((error) => {
+                        console.log("error call to internal_cic url B0003~~", error);
+                        return;
+                    });
+                // });
             });
         }).catch((error) => {
             console.log(error)
