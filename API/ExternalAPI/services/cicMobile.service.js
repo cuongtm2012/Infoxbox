@@ -3,7 +3,7 @@ const dbconfig = require('../config/dbconfig');
 
 const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
-const ipGateWay = require('../util/getIPGateWay');
+const ipGateWay = require('../../shared/util/getIPGateWay');
 
 
 let niceSessionKey = nicekey.makeNiceSessionKey();
@@ -17,8 +17,34 @@ async function insertSCRPLOG(req, res, next) {
 
             connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, PSN_NM, TEL_NO_MOBILE, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :PSN_NM, :TEL_NO_MOBILE, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :SYS_DTIM)`;
+        sql = `INSERT INTO TB_SCRPLOG(
+               NICE_SSIN_ID, 
+               CUST_SSID_ID, 
+               CUST_CD, 
+               PSN_NM, 
+               TEL_NO_MOBILE, 
+               TAX_ID, 
+               NATL_ID, 
+               OLD_NATL_ID, 
+               PSPT_NO, 
+               CIC_ID, 
+               SCRP_STAT_CD, 
+               AGR_FG, 
+               SYS_DTIM) 
+            VALUES (
+               :NICE_SSIN_ID, 
+               :CUST_SSID_ID, 
+               :CUST_CD, 
+               :PSN_NM, 
+               :TEL_NO_MOBILE, 
+               :TAX_ID, 
+               :NATL_ID, 
+               :OLD_NATL_ID, 
+               :PSPT_NO, 
+               :CIC_ID, 
+               :SCRP_STAT_CD, 
+               :AGR_FG, 
+               :SYS_DTIM)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -72,8 +98,30 @@ async function insertINQLOG(req, res, next) {
         let TX_GB_CD = "CIC_MACR_RQST";
         let gateway = ipGateWay.getIPGateWay(req);
 
-        sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
-        VALUES (:INQ_LOG_ID, :CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+        sql = `INSERT INTO TB_INQLOG(
+            INQ_LOG_ID, 
+            CUST_CD, 
+            TX_GB_CD, 
+            NATL_ID, 
+            TAX_ID, 
+            OTR_ID, 
+            CIC_ID, 
+            INQ_DTIM, 
+            AGR_FG, 
+            SYS_DTIM, 
+            WORK_ID) 
+        VALUES (
+            :INQ_LOG_ID, 
+            :CUST_CD, 
+            :TX_GB_CD, 
+            :NATL_ID, 
+            :TAX_ID, 
+            :OTR_ID, 
+            :CIC_ID, 
+            :INQ_DTIM, 
+            :AGR_FG, 
+            :SYS_DTIM, 
+            :WORK_ID)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -113,5 +161,48 @@ async function insertINQLOG(req, res, next) {
         }
     }
 }
+
+async function selectSCRPTRLOG(req, res, next){
+    try{
+        let sql, binds, options, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
+               FROM TB_SCRP_TRLOG
+               where NICE_SSIN_ID = :niceSessionKey`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                niceSessionKey: { val: req.niceSessionKey }
+            },
+            {
+                // maxRows: 1,
+                outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
+                //, extendedMetaData: true                 // get extra metadata
+                //, fetchArraySize: 100                    // internal buffer allocation size for tuning
+            });
+
+        console.log("rows::", result.rows);
+
+        return result.rows;
+    
+    } catch (err){
+           console.log(err);
+}     finally {
+        if (connection){
+            try {
+               await connection.close();
+            } catch (error) {
+            console.log(error);
+            }
+        }
+    }
+}
+
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
+module.exports.selectSCRPTRLOG = selectSCRPTRLOG;

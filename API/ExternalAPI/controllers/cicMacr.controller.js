@@ -14,7 +14,7 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
 
 exports.cicMACRRQST = function (req, res) {
-    //TODO
+    
     try {
         var start = new Date();
 
@@ -79,10 +79,56 @@ exports.cicMACRRQST = function (req, res) {
     }
 };
 
-exports.cicMACRRSLT = function (req, res) {
-    //TODO
-    try {
+const cicMacrRSLTReq = require('../domain/CIC_MACR_RSLT.request');
+const cicMacrRSLTRes = require('../domain/CIC_MACR_RSLT.response');
+const validMacrRSLT = require('../util/validRequestMACRResponse');
 
+exports.cicMACRRSLT = function (req, res) {
+    
+    try {
+        var start = new Date();
+        const getdataReq = new cicMacrRSLTReq(req.body);
+
+        // check parameters request
+        // request data
+        let rsCheck = validMacrRSLT.checkParamRequestForResponse(getdataReq);
+
+        if (!validation.isEmptyJson(rsCheck)) {
+			let preResponse = {
+				responseMessage: rsCheck.responseMessage,
+				responseTime: dateutil.getSeconds(start),
+				responseCode: rsCheck.responseCode
+
+            }
+            let responseData = new cicMacrRSLTRes(getdataReq, preResponse, {});
+			return res.status(200).json(responseData);
+		}
+        // end check params reqest
+
+        cicMobileService.selectSCRPTRLOG(getdataReq, res).then(reslt => {
+            console.log("result selectSCRPTRLOG: ", reslt);
+
+            let response = {
+				responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
+				responseTime: dateutil.getSeconds(start),
+				responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
+			}
+
+			let responseUnknow = {
+				responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
+				responseTime: dateutil.getSeconds(start),
+				responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
+            }
+            
+            if (!validation.isEmptyStr(reslt)) {
+				let responseData = new cicMacrRSLTRes(getdataReq, response, reslt[0]);
+				return res.status(200).json(responseData);
+			} else {
+				let responseData = new cicMacrRSLTRes(getdataReq, responseUnknow, {});
+				return res.status(400).json(responseData);
+			}
+
+        });
     } catch (error) {
         console.log(error);
     }

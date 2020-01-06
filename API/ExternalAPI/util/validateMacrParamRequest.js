@@ -52,6 +52,7 @@ module.exports = {
                 responseMessage : responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
                 responseCode : responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
             }
+            return response;
         }
 
         if (validation.isEmptyStr(getdataReq.niceSessionKey)) {
