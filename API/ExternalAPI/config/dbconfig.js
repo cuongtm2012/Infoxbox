@@ -1,5 +1,5 @@
 module.exports = {
-    user          : "develop",
+    user          : "admin",
   
     // Get the password from the environment variable
     // NODE_ORACLEDB_PASSWORD.  The password could also be a hard coded
