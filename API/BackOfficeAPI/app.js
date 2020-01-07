@@ -71,8 +71,6 @@ app.use(function(req, res, next) {
 		});
 });
 
-
-
 // validator
 // app.use(expressValidator());
 

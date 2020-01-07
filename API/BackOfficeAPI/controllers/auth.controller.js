@@ -1,5 +1,7 @@
 
 const logger = require('../config/logger');
+const oracledb = require('oracledb');
+const dbconfig = require('../config/dbconfig');
 const authService = require('../services/auth.service');
 const IUser = require('../domain/IUser');
 const validation = require('../../shared/util/validation');
@@ -37,12 +39,35 @@ exports.login = function (req, res) {
                 var userData = new IUser({});
                 return res.status(400).json(userData);
             }
-
         });
-
     } catch (error) {
         console.log(error);
     }
+};
 
+exports.register = async function (req, res) {
+    try {
+        connection = await oracledb.getConnection(dbconfig);
+        sqlCheckUser = `SELECT  * FROM TB_USER where USER_NAME = :user_name`;
+        result = await connection.execute(sqlCheckUser, { user_name: { val: req.body.username } },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+        if (result.rows.length >= 1) {
+            res.send({ msg: 0 });
+        } else {
+            connection = await oracledb.getConnection(dbconfig);
+            sqlRegister = `INSERT INTO TB_USER VALUES (:user_name, :password, :email, :fullname)`;
+            result = await connection.execute(sqlRegister, {
+                user_name: { val: req.body.username }, password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
+                email: { val: req.body.email }, fullname: { val: req.body.fullname }
+            },
+                { autoCommit: true }
+            );
+            res.send({msg: result.rowsAffected});
+        }
+    } catch (error) {
+        console.log(error);
+    }
 };
 
