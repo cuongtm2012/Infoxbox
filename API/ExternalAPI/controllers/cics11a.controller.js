@@ -129,9 +129,9 @@ exports.cics11aRSLT = function (req, res) {
 			}
 
 			let responseUnknow = {
-				responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
+				responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
 				responseTime: dateutil.getSeconds(start),
-				responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
+				responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
 			}
 
 			if (!validation.isEmptyStr(reslt)) {
