@@ -3,40 +3,38 @@ const dbconfig = require('../config/dbconfig');
 
 const dateutil = require('../util/dateutil');
 const getIdGetway = require('../../shared/util/getIPGateWay');
+const _ = require('lodash');
 
 async function insertLoanDetailInfor(req, res, next) {
     try {
-        let sql, binds, options, result;
+        // let sql, binds, options, result;
+
+        const sql = `INSERT INTO tb_loan_detail(NICE_SSIN_ID,
+                SEQ,
+                ST_LOAN_VND,
+                ST_LOAN_USD,
+                SYS_DTIM,
+                WORK_ID
+                )  values (:1, :2, :3, :4, :5, :6)`;
+
+        const options = {
+            autoCommit: true,
+            bindDefs: [
+                { type: oracledb.STRING, maxSize: 25 },
+                { type: oracledb.STRING, maxSize: 5 },
+                { type: oracledb.NUMBER, maxSize: 27 },
+                { type: oracledb.NUMBER, maxSize: 27 },
+                { type: oracledb.STRING, maxSize: 14 },
+                { type: oracledb.STRING, maxSize: 15 }
+            ]
+        };
 
         connection = await oracledb.getConnection(dbconfig);
+        const result = await connection.executeMany(sql, req, options);
+        console.log("Result is:", result);
 
-        sql = `INSERT INTO tb_loan_detail(NICE_SSIN_ID,
-            SEQ,
-            ST_LOAN_VND,
-            ST_LOAN_USD,
-            SYS_DTIM,
-            WORK_ID
-            ) 
-            values (:NICE_SSIN_ID, :SEQ, :ST_LOAN_VND, :ST_LOAN_USD, :SYS_DTIM, :WORK_ID)`;
-
-        result = await connection.execute(
-            // The statement to execute
-            sql,
-            {
-                NICE_SSIN_ID: { val: req.NICE_SSIN_ID },
-                SEQ: { val: req.SEQ },
-                ST_LOAN_VND: { val: req.ST_LOAN_VND },
-                ST_LOAN_USD: { val: req.ST_LOAN_USD },
-                SYS_DTIM: { val: dateutil.timeStamp() },
-                WORK_ID: {val: getIdGetway.getIPGateWay()}
-            },
-            { autoCommit: true }
-        );
-
-        console.log("tb_loan_detail updated::", result.rowsAffected);
-
-        return result.rowsAffected;
-        // return res.status(200).json(result.rows);
+        return result;
+        // return Promise.all(result.rowsAffected);
 
 
     } catch (err) {

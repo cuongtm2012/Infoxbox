@@ -6,6 +6,7 @@ const validation = require('../../shared/util/validation');
 const cicTransSave = require('../domain/cicTrans.save');
 const encryptPassword = require('../util/encryptPassword');
 const getIdGetway = require('../../shared/util/getIPGateWay');
+const _ = require("lodash");
 
 exports.internalCIC = function (req, res, next) {
     try {
@@ -74,6 +75,7 @@ exports.internalCIC = function (req, res, next) {
 */
 const loanService = require('../services/loanDetailInfo.service');
 const loanResponse = require('../domain/loanDetail.response');
+const dateutil = require('../util/dateutil');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -95,24 +97,57 @@ exports.internalCICB0003 = function (req, res, next) {
                     //update process status = 10, sucecssful recieve response from scraping service
                     // cicService.updateCICReportInquiryCompleted(req.body, res).then(resultUpdated => {
                     //     console.log("CIC report inquiry completed!");
-                    var listDataS11aB0003 = body.data.outJson.outB0003.list[0].reportS11A.loanDetailInfo.list;
+                    const listDataS11aB0003 = body.data.outJson.outB0003.list[0].reportS11A.loanDetailInfo.list;
                     console.log("listDataS11aB0003~~~~~", listDataS11aB0003);
-                    var seqPlus = 0;
-                    listDataS11aB0003.forEach(e => {
-                        seqPlus = seqPlus + 1;
-                        console.log('eeeeeee', e);
-                        console.log('seqPlus~~~', seqPlus);
-                        let loanResponseData = new loanResponse(e, req.body.niceSessionKey, seqPlus);
-                        console.log('losnResponseData~~~', loanResponseData);
-                        loanService.insertLoanDetailInfor(loanResponseData).then(() => {
-                            console.log("Updated to tb_loan_detail !");
-                            return next();
+                    console.log("listDataS11aB0003 length~~~~~", listDataS11aB0003.length);
+
+                    // Convert data to save TB_LOAN_DETAIL
+                    const niceSessionKey = req.body.niceSessionKey;
+                    const sysDtim = dateutil.timeStamp();
+                    const workID = getIdGetway.getIPGateWay();
+                    var seq = 0;
+
+                    const binds = [];
+                    _.forEach(listDataS11aB0003, res => {
+                        seq = seq + 1;
+                        const arrChild = [];
+                        const preVal = new loanResponse(res, niceSessionKey, sysDtim, workID, seq.toString());
+                        _.forEach(preVal, (val, key) => {
+                            arrChild.push(val)
                         });
+                        binds.push(arrChild)
                     });
-                    cicService.updateCICReportInquiryCompleted(req.body, res).then(resultUpdated => {
-                        console.log("CIC report inquiry completed!", resultUpdated);
-                        return;
+                    console.log('binds', binds);
+                    // End convert
+
+                    loanService.insertLoanDetailInfor(binds).then((r) => {
+                        console.log("Updated to tb_loan_detail !");
+                        if (!_.isEmpty(r)) {
+                            cicService.updateCICReportInquiryCompleted(req.body, res).then(resultUpdated => {
+                                console.log("CIC report inquiry completed!", resultUpdated);
+                                // encrypt password
+                                let password = encryptPassword.encrypt(req.body.userPw);
+                                let requestParams = req.body;
+                                let responseParams = body.data.outJson.outB0003;
+                                let scrplogid = body.data.outJson.in.thread_id.substring(0, 13);
+                                let workId = getIdGetway.getIPGateWay();
+
+                                let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password);
+                                cicServiceRes.updateScrapingTranslog(dataTransSave).then(() => {
+                                    console.log("Updated to scraping transaction log B0003!");
+                                    return next();
+                                });
+                            });
+                            return next();
+                        } else {
+                            cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
+                                console.log("update SCRP_MOD_CD = 00 ");
+                                return next();
+                            });
+                        }
                     });
+
+
                 } else {
                     cicService.updateScrpModCdHasNoResponseFromScraping(req.body, res).then(() => {
                         console.log("update SCRP_MOD_CD = 00 ");

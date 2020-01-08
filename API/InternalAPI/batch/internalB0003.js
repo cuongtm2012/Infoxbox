@@ -4,6 +4,7 @@ const decrypt = require('../util/encryptPassword');
 const URI = require('../../shared/URI');
 const dateutil = require('../util/dateutil');
 const defaultParams = require('../domain/defaultParams.request');
+const _ = require('lodash');
 
 const cicB0003Req = require('../domain/cicB0003.request');
 
@@ -21,7 +22,8 @@ module.exports = class internalJob {
 
         cicService.startProcessB0003().then(data => {
             // Get each object in array data
-            if (validation.isEmptyJson(data)) {
+            // if (validation.isEmptyJson(data)) {
+            if (_.isEmpty(data)) {
                 console.log('No request!');
                 // return next();
                 oncomplete(0, 0)
@@ -51,7 +53,7 @@ module.exports = class internalJob {
                 cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
                     axios.post(URI.internal_cicB0003, fnData, config)
                         .then((body) => {
-                            console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
+                            // console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
                             count++;
                             // next process until data ending
                             oncomplete(count, maxLength);
@@ -59,7 +61,10 @@ module.exports = class internalJob {
 
                         }).catch((error) => {
                             console.log("error call to internal_cic url B0003~~", error);
-                            return;
+                            cicService.updateScrpModCdHasNoResponseFromScraping(fnData).then(() => {
+                                console.log("update SCRP_MOD_CD = 00 ");
+                                return;
+                            });
                         });
                 });
             });

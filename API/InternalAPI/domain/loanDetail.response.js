@@ -1,5 +1,5 @@
 
-module.exports = function LoanDetailResponse(params, niceSessionKey, seqPlus) {
+module.exports = function LoanDetailResponse(params, niceSessionKey, sysDtim, workID, seqs) {
     const {
         seq,
         item,
@@ -8,9 +8,11 @@ module.exports = function LoanDetailResponse(params, niceSessionKey, seqPlus) {
     } = params;
 
     this.NICE_SSIN_ID = niceSessionKey;
-    this.SEQ = seqPlus;
-    this.ST_LOAN_VND = vnd ? vnd : 0;
-    this.ST_LOAN_USD = usd ? usd : 0;
+    this.SEQ = seqs;
+    this.ST_LOAN_VND = parseInt(vnd) ? parseInt(vnd) : 0;
+    this.ST_LOAN_USD = parseInt(usd) ? parseInt(usd) : 0;
+    this.SYS_DTIM = sysDtim;
+    this.WORK_ID = workID;
     this.LOAD_DATE;
     this.LOAD_TIME;
     this.OGZ_CD;
