@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 var salt = bcrypt.genSaltSync(saltRounds);
 const config = require('../config/config')
-
+var emailExistence = require('email-existence');
 exports.login = function (req, res) {
     try {
         var jwt = require('jsonwebtoken');
@@ -30,7 +30,7 @@ exports.login = function (req, res) {
                 });
 
                 var resdata = reslt[0];
-                console.log("OK password~~~");
+                console.log("OK password");
                 var userData = new IUser(resdata, true, token);
 
                 return res.status(200).json(userData);
@@ -56,15 +56,25 @@ exports.register = async function (req, res) {
         if (result.rows.length >= 1) {
             res.send({ msg: 0 });
         } else {
-            connection = await oracledb.getConnection(dbconfig);
-            sqlRegister = `INSERT INTO TB_USER VALUES (:user_name, :password, :email, :fullname)`;
-            result = await connection.execute(sqlRegister, {
-                user_name: { val: req.body.username }, password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
-                email: { val: req.body.email }, fullname: { val: req.body.fullname }
-            },
-                { autoCommit: true }
-            );
-            res.send({msg: result.rowsAffected});
+            emailExistence.check(req.body.email, async function(error, response){
+                console.log('res: '+response);
+                if (response === true) {
+                    connection = await oracledb.getConnection(dbconfig);
+                    sqlRegister = `INSERT INTO TB_USER VALUES (:user_name, :password, :email, :fullname)`;
+                    result = await connection.execute(sqlRegister, {
+                        user_name: { val: req.body.username }, password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
+                        email: { val: req.body.email }, fullname: { val: req.body.fullname }
+                    },
+                        { autoCommit: true }
+                    );
+                    res.send({msg: result.rowsAffected});
+                } else {
+                    res.send({msg: 2})
+                }
+            });
+
+            
+            
         }
     } catch (error) {
         console.log(error);
