@@ -1,4 +1,4 @@
-module.exports = function CIC_MACR_RQSTRequest(parameters) {
+module.exports = function CIC_MACR_RQSTRequest(parameters, niceSessionKey) {
     const { 
         fiSessionKey,
         fiCode,
@@ -14,17 +14,19 @@ module.exports = function CIC_MACR_RQSTRequest(parameters) {
         infoProvConcent
     } = parameters;
 
-    this.fiSessionKey = fiSessionKey;
+    this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
     this.fiCode = fiCode;
     this.taskCode = taskCode;
     this.name = name;//add 
     this.mobilePhoneNumber = mobilePhoneNumber;//add
-    this.taxCode = taxCode;
-    this.natId = natId;
-    this.oldNatId = oldNatId;
-    this.passportNumber = passportNumber;
-    this.cicId = cicId;
-    this.inquiryDate = inquiryDate ;
+    this.taxCode = taxCode ? taxCode : "";
+    this.natId = natId ? natId : "";
+    this.oldNatId = oldNatId ? oldNatId : "";
+    this.passportNumber = passportNumber ? passportNumber : "";
+    this.cicId = cicId ? cicId : "";
+    this.inquiryDate = inquiryDate ? inquiryDate : "" ;
     this.infoProvConcent = infoProvConcent;
+    this.niceSessionKey = niceSessionKey;
+
 
 };

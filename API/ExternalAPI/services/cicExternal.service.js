@@ -93,7 +93,7 @@ async function insertINQLOG(req, res, next) {
 
         console.log("row insert INQLOG::", result.rowsAffected);
 
-        return result.rowsAffected;
+        return producCode + niceSessionKey;
         // return res.status(200).json(result.rows);
 
 

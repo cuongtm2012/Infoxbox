@@ -1,5 +1,5 @@
-
 const logger = require('../config/logger');
+
 const cicMacrRQSTReq = require('../domain/CIC_MACR_RQST.request');
 
 const cicMacrRQSTRes = require('../domain/CIC_MACR_RQST.response');
@@ -7,15 +7,19 @@ const cicMacrRQSTRes = require('../domain/CIC_MACR_RQST.response');
 const cicMobileService = require('../services/cicMobile.service');
 
 const validation = require('../../shared/util/validation');
+
 const dateutil = require('../util/dateutil');
+
 const validRequest = require('../util/validateMacrParamRequest');
 
 const util = require('../util/dateutil');
+
 const common_service = require('../services/common.service');
+
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
 
-exports.cicMACRRQST = function (req, res) {
+exports.cicMACRRQST = function (req, res, next) {
     
     try {
         var start = new Date();
@@ -26,7 +30,7 @@ exports.cicMACRRQST = function (req, res) {
             niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
         
 
-        const getdataReq = new cicMacrRQSTReq(req.body);
+        const getdataReq = new cicMacrRQSTReq(req.body, niceSessionKey);
          //JSON.stringify(getdataReq);
         console.log("getdataReq = ", getdataReq);
 
@@ -39,16 +43,16 @@ exports.cicMACRRQST = function (req, res) {
         Request data
         */
         let rsCheck = validRequest.checkMacrParamRequest(getdataReq);
-        let preResponse = {
-            responseMessage: rsCheck.responseMessage,
-            niceSessionKey: "",
-            responseTime: dateutil.getSeconds(start),
-            responseCode: rsCheck.responseCode
-        }
-
-            if (!validation.isEmptyJson(rsCheck)) {
+        
+        if (!validation.isEmptyJson(rsCheck)) {
+            let preResponse = {
+                responseMessage: rsCheck.responseMessage,
+                niceSessionKey: "",
+                responseTime: dateutil.getSeconds(start),
+                responseCode: rsCheck.responseCode
+            }
             let responseData = new cicMacrRQSTRes(getdataReq, preResponse);
-            return res.status(200).json(responseData);C
+            return res.status(200).json(responseData);
         }
         //End check params request
 
@@ -82,8 +86,8 @@ exports.cicMACRRQST = function (req, res) {
         });
     });
 
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        return next(err);
     }
 };
 
