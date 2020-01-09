@@ -83,6 +83,7 @@ const cicmainService = require('../services/cicMain.service');
 const CreditCardInfor = require('../domain/creditcardinfo.save');
 const creditcardservice = require('../services/creditcardinfor.service');
 const getContent = require('../util/defineitem/definecard');
+const getMSG = require('../util/getMSG');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -150,7 +151,12 @@ exports.internalCICB0003 = function (req, res, next) {
                         const listcicRptInfo = body.data.outJson.outB0003.list[0].reportS11A.cicRptInfo;
                         const listcusInfor = body.data.outJson.outB0003.list[0].reportS11A.customerInfo;
                         console.log('listcicRptInfo~~~', listcicRptInfo);
-                        const fnciccptmain = new ciccptmain(listcicRptInfo, listcusInfor, niceSessionKey, listcusInfor.address);
+
+                        // msg
+                        const reportS11AMSG = body.data.outJson.outB0003.list[0].reportS11A;
+                        const msg = getMSG.getMSG(reportS11AMSG);
+
+                        const fnciccptmain = new ciccptmain(listcicRptInfo, listcusInfor, msg, niceSessionKey, listcusInfor.address);
                         console.log('fnciccptmain~~~', fnciccptmain);
                         cicmainService.insertCicMainInfor(fnciccptmain).then((r) => {
                             console.log('Insert to CICRPT_Main!!!');

@@ -1,4 +1,4 @@
-module.exports = function cicrptmain(cicrptinfor, custInfor, niceSessionKey, cusAdd) {
+module.exports = function cicrptmain(cicrptinfor, custInfor, msg,  niceSessionKey, cusAdd) {
     const {
         title,
         number,
@@ -21,6 +21,18 @@ module.exports = function cicrptmain(cicrptinfor, custInfor, niceSessionKey, cus
         otherDocument
     } = custInfor;
 
+    const {
+        loanCMT,
+        loanDetailCMT,
+        cardCMT,
+        vamcCMT,
+        loan12MonCMT,
+        npl5YCMT,
+        cardArr3YCMT,
+        catLoan12MCMT,
+        finCtrtCMT
+    } = msg;
+
     this.NICE_SSIN_ID = niceSessionKey;
     this.INQ_OGZ_NM = searchingUnit ? searchingUnit : '';
     this.INQ_OGZ_ADDR = address ? address : '';
@@ -37,13 +49,13 @@ module.exports = function cicrptmain(cicrptinfor, custInfor, niceSessionKey, cus
     this.EWS_GRD = waitdata ? waitdata : null;
     this.BIRTH_YMD = waitdata ? waitdata : null;
     this.TEL_NO_MOBILE = waitdata ? waitdata : null;
-    this.LOAN_CMT = waitdata ? waitdata : null;
-    this.LOAN_CMT_DETAIL = waitdata ? waitdata : null;
-    this.CARD_CMT = waitdata ? waitdata : null;
-    this.VAMC_CMT = waitdata ? waitdata : null;
-    this.LOAN_12MON_CMT = waitdata ? waitdata : null;
-    this.NPL_5YR_CMT = waitdata ? waitdata : null;
-    this.CARD_ARR_3YR_CMT = waitdata ? waitdata : null;
-    this.CAT_LOAN_12MON_CMT = waitdata ? waitdata : null;
-    this.FIN_CTRT_CMT = waitdata ? waitdata : null;
+    this.LOAN_CMT = loanCMT ? loanCMT : null;
+    this.LOAN_CMT_DETAIL = loanDetailCMT ? loanDetailCMT : null;
+    this.CARD_CMT = cardCMT ? cardCMT : null;
+    this.VAMC_CMT = vamcCMT ? vamcCMT : null;
+    this.LOAN_12MON_CMT = loan12MonCMT ? loan12MonCMT : null;
+    this.NPL_5YR_CMT = npl5YCMT ? npl5YCMT : null;
+    this.CARD_ARR_3YR_CMT = cardArr3YCMT ? cardArr3YCMT : null;
+    this.CAT_LOAN_12MON_CMT = catLoan12MCMT ? catLoan12MCMT : null;
+    this.FIN_CTRT_CMT = finCtrtCMT ? finCtrtCMT : null;
 }
