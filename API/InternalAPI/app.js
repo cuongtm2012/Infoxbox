@@ -8,6 +8,7 @@ var fs = require('file-system');
 
 var jobB0002 = require('./job-B0002');
 var jobnoexist = require('./job-noexist');
+var jobB0003 = require('./job-B0003');
 
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -81,6 +82,7 @@ app.use('/internal', cicInternalroute);
 // Start cron internal scraping service
 jobB0002.start();
 jobnoexist.start();
+jobB0003.start();
 
 
 // force: true will drop the table if it already exists

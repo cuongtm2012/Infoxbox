@@ -8,10 +8,12 @@ var RESCODEEXT = {
     IVCICCODE: { value: 4, name: "Invalid CIC product code", code: "F004" },
     NILOGINID: { value: 5, name: "Need to input mandatory item(log in ID)", code: "F005" },
     NIPASSWORD: { value: 6, name: "Need to input mandatory item(log in Password)", code: "F006" },
-    UNKNOW: { value: 400, name: "UNKNOW", code: "400" },
-    NIMOBILEPHONENUMBER: {value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027"},
+    NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
+    NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     NINAME: {value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
-    NINICESESSIONKEY: {value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019"}
-}; 
+    NIMOBILEPHONENUMBER: {value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027"},
+    UNKNOW: { value: 400, name: "UNKNOW", code: "400" },
+    NOTEXIST: { value: 405, name: "DOESN'T EXIST NICE SESSION KEY", code: "405" }
+};
 
 module.exports.RESCODEEXT = RESCODEEXT;

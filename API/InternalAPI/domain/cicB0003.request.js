@@ -1,6 +1,6 @@
 
 
-module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
+module.exports = function cicB0003Request(parameters, defaultValue, decryptPW) {
     const {
         NICE_SSIN_ID,
         CIC_ID,
@@ -27,7 +27,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
 
     this.appCd = appCd;
     this.orgCd = orgCd;
-    this.svcCd = 'B0002';
+    this.svcCd = 'B0003';
     this.dispNm = dispNm;
     this.userId = LOGIN_ID;
     this.userPw = decryptPW ? decryptPW : LOGIN_PW;
