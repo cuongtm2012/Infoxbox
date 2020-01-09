@@ -20,7 +20,7 @@ const common_service = require('../services/common.service');
 exports.cics11aRQST = function (req, res, next) {
 	try {
 		var start = new Date();
-	
+
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
 		// let niceSessionKey = nicekey.makeNiceSessionKey();
@@ -28,9 +28,9 @@ exports.cics11aRQST = function (req, res, next) {
 		common_service.getSequence().then(resSeq => {
 			niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
 
-		const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
-		// JSON.stringify(getdataReq);
-		console.log("getdataReq =", getdataReq);
+			const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
+			// JSON.stringify(getdataReq);
+			console.log("getdataReq =", getdataReq);
 
 			//Logging request
 			logger.debug('Log request parameters from routes after manage request');

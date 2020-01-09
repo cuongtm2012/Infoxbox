@@ -13,7 +13,7 @@ async function insertCreditCardInfor(req, res, next) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_CICRPT_MAIN (NICE_SSIN_ID,
+        sql = `INSERT INTO TB_CRDT_CARD (NICE_SSIN_ID,
                 CARD_TOT_LMT,
                 CARD_TOT_SETL_AMT,
                 CARD_TOT_ARR_AMT,
@@ -34,11 +34,11 @@ async function insertCreditCardInfor(req, res, next) {
             sql,
             {
                 NICE_SSIN_ID: { val: req.NICE_SSIN_ID },
-                CARD_TOT_LMT: { val: req.INQ_OGZ_NM },
-                CARD_TOT_SETL_AMT: { val: req.INQ_OGZ_ADDR },
-                CARD_TOT_ARR_AMT: { val: req.INQ_USER_NM },
-                CARD_CNT: { val: req.INQ_CD },
-                CARD_ISU_OGZ: { val: req.INQ_DTIM },
+                CARD_TOT_LMT: { val: req.CARD_TOT_LMT },
+                CARD_TOT_SETL_AMT: { val: req.CARD_TOT_SETL_AMT },
+                CARD_TOT_ARR_AMT: { val: req.CARD_TOT_ARR_AMT },
+                CARD_CNT: { val: req.CARD_CNT },
+                CARD_ISU_OGZ: { val: req.CARD_ISU_OGZ },
                 SYS_DTIM: { val: sysDtim },
                 WORK_ID: { val: workID }
             },

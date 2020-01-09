@@ -9,7 +9,6 @@ module.exports = {
             _.forEach(res, function (value, key) {
                 if (_.isEqual(_.startCase(value), _.startCase(constant.CARDDEFINEBALANCE.TOTCreditCardLimit.name))) {
                     totCreditCardLimit = res.content;
-                    console.log('totCreditCardLimit', totCreditCardLimit);
                 }
                 if (_.isEqual(_.startCase(value), _.startCase(constant.CARDDEFINEBALANCE.TOTAmountCardPayment.name))) {
                     totAmountCardPayment = res.content;
