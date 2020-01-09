@@ -5,6 +5,7 @@ const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 
+
 async function insertSCRPLOG(req, res, next) {
     try {
         let sql, binds, options, result;
@@ -13,10 +14,36 @@ async function insertSCRPLOG(req, res, next) {
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
         let niceSessionKey = req.niceSessionKey;
 
-        connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :SYS_DTIM)`;
+        sql = `INSERT INTO TB_SCRPLOG(
+               NICE_SSIN_ID, 
+               CUST_SSID_ID, 
+               CUST_CD, 
+               PSN_NM, 
+               TEL_NO_MOBILE, 
+               TAX_ID, 
+               NATL_ID, 
+               OLD_NATL_ID, 
+               PSPT_NO, 
+               CIC_ID, 
+               SCRP_STAT_CD, 
+               AGR_FG, 
+               SYS_DTIM) 
+            VALUES (
+               :NICE_SSIN_ID, 
+               :CUST_SSID_ID, 
+               :CUST_CD, 
+               :PSN_NM, 
+               :TEL_NO_MOBILE, 
+               :TAX_ID, 
+               :NATL_ID, 
+               :OLD_NATL_ID, 
+               :PSPT_NO, 
+               :CIC_ID, 
+               :SCRP_STAT_CD, 
+               :AGR_FG, 
+               :SYS_DTIM)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -25,8 +52,8 @@ async function insertSCRPLOG(req, res, next) {
                 NICE_SSIN_ID: { val: producCode + niceSessionKey },
                 CUST_SSID_ID: { val: req.fiSessionKey },
                 CUST_CD: { val: req.fiCode },
-                LOGIN_ID: { val: req.loginId },
-                LOGIN_PW: { val: req.loginPw },
+                PSN_NM: {val: req.name},
+                TEL_NO_MOBILE: {val: req.mobilePhoneNumber},
                 TAX_ID: { val: req.taxCode },
                 NATL_ID: { val: req.natId },
                 OLD_NATL_ID: { val: req.oldNatId },
@@ -42,12 +69,11 @@ async function insertSCRPLOG(req, res, next) {
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
 
         return producCode + niceSessionKey;
-        // return res.status(200).json(result.rows);
-
+        
 
     } catch (err) {
         console.log(err);
-        // return res.status(400);
+        return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -64,21 +90,46 @@ async function insertINQLOG(req, res, next) {
         let sql, binds, options, result;
 
         let sysDim = convertTime.timeStamp();
+        let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let niceSessionKey = req.niceSessionKey;
 
         connection = await oracledb.getConnection(dbconfig);
 
+        let TX_GB_CD = "CIC_MACR_RQST";
         let gateway = ipGateWay.getIPGateWay(req);
 
-        sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
-        VALUES (:INQ_LOG_ID, :CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+        sql = `INSERT INTO TB_INQLOG(
+            INQ_LOG_ID, 
+            CUST_CD, 
+            TX_GB_CD, 
+            NATL_ID, 
+            TAX_ID, 
+            OTR_ID, 
+            CIC_ID, 
+            INQ_DTIM, 
+            AGR_FG, 
+            SYS_DTIM, 
+            WORK_ID) 
+        VALUES (
+            :INQ_LOG_ID, 
+            :CUST_CD, 
+            :TX_GB_CD, 
+            :NATL_ID, 
+            :TAX_ID, 
+            :OTR_ID, 
+            :CIC_ID, 
+            :INQ_DTIM, 
+            :AGR_FG, 
+            :SYS_DTIM, 
+            :WORK_ID)`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
-                INQ_LOG_ID: { val: req.niceSessionKey },
+                INQ_LOG_ID: { val: niceSessionKey },
                 CUST_CD: { val: req.fiCode },
-                TX_GB_CD: { val: req.taskCode },
+                TX_GB_CD: { val: TX_GB_CD },
                 NATL_ID: { val: req.natId },
                 TAX_ID: { val: req.taxCode },
                 OTR_ID: { val: req.oldNatId + "," + req.passportNumber },
@@ -94,12 +145,11 @@ async function insertINQLOG(req, res, next) {
         console.log("row insert INQLOG::", result.rowsAffected);
 
         return producCode + niceSessionKey;
-        // return res.status(200).json(result.rows);
-
+       
 
     } catch (err) {
         console.log(err);
-        // return res.status(400);
+        return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -111,15 +161,15 @@ async function insertINQLOG(req, res, next) {
     }
 }
 
-async function selectCICS11aRSLT(req, res, next) {
-    try {
+async function selectSCRPTRLOG(req, res, next){
+    try{
         let sql, binds, options, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
-                FROM TB_SCRP_TRLOG
-                where NICE_SSIN_ID = :niceSessionKey`;
+               FROM TB_SCRP_TRLOG
+               where NICE_SSIN_ID = :niceSessionKey`;
 
         result = await connection.execute(
             // The statement to execute
@@ -137,23 +187,21 @@ async function selectCICS11aRSLT(req, res, next) {
         console.log("rows::", result.rows);
 
         return result.rows;
-        // return res.status(200).json(result.rows);
-
-
-    } catch (err) {
-        console.log(err);
-        // return res.status(400);
-    } finally {
-        if (connection) {
+    
+    } catch (err){
+           console.log(err);
+}     finally {
+        if (connection){
             try {
-                await connection.close();
+               await connection.close();
             } catch (error) {
-                console.log(error);
+            console.log(error);
             }
         }
     }
 }
 
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
-module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
+module.exports.selectSCRPTRLOG = selectSCRPTRLOG;

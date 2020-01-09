@@ -28,9 +28,9 @@ exports.cics11aRQST = function (req, res, next) {
 		common_service.getSequence().then(resSeq => {
 			niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
 
-			const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
-			// JSON.stringify(getdataReq);
-			console.log("getdataReq=====", getdataReq);
+		const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
+		// JSON.stringify(getdataReq);
+		console.log("getdataReq =", getdataReq);
 
 			//Logging request
 			logger.debug('Log request parameters from routes after manage request');
