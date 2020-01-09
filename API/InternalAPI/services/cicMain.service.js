@@ -102,7 +102,7 @@ async function insertCicMainInfor(req, res, next) {
             { autoCommit: true }
         );
 
-        console.log("updateScrapingTranslog updated::", result.rowsAffected);
+        console.log("updated cicrpt main updated::", result.rowsAffected);
 
         return result.rowsAffected;
         // return res.status(200).json(result.rows);

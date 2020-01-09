@@ -80,6 +80,10 @@ const dateutil = require('../util/dateutil');
 const ciccptmain = require('../domain/cicrptmain.save');
 const cicmainService = require('../services/cicMain.service');
 
+const CreditCardInfor = require('../domain/creditcardinfo.save');
+const creditcardservice = require('../services/creditcardinfor.service');
+const getContent = require('../util/defineitem/definecard');
+
 exports.internalCICB0003 = function (req, res, next) {
     try {
         const config = {
@@ -155,6 +159,24 @@ exports.internalCICB0003 = function (req, res, next) {
 
                         });
                         //end cicrpt main
+
+                         /* start Credit card infor
+                        ** cicrpt main
+                        */
+                       const listcreditCardInfo = body.data.outJson.outB0003.list[0].reportS11A.creditCardInfo.list;
+                       console.log('listcreditCardInfo~~~', listcreditCardInfo);
+                       const getListContentCard = getContent.getContent(listcreditCardInfo);
+                       console.log('getListContent~~~', getListContentCard);
+                       const fncreditcardinfor = new CreditCardInfor(getListContentCard, niceSessionKey);
+                       creditcardservice.insertCreditCardInfor(fncreditcardinfor).then((r) => {
+                           console.log('Insert to credit card!!!');
+
+                           return next();
+
+                       });
+                       //end credit card infor
+
+
 
                         /*
                         **   update translog 
