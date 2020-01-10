@@ -27,5 +27,14 @@ module.exports = {
 
         return { totCreditCardLimit: totCreditCardLimit, totAmountCardPayment: totAmountCardPayment, totAmountCardPaymentDelay: totAmountCardPaymentDelay, creditCardNumber: creditCardNumber, nameOfCardIssuer: nameOfCardIssuer };
 
+    },
+    getValueLoanDetailInfor: function (req) {
+        let reportDate, companyName, stLoanVND, stLoanUSD, mtLoanVND, mtLoanUSD,  ltLoanVND, ltLoanUSD, sumTotalVND, sumTotalUSD;
+
+        _.forEach(req, res => {
+            _.forEach(res, function(val, key) {
+
+            });
+        });
     }
 }

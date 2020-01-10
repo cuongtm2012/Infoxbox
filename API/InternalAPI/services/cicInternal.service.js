@@ -8,8 +8,10 @@ const dateUtil = require('../util/dateutil');
     B0002 : CIC보고서 요청 (Request for CIC Report)
 */
 async function select01(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -63,8 +65,10 @@ async function select01(req, res, next) {
 }
 
 async function select04NotExist(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -121,8 +125,9 @@ async function select04NotExist(req, res, next) {
     update statu == 04
 */
 async function updateCICReportInquirySuccessful(req, res, next) {
+    let connection;
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = dateUtil.timeStamp();
         connection = await oracledb.getConnection(dbconfig);
@@ -165,8 +170,10 @@ async function updateCICReportInquirySuccessful(req, res, next) {
     update statu == 10
 */
 async function updateCICReportInquiryCompleted(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = dateUtil.timeStamp();
         connection = await oracledb.getConnection(dbconfig);
@@ -206,8 +213,10 @@ async function updateCICReportInquiryCompleted(req, res, next) {
 }
 
 async function updateScrapingTargetRepostNotExist(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = dateUtil.timeStamp();
 
@@ -249,8 +258,10 @@ async function updateScrapingTargetRepostNotExist(req, res, next) {
 }
 
 async function updateScrpModCdPreRequestToScraping(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -289,8 +300,10 @@ async function updateScrpModCdPreRequestToScraping(req, res, next) {
 }
 
 async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -332,8 +345,10 @@ async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
     B0003 : CIC보고서 조회 (Inquiry for CIC Report)
 */
 async function startProcessB0003(req, res, next) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
