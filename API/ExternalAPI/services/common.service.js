@@ -3,8 +3,10 @@ const oracledb = require('oracledb');
 const dbconfig = require('../config/dbconfig');
 
 async function getSequence() {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 

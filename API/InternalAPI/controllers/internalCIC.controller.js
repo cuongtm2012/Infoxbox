@@ -73,26 +73,20 @@ exports.internalCIC = function (req, res, next) {
 /*
     process B0003
 */
-const loanService = require('../services/loanDetailInfo.service');
 const loanResponse = require('../domain/loanDetail.save');
 const dateutil = require('../util/dateutil');
 
 const ciccptmain = require('../domain/cicrptmain.save');
-const cicmainService = require('../services/cicMain.service');
 
 const CreditCardInfor = require('../domain/creditcardinfo.save');
-const creditcardservice = require('../services/creditcardinfor.service');
 const getContent = require('../util/defineitem/definecard');
 const getMSG = require('../util/getMSG');
 
 const loan12MInforSave = require('../domain/loan12monInfo.save');
-const loan12MInforService = require('../services/loan12MInfo.service');
 
 const loan5YearInfo = require('../domain/loan5yearInfo.save');
-const loan5YearInfoService = require('../services/loan5YearInfo.service');
 
 const excuteInsert = require('../services/excuteInsert.service');
-const InsertScrappingMSG = require('../domain/InsertScrapingMSG.save');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {

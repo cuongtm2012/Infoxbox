@@ -5,9 +5,11 @@ const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 
-async function insertSCRPLOG(req, res, next) {
+async function insertSCRPLOG(req) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = convertTime.timeStamp();
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
@@ -59,15 +61,16 @@ async function insertSCRPLOG(req, res, next) {
     }
 }
 
-async function insertINQLOG(req, res, next) {
+async function insertINQLOG(req) {
+    let connection; 
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = convertTime.timeStamp();
+        let gateway = ipGateWay.getIPGateWay(req);
 
         connection = await oracledb.getConnection(dbconfig);
-
-        let gateway = ipGateWay.getIPGateWay(req);
 
         sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
         VALUES (:INQ_LOG_ID, :CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
@@ -111,9 +114,11 @@ async function insertINQLOG(req, res, next) {
     }
 }
 
-async function selectCICS11aRSLT(req, res, next) {
+async function selectCICS11aRSLT(req) {
+    let connection; 
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 

@@ -6,15 +6,17 @@ const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 
 
-async function insertSCRPLOG(req, res, next) {
+async function insertSCRPLOG(req, res) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = convertTime.timeStamp();
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
         let niceSessionKey = req.niceSessionKey;
 
-            connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(dbconfig);
 
         sql = `INSERT INTO TB_SCRPLOG(
                NICE_SSIN_ID, 
@@ -54,9 +56,9 @@ async function insertSCRPLOG(req, res, next) {
                 NICE_SSIN_ID: { val: producCode + niceSessionKey },
                 CUST_SSID_ID: { val: req.fiSessionKey },
                 CUST_CD: { val: req.fiCode },
-                PSN_NM: {val: req.name},
-                LOGIN_ID: {val: req.name},
-                TEL_NO_MOBILE: {val: req.mobilePhoneNumber},
+                PSN_NM: { val: req.name },
+                LOGIN_ID: { val: req.name },
+                TEL_NO_MOBILE: { val: req.mobilePhoneNumber },
                 TAX_ID: { val: req.taxCode },
                 NATL_ID: { val: req.natId },
                 OLD_NATL_ID: { val: req.oldNatId },
@@ -72,7 +74,7 @@ async function insertSCRPLOG(req, res, next) {
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
 
         return producCode + niceSessionKey;
-        
+
 
     } catch (err) {
         console.log(err);
@@ -88,9 +90,11 @@ async function insertSCRPLOG(req, res, next) {
     }
 }
 
-async function insertINQLOG(req, res, next) {
+async function insertINQLOG(req, res) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         let sysDim = convertTime.timeStamp();
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
@@ -148,7 +152,7 @@ async function insertINQLOG(req, res, next) {
         console.log("row insert INQLOG::", result.rowsAffected);
 
         return producCode + niceSessionKey;
-       
+
 
     } catch (err) {
         console.log(err);
@@ -164,9 +168,11 @@ async function insertINQLOG(req, res, next) {
     }
 }
 
-async function selectSCRPTRLOG(req, res, next){
-    try{
-        let sql, binds, options, result;
+async function selectSCRPTRLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -190,15 +196,15 @@ async function selectSCRPTRLOG(req, res, next){
         console.log("rows::", result.rows);
 
         return result.rows;
-    
-    } catch (err){
-           console.log(err);
-}     finally {
-        if (connection){
+
+    } catch (err) {
+        console.log(err);
+    } finally {
+        if (connection) {
             try {
-               await connection.close();
+                await connection.close();
             } catch (error) {
-            console.log(error);
+                console.log(error);
             }
         }
     }
