@@ -3,27 +3,30 @@ const dbconfig = require('../config/dbconfig');
 
 const _ = require('lodash');
 
-async function insertLoanDetailInfor(req, res, next) {
+async function insertLoan12MInfor(req, res, next) {
     try {
         // let sql, binds, options, result;
 
-        const sql = `INSERT INTO tb_loan_detail(NICE_SSIN_ID,
-                SEQ,
-                ST_LOAN_VND,
-                ST_LOAN_USD,
-                SYS_DTIM,
-                WORK_ID
-                )  values (:1, :2, :3, :4, :5, :6)`;
+        const sql = `INSERT INTO TB_LOAN_12MON(NICE_SSIN_ID,
+                        SEQ,
+                        BASE_MONTH,
+                        BASE_MONTH_BAL,
+                        BASE_MONTH_CARD_BAL,
+                        BASE_MONTH_SUM,
+                        SYS_DTIM,
+                        WORK_ID)  values (:1, :2, :3, :4, :5, :6, :7, :8)`;
 
         const options = {
             autoCommit: true,
             bindDefs: [
                 { type: oracledb.STRING, maxSize: 25 },
                 { type: oracledb.NUMBER, maxSize: 5 },
+                { type: oracledb.STRING, maxSize: 6 },
+                { type: oracledb.NUMBER, maxSize: 27 },
                 { type: oracledb.NUMBER, maxSize: 27 },
                 { type: oracledb.NUMBER, maxSize: 27 },
                 { type: oracledb.STRING, maxSize: 14 },
-                { type: oracledb.STRING, maxSize: 15 }
+                { type: oracledb.STRING, maxSize: 20 }
             ]
         };
 
@@ -49,4 +52,4 @@ async function insertLoanDetailInfor(req, res, next) {
     }
 }
 
-module.exports.insertLoanDetailInfor = insertLoanDetailInfor;
+module.exports.insertLoan12MInfor = insertLoan12MInfor;

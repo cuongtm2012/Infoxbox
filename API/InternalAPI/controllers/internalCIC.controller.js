@@ -85,6 +85,9 @@ const creditcardservice = require('../services/creditcardinfor.service');
 const getContent = require('../util/defineitem/definecard');
 const getMSG = require('../util/getMSG');
 
+const loan12MInforSave = require('../domain/loan12monInfo.save');
+const loan12MInforService = require('../services/loan12MInfo.service');
+
 exports.internalCICB0003 = function (req, res, next) {
     try {
         const config = {
@@ -98,8 +101,10 @@ exports.internalCICB0003 = function (req, res, next) {
 
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
-                
+
                 const niceSessionKey = req.body.niceSessionKey;
+                const sysDtim = dateutil.timeStamp();
+                const workID = getIdGetway.getIPGateWay();
 
                 console.log("outJson.outB0003~~~~~", body.data.outJson.outB0003);
 
@@ -115,20 +120,15 @@ exports.internalCICB0003 = function (req, res, next) {
                         ** Loan Detail
                         */
                         const listDataS11aB0003 = body.data.outJson.outB0003.list[0].reportS11A.loanDetailInfo.list;
-                        console.log("listDataS11aB0003~~~~~", listDataS11aB0003);
-                        console.log("listDataS11aB0003 length~~~~~", listDataS11aB0003.length);
 
                         // Convert data to save TB_LOAN_DETAIL
-
-                        const sysDtim = dateutil.timeStamp();
-                        const workID = getIdGetway.getIPGateWay();
                         var seq = 0;
 
                         const binds = [];
                         _.forEach(listDataS11aB0003, res => {
                             seq = seq + 1;
                             const arrChild = [];
-                            const preVal = new loanResponse(res, niceSessionKey, sysDtim, workID, seq.toString());
+                            const preVal = new loanResponse(res, niceSessionKey, sysDtim, workID, seq);
                             _.forEach(preVal, (val, key) => {
                                 arrChild.push(val)
                             });
@@ -137,8 +137,10 @@ exports.internalCICB0003 = function (req, res, next) {
                         console.log('binds', binds);
                         // End convert
 
-                        loanService.insertLoanDetailInfor(binds).then(() => {
-                            console.log("Updated to tb_loan_detail !");
+                        loanService.insertLoanDetailInfor(binds).then((r) => {
+                            if (!_.isEmpty(r)) {
+                                console.log("Updated to tb_loan_detail !");
+                            }
 
                             return next();
 
@@ -159,30 +161,60 @@ exports.internalCICB0003 = function (req, res, next) {
                         const fnciccptmain = new ciccptmain(listcicRptInfo, listcusInfor, msg, niceSessionKey, listcusInfor.address);
                         console.log('fnciccptmain~~~', fnciccptmain);
                         cicmainService.insertCicMainInfor(fnciccptmain).then((r) => {
-                            console.log('Insert to CICRPT_Main!!!');
+                            if (!_.isEmpty(r)) {
+                                console.log('Insert to CICRPT_Main!!!');
+                            }
 
                             return next();
 
                         });
                         //end cicrpt main
 
-                         /* start Credit card infor
+                        /* start Credit card infor
                         ** cicrpt main
                         */
-                       const listcreditCardInfo = body.data.outJson.outB0003.list[0].reportS11A.creditCardInfo.list;
-                       console.log('listcreditCardInfo~~~', listcreditCardInfo);
-                       const getListContentCard = getContent.getContent(listcreditCardInfo);
-                       console.log('getListContent~~~', getListContentCard);
-                       const fncreditcardinfor = new CreditCardInfor(getListContentCard, niceSessionKey);
-                       creditcardservice.insertCreditCardInfor(fncreditcardinfor).then((r) => {
-                           console.log('Insert to credit card!!!');
+                        const listcreditCardInfo = body.data.outJson.outB0003.list[0].reportS11A.creditCardInfo.list;
+                        console.log('listcreditCardInfo~~~', listcreditCardInfo);
+                        const getListContentCard = getContent.getContent(listcreditCardInfo);
+                        console.log('getListContent~~~', getListContentCard);
+                        const fncreditcardinfor = new CreditCardInfor(getListContentCard, niceSessionKey);
+                        creditcardservice.insertCreditCardInfor(fncreditcardinfor).then((r) => {
+                            if (!_.isEmpty(r)) {
+                                console.log('Insert to credit card!!!');
+                            }
+                            return next();
 
-                           return next();
+                        });
+                        //end credit card infor
 
-                       });
-                       //end credit card infor
+                        /* start loan12monInfo
+                        ** loan12monInfo
+                        */
+                        const listloan12monInfo = body.data.outJson.outB0003.list[0].reportS11A.loan12monInfo.list;
 
+                        var seq2 = 0;
 
+                        const bindlistloan12monInfo = [];
+                        _.forEach(listloan12monInfo, res => {
+                            seq2 = seq2 + 1;
+                            const arrChild2 = [];
+                            const preVal2 = new loan12MInforSave(res, niceSessionKey, sysDtim, workID, seq2);
+                            _.forEach(preVal2, (val, key) => {
+                                arrChild2.push(val)
+                            });
+                            bindlistloan12monInfo.push(arrChild2)
+                        });
+                        console.log('bindlistloan12monInfo', bindlistloan12monInfo);
+                        // End convert
+
+                        loan12MInforService.insertLoan12MInfor(bindlistloan12monInfo).then((r) => {
+                            if (_.isEmpty(r)) {
+                                console.log("Updated to insertLoan12MInfor !");
+                            }
+                            return next();
+
+                        });
+                        // end loan12monInfo
 
                         /*
                         **   update translog 
