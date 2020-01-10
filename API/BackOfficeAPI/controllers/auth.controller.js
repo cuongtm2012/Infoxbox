@@ -1,5 +1,4 @@
 
-const logger = require('../config/logger');
 const oracledb = require('oracledb');
 const dbconfig = require('../config/dbconfig');
 const authService = require('../services/auth.service');
@@ -48,6 +47,8 @@ exports.login = function (req, res) {
 };
 
 exports.checkemail = async function (req, res) {
+    let connection;
+
     try {
         connection = await oracledb.getConnection(dbconfig);
         sqlCheckUser = `SELECT  * FROM TB_USER where USER_NAME = :user_name`;
@@ -69,7 +70,7 @@ exports.checkemail = async function (req, res) {
                     },
                         { autoCommit: true }
                     );
-                    res.send({msg: result.rowsAffected});
+                    res.send({ msg: result.rowsAffected });
                 } else {
                     res.send({ msg: 2 })
                 }
@@ -77,6 +78,14 @@ exports.checkemail = async function (req, res) {
         }
     } catch (error) {
         console.log(error);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 };
 
@@ -97,18 +106,18 @@ exports.sendEmail = function (req, res) {
         html: config.email.body.replace('$userName', userName).replace('$pincode', pincode)
     }
     console.log(mailOptions);
-    
+
     redisApi.set(redisApi.PINCODE_PREFIX + req.body.email, pincode, function (err, reply) {
         if (err) {
             console.log('Store pincode error : ' + err);
         } else {
             smtpTransport.sendMail(mailOptions, function (error, response) {
-            	if (error) {
+                if (error) {
                     console.log(error);
-            	} else {
+                } else {
                     console.log("Message sent: ");
-                    res.status(200).send({msg:'ok'});
-            	}
+                    res.status(200).send({ msg: 'ok' });
+                }
             });
             console.log('Store pincode : ' + reply);
         }
@@ -117,18 +126,18 @@ exports.sendEmail = function (req, res) {
 
 exports.getCodeEmail = function (req, res) {
     var email = req.body.email;
-	redisApi.get(redisApi.PINCODE_PREFIX + email, function (err, reply) {
-		console.log(reply);
-		if (err) {
-			res.status(404).send(err);
-			return;
-		}
+    redisApi.get(redisApi.PINCODE_PREFIX + email, function (err, reply) {
+        console.log(reply);
+        if (err) {
+            res.status(404).send(err);
+            return;
+        }
 
-		if (validation.isEmptyStr(reply)) {
-			res.status(404).send('');
-		} else {
-			res.status(200).send(reply);
-		}
-	});
+        if (validation.isEmptyStr(reply)) {
+            res.status(404).send('');
+        } else {
+            res.status(200).send(reply);
+        }
+    });
 };
 

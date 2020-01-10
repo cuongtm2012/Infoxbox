@@ -6,9 +6,11 @@ const saltRounds = 12;
 var salt = bcrypt.genSaltSync(saltRounds);
 const config = require('../config/config')
 
-async function getUser(req, res, next) {
+async function getUser(req) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         var user_pwd = req.body.password;
 
@@ -57,9 +59,11 @@ async function getUser(req, res, next) {
     }
 }
 
-async function getUser(req, res, next) {
+async function getUser(req) {
+    let connection;
+
     try {
-        let sql, binds, options, result;
+        let sql, result;
 
         var user_pwd = req.body.password;
 

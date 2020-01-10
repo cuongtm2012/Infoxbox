@@ -15,7 +15,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-var backofficeRoute = require('./routes/backoffice.route');
 var login = require('./routes/auth.route');
 
 // Config DB
@@ -71,10 +70,6 @@ app.use(function(req, res, next) {
 		});
 });
 
-// validator
-// app.use(expressValidator());
-
-app.use('/backoffice', backofficeRoute);
 app.use('/auth', login);
 
 app.use(function (err, req, res, next) {
