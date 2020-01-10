@@ -18,6 +18,9 @@ const common_service = require('../services/common.service');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
+const cicMacrRSLTReq = require('../domain/CIC_MACR_RSLT.request');
+const cicMacrRSLTRes = require('../domain/CIC_MACR_RSLT.response');
+const validMacrRSLT = require('../util/validRequestS11AResponse');
 
 exports.cicMACRRQST = function (req, res, next) {
     
@@ -91,9 +94,7 @@ exports.cicMACRRQST = function (req, res, next) {
     }
 };
 
-const cicMacrRSLTReq = require('../domain/CIC_MACR_RSLT.request');
-const cicMacrRSLTRes = require('../domain/CIC_MACR_RSLT.response');
-const validMacrRSLT = require('../util/validRequestMACRResponse');
+
 
 exports.cicMACRRSLT = function (req, res) {
     
