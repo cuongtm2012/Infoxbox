@@ -80,6 +80,7 @@ const ciccptmain = require('../domain/cicrptmain.save');
 
 const CreditCardInfor = require('../domain/creditcardinfo.save');
 const getContent = require('../util/defineitem/definecard');
+const getLoanDetailInfor = require('../util/defineitem/defineLoan');
 const getMSG = require('../util/getMSG');
 
 const loan12MInforSave = require('../domain/loan12monInfo.save');
@@ -121,18 +122,10 @@ exports.internalCICB0003 = function (req, res, next) {
 
                         // 1.Loan detail infor
                         const listLoanDetailInfor = body.data.outJson.outB0003.list[0].reportS11A.loanDetailInfo.list;
-                        var seq = 0;
+                        var seq = 1;
 
-                        const bindsLoanDetailInfor = [];
-                        _.forEach(listLoanDetailInfor, res => {
-                            seq = seq + 1;
-                            const arrChild = [];
-                            const preVal = new loanResponse(res, niceSessionKey, sysDtim, workID, seq);
-                            _.forEach(preVal, (val, key) => {
-                                arrChild.push(val)
-                            });
-                            bindsLoanDetailInfor.push(arrChild)
-                        });
+                        const dataConvertLoanDetail = getLoanDetailInfor.getValueLoanDetailInfor(res);
+                        const bindsLoanDetailInfor = new loanResponse(dataConvertLoanDetail, niceSessionKey, sysDtim, workID, seq);
                         console.log('bindsLoanDetailInfor:', bindsLoanDetailInfor);
 
                         // 2.Loan 5 year infor

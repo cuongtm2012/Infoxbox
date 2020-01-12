@@ -11,7 +11,9 @@ const LOANTERM = {
     ShortTerm: { value: 0, name: "Dư nợ cho vay ngắn hạn" },
     MidTerm: { value: 1, name: "Dư nợ cho vay trung hạn" },
     LongTerm: { value: 2, name: "Dư nợ cho vay dài hạn" },
-    TotalFILoan: { value: 3, name: "Tổng cộng" }
+    TotalFILoan: { value: 3, name: "Tổng cộng" },
+    ReportDate: { value: 4, name: "Ngày báo cáo gần nhất" },
+    CompanyName: { value: 5, name: "1." }
 };
 
 module.exports.CARDDEFINEBALANCE = CARDDEFINEBALANCE;
