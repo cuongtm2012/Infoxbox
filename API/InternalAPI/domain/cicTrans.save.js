@@ -1,4 +1,4 @@
-module.exports = function cicTransSave(requestParams, responseParams, scrplogid, workId, password) {
+module.exports = function cicTransSave(requestParams, responseParams, scrplogid, workId, password, cicNos) {
     const {
         niceSessionKey,
         svcCd,
@@ -33,7 +33,7 @@ module.exports = function cicTransSave(requestParams, responseParams, scrplogid,
     this.S_USER_ID = userId ? userId : null;
     this.S_USER_PW = password ? password : null;
     this.S_CUSTOMER_TYPE = customerType ? customerType : null;
-    this.S_CIC_NO = cicNo ? cicNo : null;
+    this.S_CIC_NO = cicNo ? cicNo : cicNos;
     this.S_TAX_NO = taxNo ? taxNo : null;
     this.S_CMT_NO = cmtNo ? cmtNo : null;
     this.S_REPORT_TYPE = reportType ? reportType : null;

@@ -204,10 +204,11 @@ exports.internalCICB0003 = function (req, res, next) {
                             let password = encryptPassword.encrypt(req.body.userPw);
                             let requestParams = req.body;
                             let responseParams = body.data.outJson.outB0003;
+                            let cicNo = body.data.outJson.outB0003.list[0].cicNo;
                             let scrplogid = body.data.outJson.in.thread_id.substring(0, 13);
                             let workId = getIdGetway.getIPGateWay();
 
-                            let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password);
+                            let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password, cicNo);
                             cicServiceRes.updateScrapingTranslog(dataTransSave).then(() => {
                                 console.log("Updated to scraping transaction log B0003!");
                                 return next();
