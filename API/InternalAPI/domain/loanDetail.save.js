@@ -1,5 +1,5 @@
 
-module.exports = function LoanDetailResponse(params, niceSessionKey, sysDtim, workID, seqs) {
+module.exports = function LoanDetailResponse(params, niceSessionKey, seqs) {
     const {
         reportDate,
         companyName,
@@ -16,15 +16,13 @@ module.exports = function LoanDetailResponse(params, niceSessionKey, sysDtim, wo
 
     this.NICE_SSIN_ID = niceSessionKey;
     this.SEQ = seqs;
-    this.ST_LOAN_VND = parseFloat(stLoanVND) ? parseFloat(stLoanVND) : 0;
-    this.ST_LOAN_USD = parseFloat(stLoanUSD) ? parseFloat(stLoanUSD) : 0;
-    this.SYS_DTIM = sysDtim;
-    this.WORK_ID = workID;
     this.LOAD_DATE = waitData ? waitData : null;
     this.LOAD_TIME = waitData ? waitData : null;
     this.OGZ_CD = waitData ? waitData : null;
     this.OGZ_NM = companyName ? companyName : null;
     this.RCT_RPT_DATE = reportDate ? reportDate : null;
+    this.ST_LOAN_VND = parseFloat(stLoanVND) ? parseFloat(stLoanVND) : 0;
+    this.ST_LOAN_USD = parseFloat(stLoanUSD) ? parseFloat(stLoanUSD) : 0;
     this.ST_NORM_LOAN_VND = waitData ? waitData : 0;
     this.ST_NORM_LOAN_USD = waitData ? waitData : 0;
     this.ST_CAT_LOAN_VND = waitData ? waitData : 0;

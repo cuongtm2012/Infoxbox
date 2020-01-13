@@ -17,7 +17,8 @@ module.exports = class internalJob {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            timeout: 60 * 1 * 1000
         }
 
         cicService.select01().then(data => {
@@ -64,6 +65,7 @@ module.exports = class internalJob {
                                 console.log("update SCRP_MOD_CD = 00 ");
                                 return;
                             });
+                            throw error;
                         });
                 });
             });

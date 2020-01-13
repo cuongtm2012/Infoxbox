@@ -65,6 +65,7 @@ module.exports = class internalJob {
                                 console.log("update SCRP_MOD_CD = 00 ");
                                 return;
                             });
+                            throw error;
                         });
                 });
             });
