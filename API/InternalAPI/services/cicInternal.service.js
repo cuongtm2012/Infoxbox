@@ -1,6 +1,6 @@
 
 const oracledb = require('oracledb');
-const dbconfig = require('../config/dbconfig');
+const dbconfig = require('../../shared/config/dbconfig');
 
 const dateUtil = require('../util/dateutil');
 

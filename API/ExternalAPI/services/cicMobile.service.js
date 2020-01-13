@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../config/dbconfig');
+const dbconfig = require('../../shared/config/dbconfig');
 
 const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');

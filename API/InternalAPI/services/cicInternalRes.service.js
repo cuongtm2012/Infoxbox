@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../config/dbconfig');
+const dbconfig = require('../../shared/config/dbconfig');
 
 async function updateScrapingTranslog(req, res, next) {
     let connection;

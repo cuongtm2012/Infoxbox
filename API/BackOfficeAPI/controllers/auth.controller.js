@@ -1,6 +1,6 @@
 
 const oracledb = require('oracledb');
-const dbconfig = require('../config/dbconfig');
+const dbconfig = require('../../shared/config/dbconfig');
 const authService = require('../services/auth.service');
 const IUser = require('../domain/IUser');
 const validation = require('../../shared/util/validation');
