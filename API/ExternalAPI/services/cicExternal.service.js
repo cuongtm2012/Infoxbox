@@ -62,7 +62,7 @@ async function insertSCRPLOG(req) {
 }
 
 async function insertINQLOG(req) {
-    let connection; 
+    let connection;
 
     try {
         let sql, result;
@@ -115,35 +115,57 @@ async function insertINQLOG(req) {
 }
 
 async function selectCICS11aRSLT(req) {
-    let connection; 
+    let connection;
 
     try {
-        let sql, result;
+        let resultScrpTranlog, resultCicrptMain;
 
+        //Connection db
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
+        /*
+        ** scrp tranlosg
+        */
+        let sqlScrpTranlog = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
                 FROM TB_SCRP_TRLOG
-                where NICE_SSIN_ID = :niceSessionKey`;
+                where NICE_SSIN_ID = :niceSessionKey
+                AND S_SVC_CD = 'B0003'`;
 
-        result = await connection.execute(
+        resultScrpTranlog = await connection.execute(
             // The statement to execute
-            sql,
+            sqlScrpTranlog,
             {
                 niceSessionKey: { val: req.niceSessionKey }
             },
             {
-                // maxRows: 1,
-                outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
-                //, extendedMetaData: true                 // get extra metadata
-                //, fetchArraySize: 100                    // internal buffer allocation size for tuning
+                outFormat: oracledb.OUT_FORMAT_OBJECT
             });
 
-        console.log("rows::", result.rows);
+        console.log("resultScrpTranlog rows:", resultScrpTranlog.rows);
+        let outputScrpTranlog = resultScrpTranlog.rows;
 
-        return result.rows;
-        // return res.status(200).json(result.rows);
+        /*
+        ** cicrpt main
+        */
+        let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.otr_iden_evd 
+                              from tb_cicrpt_main a
+                              where NICE_SSIN_ID = :niceSessionKey`;
 
+        resultCicrptMain = await connection.execute(
+            // The statement to execute
+            sqlCicrptMain,
+            {
+                niceSessionKey: { val: req.niceSessionKey }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+
+        console.log("resultCicrptMain rows:", resultCicrptMain.rows);
+        let outputCicrptMain = resultCicrptMain.rows;
+
+
+        return { outputScrpTranlog, outputCicrptMain };
 
     } catch (err) {
         console.log(err);

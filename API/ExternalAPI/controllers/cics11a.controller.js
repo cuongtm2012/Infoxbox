@@ -135,7 +135,7 @@ exports.cics11aRSLT = function (req, res) {
 			}
 
 			if (!validation.isEmptyStr(reslt)) {
-				let responseData = new cics11aRSLTRes(getdataReq, response, reslt[0]);
+				let responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0]);
 				return res.status(200).json(responseData);
 			} else {
 				let responseData = new cics11aRSLTRes(getdataReq, responseUnknow, {});
