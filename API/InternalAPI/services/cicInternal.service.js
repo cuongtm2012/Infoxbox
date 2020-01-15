@@ -355,8 +355,8 @@ async function startProcessB0003(req, res, next) {
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, SYS_DTIM
-            FROM TB_SCRPLOG a
+        sql = `SELECT a.NICE_SSIN_ID, a.CIC_ID, a.LOGIN_ID, a.LOGIN_PW, a.PSPT_NO, a.TAX_ID, a.SYS_DTIM, b.S_CIC_NO
+            FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
             WHERE a.SCRP_STAT_CD = '04' 
                 and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
                 and SCRP_MOD_CD = '00'
