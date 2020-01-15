@@ -51,7 +51,7 @@ exports.checkemail = async function (req, res) {
 
     try {
         connection = await oracledb.getConnection(dbconfig);
-        sqlCheckUser = `SELECT  * FROM TB_USER where USER_NAME = :user_name`;
+        sqlCheckUser = `SELECT  * FROM TB_ITUSER where USER_NM = :user_name`;
         result = await connection.execute(sqlCheckUser, { user_name: { val: req.body.username } },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -62,15 +62,7 @@ exports.checkemail = async function (req, res) {
             emailExistence.check(req.body.email, async function (error, response) {
                 console.log('res: ' + response);
                 if (response === true) {
-                    connection = await oracledb.getConnection(dbconfig);
-                    sqlRegister = `INSERT INTO TB_USER VALUES (:user_name, :password, :email, :fullname)`;
-                    result = await connection.execute(sqlRegister, {
-                        user_name: { val: req.body.username }, password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
-                        email: { val: req.body.email }, fullname: { val: req.body.fullname }
-                    },
-                        { autoCommit: true }
-                    );
-                    res.send({ msg: result.rowsAffected });
+                    res.send({ msg: 1 })
                 } else {
                     res.send({ msg: 2 })
                 }
@@ -89,6 +81,41 @@ exports.checkemail = async function (req, res) {
     }
 };
 
+exports.register = async function (req, res) {
+    let connection;
+    try {
+        connection = await oracledb.getConnection(dbconfig);
+        let sqlRegister = `INSERT INTO TB_ITUSER VALUES (:user_id, :user_name, :custCd, :password, :typeUser, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
+        result = await connection.execute(sqlRegister, {
+            user_id: { val: null },
+            user_name: { val: req.body.username },
+            custCd: { val: req.body.custCd },
+            password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
+            typeUser: { val: req.body.typeUser },
+            startDate: { val: req.body.startDate },
+            endDate: { val: req.body.endDate },
+            mobileUser: { val: req.body.mobileUser },
+            email: { val: req.body.email },
+            addressUser: { val: req.body.addressUser },
+            systemDate: { val: req.body.systemDate },
+            workId: { val: req.body.workId }
+        },
+            { autoCommit: true }
+        );
+    } catch (error) {
+        console.log(error);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
+
+
 exports.sendEmail = function (req, res) {
     var userName = req.body.username;
     var pincode = Math.floor(100000 + Math.random() * 900000);
@@ -105,8 +132,6 @@ exports.sendEmail = function (req, res) {
         subject: config.email.header,
         html: config.email.body.replace('$userName', userName).replace('$pincode', pincode)
     }
-    console.log(mailOptions);
-
     redisApi.set(redisApi.PINCODE_PREFIX + req.body.email, pincode, function (err, reply) {
         if (err) {
             console.log('Store pincode error : ' + err);
@@ -132,7 +157,6 @@ exports.getCodeEmail = function (req, res) {
             res.status(404).send(err);
             return;
         }
-
         if (validation.isEmptyStr(reply)) {
             res.status(404).send('');
         } else {
