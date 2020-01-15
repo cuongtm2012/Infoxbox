@@ -37,6 +37,15 @@ module.exports = {
             }
             return response;
         }
+
+        //taskCode
+        if (validation.isEmptyStr(getdataReq.taskCode)){
+            response = {
+                responseMessage : responcodeEXT.RESCODEEXT.NITASKCODE.name,
+                responseCode : responcodeEXT.RESCODEEXT.NITASKCODE.code
+            }
+            return response;
+        }
         
  
         if (validation.isEmptyStr(getdataReq.name)){
