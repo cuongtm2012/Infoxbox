@@ -82,23 +82,35 @@ exports.checkemail = async function (req, res) {
 };
 
 exports.register = async function (req, res) {
+    
+    var username = req.body.username;
+    var custCd = req.body.custCd;
+    var password = req.body.password;
+    var typeUser = req.body.typeUser;
+    var startDate = req.body.startDate;
+    var endDate = req.body.endDate;
+    var mobileUser = req.body.mobileUser;
+    var email = req.body.email;
+    var addressUser = req.body.addressUser;
+    var systemDate = req.body.systemDate;
+    var workId = req.body.workId;
     let connection;
     try {
         connection = await oracledb.getConnection(dbconfig);
-        let sqlRegister = `INSERT INTO TB_ITUSER VALUES (:user_id, :user_name, :custCd, :password, :typeUser, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
-        result = await connection.execute(sqlRegister, {
+        let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
+        result = await connection.execute(sql, {
             user_id: { val: null },
-            user_name: { val: req.body.username },
-            custCd: { val: req.body.custCd },
-            password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
-            typeUser: { val: req.body.typeUser },
-            startDate: { val: req.body.startDate },
-            endDate: { val: req.body.endDate },
-            mobileUser: { val: req.body.mobileUser },
-            email: { val: req.body.email },
-            addressUser: { val: req.body.addressUser },
-            systemDate: { val: req.body.systemDate },
-            workId: { val: req.body.workId }
+            user_name: { val: username },
+            custCd: { val: custCd },
+            password: { val: bcrypt.hashSync(password, saltRounds) },
+            typeUser: { val: typeUser },
+            startDate: { val: startDate },
+            endDate: { val: endDate },
+            mobileUser: { val: mobileUser },
+            email: { val: email },
+            addressUser: { val: addressUser },
+            systemDate: { val: systemDate },
+            workId: { val: workId }
         },
             { autoCommit: true }
         );
