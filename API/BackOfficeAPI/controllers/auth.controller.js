@@ -51,7 +51,7 @@ exports.checkemail = async function (req, res) {
 
     try {
         connection = await oracledb.getConnection(dbconfig);
-        sqlCheckUser = `SELECT  * FROM TB_USER where USER_NAME = :user_name`;
+        sqlCheckUser = `SELECT  * FROM TB_ITUSER where USER_NM = :user_name`;
         result = await connection.execute(sqlCheckUser, { user_name: { val: req.body.username } },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -62,15 +62,7 @@ exports.checkemail = async function (req, res) {
             emailExistence.check(req.body.email, async function (error, response) {
                 console.log('res: ' + response);
                 if (response === true) {
-                    connection = await oracledb.getConnection(dbconfig);
-                    sqlRegister = `INSERT INTO TB_USER VALUES (:user_name, :password, :email, :fullname)`;
-                    result = await connection.execute(sqlRegister, {
-                        user_name: { val: req.body.username }, password: { val: bcrypt.hashSync(req.body.password, saltRounds) },
-                        email: { val: req.body.email }, fullname: { val: req.body.fullname }
-                    },
-                        { autoCommit: true }
-                    );
-                    res.send({ msg: result.rowsAffected });
+                    res.send({ msg: 1 })
                 } else {
                     res.send({ msg: 2 })
                 }
@@ -89,6 +81,53 @@ exports.checkemail = async function (req, res) {
     }
 };
 
+exports.register = async function (req, res) {
+    
+    var username = req.body.username;
+    var custCd = req.body.custCd;
+    var password = req.body.password;
+    var typeUser = req.body.typeUser;
+    var startDate = req.body.startDate;
+    var endDate = req.body.endDate;
+    var mobileUser = req.body.mobileUser;
+    var email = req.body.email;
+    var addressUser = req.body.addressUser;
+    var systemDate = req.body.systemDate;
+    var workId = req.body.workId;
+    let connection;
+    try {
+        connection = await oracledb.getConnection(dbconfig);
+        let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
+        result = await connection.execute(sql, {
+            user_id: { val: null },
+            user_name: { val: username },
+            custCd: { val: custCd },
+            password: { val: bcrypt.hashSync(password, saltRounds) },
+            typeUser: { val: typeUser },
+            startDate: { val: startDate },
+            endDate: { val: endDate },
+            mobileUser: { val: mobileUser },
+            email: { val: email },
+            addressUser: { val: addressUser },
+            systemDate: { val: systemDate },
+            workId: { val: workId }
+        },
+            { autoCommit: true }
+        );
+    } catch (error) {
+        console.log(error);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
+
+
 exports.sendEmail = function (req, res) {
     var userName = req.body.username;
     var pincode = Math.floor(100000 + Math.random() * 900000);
@@ -105,8 +144,6 @@ exports.sendEmail = function (req, res) {
         subject: config.email.header,
         html: config.email.body.replace('$userName', userName).replace('$pincode', pincode)
     }
-    console.log(mailOptions);
-
     redisApi.set(redisApi.PINCODE_PREFIX + req.body.email, pincode, function (err, reply) {
         if (err) {
             console.log('Store pincode error : ' + err);
@@ -132,7 +169,6 @@ exports.getCodeEmail = function (req, res) {
             res.status(404).send(err);
             return;
         }
-
         if (validation.isEmptyStr(reply)) {
             res.status(404).send('');
         } else {

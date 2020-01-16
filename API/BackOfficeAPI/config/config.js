@@ -24,7 +24,7 @@ var config = {
 	email: {
 		service: 'Gmail',
 		user: 'cuong8888q@gmail.com',
-		password: 'cuongtm2015',
+		password: 'vanthe010',
 		header: '[InfoCity] RESET PIN CODE',
 		body: '<p>Hello Mr/Ms. <b>$userName</b>,</p> <p>Your PIN Code has already been reset.</p><p>Your new PIN code is <b>$pincode</b>.</p><p>If there is any request, please contact us by HOTLINE <b>19006198</b> to be supported.</p><p>Regards,</p><p>InfoCity Management.</p>'
 	},

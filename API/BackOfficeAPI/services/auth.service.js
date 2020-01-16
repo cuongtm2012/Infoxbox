@@ -8,7 +8,6 @@ const config = require('../config/config')
 
 async function getUser(req) {
     let connection;
-
     try {
         let sql, result;
 
@@ -17,8 +16,8 @@ async function getUser(req) {
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `SELECT  * 
-                FROM TB_USER
-                where USER_NAME = :user_name`;
+                FROM TB_ITUSER
+                where USER_NM = :user_name`;
 
         result = await connection.execute(
             // The statement to execute
@@ -32,19 +31,15 @@ async function getUser(req) {
                 //, extendedMetaData: true                 // get extra metadata
                 //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
-
-        console.log("rows::", result.rows);
-
-        if (bcrypt.compareSync(user_pwd, result.rows[0].PASSWORD)) {
+            console.log(bcrypt.hashSync(user_pwd, salt));
+            
+        if (bcrypt.compareSync(user_pwd, result.rows[0].USER_PW)) {
             console.log("OK password");
-
             return result.rows;
         } else {
             return;
         }
         // return res.status(200).json(result.rows);
-
-
     } catch (err) {
         console.log(err);
         // return res.status(400);
