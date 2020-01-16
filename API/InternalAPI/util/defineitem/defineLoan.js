@@ -1,38 +1,36 @@
-const constant = require('./consant');
+const mappingData = require('./consant');
 const _ = require('lodash');
 
 module.exports = {
-    getValueLoanDetailInfor: function (req) {
-        var reportDate, companyName, stLoanVND, stLoanUSD, mtLoanVND, mtLoanUSD, ltLoanVND, ltLoanUSD, sumTotalVND, sumTotalUSD;
+    getLoanDetail: function (listLoanDetail) {
+        let result = [];
+        const resGroup = _.groupBy(listLoanDetail, "companyCode");
+        _.forEach(resGroup, val => {
+            let t1 = [];
+            _.forEach(val, arrVal => {
+                _.forEach(mappingData.mappingData, (val1, key1) => {
+                    if (_.startsWith(arrVal.item, key1)) {
 
-        _.forEach(req, res => {
-            _.forEach(res, function (value, key) {
-                if (_.isEqual(_.startCase(value), _.startCase(constant.LOANTERM.ShortTerm.name))) {
-                    stLoanVND = res.vnd;
-                    stLoanUSD = res.usd;
-                }
-                if (_.isEqual(_.startCase(value), _.startCase(constant.LOANTERM.MidTerm.name))) {
-                    mtLoanVND = res.vnd;
-                    mtLoanUSD = res.usd;
-                }
-                if (_.isEqual(_.startCase(value), _.startCase(constant.LOANTERM.LongTerm.name))) {
-                    ltLoanVND = res.vnd;
-                    ltLoanUSD = res.usd;
-                }
-                if (_.isEqual(_.startCase(value), _.startCase(constant.LOANTERM.TotalFILoan.name))) {
-                    sumTotalVND = res.vnd;
-                    sumTotalUSD = res.usd;
-                }
-                if (_.startCase(value).indexOf(_.startCase(constant.LOANTERM.ReportDate.name)) >= 0) {
-                    reportDate = res.item.split(':')[1].trim();
-                }
-                if (value.indexOf(constant.LOANTERM.CompanyName.name) >= 0) {
-                    companyName = res.item;
-                }
+                        const keyForObj = val1;
+                        if (!_.isEmpty(keyForObj)) {
+                            console.log('keyForObj:', keyForObj);
+                            const res = {
+                                cicFiName: arrVal.company,
+                                cicFiCode: arrVal.companyCode,
+                                recentReportDate: arrVal.date,
+                                seq: arrVal.seq,
+                                [keyForObj.vnd]: arrVal.vnd,
+                                [keyForObj.usd]: arrVal.usd
+                            };
+                            t1.push(res);
+                        }
+                    }
+                })
+
             });
+            if (!_.isEmpty(t1)) result.push(_.merge.apply(null, [{}].concat(t1)));
         });
-
-        return { reportDate, companyName, stLoanVND, stLoanUSD, mtLoanVND, mtLoanUSD, ltLoanVND, ltLoanUSD, sumTotalVND, sumTotalUSD };
-
+        console.log("Loan detail result:", result);
+        return result;
     }
 }

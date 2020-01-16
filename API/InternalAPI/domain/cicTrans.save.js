@@ -1,6 +1,5 @@
-module.exports = function cicTransSave(requestParams, responseParams, scrplogid, workId, password, cicNos) {
+module.exports = function cicTransSave(requestParams, responseParams, scrplogid, workId, password, cicNos, niceSessionKey) {
     const {
-        niceSessionKey,
         svcCd,
         userId,
         userPw,

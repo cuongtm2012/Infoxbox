@@ -16,5 +16,25 @@ const LOANTERM = {
     CompanyName: { value: 5, name: "1." }
 };
 
+const mappingData = {
+    "Dư nợ cho vay ngắn hạn:": {
+        vnd: 'shortTermLoanVnd',
+        usd: 'shortTermLoanUsd'
+    },
+    "Dư nợ cho vay trung hạn:": {
+        vnd: 'midTermLoadnInVnd',
+        usd: 'midTermLoadnInUsd'
+    },
+    "Dư nợ cho vay dài hạn:": {
+        vnd: 'longTermLoanVnd',
+        usd: 'longTermLoanUsd'
+    },
+    "Dư nợ xấu khác": {
+        vnd: "otherBadLoanVnd",
+        usd: "otherBadLoanUsd"
+    }
+};
+
 module.exports.CARDDEFINEBALANCE = CARDDEFINEBALANCE;
 module.exports.LOANTERM = LOANTERM;
+module.exports.mappingData = mappingData;

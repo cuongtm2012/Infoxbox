@@ -22,7 +22,7 @@ var config = {
 	},
 	batch: {
 		TIME_OUT: 20000, // 10000 milisecond = 1 seconds
-		TIME_OUT1: 40000,
+		TIME_OUT1: 10000,
 		TIME_OUT2: 900000, // 15 minutes
 	},
 	authprefix: 'Bearer ',

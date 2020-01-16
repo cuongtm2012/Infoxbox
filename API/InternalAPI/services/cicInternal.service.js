@@ -3,6 +3,7 @@ const oracledb = require('oracledb');
 const dbconfig = require('../../shared/config/dbconfig');
 
 const dateUtil = require('../util/dateutil');
+const _ = require('lodash');
 
 /*
     B0002 : CIC보고서 요청 (Request for CIC Report)
@@ -262,28 +263,27 @@ async function updateScrpModCdPreRequestToScraping(req, res, next) {
 
     try {
         let sql, result;
+        if (!_.isEmpty(req)) {
+            connection = await oracledb.getConnection(dbconfig);
 
-        connection = await oracledb.getConnection(dbconfig);
 
-
-        sql = `UPDATE TB_SCRPLOG
+            sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD  = '01'
-                WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
+                WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
 
-        result = await connection.execute(
-            // The statement to execute
-            sql,
-            {
-                NICE_SSIN_ID: { val: req.NICE_SSIN_ID }
-            },
-            { autoCommit: true },
-        );
+            result = await connection.execute(
+                // The statement to execute
+                sql,
+                {},
+                { autoCommit: true },
+            );
 
-        console.log("updateScrpModCdPreRequestToScraping updated::", result.rowsAffected);
 
-        return result.rowsAffected;
-        // return res.status(200).json(result.rows);
+            console.log("updateScrpModCdPreRequestToScraping updated::", result.rowsAffected);
 
+            return result.rowsAffected;
+            // return res.status(200).json(result.rows);
+        }
 
     } catch (err) {
         console.log(err);
@@ -310,14 +310,12 @@ async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD  = '00'
-                WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
+                WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
-            {
-                NICE_SSIN_ID: { val: req.niceSessionKey }
-            },
+            {},
             { autoCommit: true },
         );
 
@@ -344,7 +342,7 @@ async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
 /*
     B0003 : CIC보고서 조회 (Inquiry for CIC Report)
 */
-async function startProcessB0003(req, res, next) {
+async function startProcessB0003() {
     let connection;
 
     try {
@@ -353,26 +351,22 @@ async function startProcessB0003(req, res, next) {
         connection = await oracledb.getConnection(dbconfig);
 
         //get curremt time
-        let currentTimeStamp = dateUtil.timeStamp();
+        // let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT a.NICE_SSIN_ID, a.CIC_ID, a.LOGIN_ID, a.LOGIN_PW, a.PSPT_NO, a.TAX_ID, a.SYS_DTIM, b.S_CIC_NO
-            FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
-            WHERE a.SCRP_STAT_CD = '04' 
-                and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
-                and SCRP_MOD_CD = '00'
-                and ROWNUM <= 20
-            ORDER BY a.SYS_DTIM ASC`;
-        // and (SCRP_MOD_CD = '00' or SCRP_MOD_CD is null)
-
+        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId
+        FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
+        WHERE a.SCRP_STAT_CD = '04'
+            and SCRP_MOD_CD = '00'
+            and ROWNUM <= 20
+        ORDER BY a.SYS_DTIM ASC`;
+        // --                and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
+        // [currentTimeStamp],
         result = await connection.execute(
-            // The statement to execute
             sql,
-            [currentTimeStamp],
+            {},
             {
                 // maxRows: 1,
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
-                //, extendedMetaData: true                 // get extra metadata
-                //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
 
         console.log("rows::", result.rows);

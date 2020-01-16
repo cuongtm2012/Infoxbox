@@ -33,24 +33,48 @@ module.exports = class internalJob {
             var count = 0;
             var maxLength = data.length;
 
-            data.forEach(element => {
-                // let fnData = data[i].child;
-                console.log("element::::", element);
-                // let inqDt1 = dateutil.getDate();
-                // let inqDt2 = dateutil.getDate();
+            //Get list cicID
+            let arrCicId = _.map(data, 'CICID');
+            let listCicId = '';
 
-                // DEBUG
-                let inqDt1 = '20191219';
-                let inqDt2 = '20191219';
+            _.forEach(arrCicId, (val, key) => {
+                listCicId = listCicId + val + ',';
+            });
+            console.log('listCicId~~:', listCicId.substr(0, listCicId.length - 1));
+            // End get list CICID
 
-                let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
+            //Get list nicesessionkey
+            let arrNiceSessionkey = _.map(data, 'NICESESSIONKEY');
+            let listNiceSessionkey = [];
+            let listSessionkey = '';
 
-                //Convert data to format cic site
-                //decrypt password
-                var decryptPW = decrypt.decrypt(element.LOGIN_PW);
-                var fnData = new cicB0003Req(element, defaultValue, decryptPW);
+            _.forEach(arrNiceSessionkey, (val, key) => {
+                listNiceSessionkey.push(val);
+                listSessionkey = listSessionkey + "'" + val + "',";
+            });
+            console.log('arrNiceSessionkey~~:', listNiceSessionkey);
+            // End get list nicesessionkey
 
-                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
+            // data.forEach(element => {
+            // let fnData = data[i].child;
+            // console.log("element::::", element);
+            // let inqDt1 = dateutil.getDate();
+            // let inqDt2 = dateutil.getDate();
+
+            // DEBUG
+            let inqDt1 = '20190125';
+            let inqDt2 = '20190125';
+
+            let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
+
+            //Convert data to format cic site
+            //decrypt password
+            // let decryptPW = decrypt.decrypt(element.LOGIN_PW);
+            let listCicNo = listCicId.substr(0, listCicId.length - 1);
+            let fnData = new cicB0003Req(listCicNo, listNiceSessionkey, data, defaultValue);
+
+            if (!_.isEmpty(listCicNo)) {
+                cicService.updateScrpModCdPreRequestToScraping(listNiceSessionkey).then(() => {
                     axios.post(URI.internal_cicB0003, fnData, config)
                         .then((body) => {
                             // console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
@@ -68,7 +92,8 @@ module.exports = class internalJob {
                             throw error;
                         });
                 });
-            });
+            }
+            // });
         }).catch((error) => {
             console.log(error)
         });
