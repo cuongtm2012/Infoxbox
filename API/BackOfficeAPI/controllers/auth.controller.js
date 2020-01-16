@@ -1,7 +1,7 @@
 
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
 const authService = require('../services/auth.service');
+const oracelService = require('../services/oracelQuery.service');
 const IUser = require('../domain/IUser');
 const validation = require('../../shared/util/validation');
 const bcrypt = require('bcrypt');
@@ -11,6 +11,12 @@ const config = require('../config/config')
 var emailExistence = require('email-existence');
 var nodemailer = require('nodemailer');
 var redisApi = require('./../redis/redisApi');
+const optionFormatObj = {
+    outFormat: oracledb.OUT_FORMAT_OBJECT
+};
+const optionAutoCommit = { 
+    autoCommit: true 
+};
 exports.login = function (req, res) {
     try {
         var jwt = require('jsonwebtoken');
@@ -47,15 +53,9 @@ exports.login = function (req, res) {
 };
 
 exports.checkemail = async function (req, res) {
-    let connection;
-
-    try {
-        connection = await oracledb.getConnection(dbconfig);
-        sqlCheckUser = `SELECT  * FROM TB_ITUSER where USER_NM = :user_name`;
-        result = await connection.execute(sqlCheckUser, { user_name: { val: req.body.username } },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+    sqlCheckUser = `SELECT  * FROM TB_ITUSER where USER_NM = :user_name`;
+    params = { user_name: { val: req.body.username } };
+    oracelService.queryOracel(res, sqlCheckUser, params, optionFormatObj).then(result => {
         if (result.rows.length >= 1) {
             res.send({ msg: 0 });
         } else {
@@ -68,21 +68,10 @@ exports.checkemail = async function (req, res) {
                 }
             });
         }
-    } catch (error) {
-        console.log(error);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
+    });
 };
 
 exports.register = async function (req, res) {
-    
     var username = req.body.username;
     var custCd = req.body.custCd;
     var password = req.body.password;
@@ -94,37 +83,23 @@ exports.register = async function (req, res) {
     var addressUser = req.body.addressUser;
     var systemDate = req.body.systemDate;
     var workId = req.body.workId;
-    let connection;
-    try {
-        connection = await oracledb.getConnection(dbconfig);
-        let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
-        result = await connection.execute(sql, {
-            user_id: { val: null },
-            user_name: { val: username },
-            custCd: { val: custCd },
-            password: { val: bcrypt.hashSync(password, saltRounds) },
-            typeUser: { val: typeUser },
-            startDate: { val: startDate },
-            endDate: { val: endDate },
-            mobileUser: { val: mobileUser },
-            email: { val: email },
-            addressUser: { val: addressUser },
-            systemDate: { val: systemDate },
-            workId: { val: workId }
-        },
-            { autoCommit: true }
-        );
-    } catch (error) {
-        console.log(error);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
+    
+    var params = {
+        user_id: { val: null },
+        user_name: { val: username },
+        custCd: { val: custCd },
+        password: { val: bcrypt.hashSync(password, saltRounds) },
+        typeUser: { val: typeUser },
+        startDate: { val: startDate },
+        endDate: { val: endDate },
+        mobileUser: { val: mobileUser },
+        email: { val: email },
+        addressUser: { val: addressUser },
+        systemDate: { val: systemDate },
+        workId: { val: workId }
     }
+    var sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
+    oracelService.queryOracel(res, sql, params, optionAutoCommit);
 };
 
 
