@@ -8,7 +8,8 @@ module.exports = function cicB0003Request(parameters, defaultValue, decryptPW) {
         LOGIN_PW,
         PSPT_NO,
         TAX_ID,
-        SYS_DTIM
+        SYS_DTIM,
+        S_CIC_NO
     } = parameters;
 
     const {
@@ -32,7 +33,7 @@ module.exports = function cicB0003Request(parameters, defaultValue, decryptPW) {
     this.userId = LOGIN_ID;
     this.userPw = decryptPW ? decryptPW : LOGIN_PW;
     this.customerType = customerType;
-    this.cicNo = CIC_ID ? CIC_ID : "";
+    this.cicNo = CIC_ID ? S_CIC_NO : "";
     this.taxNo = TAX_ID ? TAX_ID : "";
     this.cmtNo = PSPT_NO ? PSPT_NO : "";
     this.reportType = reportType;
