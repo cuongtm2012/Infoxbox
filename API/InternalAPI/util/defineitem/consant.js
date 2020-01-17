@@ -22,8 +22,8 @@ const mappingData = {
         usd: 'shortTermLoanUsd'
     },
     "Dư nợ cho vay trung hạn:": {
-        vnd: 'midTermLoadnInVnd',
-        usd: 'midTermLoadnInUsd'
+        vnd: 'midTermLoadVnd',
+        usd: 'midTermLoadUsd'
     },
     "Dư nợ cho vay dài hạn:": {
         vnd: 'longTermLoanVnd',
@@ -32,6 +32,26 @@ const mappingData = {
     "Dư nợ xấu khác": {
         vnd: "otherBadLoanVnd",
         usd: "otherBadLoanUsd"
+    },
+    "- Dư nợ đủ tiêu chuẩn": {
+        vnd: "TermNormalLoanVnd",
+        usd: "TermNormalLoanUsd"
+    },
+    "- Dư nợ cần chú ý": {
+        vnd: "TermCautiousLoanVnd",
+        usd: "TermCautiousLoanUsd"
+    },
+    "- Dư nợ dưới tiêu chuẩn": {
+        vnd: "TermFixedLoanVnd",
+        usd: "TermFixedLoanUsd"
+    },
+    "Dư nợ nghi ngờ": {
+        vnd: "TermDaubtLoanVnd",
+        usd: "TermDaubtLoanUsd"
+    },
+    "- Dư nợ có khả năng mất vốn": {
+        vnd: "TermEstLossLoanVnd",
+        usd: "TermEstLossLoanUsd"
     }
 };
 

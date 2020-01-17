@@ -17,7 +17,7 @@ module.exports = class internalJob {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            }, timeout: 60 * 3 * 1000
         }
 
         cicService.startProcessB0003().then(data => {
@@ -80,13 +80,13 @@ module.exports = class internalJob {
                             // console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
                             count++;
                             // next process until data ending
-                            oncomplete(count, maxLength);
+                            oncomplete(0, 0);
                             // return res.status(200).json(body.data);
 
                         }).catch((error) => {
                             console.log("error call to internal_cic url B0003~~", error);
-                            cicService.updateScrpModCdHasNoResponseFromScraping(fnData).then(() => {
-                                console.log("update SCRP_MOD_CD = 00 ");
+                            cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
+                                console.log("B0003 update SCRP_MOD_CD = 00 ");
                                 return;
                             });
                             throw error;

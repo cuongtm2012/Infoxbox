@@ -48,7 +48,7 @@ module.exports = class internalJob {
                 var decryptPW = decrypt.decrypt(element.LOGIN_PW);
                 var fnData = new cicB0002Req(element, defaultValue, decryptPW);
 
-                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
+                cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
                     // "?inJsonList=%5B" + querystrings + "%5D"
                     axios.post(URI.internal_cic, fnData, config)
                         .then((body) => {
