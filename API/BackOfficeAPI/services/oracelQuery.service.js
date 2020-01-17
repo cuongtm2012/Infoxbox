@@ -8,8 +8,8 @@ async function queryOracel(res, sql, param, option) {
         connection = await oracledb.getConnection(dbconfig);
         result = await connection.execute(
             sql, param, option);
-            if (!result.rows === undefined) {
-                res.status(200).send(result.rows);
+            if (!(result.rows === undefined)) {
+                res.status(200).send(result.rows)
             } else {
                 res.status(200).send(result);
             }
