@@ -75,18 +75,18 @@ exports.insertContract = async function (req, res) {
 exports.updateContract = async function (req, res) {
     var cusGB = req.body.cusGB;
     var custCD = req.body.custCD;
-    var productCD = req.body.productCD;
+    var gdsCD = req.body.gdsCD;
     var validStartDt = req.body.validStartDt;
     var validEndDt = req.body.validEndDt;
     var sysDTim = req.body.sysDTim;
     var workID = req.body.workID;
 
-    var SQL = 'UPDATE TB_ITCTRT SET CUST_GB = :cusGB, CUST_CD = :custCD, GDS_CD = :productCD, VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt, SYS_DTIM = :sysDTim, WORK_ID = :workID';
+    var SQL = 'UPDATE TB_ITCTRT SET CUST_GB = :cusGB, CUST_CD = :custCD, VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt, SYS_DTIM = :sysDTim, WORK_ID = :workID WHERE GDS_CD = :gdsCD';
 
     let params = {
         cusGB: { val: cusGB },
         custCD: { val: custCD },
-        productCD: { val: productCD },
+        gdsCD: { val: gdsCD },
         validStartDt: { val: validStartDt },
         validEndDt: { val: validEndDt },
         sysDTim: { val: sysDTim },
