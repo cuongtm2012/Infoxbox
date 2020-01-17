@@ -78,7 +78,7 @@ exports.editCode = async function (req, res) {
     var sysDt = req.body.sysDt;
     var workID = req.body.workID;
 
-    var SQL = 'UPDATE TB_ITCODE SET VALID_END_DT = :valid_end_dt, CODE_NM = :codeNm, CODE_NM_EN = :codeNmEn, PRT_CD_CLASS = :prtCdClass, PRT_CODE = :prtCd, SYS_DTIM = :sysDt, WORK_ID = :workID WHERE CODE = :code AND CD_CLASS = :codeClass AND VALID_START_DT = :valid_start_dt ';
+    var SQL = 'UPDATE TB_ITCODE SET  CODE_NM = :codeNm, CODE_NM_EN = :codeNmEn, PRT_CD_CLASS = :prtCdClass, PRT_CODE = :prtCd, SYS_DTIM = :sysDt, WORK_ID = :workID WHERE CODE = :code AND CD_CLASS = :codeClass AND VALID_START_DT = :valid_start_dt , VALID_END_DT = :valid_end_dt ';
     let params = {
         code: { val: code },
         codeClass: { val: codeClass },
