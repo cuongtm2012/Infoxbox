@@ -15,7 +15,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-var login = require('./routes/auth.route');
+var auth = require('./routes/auth.route');
+var customer = require('./routes/customer.route');
 
 // Config DB
 var config = require('./config/config');
@@ -70,7 +71,8 @@ app.use(function(req, res, next) {
 		});
 });
 
-app.use('/auth', login);
+app.use('/auth', auth);
+app.use('/customer', customer);
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
