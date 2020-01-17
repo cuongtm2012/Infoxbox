@@ -54,9 +54,9 @@ exports.insertContract = async function (req, res) {
     var cusGB = req.body.cusGB;
     var custCD = req.body.custCD;
     var productCD = req.body.productCD;
-    var validStartDt = req.body.validStartDt;
-    var validEndDt = req.body.validEndDt;
-    var sysDTim = req.body.sysDTim;
+    var validStartDt = req.body.validStartDt.replace(/[^0-9 ]/g, "");
+    var validEndDt = req.body.validEndDt.replace(/[^0-9 ]/g, "");
+    var sysDTim = req.body.sysDTim.replace(/[^0-9 ]/g, "");
     var workID = req.body.workID;
 
     var SQL = 'INSERT INTO TB_ITCTRT (CUST_GB, CUST_CD, GDS_CD, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID) VALUES (:cusGB, :custCD, :productCD, :validStartDt, :validEndDt, :sysDTim, :workID)';
@@ -76,9 +76,9 @@ exports.updateContract = async function (req, res) {
     var cusGB = req.body.cusGB;
     var custCD = req.body.custCD;
     var gdsCD = req.body.gdsCD;
-    var validStartDt = req.body.validStartDt;
-    var validEndDt = req.body.validEndDt;
-    var sysDTim = req.body.sysDTim;
+    var validStartDt = req.body.validStartDt.replace(/[^0-9 ]/g, "");
+    var validEndDt = req.body.validEndDt.replace(/[^0-9 ]/g, "");
+    var sysDTim = req.body.sysDTim.replace(/[^0-9 ]/g, "");
     var workID = req.body.workID;
 
     var SQL = 'UPDATE TB_ITCTRT SET CUST_GB = :cusGB, CUST_CD = :custCD, VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt, SYS_DTIM = :sysDTim, WORK_ID = :workID WHERE GDS_CD = :gdsCD';
