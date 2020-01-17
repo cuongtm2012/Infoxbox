@@ -2,6 +2,8 @@ const validation = require('../../shared/util/validation');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
+const validParams = require('../../shared/util/param_middleware');
+const dataType = require('../../shared/constant/datatype');
 module.exports = {
     checkParamRequestForResponse: function (getdataReq) {
         var response;
@@ -24,6 +26,15 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NITASKCODE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NITASKCODE.code
+            }
+            return response;
+        }
+
+        if (!validParams.checkParamType(getdataReq.fiCode, dataType.DATATYPE.STRING.type)){
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.IVFICODE.name + `, FI code is type ` + 
+                `${typeof getdataReq.fiCode}` + ` but should be ` + dataType.DATATYPE.STRING.type,
+                responseCode: responcodeEXT.RESCODEEXT.IVFICODE.code
             }
             return response;
         }
