@@ -6,7 +6,7 @@ const dateutil = require('../util/dateutil');
 
 const _ = require('lodash');
 
-async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor) {
+async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo) {
     let connection;
 
     try {
@@ -19,7 +19,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         const sysDtim = dateutil.timeStamp();
         const workID = getIdGetway.getIPGateWay();
 
-        // Insert Loan 5 Year
+        // 2.5.Insert Loan 5 Year
         if (!_.isEmpty(bindlistloan5YearInfo)) {
             const sqlInsert5YearInfor = `INSERT INTO TB_NPL_5YR(NICE_SSIN_ID,
             SEQ,
@@ -51,7 +51,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         }
         console.log("Result resultLoan5Year is :", resultLoan5Year);
 
-        // Insert Loan detail infor
+        // 2.1.Insert Loan detail infor
         if (!_.isEmpty(bindsLoanDetailInfor)) {
             const sqlInsertLoanDetailInfor = `INSERT INTO tb_loan_detail(NICE_SSIN_ID,
                 SEQ,
@@ -251,7 +251,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         }
         console.log("Result resultLoanDetailInfor is:", resultLoanDetailInfor);
 
-        // Loan 12 Mon infor
+        //2.4. Loan 12 Mon infor
         if (!_.isEmpty(bindlistloan12monInfo)) {
             const sqlInsertLoan12MonInfor = `INSERT INTO TB_LOAN_12MON(NICE_SSIN_ID,
             SEQ,
@@ -281,7 +281,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         }
         console.log("Result bindlistloan12monInfo is:", resultLoan12MonInfor);
 
-        // Credit card infor
+        // 2.2.Credit card infor
         if (!_.isEmpty(objCreditcardinfor)) {
 
             const sqlInsertCreditCardInfor = `INSERT INTO TB_CRDT_CARD (NICE_SSIN_ID,
@@ -317,6 +317,34 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             );
         }
         console.log("update Credit card infor updated::", resultCreditCardInfor);
+
+        // 2.3.Vamc loan infor
+        if (!_.isEmpty(bindlistVamcLoanInfo)) {
+            const sqlInsertVamcLoanInfo = `INSERT INTO TB_VAMC_LOAN(NICE_SSIN_ID,
+            SEQ,
+            SELL_OGZ_NM,
+            PRCP_BAL,
+            DATA_RPT_DATE,
+            SYS_DTIM,
+            WORK_ID)  values (:1, :2, :3, :4, :5, :6, :7)`;
+
+            const options = {
+                autoCommit: false,
+                bindDefs: [
+                    { type: oracledb.STRING, maxSize: 25 },
+                    { type: oracledb.NUMBER, maxSize: 5 },
+                    { type: oracledb.STRING, maxSize: 500 },
+                    { type: oracledb.NUMBER, maxSize: 27 },
+                    { type: oracledb.STRING, maxSize: 8 },
+                    { type: oracledb.STRING, maxSize: 14 },
+                    { type: oracledb.STRING, maxSize: 20 }
+                ]
+            };
+
+            resultVamcLoanInfo = await connection.executeMany(sqlInsertVamcLoanInfo, bindlistVamcLoanInfo, options);
+
+        }
+        console.log("Result VamcLoanInfo is :", resultVamcLoanInfo);
 
         // CICRPT main
         if (!_.isEmpty(objciccptmain)) {
