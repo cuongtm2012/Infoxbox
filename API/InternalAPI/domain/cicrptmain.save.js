@@ -34,10 +34,10 @@ module.exports = function cicrptmain(cicrptinfor, custInfor, msg,  niceSessionKe
     } = msg;
 
     this.NICE_SSIN_ID = niceSessionKey;
-    this.INQ_OGZ_NM = searchingUnit ? searchingUnit : '';
-    this.INQ_OGZ_ADDR = address ? address : '';
-    this.INQ_USER_NM = lookupers ? lookupers : '';
-    this.INQ_CD = number ? number : '';
+    this.INQ_OGZ_NM = searchingUnit ? searchingUnit : null;
+    this.INQ_OGZ_ADDR = address ? address : null;
+    this.INQ_USER_NM = lookupers ? lookupers : null;
+    this.INQ_CD = voucherCode ? voucherCode : null;
     this.INQ_DTIM = requireDay + requireTime;
     this.RPT_SEND_DTIM = sendDay + sendTime;
     this.PSN_COMT = waitdata ? waitdata : null;

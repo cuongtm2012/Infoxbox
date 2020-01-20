@@ -7,6 +7,7 @@ const cicTransSave = require('../domain/cicTrans.save');
 const encryptPassword = require('../util/encryptPassword');
 const getIdGetway = require('../../shared/util/getIPGateWay');
 const _ = require("lodash");
+const logger = require('../config/logger');
 
 exports.internalCIC = function (req, res, next) {
     try {
@@ -91,6 +92,8 @@ const loan12MInforSave = require('../domain/loan12monInfo.save');
 
 const loan5YearInfo = require('../domain/loan5yearInfo.save');
 
+const vamcLoanInfo = require('../domain/vamcLoanInfo.save');
+
 const excuteInsert = require('../services/excuteInsert.service');
 
 const getLoanDetail = require('../util/defineitem/defineLoan');
@@ -105,6 +108,9 @@ exports.internalCICB0003 = function (req, res, next) {
         }
 
         console.log(" req.body:::", req.body);
+        //Logging request
+        logger.debug('Log request parameters send from internal');
+        logger.info(req.body);
 
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
@@ -114,6 +120,9 @@ exports.internalCICB0003 = function (req, res, next) {
                 const workID = getIdGetway.getIPGateWay();
 
                 console.log("outJson.outB0003~~~~~", body.data.outJson.outB0003);
+                //Logging request
+                logger.debug('Log response parameters from scrapping service');
+                logger.info(body.data.outJson.outB0003);
 
                 // update process status = 10 update process completed
                 if (!validation.isEmptyJson(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {
@@ -144,7 +153,7 @@ exports.internalCICB0003 = function (req, res, next) {
                               ** Excute insert
                             */
 
-                            // 1.Loan detail infor
+                            // 2.1.Loan detail infor
                             let listLoanDetail = list.reportS11A.loanDetailInfo.list;
                             let bindsLoanDetailInfor = [];
 
@@ -163,7 +172,7 @@ exports.internalCICB0003 = function (req, res, next) {
                             }
                             console.log('bindsLoanDetailInfor:', bindsLoanDetailInfor);
 
-                            // 2.Loan 5 year infor
+                            // 2.5. Loan 5 year infor
                             let listLoan5YInfor = list.reportS11A.loan5yearInfo.list;
                             var seq3 = 0;
                             let bindlistloan5YearInfo = [];
@@ -174,14 +183,14 @@ exports.internalCICB0003 = function (req, res, next) {
                                     const arrChildLoan5YInfor = [];
                                     const preValLoan5YInfor = new loan5YearInfo(res, niceSessionKey, sysDtim, workID, seq3);
                                     _.forEach(preValLoan5YInfor, (val, key) => {
-                                        arrChild2.push(val)
+                                        arrChildLoan5YInfor.push(val)
                                     });
                                     bindlistloan5YearInfo.push(arrChildLoan5YInfor)
                                 });
                             }
                             console.log('bindlistLoan5YInfor:', bindlistloan5YearInfo);
 
-                            /* start Credit card infor
+                            /*2.2. start Credit card infor
                             ** 4
                             */
                             let listcreditCardInfo = list.reportS11A.creditCardInfo.list;
@@ -194,8 +203,26 @@ exports.internalCICB0003 = function (req, res, next) {
                             }
                             console.log('objCreditcardinfor:', objCreditcardinfor);
 
+                            // 2.3.Vamc loan infor
+                            let listVamcLoanInfo = list.reportS11A.vamcLoanInfo.list;
+                            var seqvamc = 0;
+                            let bindlistVamcLoanInfo = [];
+
+                            if (!_.isEmpty(listVamcLoanInfo)) {
+                                _.forEach(listVamcLoanInfo, res => {
+                                    seqvamc = seqvamc + 1;
+                                    const arrChildVamcLoanInfo = [];
+                                    const preValVamceLoanInfo = new vamcLoanInfo(res, niceSessionKey, sysDtim, workID, seqvamc);
+                                    _.forEach(preValVamceLoanInfo, (val, key) => {
+                                        arrChildVamcLoanInfo.push(val)
+                                    });
+                                    bindlistVamcLoanInfo.push(arrChildVamcLoanInfo)
+                                });
+                            }
+                            console.log('bindlistVamcLoanInfo:', bindlistVamcLoanInfo);
+
                             /* start loan12monInfo
-                           ** 5.loan12monInfo
+                           ** 2.4.loan12monInfo
                            */
                             let listloan12monInfo = list.reportS11A.loan12monInfo.list;
                             var seq2 = 0;
@@ -204,12 +231,12 @@ exports.internalCICB0003 = function (req, res, next) {
                             if (!_.isEmpty(listloan12monInfo)) {
                                 _.forEach(listloan12monInfo, res => {
                                     seq2 = seq2 + 1;
-                                    const arrChild2 = [];
+                                    const arrChildLoan12MonInfo = [];
                                     const preVal2 = new loan12MInforSave(res, niceSessionKey, sysDtim, workID, seq2);
                                     _.forEach(preVal2, (val, key) => {
-                                        arrChild2.push(val)
+                                        arrChildLoan12MonInfo.push(val)
                                     });
-                                    bindlistloan12monInfo.push(arrChild2)
+                                    bindlistloan12monInfo.push(arrChildLoan12MonInfo)
                                 });
                             }
                             console.log('bindlistloan12monInfo', bindlistloan12monInfo);
@@ -218,7 +245,7 @@ exports.internalCICB0003 = function (req, res, next) {
                             ** Insert Scraping service
                             */
 
-                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor).then(resultMSG => {
+                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo).then(resultMSG => {
                                 console.log('insert Scraping MSG:', resultMSG);
                                 if (!_.isEmpty(resultMSG)) {
                                     // update complete cic report inquiry status 10
