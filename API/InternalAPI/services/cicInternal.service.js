@@ -125,7 +125,7 @@ async function select04NotExist(req, res, next) {
 /*
     update statu == 04
 */
-async function updateCICReportInquirySuccessful(req, res, next) {
+async function updateCICReportInquirySuccessful(req) {
     let connection;
     try {
         let sql, result;
@@ -170,7 +170,7 @@ async function updateCICReportInquirySuccessful(req, res, next) {
 /*
     update statu == 10
 */
-async function updateCICReportInquiryCompleted(req, res, next) {
+async function updateCICReportInquiryCompleted(req) {
     let connection;
 
     try {
@@ -181,14 +181,14 @@ async function updateCICReportInquiryCompleted(req, res, next) {
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '10', SYS_DTIM = :sysDim
-                WHERE NICE_SSIN_ID =:niceSessionKey `;
+                WHERE NICE_SSIN_ID =:niceSessionKey`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
                 sysDim: { val: sysDim },
-                niceSessionKey: { val: req.niceSessionKey }
+                niceSessionKey: { val: req }
             },
             { autoCommit: true }
         );
@@ -258,7 +258,7 @@ async function updateScrapingTargetRepostNotExist(req, res, next) {
     }
 }
 
-async function updateScrpModCdPreRequestToScraping(req, res, next) {
+async function updateScrpModCdPreRequestToScraping(req) {
     let connection;
 
     try {
@@ -299,7 +299,50 @@ async function updateScrpModCdPreRequestToScraping(req, res, next) {
     }
 }
 
-async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
+async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey) {
+    let connection;
+
+    try {
+        let sql, result;
+        if (!_.isEmpty(niceSessionKey)) {
+            connection = await oracledb.getConnection(dbconfig);
+
+
+            sql = `UPDATE TB_SCRPLOG
+                SET SCRP_MOD_CD  = '01'
+                WHERE NICE_SSIN_ID =:niceSessionKey`;
+
+            result = await connection.execute(
+                // The statement to execute
+                sql,
+                {
+                    niceSessionKey: { val: niceSessionKey }
+                },
+                { autoCommit: true },
+            );
+
+
+            console.log("updateScrpModCdPreRequestToScrapingB0002 updated::", result.rowsAffected);
+
+            return result.rowsAffected;
+            // return res.status(200).json(result.rows);
+        }
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function updateScrpModCdHasNoResponseFromScraping(req) {
     let connection;
 
     try {
@@ -310,12 +353,14 @@ async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD  = '00'
-                WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
+                WHERE NICE_SSIN_ID =:NICE_SSIN_ID`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
-            {},
+            {
+                NICE_SSIN_ID: { val: req }
+            },
             { autoCommit: true },
         );
 
@@ -339,6 +384,44 @@ async function updateScrpModCdHasNoResponseFromScraping(req, res, next) {
     }
 }
 
+async function updateCICReportInquiryReadyToRequestScraping(req) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `UPDATE TB_SCRPLOG
+                SET SCRP_MOD_CD = '00'
+                WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {},
+            { autoCommit: true }
+        );
+
+        console.log("updateCICReportInquiryReadyToRequestScraping updated::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
 /*
     B0003 : CIC보고서 조회 (Inquiry for CIC Report)
 */
@@ -398,3 +481,5 @@ module.exports.updateScrpModCdPreRequestToScraping = updateScrpModCdPreRequestTo
 module.exports.updateScrpModCdHasNoResponseFromScraping = updateScrpModCdHasNoResponseFromScraping;
 module.exports.startProcessB0003 = startProcessB0003;
 module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted;
+module.exports.updateCICReportInquiryReadyToRequestScraping = updateCICReportInquiryReadyToRequestScraping;
+module.exports.updateScrpModCdPreRequestToScrapingB0002 = updateScrpModCdPreRequestToScrapingB0002;
