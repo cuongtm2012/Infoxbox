@@ -14,7 +14,7 @@ exports.getCustInfo = async function (req, res) {
     var SQL_FROM = 'FROM TB_ITCUST ';
     var SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication OR CUST_CD LIKE :cusCd OR CUST_NM LIKE :custNm ';
     var SQL_ORDER_BY = 'ORDER BY CUST_NM '
-    var SQL_LIMIT = ':currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
