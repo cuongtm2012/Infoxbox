@@ -29,23 +29,28 @@ module.exports = {
         _.forEach(resGroup, val => {
             let t1 = [];
             _.forEach(val, arrVal => {
-                let keyForObj = mappingData.mappingData[arrVal.item];
-                if (!_.isEmpty(keyForObj)) {
-                    let res = {
-                        company: arrVal.company,
-                        companyCode: arrVal.companyCode,
-                        date: arrVal.date,
-                        seq: arrVal.seq,
-                        [keyForObj.vnd]: arrVal.vnd,
-                        [keyForObj.usd]: arrVal.usd
-                    };
+                _.forEach(mappingData.mappingData, (val1, key1) => {
+                    if (_.startsWith(arrVal.item, key1)) {
 
-                    const keyObjChild = keyForObj.vnd.substring(0, keyForObj.vnd.length - 3);
-                    if (!_.isEmpty(arrVal.itemDetailInfo)) {
-                        res[keyObjChild] = getChildren(arrVal.itemDetailInfo);
+                        const keyForObj = val1;
+                        if (!_.isEmpty(keyForObj)) {
+                            let res = {
+                                cicFiName: arrVal.company,
+                                cicFiCode: arrVal.companyCode,
+                                date: arrVal.date,
+                                seq: arrVal.seq,
+                                [keyForObj.vnd]: arrVal.vnd,
+                                [keyForObj.usd]: arrVal.usd
+                            };
+
+                            const keyObjChild = keyForObj.vnd.substring(0, keyForObj.vnd.length - 3);
+                            if (!_.isEmpty(arrVal.itemDetailInfo)) {
+                                res[keyObjChild] = getChildren(arrVal.itemDetailInfo);
+                            }
+                            t1.push(res);
+                        }
                     }
-                    t1.push(res);
-                }
+                });
             });
 
             if (!_.isEmpty(t1)) result.push(_.merge.apply(null, [{}].concat(t1)));
@@ -160,7 +165,7 @@ module.exports = {
                 LongTermEstLossLoan = listTermLoan.longTermLoan.TermEstLossLoan;
             }
 
-            LongLoanTerm = new shortLoanTerm(LongTermNormalLoan, LongTermCautiousLoan, LongTermFixedLoan, LongTermDaubtLoan, LongTermEstLossLoan);
+            LongLoanTerm = new longLoanTerm(LongTermNormalLoan, LongTermCautiousLoan, LongTermFixedLoan, LongTermDaubtLoan, LongTermEstLossLoan);
         }
         if (_.isEmpty(listTermLoan.otherTermLoan)) {
             OtherLoanTerm = {};
@@ -195,7 +200,7 @@ module.exports = {
                 OtherTermEstLossLoan = listTermLoan.otherTermLoan.TermEstLossLoan;
             }
 
-            OtherLoanTerm = new shortLoanTerm(OtherTermNormalLoan, OtherTermCautiousLoan, OtherTermFixedLoan, OtherTermDaubtLoan, OtherTermEstLossLoan);
+            OtherLoanTerm = new otherLoanTerm(OtherTermNormalLoan, OtherTermCautiousLoan, OtherTermFixedLoan, OtherTermDaubtLoan, OtherTermEstLossLoan);
         }
 
 

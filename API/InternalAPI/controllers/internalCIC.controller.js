@@ -7,6 +7,7 @@ const cicTransSave = require('../domain/cicTrans.save');
 const encryptPassword = require('../util/encryptPassword');
 const getIdGetway = require('../../shared/util/getIPGateWay');
 const _ = require("lodash");
+const logger = require('../config/logger');
 
 exports.internalCIC = function (req, res, next) {
     try {
@@ -105,6 +106,9 @@ exports.internalCICB0003 = function (req, res, next) {
         }
 
         console.log(" req.body:::", req.body);
+        //Logging request
+        logger.debug('Log request parameters send from internal');
+        logger.info(req.body);
 
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
@@ -114,6 +118,9 @@ exports.internalCICB0003 = function (req, res, next) {
                 const workID = getIdGetway.getIPGateWay();
 
                 console.log("outJson.outB0003~~~~~", body.data.outJson.outB0003);
+                //Logging request
+                logger.debug('Log response parameters from scrapping service');
+                logger.info(body.data.outJson.outB0003);
 
                 // update process status = 10 update process completed
                 if (!validation.isEmptyJson(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {

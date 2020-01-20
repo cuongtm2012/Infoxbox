@@ -29,46 +29,47 @@ module.exports = class internalJob {
                 // return next();
                 oncomplete(0, 0)
                 // return;
-            }
+            } else {
 
-            var count = 0;
-            var maxLength = data.length;
-            console.log("maxLength11~~~", maxLength);
+                var count = 0;
+                var maxLength = data.length;
+                console.log("maxLength11~~~", maxLength);
 
-            data.forEach(element => {
-                // let fnData = data[i].child;
-                console.log("element::::", element);
-                let inqDt1 = dateutil.getDate();
-                let inqDt2 = dateutil.getDate();
+                data.forEach(element => {
+                    // let fnData = data[i].child;
+                    console.log("element::::", element);
+                    let inqDt1 = dateutil.getDate();
+                    let inqDt2 = dateutil.getDate();
 
-                let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
+                    let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
-                //Convert data to format cic site
-                //decrypt password
-                var decryptPW = decrypt.decrypt(element.LOGIN_PW);
-                var fnData = new cicB0002Req(element, defaultValue, decryptPW);
+                    //Convert data to format cic site
+                    //decrypt password
+                    var decryptPW = decrypt.decrypt(element.LOGIN_PW);
+                    var fnData = new cicB0002Req(element, defaultValue, decryptPW);
 
-                cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
-                    // "?inJsonList=%5B" + querystrings + "%5D"
-                    axios.post(URI.internal_cic, fnData, config)
-                        .then((body) => {
-                            console.log("body resultB0002~~~~~", body.data);
+                    cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
+                        // "?inJsonList=%5B" + querystrings + "%5D"
+                        axios.post(URI.internal_cic, fnData, config)
+                            .then((body) => {
+                                console.log("body resultB0002~~~~~", body.data);
 
-                            count++;
-                            // next process until data ending
-                            oncomplete(count, maxLength);
-                            // return res.status(200).json(body.data);
+                                count++;
+                                // next process until data ending
+                                oncomplete(count, maxLength);
+                                // return res.status(200).json(body.data);
 
-                        }).catch((error) => {
-                            console.log("error call to internal_cic url B0002~~", error);
-                            cicService.updateScrpModCdHasNoResponseFromScraping(fnData).then(() => {
-                                console.log("update SCRP_MOD_CD = 00 ");
-                                return;
+                            }).catch((error) => {
+                                console.log("error call to internal_cic url B0002~~", error);
+                                cicService.updateScrpModCdHasNoResponseFromScraping(fnData).then(() => {
+                                    console.log("update SCRP_MOD_CD = 00 ");
+                                    return;
+                                });
+                                throw error;
                             });
-                            throw error;
-                        });
+                    });
                 });
-            });
+            }
         }).catch((error) => {
             console.log(error)
         });
