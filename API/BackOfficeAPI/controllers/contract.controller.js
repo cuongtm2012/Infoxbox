@@ -30,8 +30,8 @@ exports.getContract = async function (req, res) {
     var organCd = req.query.organCd;
     var organNM = req.query.organNM;
     var productCode = req.query.productCode;
-    var currentLocation = req.body.currentLocation;
-    var limitRow = req.body.limitRow;
+    var currentLocation = req.query.currentLocation;
+    var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT TB_ITCUST.CUST_GB as CLASS, TB_ITCTRT.CUST_CD as CUST_CODE, TB_ITCTRT.GDS_CD as PRODUCT_CODE, TB_ITCUST.CUST_NM as CUST_NM, TB_ITCTRT.VALID_START_DT as VALID_START_DT, TB_ITCTRT.VALID_END_DT as VALID_END_DT `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
     var SQL_INNER_JOIN = 'INNER JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD ';
