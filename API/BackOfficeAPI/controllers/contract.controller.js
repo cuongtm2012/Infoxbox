@@ -10,9 +10,10 @@ exports.getProduct = async function (req, res) {
     var SQL_SELECT = `SELECT TB_ITCODE.CODE, TB_ITCODE.CODE_NM `;
     var SQL_FROM = `FROM TB_ITCODE WHERE TB_ITCODE.CD_CLASS = 'C0005' `;
     var SQL_SEARCH = 'AND TB_ITCODE.CODE LIKE :productCode OR TB_ITCODE.CODE_NM LIKE :productNM ';
+
     if (_.isEmpty(productCode) && _.isEmpty(productNM)) {
         let sql = SQL_SELECT + SQL_FROM;
-        let params = {};
+        let param = {};
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     } else {
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
@@ -29,22 +30,30 @@ exports.getContract = async function (req, res) {
     var organCd = req.query.organCd;
     var organNM = req.query.organNM;
     var productCode = req.query.productCode;
-
+    var currentLocation = req.query.currentLocation;
+    var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT TB_ITCUST.CUST_GB as CLASS, TB_ITCTRT.CUST_CD as CUST_CODE, TB_ITCTRT.GDS_CD as PRODUCT_CODE, TB_ITCUST.CUST_NM as CUST_NM, TB_ITCTRT.VALID_START_DT as VALID_START_DT, TB_ITCTRT.VALID_END_DT as VALID_END_DT `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
     var SQL_INNER_JOIN = 'INNER JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD ';
     var SQL_SEARCH = 'WHERE TB_ITCUST.CUST_GB LIKE :organClassifi OR TB_ITCTRT.CUST_CD LIKE :organCd OR TB_ITCUST.CUST_NM LIKE :organNM OR TB_ITCTRT.GDS_CD LIKE :productCode ';
+    var SQL_ORDER_BY = 'ORDER BY CUST_CD ';
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
-        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN;
-        let params = {};
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
+        };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     } else {
-        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
             organClassifi: { val: organClassifi },
             organCd: { val: organCd },
             productCode: { val: productCode },
-            organNM: { val: organNM }
+            organNM: { val: organNM },
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     }

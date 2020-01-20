@@ -10,28 +10,38 @@ exports.getCode = async function (req, res) {
     var code = req.query.code;
     var codeClass = req.query.codeClass;
     var codeNm = req.query.codeNm;
-
+    var currentLocation = req.query.currentLocation;
+    var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT TB_ITCODE.CODE as CODE, TB_ITCODE.CD_CLASS as CD_CLASS, TB_ITCODE.CODE_NM as CODENM, TB_ITCODE.CODE_NM_EN as CODENM_EN, TB_ITCODE.VALID_START_DT as VALID_START_DT, TB_ITCODE.VALID_END_DT as VALID_END_DT `;
     var SQL_FROM = `FROM TB_ITCODE `;
     var SQL_SEARCH_CODE = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm `;
     var SQL_SEARCH_ALL = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm AND TB_ITCODE.CODE LIKE :code `;
+    var SQL_ORDER_BY = 'ORDER BY CODE_NM ';
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
-        let sql = SQL_SELECT + SQL_FROM;
-        let params = {};
+        let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
+        };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     } else if (_.isEmpty(code) && !_.isEmpty(codeClass) && !_.isEmpty(codeNm)) {
-        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH_CODE;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH_CODE + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
             codeClass: { val: codeClass },
-            codeNm: { val: codeNm }
+            codeNm: { val: codeNm },
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     } else {
-        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH_ALL;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH_ALL + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
             code: { val: code },
             codeClass: { val: codeClass },
-            codeNm: { val: codeNm }
+            codeNm: { val: codeNm },
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     }
