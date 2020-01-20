@@ -14,7 +14,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         connection = await oracledb.getConnection(dbconfig);
 
         // result for insert
-        let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor;
+        let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo;
 
         const sysDtim = dateutil.timeStamp();
         const workID = getIdGetway.getIPGateWay();
@@ -448,7 +448,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             });
         console.log("resultFinal: " + resultFinal);
 
-        return { resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor };
+        return { resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo};
         // return Promise.all(result.rowsAffected);
     } catch (err) {
         console.log(err);
