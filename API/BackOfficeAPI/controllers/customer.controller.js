@@ -8,20 +8,29 @@ exports.getCustInfo = async function (req, res) {
     var custClassicfication = req.query.custClassicfication;
     var cusCd = req.query.cusCd;
     var custNm = req.query.custNm;
-    SQL_SELECT = `SELECT TB_ITCUST.CUST_GB as CUST_CLASSSIC, TB_ITCUST.CUST_CD as CUST_CODE, TB_ITCUST.CUST_NM as CUST_NM, TB_ITCUST.BRANCH_NM as BRANCH_NM, TB_ITCUST.CO_RGST_NO as CO_RGST_NO, TB_ITCUST.VALID_START_DT as VALID_START_DT, TB_ITCUST.VALID_END_DT as VALID_END_DT `;
-    SQL_FROM = 'FROM TB_ITCUST ';
-    SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication OR CUST_CD LIKE :cusCd OR CUST_NM LIKE :custNm';
+    var currentLocation = req.body.currentLocation;
+    var limitRow = req.body.limitRow;
+    var SQL_SELECT = `SELECT TB_ITCUST.CUST_GB as CUST_CLASSSIC, TB_ITCUST.CUST_CD as CUST_CODE, TB_ITCUST.CUST_NM as CUST_NM, TB_ITCUST.BRANCH_NM as BRANCH_NM, TB_ITCUST.CO_RGST_NO as CO_RGST_NO, TB_ITCUST.VALID_START_DT as VALID_START_DT, TB_ITCUST.VALID_END_DT as VALID_END_DT `;
+    var SQL_FROM = 'FROM TB_ITCUST ';
+    var SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication OR CUST_CD LIKE :cusCd OR CUST_NM LIKE :custNm ';
+    var SQL_ORDER_BY = 'ORDER BY CUST_NM '
+    var SQL_LIMIT = ':currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
-        let sql = SQL_SELECT + SQL_FROM;
-        let param = {};
+        let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
+        };
         oracelService.queryOracel(res, sql, param, optionFormatObj);
     } else {
-        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH;
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication: { val: custClassicfication },
             cusCd: { val: cusCd },
-            custNm: { val: custNm }
+            custNm: { val: custNm },
+            currentLocation: { val: currentLocation },
+            limitRow: { val: limitRow }
         };
         oracelService.queryOracel(res, sql, param, optionFormatObj);
     }
@@ -61,7 +70,7 @@ exports.addCust = async function (req, res) {
         operationDate: { val: operationDate },
         userID: { val: userID }
     };
-    SQL = `INSERT INTO TB_ITCUST(CUST_GB, CUST_CD ,CUST_NM, CUST_NM_ENG, BRANCH_NM, BRANCH_NM_ENG, CO_RGST_NO, BIZ_CG_CD, PRT_CUST_GB, PRT_CUST_CD, ADDR, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID) VALUES (:classFication, :custCD, :custNM, :custNMENG, :custBranchNM, :custBranchNM_EN, :coRgstNo, :industryCD, :prtOrganizationClass, :prtOrganizationCD, :addr, :validStartDT, :validEndDT, :operationDate, :userID)`;
+    var SQL = `INSERT INTO TB_ITCUST(CUST_GB, CUST_CD ,CUST_NM, CUST_NM_ENG, BRANCH_NM, BRANCH_NM_ENG, CO_RGST_NO, BIZ_CG_CD, PRT_CUST_GB, PRT_CUST_CD, ADDR, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID) VALUES (:classFication, :custCD, :custNM, :custNMENG, :custBranchNM, :custBranchNM_EN, :coRgstNo, :industryCD, :prtOrganizationClass, :prtOrganizationCD, :addr, :validStartDT, :validEndDT, :operationDate, :userID)`;
     oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 
@@ -98,7 +107,7 @@ exports.editCust = async function (req, res) {
         operationDate: { val: operationDate },
         userID: { val: userID }
     };
-    SQL = `UPDATE TB_ITCUST SET CUST_GB = :classFication ,CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT, SYS_DTIM = :operationDate, WORK_ID = :userID WHERE CUST_CD = :custCD`;
+    var SQL = `UPDATE TB_ITCUST SET CUST_GB = :classFication ,CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT, SYS_DTIM = :operationDate, WORK_ID = :userID WHERE CUST_CD = :custCD`;
     oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 
