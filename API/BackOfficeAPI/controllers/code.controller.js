@@ -17,7 +17,7 @@ exports.getCode = async function (req, res) {
     var SQL_SEARCH_CODE = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm `;
     var SQL_SEARCH_ALL = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm AND TB_ITCODE.CODE LIKE :code `;
     var SQL_ORDER_BY = 'ORDER BY CODE_NM ';
-    var SQL_LIMIT = ':currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
