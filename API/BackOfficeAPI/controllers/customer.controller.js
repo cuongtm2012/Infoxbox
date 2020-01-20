@@ -86,9 +86,9 @@ exports.editCust = async function (req, res) {
     var prtOrganizationClass = req.body.prtOrganizationClass;
     var prtOrganizationCD = req.body.prtOrganizationCD;
     var addr = req.body.addr;
-    var validStartDT = req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var operationDate = req.body.operationDate.replace(/[^0-9 ]/g, "");
+    var validStartDT = req.body.validStartDT ? req.body.validStartDT.replace(/[^0-9 ]/g, "") : "";
+    var validEndDT = req.body.validEndDT ? req.body.validEndDT.replace(/[^0-9 ]/g, "") : "";
+    var operationDate = req.body.operationDate ? req.body.operationDate.replace(/[^0-9 ]/g, "") : "";
     var userID = req.body.userID;
     var param = {
         classFication: { val: classFication },
