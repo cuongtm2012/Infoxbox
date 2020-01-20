@@ -37,7 +37,7 @@ exports.getContract = async function (req, res) {
     var SQL_INNER_JOIN = 'INNER JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD ';
     var SQL_SEARCH = 'WHERE TB_ITCUST.CUST_GB LIKE :organClassifi OR TB_ITCTRT.CUST_CD LIKE :organCd OR TB_ITCUST.CUST_NM LIKE :organNM OR TB_ITCTRT.GDS_CD LIKE :productCode ';
     var SQL_ORDER_BY = 'ORDER BY CUST_CD ';
-    var SQL_LIMIT = ':currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
