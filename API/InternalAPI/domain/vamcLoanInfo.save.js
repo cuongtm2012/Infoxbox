@@ -7,7 +7,7 @@ module.exports = function VamcLoanInfo(listData, niceSessionKey, sysDtim, workID
     } = listData;
 
     this.NICE_SSIN_ID = niceSessionKey;
-    this.SEQ = seq ? seq : seqs;
+    this.SEQ = parseInt(seq) ? parseInt(seq) : seqs;
     this.SELL_OGZ_NM = company ? company : null;
     this.PRCP_BAL = balance ? balance : 0;
     this.DATA_RPT_DATE = date ? date : null;

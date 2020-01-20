@@ -89,10 +89,10 @@ const getContent = require('../util/defineitem/definecard');
 const getMSG = require('../util/getMSG');
 
 const loan12MInforSave = require('../domain/loan12monInfo.save');
-
 const loan5YearInfo = require('../domain/loan5yearInfo.save');
-
 const vamcLoanInfo = require('../domain/vamcLoanInfo.save');
+const loanAtt12MInfo = require('../domain/loanAttention12mInfo');
+const creditContractInfor = require('../domain/creditContractInfo.save');
 
 const excuteInsert = require('../services/excuteInsert.service');
 
@@ -241,11 +241,51 @@ exports.internalCICB0003 = function (req, res, next) {
                             }
                             console.log('bindlistloan12monInfo', bindlistloan12monInfo);
 
+                            /* 
+                            ** 2.7.Loan Attention 12M info
+                            */
+                            let listloanAtt12monInfo = list.reportS11A.loanAttention12monInfo.list;
+                            var seqAttLoan = 0;
+                            let bindlistloanAtt12monInfo = [];
+
+                            if (!_.isEmpty(listloanAtt12monInfo)) {
+                                _.forEach(listloanAtt12monInfo, res => {
+                                    seqAttLoan = seqAttLoan + 1;
+                                    const arrChildLoanAtt12MonInfo = [];
+                                    const preVal2 = new loanAtt12MInfo(res, niceSessionKey, sysDtim, workID, seqAttLoan);
+                                    _.forEach(preVal2, (val, key) => {
+                                        arrChildLoanAtt12MonInfo.push(val)
+                                    });
+                                    bindlistloanAtt12monInfo.push(arrChildLoanAtt12MonInfo)
+                                });
+                            }
+                            console.log('bindlistloanAtt12monInfo', bindlistloanAtt12monInfo);
+
+                            /* 
+                            ** 3.1. Credit contract info
+                            */
+                          let listcreditContractInfo = list.reportS11A.creditContractInfo.list;
+                          var seqcreditCtr = 0;
+                          let bindlistCreditContractInfo = [];
+
+                          if (!_.isEmpty(listcreditContractInfo)) {
+                              _.forEach(listcreditContractInfo, res => {
+                                seqcreditCtr = seqcreditCtr + 1;
+                                  const arrChildCreditContractInfo = [];
+                                  const preVal2 = new creditContractInfor(res, niceSessionKey, sysDtim, workID, seqcreditCtr);
+                                  _.forEach(preVal2, (val, key) => {
+                                    arrChildCreditContractInfo.push(val)
+                                  });
+                                  bindlistCreditContractInfo.push(arrChildCreditContractInfo)
+                              });
+                          }
+                          console.log('bindlistCreditContractInfo', bindlistCreditContractInfo);
+
                             /*
                             ** Insert Scraping service
                             */
 
-                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo).then(resultMSG => {
+                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo).then(resultMSG => {
                                 console.log('insert Scraping MSG:', resultMSG);
                                 if (!_.isEmpty(resultMSG)) {
                                     // update complete cic report inquiry status 10
