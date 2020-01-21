@@ -12,7 +12,16 @@ exports.getCode = async function (req, res) {
     var codeNm = req.query.codeNm;
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
-    var SQL_SELECT = `SELECT TB_ITCODE.CODE as CODE, TB_ITCODE.CD_CLASS as CD_CLASS, TB_ITCODE.CODE_NM as CODENM, TB_ITCODE.CODE_NM_EN as CODENM_EN, TB_ITCODE.VALID_START_DT as VALID_START_DT, TB_ITCODE.VALID_END_DT as VALID_END_DT `;
+    var SQL_SELECT = `SELECT TB_ITCODE.CODE as CODE, 
+    TB_ITCODE.CD_CLASS as CD_CLASS, 
+    TB_ITCODE.CODE_NM as CODENM, 
+    TB_ITCODE.CODE_NM_EN as CODENM_EN, 
+    TB_ITCODE.PRT_CD_CLASS as PRT_CD_CLASS, 
+    TB_ITCODE.PRT_CODE as PRT_CODE, 
+    to_date(SYS_DTIM, 'YYYY/MM/DD HH:MI:SS') as SYS_DTIM, 
+    WORK_ID as WORK_ID, 
+    to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT,
+    to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT `;
     var SQL_FROM = `FROM TB_ITCODE `;
     var SQL_SEARCH_CODE = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm `;
     var SQL_SEARCH_ALL = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm AND TB_ITCODE.CODE LIKE :code `;
@@ -20,6 +29,7 @@ exports.getCode = async function (req, res) {
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
+        console.log(sql);
         let params = {
             currentLocation: { val: currentLocation },
             limitRow: { val: limitRow }
