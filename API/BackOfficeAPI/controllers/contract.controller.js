@@ -13,7 +13,7 @@ exports.getProduct = async function (req, res) {
 
     if (_.isEmpty(productCode) && _.isEmpty(productNM)) {
         let sql = SQL_SELECT + SQL_FROM;
-        let param = {};
+        let params = {};
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     } else {
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
@@ -32,11 +32,19 @@ exports.getContract = async function (req, res) {
     var productCode = req.query.productCode;
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
-    var SQL_SELECT = `SELECT TB_ITCUST.CUST_GB as CLASS, TB_ITCTRT.CUST_CD as CUST_CODE, TB_ITCTRT.GDS_CD as PRODUCT_CODE, TB_ITCUST.CUST_NM as CUST_NM, TB_ITCTRT.VALID_START_DT as VALID_START_DT, TB_ITCTRT.VALID_END_DT as VALID_END_DT `;
+    var SQL_SELECT = `SELECT 
+    TB_ITCTRT.CUST_GB as CLASS, 
+    TB_ITCTRT.CUST_CD as CUST_CODE, 
+    TB_ITCTRT.GDS_CD as PRODUCT_CODE, 
+    TB_ITCUST.CUST_NM as CUST_NM,
+    to_char(to_date(TB_ITCTRT.VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT ,
+    to_char(to_date(TB_ITCTRT.VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT ,
+    to_char(to_date(TB_ITCTRT.SYS_DTIM, 'yyyymmdd'),'mm/dd/yyyy') AS SYS_DTIM , 
+    TB_ITCTRT.WORK_ID as WORK_ID  `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
     var SQL_INNER_JOIN = 'INNER JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD ';
     var SQL_SEARCH = 'WHERE TB_ITCUST.CUST_GB LIKE :organClassifi OR TB_ITCTRT.CUST_CD LIKE :organCd OR TB_ITCUST.CUST_NM LIKE :organNM OR TB_ITCTRT.GDS_CD LIKE :productCode ';
-    var SQL_ORDER_BY = 'ORDER BY CUST_CD ';
+    var SQL_ORDER_BY = 'ORDER BY TB_ITCTRT.CUST_CD ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_ORDER_BY + SQL_LIMIT;
