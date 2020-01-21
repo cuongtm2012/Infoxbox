@@ -93,6 +93,7 @@ const loan5YearInfo = require('../domain/loan5yearInfo.save');
 const vamcLoanInfo = require('../domain/vamcLoanInfo.save');
 const loanAtt12MInfo = require('../domain/loanAttention12mInfo');
 const creditContractInfor = require('../domain/creditContractInfo.save');
+const customerLookupInfo = require('../domain/customerLookUpInfo.save');
 
 const excuteInsert = require('../services/excuteInsert.service');
 
@@ -103,8 +104,8 @@ exports.internalCICB0003 = function (req, res, next) {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
-            }
-            // timeout: 6000
+            },
+            timeout: 2 * 60 * 1000
         }
 
         console.log(" req.body:::", req.body);
@@ -262,30 +263,51 @@ exports.internalCICB0003 = function (req, res, next) {
                             console.log('bindlistloanAtt12monInfo', bindlistloanAtt12monInfo);
 
                             /* 
-                            ** 3.1. Credit contract info
+                            ** 3.2. Credit contract info
                             */
-                          let listcreditContractInfo = list.reportS11A.creditContractInfo.list;
-                          var seqcreditCtr = 0;
-                          let bindlistCreditContractInfo = [];
+                            let listcreditContractInfo = list.reportS11A.creditContractInfo.list;
+                            var seqcreditCtr = 0;
+                            let bindlistCreditContractInfo = [];
 
-                          if (!_.isEmpty(listcreditContractInfo)) {
-                              _.forEach(listcreditContractInfo, res => {
-                                seqcreditCtr = seqcreditCtr + 1;
-                                  const arrChildCreditContractInfo = [];
-                                  const preVal2 = new creditContractInfor(res, niceSessionKey, sysDtim, workID, seqcreditCtr);
-                                  _.forEach(preVal2, (val, key) => {
-                                    arrChildCreditContractInfo.push(val)
-                                  });
-                                  bindlistCreditContractInfo.push(arrChildCreditContractInfo)
-                              });
-                          }
-                          console.log('bindlistCreditContractInfo', bindlistCreditContractInfo);
+                            if (!_.isEmpty(listcreditContractInfo)) {
+                                _.forEach(listcreditContractInfo, res => {
+                                    seqcreditCtr = seqcreditCtr + 1;
+                                    const arrChildCreditContractInfo = [];
+                                    const preVal2 = new creditContractInfor(res, niceSessionKey, sysDtim, workID, seqcreditCtr);
+                                    _.forEach(preVal2, (val, key) => {
+                                        arrChildCreditContractInfo.push(val)
+                                    });
+                                    bindlistCreditContractInfo.push(arrChildCreditContractInfo)
+                                });
+                            }
+                            console.log('bindlistCreditContractInfo', bindlistCreditContractInfo);
+
+
+                            /* 
+                            ** 3.3. Customer lookup info
+                            */
+                            let listcusLookupInfo = list.reportS11A.customerLookUpInfo.list;
+                            var seqcusLook = 0;
+                            let bindlistcusLookupInfo = [];
+
+                            if (!_.isEmpty(listcusLookupInfo)) {
+                                _.forEach(listcusLookupInfo, res => {
+                                    seqcusLook = seqcusLook + 1;
+                                    const arrChildCusLookUpInfo = [];
+                                    const preVal2 = new customerLookupInfo(res, niceSessionKey, sysDtim, workID, seqcusLook);
+                                    _.forEach(preVal2, (val, key) => {
+                                        arrChildCusLookUpInfo.push(val)
+                                    });
+                                    bindlistcusLookupInfo.push(arrChildCusLookUpInfo)
+                                });
+                            }
+                            console.log('bindlistcusLookupInfo', bindlistcusLookupInfo);
 
                             /*
                             ** Insert Scraping service
                             */
 
-                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo).then(resultMSG => {
+                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo).then(resultMSG => {
                                 console.log('insert Scraping MSG:', resultMSG);
                                 if (!_.isEmpty(resultMSG)) {
                                     // update complete cic report inquiry status 10
