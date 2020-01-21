@@ -22,11 +22,10 @@ async function select01(req, res, next) {
         sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, SYS_DTIM
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '01' 
-                and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
                 and (SCRP_MOD_CD = '00' or SCRP_MOD_CD is null)
                 and ROWNUM <= 20
             ORDER BY a.SYS_DTIM ASC`;
-        // where CUS_ID = :CUS_ID`;
+        // and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
 
         result = await connection.execute(
             // The statement to execute
