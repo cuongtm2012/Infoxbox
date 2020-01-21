@@ -14,6 +14,7 @@ async function queryOracel(res, sql, param, option) {
                 res.status(200).send(result);
             }
     } catch (err) {
+        console.log(err);
         res.send({error: 1});
     } finally {
         if (connection) {
