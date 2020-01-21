@@ -30,7 +30,8 @@ async function select01(req, res, next) {
         result = await connection.execute(
             // The statement to execute
             sql,
-            [currentTimeStamp],
+            {},
+            // [currentTimeStamp],
             // [1],
             // The "bind value" 3 for the bind variable ":idbv"
             // Options argument.  Since the query only returns one
