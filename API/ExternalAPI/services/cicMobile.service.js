@@ -1,7 +1,7 @@
 const oracledb = require('oracledb');
 const dbconfig = require('../config/dbconfig');
 
-const convertTime = require('../util/dateutil');
+const convertTime = require('../util/convertDate');
 const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 
