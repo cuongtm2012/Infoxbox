@@ -6,6 +6,11 @@ var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');
 
+const https = require('https');
+const fss = require('fs');
+const privateKey = fss.readFileSync('./sslcert/key.pem', 'utf8');
+const certificate = fss.readFileSync('./sslcert/cert.pem', 'utf8');
+
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
@@ -16,7 +21,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var cicExternalRoute = require('./routes/cicExternal.route');
-var cicMobileRoute= require('./routes/cicMobile.route');
+var cicMobileRoute = require('./routes/cicMobile.route');
 
 // Config DB
 var config = require('./config/config');
@@ -49,12 +54,12 @@ app.use(flash());
 app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
-		try {
-			return fs.mkdirSync(dirpath)
-		} catch (err) {
-			if (err.code !== 'EEXIST') throw err
-		}
-	};
+	try {
+		return fs.mkdirSync(dirpath)
+	} catch (err) {
+		if (err.code !== 'EEXIST') throw err
+	}
+};
 
 // LOGS
 var uuid = require('node-uuid');
@@ -64,11 +69,11 @@ var myRequest = createNamespace('my request');
 createFolder(config.log.orgLog);
 
 // Run the context for each request. Assign a unique identifier to each request
-app.use(function(req, res, next) {
-		myRequest.run(function() {
-			myRequest.set('reqId', uuid.v1());
-			next();
-		});
+app.use(function (req, res, next) {
+	myRequest.run(function () {
+		myRequest.set('reqId', uuid.v1());
+		next();
+	});
 });
 
 
@@ -93,6 +98,9 @@ app.use(function (err, req, res, next) {
 	res.render('error');
 });
 
-app.listen(config.server.port, function () {
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
