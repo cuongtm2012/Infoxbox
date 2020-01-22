@@ -59,8 +59,8 @@ exports.addCust = async function (req, res) {
     var prtOrganizationClass = req.body.prtOrganizationClass;
     var prtOrganizationCD = req.body.prtOrganizationCD;
     var addr = req.body.addr;
-    var validStartDT = req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
+    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
     var operationDate = req.body.operationDate.replace(/[^0-9 ]/g, "");;
     var userID = req.body.userID;
     let param = {
@@ -96,10 +96,11 @@ exports.editCust = async function (req, res) {
     var prtOrganizationClass = req.body.prtOrganizationClass;
     var prtOrganizationCD = req.body.prtOrganizationCD;
     var addr = req.body.addr;
-    var validStartDT = req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
+    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
     var operationDate = req.body.operationDate.replace(/[^0-9 ]/g, "");
     var userID = req.body.userID;
+    
     var param = {
         classFication: { val: classFication },
         custCD: { val: custCD },
@@ -117,7 +118,7 @@ exports.editCust = async function (req, res) {
         operationDate: { val: operationDate },
         userID: { val: userID }
     };
-    var SQL = `UPDATE TB_ITCUST SET CUST_CD = :custCD, CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT, SYS_DTIM = :operationDate, WORK_ID = :userID WHERE CUST_GB = :classFication `;
+    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT, SYS_DTIM = :operationDate, WORK_ID = :userID WHERE CUST_GB = :classFication AND CUST_CD = :custCD `;
     oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 
