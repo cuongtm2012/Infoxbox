@@ -8,8 +8,8 @@ var fs = require('file-system');
 
 const https = require('https');
 const fss = require('fs');
-const privateKey = fss.readFileSync('./sslcert/key.pem', 'utf8');
-const certificate = fss.readFileSync('./sslcert/cert.pem', 'utf8');
+const privateKey = fss.readFileSync('../sslcert/key.pem', 'utf8');
+const certificate = fss.readFileSync('../sslcert/cert.pem', 'utf8');
 
 var app = express();
 app.use(cors());
