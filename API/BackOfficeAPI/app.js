@@ -19,6 +19,8 @@ var auth = require('./routes/auth.route');
 var customer = require('./routes/customer.route');
 var contract = require('./routes/contract.route');
 var code = require('./routes/code.route');
+var ciciReport = require('./routes/cic-report.route');
+
 // Config DB
 var config = require('./config/config');
 
@@ -76,6 +78,8 @@ app.use('/auth', auth);
 app.use('/customer', customer);
 app.use('/contract', contract);
 app.use('/code', code);
+app.use('/cicreport', ciciReport);
+
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
