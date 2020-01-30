@@ -70,17 +70,17 @@ exports.getContract = async function (req, res) {
 exports.insertContract = async function (req, res) {
     var cusGB = req.body.cusGB;
     var custCD = req.body.custCD;
-    var productCD = req.body.productCD;
+    var gdsCD = req.body.gdsCD;
     var validStartDt = (_.isEmpty(req.body.validStartDt) ? null : req.body.validStartDt.replace(/[^0-9 ]/g, ""));
     var validEndDt = (_.isEmpty(req.body.validEndDt) ? null : req.body.validEndDt.replace(/[^0-9 ]/g, ""));
     var sysDTim = req.body.sysDTim.replace(/[^0-9 ]/g, "");
     var workID = req.body.workID;
 
-    var SQL = 'INSERT INTO TB_ITCTRT (CUST_GB, CUST_CD, GDS_CD, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID) VALUES (:cusGB, :custCD, :productCD, :validStartDt, :validEndDt, :sysDTim, :workID)';
+    var SQL = 'INSERT INTO TB_ITCTRT (CUST_GB, CUST_CD, GDS_CD, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID) VALUES (:cusGB, :custCD, :gdsCD, :validStartDt, :validEndDt, :sysDTim, :workID)';
     let params = {
         cusGB: { val: cusGB },
         custCD: { val: custCD },
-        productCD: { val: productCD },
+        gdsCD: { val: gdsCD },
         validStartDt: { val: validStartDt },
         validEndDt: { val: validEndDt },
         sysDTim: { val: sysDTim },

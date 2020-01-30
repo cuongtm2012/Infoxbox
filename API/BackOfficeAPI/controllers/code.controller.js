@@ -3,7 +3,7 @@ const oracelService = require('../services/oracelQuery.service');
 var _ = require('lodash');
 
 const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
-const optionAutoCommit = { autoCommit: true };
+const optionAutoCommit = { autoCommit: true };''
 
 exports.getCodeClassification = async function (req, res) {
     var code_classification = _.isEmpty(req.query.code_classification) ? '' : req.query.code_classification;
