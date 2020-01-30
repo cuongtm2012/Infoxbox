@@ -94,10 +94,12 @@ const vamcLoanInfo = require('../domain/vamcLoanInfo.save');
 const loanAtt12MInfo = require('../domain/loanAttention12mInfo');
 const creditContractInfor = require('../domain/creditContractInfo.save');
 const customerLookupInfo = require('../domain/customerLookUpInfo.save');
+const colletaralLoanSecuInfo = require('../domain/collateralLoanSecuInfo.save');
 
 const excuteInsert = require('../services/excuteInsert.service');
 
 const getLoanDetail = require('../util/defineitem/defineLoan');
+const defineColletral = require('../util/defineitem/defineCollateral');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -303,11 +305,29 @@ exports.internalCICB0003 = function (req, res, next) {
                             }
                             console.log('bindlistcusLookupInfo', bindlistcusLookupInfo);
 
+                            /* 
+                            ** 3.1. Colletaral Loan Secu info
+                            */
+                            let listloanSecurityInfo = list.reportS11A.loanSecurityInfo.list;
+                            let bindlistColletaralLoanSecuInfo = [];
+
+                            const arrCollateral = defineColletral.getCollateral(listloanSecurityInfo);
+                            _.forEach(arrCollateral, res => {
+                                const arrChildCollateralLoanSecuInfor = [];
+                                const preVal2 = new colletaralLoanSecuInfo(res, niceSessionKey, sysDtim, workID);
+                                _.forEach(preVal2, (val, key) => {
+                                    arrChildCollateralLoanSecuInfor.push(val)
+                                });
+                                bindlistColletaralLoanSecuInfo.push(arrChildCollateralLoanSecuInfor)
+                            });
+
+                            console.log('bindlistColletaralLoanSecuInfo', bindlistColletaralLoanSecuInfo);
+
                             /*
                             ** Insert Scraping service
                             */
 
-                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo).then(resultMSG => {
+                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, bindlistColletaralLoanSecuInfo).then(resultMSG => {
                                 console.log('insert Scraping MSG:', resultMSG);
                                 if (!_.isEmpty(resultMSG)) {
                                     // update complete cic report inquiry status 10

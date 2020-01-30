@@ -6,7 +6,7 @@ const dateutil = require('../util/dateutil');
 
 const _ = require('lodash');
 
-async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo) {
+async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, bindlistColletaralLoanSecuInfo) {
     let connection;
 
     try {
@@ -14,7 +14,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         connection = await oracledb.getConnection(dbconfig);
 
         // result for insert
-        let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo;
+        let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo;
 
         const sysDtim = dateutil.timeStamp();
         const workID = getIdGetway.getIPGateWay();
@@ -438,6 +438,32 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         }
         console.log("Result bindlistcusLookupInfo is:", resultCusLookupInfo);
 
+        //3.1. Collateral loan security infor
+        if (!_.isEmpty(bindlistColletaralLoanSecuInfo)) {
+            const sqlInsertCollateral = `INSERT INTO tb_loan_gurt (NICE_SSIN_ID,
+                AST_SCRT_LOAN_GURT_AMT,
+                SCRT_AST_CNT,
+                SCRT_AST_OGZ_CNT,             
+                SYS_DTIM,
+                WORK_ID)  values (:1, :2, :3, :4, :5, :6)`;
+
+            const options = {
+                autoCommit: false,
+                bindDefs: [
+                    { type: oracledb.STRING, maxSize: 25 },
+                    { type: oracledb.STRING, maxSize: 200 },
+                    { type: oracledb.STRING, maxSize: 200 },
+                    { type: oracledb.STRING, maxSize: 200 },
+                    { type: oracledb.STRING, maxSize: 14 },
+                    { type: oracledb.STRING, maxSize: 20 }
+                ]
+            };
+
+            resultColletaralLoanSecuInfo = await connection.executeMany(sqlInsertCollateral, bindlistColletaralLoanSecuInfo, options);
+
+        }
+        console.log("Result bindlistColletaralLoanSecuInfo is:", resultColletaralLoanSecuInfo);
+
         // CICRPT main
         if (!_.isEmpty(objciccptmain)) {
             const sqlInsertCICRPTMain = `INSERT INTO TB_CICRPT_MAIN (NICE_SSIN_ID,
@@ -540,7 +566,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             });
         console.log("resultFinal: " + resultFinal);
 
-        return { resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo };
+        return { resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo };
         // return Promise.all(result.rowsAffected);
     } catch (err) {
         console.log(err);

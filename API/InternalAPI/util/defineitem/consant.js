@@ -67,11 +67,7 @@ const mappingDataCollateral = {
     }
 };
 
-const _CARDDEFINEBALANCE = CARDDEFINEBALANCE;
-export { _CARDDEFINEBALANCE as CARDDEFINEBALANCE };
-const _LOANTERM = LOANTERM;
-export { _LOANTERM as LOANTERM };
-const _mappingData = mappingData;
-export { _mappingData as mappingData };
-const _mappingDataCollateral = mappingDataCollateral;
-export { _mappingDataCollateral as mappingDataCollateral };
+module.exports.CARDDEFINEBALANCE = CARDDEFINEBALANCE;
+module.exports.LOANTERM = LOANTERM;
+module.exports.mappingData = mappingData;
+module.exports.mappingDataCollateral = mappingDataCollateral;
