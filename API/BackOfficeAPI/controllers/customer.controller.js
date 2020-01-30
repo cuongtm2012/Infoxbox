@@ -20,7 +20,7 @@ exports.getCustInfo = async function (req, res) {
     CO_RGST_NO as CO_RGST_NO, 
     BIZ_CG_CD as BIZ_CG_CD, PRT_CUST_GB as PRT_CUST_GB,
      PRT_CUST_CD as PRT_CUST_CD, 
-     ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'yyyymmdd'),'mm/dd/yyyy') AS SYS_DTIM, WORK_ID as WORK_ID `;
+     ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH:MI:SS'),'mm/dd/yyyy hh:mm:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
     var SQL_FROM = 'FROM TB_ITCUST ';
     var SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication OR CUST_CD LIKE :cusCd OR CUST_NM LIKE :custNm ';
     var SQL_ORDER_BY = 'ORDER BY CUST_NM '
