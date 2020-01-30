@@ -19,7 +19,7 @@ async function select01(req, res, next) {
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, SYS_DTIM
+        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '01' 
                 and (SCRP_MOD_CD = '00' or SCRP_MOD_CD is null)

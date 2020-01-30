@@ -8,6 +8,8 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
         LOGIN_PW,
         PSPT_NO,
         TAX_ID,
+        NATL_ID,
+        OLD_NATL_ID,
         SYS_DTIM
     } = parameters;
 
@@ -25,6 +27,8 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
         step_data
     } = defaultValue;
 
+    const natId = NATL_ID ? NATL_ID : OLD_NATL_ID;
+
     this.appCd = appCd;
     this.orgCd = orgCd;
     this.svcCd = 'B0002';
@@ -34,7 +38,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     this.customerType = customerType;
     this.cicNo = CIC_ID ? CIC_ID : "";
     this.taxNo = TAX_ID ? TAX_ID : "";
-    this.cmtNo = PSPT_NO ? PSPT_NO : "";
+    this.cmtNo = natId ? natId : PSPT_NO;
     this.reportType = reportType;
     this.voteNo = voteNo;
     this.reqStatus = reqStatus;
