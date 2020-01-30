@@ -9,6 +9,7 @@ var RESCODEEXT = {
     NILOGINID: { value: 5, name: "Need to input mandatory item(log in ID)", code: "F005" },
     NIPASSWORD: { value: 6, name: "Need to input mandatory item(log in Password)", code: "F006" },
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
+    NIONEOFFIVENOTNULL: {value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017"},
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     NINAME: {value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
     NIMOBILEPHONENUMBER: {value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027"},

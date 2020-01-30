@@ -67,6 +67,14 @@ module.exports = {
             return response;
         }
 
+        if (validation.isEmptyStr(getdataReq.taxCode || getdataReq.natId || getdataReq.oldNatId || 
+            getdataReq.passportNumber|| getdataReq.cicId )){
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NIONEOFFIVENOTNULL.name,
+                responseCode: responcodeEXT.RESCODEEXT.NIONEOFFIVENOTNULL.code
+            }
+        }
+        
         else
             response = {};
 
