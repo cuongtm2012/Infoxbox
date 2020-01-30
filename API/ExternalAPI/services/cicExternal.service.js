@@ -4,6 +4,7 @@ const dbconfig = require('../../shared/config/dbconfig');
 const convertTime = require('../util/dateutil');
 const nicekey = require('../util/niceSessionKey');
 const ipGateWay = require('../../shared/util/getIPGateWay');
+const _ = require('lodash');
 
 async function insertSCRPLOG(req) {
     let connection;
@@ -118,7 +119,9 @@ async function selectCICS11aRSLT(req) {
     let connection;
 
     try {
-        let resultScrpTranlog, resultCicrptMain;
+        let resultScrpTranlog, resultCicrptMain, resultLoanDetailInfo, resultCreditCardInfo;
+        let outputCicrptMain, outputScrpTranlog, outputLoanDetailinfo, outputCreditCardInfo;
+        var cmtLoanDetailInfo, cmtCreditCard;
 
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
@@ -142,14 +145,15 @@ async function selectCICS11aRSLT(req) {
             });
 
         console.log("resultScrpTranlog rows:", resultScrpTranlog.rows);
-        let outputScrpTranlog = resultScrpTranlog.rows;
+        outputScrpTranlog = resultScrpTranlog.rows;
 
         /*
         ** cicrpt main
         */
-        let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.otr_iden_evd 
+        let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.otr_iden_evd,
+                              a.CARD_CMT, a.LOAN_CMT_DETAIL  
                               from tb_cicrpt_main a
-                              where NICE_SSIN_ID = :niceSessionKey`;
+                              where a.NICE_SSIN_ID = :niceSessionKey`;
 
         resultCicrptMain = await connection.execute(
             // The statement to execute
@@ -162,10 +166,117 @@ async function selectCICS11aRSLT(req) {
             });
 
         console.log("resultCicrptMain rows:", resultCicrptMain.rows);
-        let outputCicrptMain = resultCicrptMain.rows;
+        outputCicrptMain = resultCicrptMain.rows;
 
+        /*
+        ** 2.1. loan detail
+        */
+        const sqlLoanDetailInfo = `select B.OGZ_CD,
+            B.OGZ_NM,
+            B.RCT_RPT_DATE,
+            B.ST_LOAN_VND,
+            B.ST_LOAN_USD,
+            B.ST_NORM_LOAN_VND,
+            B.ST_NORM_LOAN_USD,
+            B.ST_CAT_LOAN_VND,
+            B.ST_CAT_LOAN_USD,
+            B.ST_FIX_LOAN_VND,
+            B.ST_FIX_LOAN_USD,
+            B.ST_CQ_LOAN_VND,
+            B.ST_CQ_LOAN_USD,
+            B.ST_EL_LOAN_VND,
+            B.ST_EL_LOAN_USD,
+            B.MT_LOAN_VND,
+            B.MT_LOAN_UDS,
+            B.MT_NORM_LOAN_VND,
+            B.MT_NORM_LOAN_USD,
+            B.MT_CAT_LOAN_VND,
+            B.MT_CAT_LOAN_USD,
+            B.MT_FIX_LOAN_VND,
+            B.MT_FIX_LOAN_USD,
+            B.MT_CQ_LOAN_VND,
+            B.MT_CQ_LOAN_USD,
+            B.MT_EL_LOAN_VND,
+            B.MT_EL_LOAN_USD,
+            B.LT_LOAN_VND,
+            B.LT_LOAN_USD,
+            B.LT_NORM_LOAN_VND,
+            B.LT_NORM_LOAN_USD,
+            B.LT_CAT_LOAN_VND,
+            B.LT_CAT_LOAN_USD,
+            B.LT_FIX_LOAN_VND,
+            B.LT_FIX_LOAN_USD,
+            B.LT_CQ_LOAN_VND,
+            B.LT_CQ_LOAN_USD,
+            B.LT_EL_LOAN_VND,
+            B.LT_EL_LOAN_USD,
+            B.OTR_LOAN_VND,
+            B.OTR_LOAN_USD,
+            B.OTR_NORM_LOAN_VND,
+            B.OTR_NORM_LOAN_USD,
+            B.OTR_CAT_LOAN_VND,
+            B.OTR_CAT_LOAN_USD,
+            B.OTR_FIX_LOAN_VND,
+            B.OTR_FIX_LOAN_USD,
+            B.OTR_CQ_LOAN_VND,
+            B.OTR_CQ_LOAN_USD,
+            B.OTR_EL_LOAN_VND,
+            B.OTR_EL_LOAN_USD,
+            B.OTR_BAD_LOAN_VND,
+            B.OTR_BAD_LOAN_USD,
+            B.OGZ_TOT_LOAN_VND,
+            B.OGZ_TOT_LOAN_USD,
+            A.SUM_TOT_OGZ_VND,
+            A.SUM_TOT_OGZ_USD
+            from 
+                (select NICE_SSIN_ID,
+                sum(OGZ_TOT_LOAN_VND) AS SUM_TOT_OGZ_VND,
+                sum(OGZ_TOT_LOAN_USD) AS SUM_TOT_OGZ_USD
+                from tb_loan_detail where nice_ssin_id =:niceSessionKey group by nice_ssin_id) A left join tb_loan_detail B on A.NICE_SSIN_ID = B.NICE_SSIN_ID`;
 
-        return { outputScrpTranlog, outputCicrptMain };
+        resultLoanDetailInfo = await connection.execute(
+            // The statement to execute
+            sqlLoanDetailInfo,
+            {
+                niceSessionKey: { val: req.niceSessionKey }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+
+        console.log("resultLoanDetailInfo rows:", resultLoanDetailInfo.rows);
+
+        if (_.isEmpty(resultLoanDetailInfo.rows)) {
+            cmtLoanDetailInfo = outputCicrptMain[0].LOAN_CMT_DETAIL;
+        }
+        else
+            outputLoanDetailinfo = resultLoanDetailInfo.rows;
+
+        /*
+        ** 2.2. Credit Card infor
+        */
+        let sqlCreditCardInfo = `select a.CARD_TOT_LMT, a.CARD_TOT_SETL_AMT, a.CARD_TOT_ARR_AMT, a.CARD_CNT, a.CARD_ISU_OGZ 
+                             from TB_CRDT_CARD a
+                             where a.NICE_SSIN_ID = :niceSessionKey`;
+
+        resultCreditCardInfo = await connection.execute(
+            // The statement to execute
+            sqlCreditCardInfo,
+            {
+                niceSessionKey: { val: req.niceSessionKey }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+
+        console.log("resultCreditCardInfo rows:", resultCreditCardInfo.rows);
+        if (_.isEmpty(resultCreditCardInfo.rows)) {
+            cmtCreditCard = outputCicrptMain[0].CARD_CMT;
+        }
+        else
+            outputCreditCardInfo = resultCreditCardInfo.rows;
+
+        return { outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, outputCreditCardInfo, cmtLoanDetailInfo, cmtCreditCard };
 
     } catch (err) {
         console.log(err);

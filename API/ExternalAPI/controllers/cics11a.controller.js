@@ -16,6 +16,7 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
 const util = require('../util/dateutil');
 const common_service = require('../services/common.service');
+const _ = require('lodash');
 
 exports.cics11aRQST = function (req, res, next) {
 	try {
@@ -94,6 +95,8 @@ const cics11aRSLTReq = require('../domain/CIC_S11A_RSLT.request');
 const cics11aRSLTRes = require('../domain/CIC_S11A_RSLT.response');
 const validS11ARQLT = require('../util/validRequestS11AResponse');
 
+const loanDetailNode = require('../domain/loan/loanDetailNode');
+
 exports.cics11aRSLT = function (req, res) {
 	try {
 		var start = new Date();
@@ -114,7 +117,7 @@ exports.cics11aRSLT = function (req, res) {
 
 			}
 
-			let responseData = new cics11aRSLTRes(getdataReq, preResponse, {});
+			let responseData = new cics11aRSLTRes(preResponse, {});
 			return res.status(200).json(responseData);
 		}
 		//End check params request
@@ -135,10 +138,40 @@ exports.cics11aRSLT = function (req, res) {
 			}
 
 			if (!validation.isEmptyStr(reslt)) {
-				let responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0]);
+				const arrloanDetailNode = [];
+				var totalFiLoanVND, totalFiLoanUSD;
+				var cmtLoanDetaiInfo, cmtCreditCard;
+				var creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany;
+
+				// 2.1 Loan detail infor
+				if (!_.isEmpty(reslt.outputLoanDetailinfo)) {
+					reslt.outputLoanDetailinfo.forEach(em => {
+						arrloanDetailNode.push(new loanDetailNode(em));
+						totalFiLoanVND = em.SUM_TOT_OGZ_VND;
+						totalFiLoanUSD = em.SUM_TOT_OGZ_USD;
+					});
+				} else {
+					cmtLoanDetaiInfo = reslt.cmtLoanDetailInfo;
+				}
+
+				// 2.2 Credit card infor
+				if (!_.isEmpty(reslt.outputCreditCardInfo)) {
+					creditCardTotalLimit = reslt.outputCreditCardInfo.CARD_TOT_LMT;
+					creditCardTotalBalance = reslt.outputCreditCardInfo.CARD_TOT_SETL_AMT;
+					creditCardTotalArrears = reslt.outputCreditCardInfo.CARD_TOT_ARR_AMT;
+					numberOfCreditCard = reslt.outputCreditCardInfo.CARD_CNT;
+					creditCardIssueCompany = reslt.outputCreditCardInfo.CARD_ISU_OGZ;
+
+				}
+				else {
+					cmtCreditCard = reslt.cmtCreditCard.split('.')[0];
+				}
+
+				let responseData = new cics11aRSLTRes(response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+					, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard);
 				return res.status(200).json(responseData);
 			} else {
-				let responseData = new cics11aRSLTRes(getdataReq, responseUnknow, {});
+				let responseData = new cics11aRSLTRes(responseUnknow, {}, {}, {});
 				return res.status(400).json(responseData);
 			}
 		});

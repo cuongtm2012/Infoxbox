@@ -1,7 +1,7 @@
 
-var cics11aRSLTReq = require('./CIC_S11A_RSLT.request');
 
-module.exports = function CIC_S11A_RSLTResponse(cics11aRSLTRequest, response, outputScrpTranlog, outputCicrptMain) {
+module.exports = function CIC_S11A_RSLTResponse(response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+    , creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard) {
 
     const {
         responseTime,
@@ -30,7 +30,6 @@ module.exports = function CIC_S11A_RSLTResponse(cics11aRSLTRequest, response, ou
         RPT_SEND_DTIM
     } = outputCicrptMain;
 
-    this.requestData = new cics11aRSLTReq(cics11aRSLTRequest);
     this.responseTime = responseTime ? responseTime : '';
     this.responseCode = responseCode ? responseCode : '';
     this.responseMessage = responseMessage ? responseMessage : '';
@@ -49,6 +48,16 @@ module.exports = function CIC_S11A_RSLTResponse(cics11aRSLTRequest, response, ou
     this.address = PSN_ADDR ? PSN_ADDR : '';
     this.nationalId = NATL_ID ? NATL_ID : '';
     this.docIdEvidance = OTR_IDEN_EVD ? OTR_IDEN_EVD : '';
+    this.loanDetailNode = outputLoanDetailinfo;
+    this.totalFiLoanVND = totalFiLoanVND ? totalFiLoanVND : '';
+    this.totalFiLoanUSD = totalFiLoanUSD ? totalFiLoanUSD : '';
+    this.cmtLoanDetaiInfo = cmtLoanDetaiInfo ? cmtLoanDetaiInfo : '';
+    this.creditCardTotalLimit = creditCardTotalLimit ? creditCardTotalLimit : '';
+    this.creditCardTotalBalance = creditCardTotalBalance ? creditCardTotalBalance : '';
+    this.creditCardTotalArrears = creditCardTotalArrears ? creditCardTotalArrears : '';
+    this.numberOfCreditCard = numberOfCreditCard ? numberOfCreditCard : '';
+    this.creditCardIssueCompany = creditCardIssueCompany ? creditCardIssueCompany : '';
+    this.cmtCreditCard = cmtCreditCard ? cmtCreditCard : '';
 
 };
 

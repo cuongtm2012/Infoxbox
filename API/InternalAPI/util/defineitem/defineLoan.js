@@ -37,7 +37,7 @@ module.exports = {
                             let res = {
                                 cicFiName: arrVal.company,
                                 cicFiCode: arrVal.companyCode,
-                                date: arrVal.date,
+                                recentReportDate: arrVal.date,
                                 seq: arrVal.seq,
                                 [keyForObj.vnd]: arrVal.vnd,
                                 [keyForObj.usd]: arrVal.usd
