@@ -5,6 +5,7 @@ var router = express.Router();
 
 var code_route = require('../controllers/code.controller');
 
+router.get('/getCodeClassification',  code_route.getCodeClassification);
 router.get('/getCode',  code_route.getCode);
 router.post('/insertCode',  code_route.insertCode);
 router.put('/editCode',  code_route.editCode);
