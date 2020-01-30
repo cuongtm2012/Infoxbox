@@ -5,11 +5,32 @@ var _ = require('lodash');
 const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 
+exports.getCodeClassification = async function (req, res) {
+    var code_classification = _.isEmpty(req.query.code_classification) ? '' : req.query.code_classification;
+    var code_classification_name = _.isEmpty(req.query.code_classification_name) ? '' : req.query.code_classification_name;
+    var SQL_SELECT = `SELECT CD_CLASS, CODE_NM, CODE_NM_EN `;
+    var SQL_FROM = 'FROM TB_ITCODE ';
+    var SEARCH = 'WHERE CD_CLASS = :code_classification AND CODE_NM = :code_classification_name';
+    if (_.isEmpty(code_classification) && _.isEmpty(code_classification_name)) {
+        let sql = SQL_SELECT + SQL_FROM;
+        let params = {};
+        oracelService.queryOracel(res, sql, params, optionFormatObj);
+    } else {
+        let sql = SQL_SELECT + SQL_FROM + SEARCH;
+        let params = {
+            code_classification: { val: code_classification },
+            code_classification_name: { val: code_classification_name }
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj);
+    }
+};
+
+
 
 exports.getCode = async function (req, res) {
-    var code = req.query.code;
-    var codeClass = req.query.codeClass;
-    var codeNm = req.query.codeNm;
+    var code = _.isEmpty(req.query.code) ? '' : req.query.code;
+    var codeClass = _.isEmpty(req.query.codeClass) ? '' : req.query.codeClass;
+    var codeNm = _.isEmpty(req.query.codeNm) ? '' : req.query.codeNm;
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT TB_ITCODE.CODE as CODE, 
@@ -34,7 +55,7 @@ exports.getCode = async function (req, res) {
             currentLocation: { val: currentLocation },
             limitRow: { val: limitRow }
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        oracelService.queryOracel(res, sql, params, optionFormatObj);
     } else if (_.isEmpty(code) && !_.isEmpty(codeClass) && !_.isEmpty(codeNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH_CODE + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
@@ -62,12 +83,12 @@ exports.insertCode = async function (req, res) {
     var codeClass = req.body.codeClass;
     var valid_start_dt = (_.isEmpty(req.body.valid_start_dt) ? null : req.body.valid_start_dt.replace(/[^0-9 ]/g, ""));
     var valid_end_dt = (_.isEmpty(req.body.valid_end_dt) ? null : req.body.valid_end_dt.replace(/[^0-9 ]/g, ""));
-    var codeNm = req.body.codeNm;
-    var codeNmEn = req.body.codeNmEn;
-    var prtCdClass = req.body.prtCdClass;
-    var prtCd = req.body.prtCd;
+    var codeNm = _.isEmpty(req.query.codeNm) ? '' : req.body.codeNm;
+    var codeNmEn = _.isEmpty(req.query.codeNmEn) ? '' : req.body.codeNmEn;
+    var prtCdClass = _.isEmpty(req.query.prtCdClass) ? '' : req.body.prtCdClass;
+    var prtCd = _.isEmpty(req.query.prtCd) ? '' : req.body.prtCd;
     var sysDt = req.body.sysDt.replace(/[^0-9 ]/g, "");
-    var workID = req.body.workID;
+    var workID = _.isEmpty(req.query.workID) ? '' : req.body.workID;
 
     var SQL = 'INSERT INTO TB_ITCODE (CODE, CD_CLASS, VALID_START_DT, VALID_END_DT, CODE_NM, CODE_NM_EN, PRT_CD_CLASS, PRT_CODE, SYS_DTIM, WORK_ID) VALUES (:code, :codeClass, :valid_start_dt, :valid_end_dt, :codeNm, :codeNmEn, :prtCdClass, :prtCd, :sysDt, :workID)';
     let params = {
