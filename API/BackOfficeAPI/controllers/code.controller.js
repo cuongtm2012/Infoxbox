@@ -39,7 +39,7 @@ exports.getCode = async function (req, res) {
     TB_ITCODE.CODE_NM_EN as CODENM_EN, 
     TB_ITCODE.PRT_CD_CLASS as PRT_CD_CLASS, 
     TB_ITCODE.PRT_CODE as PRT_CODE, 
-    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH:MI:SS'),'mm/dd/yyyy hh:mm:ss') as SYS_DTIM, 
+    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH:MI:SS'),'mm/dd/yyyy hh:mi:ss') as SYS_DTIM, 
     WORK_ID as WORK_ID, 
     to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT,
     to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT `;
