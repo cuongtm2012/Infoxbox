@@ -250,7 +250,7 @@ exports.internalCICB0003 = function (req, res, next) {
                            ** 2.6. Card 3 Year
                            */
                             let listCard3YearInfo = list.reportS11A.credit3yearInfo.list;
-                            const objCard3YearInfo;
+                            let objCard3YearInfo;
                             if (_.isEmpty(listCard3YearInfo)) {
                                 objCard3YearInfo = {};
                             }
@@ -325,7 +325,7 @@ exports.internalCICB0003 = function (req, res, next) {
                             ** 3.1. Colletaral Loan Secu info
                             */
                             let listloanSecurityInfo = list.reportS11A.loanSecurityInfo.list;
-                            const objCollateralInfo;
+                            let objCollateralInfo;
                             if (_.isEmpty(listloanSecurityInfo)) {
                                 objCollateralInfo = {};
                             }
