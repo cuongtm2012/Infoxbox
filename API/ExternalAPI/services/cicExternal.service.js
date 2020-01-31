@@ -119,9 +119,9 @@ async function selectCICS11aRSLT(req) {
     let connection;
 
     try {
-        let resultScrpTranlog, resultCicrptMain, resultLoanDetailInfo, resultCreditCardInfo, resultVamcLoan, resultLoan12MInfo, resultNPL5YLoan, resultLoan12MCat, resultCollateral, resultFinancialContract, resultCusLookup;
-        let outputCicrptMain, outputScrpTranlog, outputLoanDetailinfo, outputCreditCardInfo, outputVamcLoan, outputLoan12MInfo, outputNPL5YLoan, outputloan12MCat, outputCollateral, outputFinanCialContract, outputCusLookup;
-        var cmtLoanDetailInfo, cmtCreditCard, cmtVamcLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract, cmtCusLookup;
+        let resultScrpTranlog, resultCicrptMain, resultLoanDetailInfo, resultCreditCardInfo, resultVamcLoan, resultLoan12MInfo, resultNPL5YLoan, resultLoan12MCat, resultCollateral, resultFinancialContract, resultCusLookup, resultCard3Year;
+        let outputCicrptMain, outputScrpTranlog, outputLoanDetailinfo, outputCreditCardInfo, outputVamcLoan, outputLoan12MInfo, outputNPL5YLoan, outputloan12MCat, outputCollateral, outputFinanCialContract, outputCusLookup, outputCard3year;
+        var cmtLoanDetailInfo, cmtCreditCard, cmtVamcLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract, cmtCard3Year;
 
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
@@ -151,7 +151,7 @@ async function selectCICS11aRSLT(req) {
         ** cicrpt main
         */
         let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.otr_iden_evd,
-                              a.CARD_CMT, a.LOAN_CMT_DETAIL, a.VAMC_CMT, a.LOAN_12MON_CMT, a.NPL_5YR_CMT, a.CAT_LOAN_12MON_CMT, a.FIN_CTRT_CMT
+                              a.CARD_CMT, a.LOAN_CMT_DETAIL, a.VAMC_CMT, a.LOAN_12MON_CMT, a.NPL_5YR_CMT, a.CAT_LOAN_12MON_CMT, a.FIN_CTRT_CMT, a.CARD_ARR_3YR_CMT
                               from tb_cicrpt_main a
                               where a.NICE_SSIN_ID = :niceSessionKey`;
 
@@ -346,6 +346,28 @@ async function selectCICS11aRSLT(req) {
             outputNPL5YLoan = resultNPL5YLoan.rows;
 
         /*
+        ** 2.6. Card 3 year
+        */
+        let sqlCard3Year = `SELECT T.CARD_ARR_PSN_YN, T.CARD_ARR_LGST_DAYS, T.CARD_ARR_CNT FROM TB_CRDT_CARD_DEQ T
+                            where T.NICE_SSIN_ID = :niceSessionKey`;
+
+        resultCard3Year = await connection.execute(
+            // The statement to execute
+            sqlCard3Year,
+            {
+                niceSessionKey: { val: req.niceSessionKey }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+
+        console.log("resultCard3Year rows:", resultCard3Year.rows);
+        if (_.isEmpty(resultCard3Year.rows)) {
+            cmtCard3Year = outputCicrptMain[0].CARD_ARR_3YR_CMT;
+        } else
+            outputCard3year = resultCard3Year.rows;
+
+        /*
         ** 2.7.Loan 12M Cautiou infor
         */
         let sqlLoan12MCat = `SELECT T.BASE_MONTH, T.BASE_MONTH_CAT_LOAN_SUM, T.OGZ_NM, T.RPT_DATE FROM TB_LOAN_12MON_PC T
@@ -430,7 +452,7 @@ async function selectCICS11aRSLT(req) {
         outputCusLookup = resultCusLookup.rows;
 
 
-        return { outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, outputCreditCardInfo, cmtLoanDetailInfo, cmtCreditCard, outputVamcLoan, cmtVamcLoan, outputLoan12MInfo, cmtLoan12MInfo, outputNPL5YLoan, cmtNPL5YearLoan, outputloan12MCat, cmtLoan12MCat, outputCollateral, outputFinanCialContract, cmtFinancialContract, outputCusLookup };
+        return { outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, outputCreditCardInfo, cmtLoanDetailInfo, cmtCreditCard, outputVamcLoan, cmtVamcLoan, outputLoan12MInfo, cmtLoan12MInfo, outputNPL5YLoan, cmtNPL5YearLoan, outputloan12MCat, cmtLoan12MCat, outputCollateral, outputFinanCialContract, cmtFinancialContract, outputCusLookup, outputCard3year, cmtCard3Year };
 
     } catch (err) {
         console.log(err);

@@ -56,18 +56,20 @@ const mappingData = {
 };
 
 const mappingDataCollateral = {
-    "Bảo đảm tiền vay bằng tài sản": {
-        content: 'assetBackedLoanGuarantee'
-    },
-    "Số lượng tài sản bảo đảm": {
-        content: 'numberOfCollateral'
-    },
-    "Số TCTD có tài sản bảo đảm": {
-        content: 'longTermLoanVnd'
-    }
+    assetBackedLoanGuarantee: 'Bảo đảm tiền vay bằng tài sản',
+    numberOfCollateral: 'Số lượng tài sản bảo đảm',
+    numberOfFiWithCollateral: 'Số TCTD có tài sản bảo đảm',
+
 };
+
+const mappingCard3Year = {
+    borrowCreditCardArrear: 'Khách hàng có chậm thanh toán thẻ',
+    creditCardLongestArrearDays: 'Số ngày chậm thanh toán thẻ lớn nhất',
+    creditCardArrearCount: 'Số lần chậm thanh toán thẻ'
+}
 
 module.exports.CARDDEFINEBALANCE = CARDDEFINEBALANCE;
 module.exports.LOANTERM = LOANTERM;
 module.exports.mappingData = mappingData;
 module.exports.mappingDataCollateral = mappingDataCollateral;
+module.exports.mappingCard3Year = mappingCard3Year;

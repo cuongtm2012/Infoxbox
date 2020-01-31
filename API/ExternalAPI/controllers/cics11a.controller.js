@@ -153,9 +153,10 @@ exports.cics11aRSLT = function (req, res) {
 				const arrFinancialContract = [];
 				const arrCusLookup = [];
 				var totalFiLoanVND, totalFiLoanUSD;
-				var cmtLoanDetaiInfo, cmtCreditCard, cmtVmacDisposalLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract;
+				var cmtLoanDetaiInfo, cmtCreditCard, cmtVmacDisposalLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract, cmtCard3Year;
 				var creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany;
 				var gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral;
+				var borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount;
 
 
 				// 2.1 Loan detail infor
@@ -227,6 +228,20 @@ exports.cics11aRSLT = function (req, res) {
 						cmtNPL5YearLoan = reslt.cmtNPL5YearLoan;
 				}
 
+				// 2.6 Card 3 year infor
+				if (!_.isEmpty(reslt.outputCard3year) && _.isEmpty(reslt.cmtCard3Year)) {
+					borrowCreditCardArrear = reslt.outputCard3year[0].CARD_ARR_PSN_YN;
+					creditCardLongestArrearDays = reslt.outputCard3year[0].CARD_ARR_LGST_DAYS;
+					creditCardArrearCount = reslt.outputCard3year[0].CARD_ARR_CNT;
+
+				}
+				else {
+					if (_.includes(reslt.cmtCard3Year, '.'))
+						cmtCard3Year = reslt.cmtCard3Year.split('.')[0];
+					else
+						cmtCard3Year = reslt.cmtCard3Year;
+				}
+
 				// 2.7 Loan 12M Cautios infor
 				if (!_.isEmpty(reslt.outputloan12MCat) && _.isEmpty(reslt.cmtLoan12MCat)) {
 					reslt.outputloan12MCat.forEach(el => {
@@ -277,7 +292,8 @@ exports.cics11aRSLT = function (req, res) {
 					, arrLoan12MonCat, cmtLoan12MCat
 					, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
 					, arrFinancialContract, cmtFinancialContract
-					, arrCusLookup);
+					, arrCusLookup
+					, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year);
 				return res.status(200).json(responseData);
 			} else {
 				let responseData = new cics11aRSLTRes(responseUnknow, {}, {}, {});

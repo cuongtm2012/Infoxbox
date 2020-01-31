@@ -9,7 +9,8 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     , arrLoan12MonCat, cmtLoan12MCat
     , gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
     , arrFinancialContract, cmtFinancialContract
-    , arrCusLookup) {
+    , arrCusLookup
+    , borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year) {
 
     const {
         fiSessionKey,
@@ -97,6 +98,13 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         this.nplNode = arrNPL5YLoan ? arrNPL5YLoan : '';
     if (_.isEmpty(arrNPL5YLoan))
         this.cmtNPL5YearLoan = cmtNPL5YearLoan ? cmtNPL5YearLoan : '';
+    if (_.isEmpty(cmtCard3Year)) {
+        this.borrowCreditCardArrear = borrowCreditCardArrear ? borrowCreditCardArrear : '';
+        this.creditCardLongestArrearDays = creditCardLongestArrearDays ? creditCardLongestArrearDays : '';
+        this.creditCardArrearCount = creditCardArrearCount ? creditCardArrearCount : '';
+    }
+    if (_.isEmpty(borrowCreditCardArrear) && _.isEmpty(creditCardLongestArrearDays) && _.isEmpty(creditCardArrearCount))
+        this.cmtCard3Year = cmtCard3Year ? cmtCard3Year : '';
     if (_.isEmpty(cmtLoan12MCat))
         this.cautiousLoanNode = arrLoan12MonCat ? arrLoan12MonCat : '';
     if (_.isEmpty(arrLoan12MonCat))
@@ -109,5 +117,6 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     if (_.isEmpty(arrFinancialContract))
         this.cmtFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
     this.customerInquiryNode = arrCusLookup ? arrCusLookup : '';
+
 };
 
