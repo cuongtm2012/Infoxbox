@@ -90,24 +90,25 @@ exports.insertContract = async function (req, res) {
 };
 
 exports.updateContract = async function (req, res) {
-    var cusGB = req.body.cusGB;
-    var custCD = req.body.custCD;
+    // var cusGB = req.body.cusGB;
+    // var custCD = req.body.custCD;
     var gdsCD = req.body.gdsCD;
     var validStartDt = (_.isEmpty(req.body.validStartDt) ? null : req.body.validStartDt.replace(/[^0-9 ]/g, ""));
     var validEndDt = (_.isEmpty(req.body.validEndDt) ? null : req.body.validEndDt.replace(/[^0-9 ]/g, ""));
-    var sysDTim = req.body.sysDTim.replace(/[^0-9 ]/g, "");
-    var workID = req.body.workID;
+    // var sysDTim = req.body.sysDTim.replace(/[^0-9 ]/g, "");
+    // var workID = req.body.workID;
 
-    var SQL = 'UPDATE TB_ITCTRT SET CUST_GB = :cusGB, CUST_CD = :custCD, VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt, SYS_DTIM = :sysDTim, WORK_ID = :workID WHERE GDS_CD = :gdsCD';
+    // var SQL = 'UPDATE TB_ITCTRT SET CUST_GB = :cusGB, CUST_CD = :custCD, VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt, SYS_DTIM = :sysDTim, WORK_ID = :workID WHERE GDS_CD = :gdsCD';
+    var SQL = 'UPDATE TB_ITCTRT SET  VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt WHERE GDS_CD = :gdsCD';
 
     let params = {
-        cusGB: { val: cusGB },
-        custCD: { val: custCD },
+        // cusGB: { val: cusGB },
+        // custCD: { val: custCD },
         gdsCD: { val: gdsCD },
         validStartDt: { val: validStartDt },
         validEndDt: { val: validEndDt },
-        sysDTim: { val: sysDTim },
-        workID: { val: workID },
+        // sysDTim: { val: sysDTim },
+        // workID: { val: workID },
     };
     oracelService.queryOracel(res, SQL, params, optionAutoCommit)
 };
