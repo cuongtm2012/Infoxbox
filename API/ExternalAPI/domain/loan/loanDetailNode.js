@@ -57,7 +57,8 @@ module.exports = function LoanDetailNode(params, totalFiLoanVND, totalFiLoanUSD)
         OGZ_TOT_LOAN_USD
     } = params;
 
-    this.cicFiCodeName = OGZ_CD + '-' + OGZ_NM;
+    this.cicFiCode = OGZ_CD ? OGZ_CD : '';
+    this.cicFiName = OGZ_NM ? OGZ_NM : '';
     this.recentReportDate = RCT_RPT_DATE ? RCT_RPT_DATE : null;
     this.shortTermLoanVnd = ST_LOAN_VND ? ST_LOAN_VND : "";
     this.shortTermLoanUsd = ST_LOAN_USD ? ST_LOAN_USD : "";

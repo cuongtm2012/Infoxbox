@@ -1,12 +1,23 @@
 
 const _ = require('lodash');
 
-module.exports = function CIC_S11A_RSLTResponse(response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
     , creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
     , arrVamcLoanInfo, cmtVmacDisposalLoan
     , arrLoan12MInfo, cmtLoan12MInfo
     , arrNPL5YLoan, cmtNPL5YearLoan
-    , arrLoan12MonCat, cmtLoan12MCat) {
+    , arrLoan12MonCat, cmtLoan12MCat
+    , gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
+    , arrFinancialContract, cmtFinancialContract
+    , arrCusLookup) {
+
+    const {
+        fiSessionKey,
+        fiCode,
+        taskCode,
+        niceSessionKey,
+        inquiryDate
+    } = requestParams;
 
     const {
         responseTime,
@@ -35,6 +46,11 @@ module.exports = function CIC_S11A_RSLTResponse(response, outputScrpTranlog, out
         RPT_SEND_DTIM
     } = outputCicrptMain;
 
+    this.fiSessionKey = fiSessionKey ? fiSessionKey : '';
+    this.fiCode = fiCode ? fiCode : '';
+    this.taskCode = taskCode ? taskCode : '';
+    this.niceSessionKey = niceSessionKey ? niceSessionKey : '';
+    this.inquiryDate = inquiryDate ? inquiryDate : '';
     this.responseTime = responseTime ? responseTime : '';
     this.responseCode = responseCode ? responseCode : '';
     this.responseMessage = responseMessage ? responseMessage : '';
@@ -85,6 +101,13 @@ module.exports = function CIC_S11A_RSLTResponse(response, outputScrpTranlog, out
         this.cautiousLoanNode = arrLoan12MonCat ? arrLoan12MonCat : '';
     if (_.isEmpty(arrLoan12MonCat))
         this.cmtLoan12MpnthCat = cmtLoan12MCat ? cmtLoan12MCat : '';
-
+    this.gurAmountOfAssetBackedLoan = gurAmountOfAssetBackedLoan ? gurAmountOfAssetBackedLoan : '';
+    this.numberOfCollateral = numberOfCollateral ? numberOfCollateral : '';
+    this.numberOfFiWithCollateral = numberOfFiWithCollateral ? numberOfFiWithCollateral : '';
+    if (_.isEmpty(cmtFinancialContract))
+        this.financialContractNode = arrFinancialContract ? arrFinancialContract : '';
+    if (_.isEmpty(arrFinancialContract))
+        this.cmtFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
+    this.customerInquiryNode = arrCusLookup ? arrCusLookup : '';
 };
 

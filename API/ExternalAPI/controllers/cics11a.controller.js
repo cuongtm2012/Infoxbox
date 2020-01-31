@@ -47,7 +47,7 @@ exports.cics11aRQST = function (req, res, next) {
 				let preResponse = {
 					responseMessage: rsCheck.responseMessage,
 					niceSessionKey: "",
-					responseTime: dateutil.getSeconds(start),
+					responseTime: dateutil.timeStamp(),
 					responseCode: rsCheck.responseCode
 				}
 
@@ -64,14 +64,14 @@ exports.cics11aRQST = function (req, res, next) {
 					let response = {
 						responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
 						niceSessionKey: result,
-						responseTime: dateutil.getSeconds(start),
+						responseTime: dateutil.timeStamp(),
 						responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
 					}
 
 					let responseUnknow = {
 						responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
 						niceSessionKey: result,
-						responseTime: dateutil.getSeconds(start),
+						responseTime: dateutil.timeStamp(),
 						responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
 					}
 
@@ -100,6 +100,8 @@ const disposalLoanNode = require('../domain/loan/disposalVAMCLoan');
 const loan12MInfor = require('../domain/loan/loan12MInfo');
 const npl5YLoan = require('../domain/loan/nplLoan5year');
 const loan12MCat = require('../domain/loan/loan12MCautious');
+const financialContract = require('../domain/loan/financialContract');
+const cusLookup = require('../domain/loan/customerLookupInfo');
 
 exports.cics11aRSLT = function (req, res) {
 	try {
@@ -116,7 +118,7 @@ exports.cics11aRSLT = function (req, res) {
 		if (!validation.isEmptyJson(rsCheck)) {
 			let preResponse = {
 				responseMessage: rsCheck.responseMessage,
-				responseTime: dateutil.getSeconds(start),
+				responseTime: dateutil.timeStamp(),
 				responseCode: rsCheck.responseCode
 
 			}
@@ -131,13 +133,13 @@ exports.cics11aRSLT = function (req, res) {
 
 			let response = {
 				responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-				responseTime: dateutil.getSeconds(start),
+				responseTime: dateutil.timeStamp(),
 				responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
 			}
 
 			let responseUnknow = {
 				responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
-				responseTime: dateutil.getSeconds(start),
+				responseTime: dateutil.timeStamp(),
 				responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
 			}
 
@@ -148,9 +150,13 @@ exports.cics11aRSLT = function (req, res) {
 				const arrLoan12MInfo = [];
 				const arrNPL5YLoan = [];
 				const arrLoan12MonCat = [];
+				const arrFinancialContract = [];
+				const arrCusLookup = [];
 				var totalFiLoanVND, totalFiLoanUSD;
-				var cmtLoanDetaiInfo, cmtCreditCard, cmtVmacDisposalLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat;
+				var cmtLoanDetaiInfo, cmtCreditCard, cmtVmacDisposalLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract;
 				var creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany;
+				var gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral;
+
 
 				// 2.1 Loan detail infor
 				if (!_.isEmpty(reslt.outputLoanDetailinfo) && _.isEmpty(cmtLoanDetaiInfo)) {
@@ -234,12 +240,44 @@ exports.cics11aRSLT = function (req, res) {
 						cmtLoan12MCat = reslt.cmtLoan12MCat;
 				}
 
-				responseData = new cics11aRSLTRes(response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+				//TODO
+				// 3.1 Collateral infor
+				if (!_.isEmpty(reslt.outputCollateral)) {
+					gurAmountOfAssetBackedLoan = reslt.outputCollateral[0].AST_SCRT_LOAN_GURT_AMT;
+					numberOfCollateral = reslt.outputCollateral[0].SCRT_AST_CNT;
+					numberOfFiWithCollateral = reslt.outputCollateral[0].SCRT_AST_OGZ_CNT;
+
+				}
+
+				// 3.2 Financial contract
+				if (!_.isEmpty(reslt.outputFinanCialContract) && _.isEmpty(reslt.cmtFinancialContract)) {
+					reslt.outputFinanCialContract.forEach(el => {
+						arrFinancialContract.push(new financialContract(el));
+					});
+				}
+				else {
+					if (_.includes(reslt.cmtFinancialContract, '.'))
+						cmtFinancialContract = reslt.cmtFinancialContract.split('.')[0];
+					else
+						cmtFinancialContract = reslt.cmtFinancialContract;
+				}
+
+				// 3.3 Customer lookup info
+				if (!_.isEmpty(reslt.outputCusLookup)) {
+					reslt.outputCusLookup.forEach(el => {
+						arrCusLookup.push(new cusLookup(el));
+					});
+				}
+
+				responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
 					, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
 					, arrVamcLoanInfo, cmtVmacDisposalLoan
 					, arrLoan12MInfo, cmtLoan12MInfo
 					, arrNPL5YLoan, cmtNPL5YearLoan
-					, arrLoan12MonCat, cmtLoan12MCat);
+					, arrLoan12MonCat, cmtLoan12MCat
+					, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
+					, arrFinancialContract, cmtFinancialContract
+					, arrCusLookup);
 				return res.status(200).json(responseData);
 			} else {
 				let responseData = new cics11aRSLTRes(responseUnknow, {}, {}, {});
