@@ -72,12 +72,12 @@ exports.insertCode = async function (req, res) {
     var codeClass = req.body.codeClass;
     var valid_start_dt = (_.isEmpty(req.body.valid_start_dt) ? null : req.body.valid_start_dt.replace(/[^0-9 ]/g, ""));
     var valid_end_dt = (_.isEmpty(req.body.valid_end_dt) ? null : req.body.valid_end_dt.replace(/[^0-9 ]/g, ""));
-    var codeNm = _.isEmpty(req.query.codeNm) ? '' : req.body.codeNm;
-    var codeNmEn = _.isEmpty(req.query.codeNmEn) ? '' : req.body.codeNmEn;
-    var prtCdClass = _.isEmpty(req.query.prtCdClass) ? '' : req.body.prtCdClass;
-    var prtCd = _.isEmpty(req.query.prtCd) ? '' : req.body.prtCd;
+    var codeNm = _.isEmpty(req.body.codeNm) ? '' : req.body.codeNm;
+    var codeNmEn = _.isEmpty(req.body.codeNmEn) ? '' : req.body.codeNmEn;
+    var prtCdClass = _.isEmpty(req.body.prtCdClass) ? '' : req.body.prtCdClass;
+    var prtCd = _.isEmpty(req.body.prtCd) ? '' : req.body.prtCd;
     var sysDt = req.body.sysDt.replace(/[^0-9 ]/g, "");
-    var workID = _.isEmpty(req.query.workID) ? '' : req.body.workID;
+    var workID = _.isEmpty(req.body.workID) ? '' : req.body.workID;
 
     var SQL = 'INSERT INTO TB_ITCODE (CODE, CD_CLASS, VALID_START_DT, VALID_END_DT, CODE_NM, CODE_NM_EN, PRT_CD_CLASS, PRT_CODE, SYS_DTIM, WORK_ID) VALUES (:code, :codeClass, :valid_start_dt, :valid_end_dt, :codeNm, :codeNmEn, :prtCdClass, :prtCd, :sysDt, :workID)';
     let params = {
