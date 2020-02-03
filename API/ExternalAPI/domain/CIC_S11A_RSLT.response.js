@@ -1,5 +1,6 @@
 
 const _ = require('lodash');
+const validation = require('../../shared/util/validation');
 
 module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
     , creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
@@ -47,12 +48,12 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         RPT_SEND_DTIM
     } = outputCicrptMain;
 
-    this.fiSessionKey = fiSessionKey ? fiSessionKey : '';
-    this.fiCode = fiCode ? fiCode : '';
-    this.taskCode = taskCode ? taskCode : '';
-    this.niceSessionKey = niceSessionKey ? niceSessionKey : '';
-    this.inquiryDate = inquiryDate ? inquiryDate : '';
-    this.responseTime = responseTime ? responseTime : '';
+    this.fiSessionKey = fiSessionKey;
+    this.fiCode = fiCode;
+    this.taskCode = taskCode;
+    this.niceSessionKey = niceSessionKey;
+    this.inquiryDate = inquiryDate;
+    this.responseTime = responseTime;
     this.responseCode = responseCode ? responseCode : '';
     this.responseMessage = responseMessage ? responseMessage : '';
     this.scrapingStatusCode = R_ERRYN ? R_ERRYN : '';
@@ -63,8 +64,8 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.cicInquiryFiAddress = INQ_OGZ_ADDR ? INQ_OGZ_ADDR : '';
     this.cicUserName = INQ_USER_NM ? INQ_USER_NM : '';
     this.cicInquiryCode = INQ_CD ? INQ_CD : '';
-    this.cicReportInquiryDateTime = INQ_DTIM ? INQ_DTIM : '';
-    this.cicReportResultDateTime = RPT_SEND_DTIM ? RPT_SEND_DTIM : '';
+    this.cicReportInquiryDateTime = validation.formatDateVN(INQ_DTIM);
+    this.cicReportResultDateTime = validation.formatDateVN(RPT_SEND_DTIM);
     this.name = PSN_NM ? PSN_NM : '';
     this.cicId = CIC_ID ? CIC_ID : '';
     this.address = PSN_ADDR ? PSN_ADDR : '';
@@ -72,50 +73,50 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.docIdEvidance = OTR_IDEN_EVD ? OTR_IDEN_EVD : '';
     if (_.isEmpty(cmtLoanDetaiInfo)) {
         this.loanDetailNode = outputLoanDetailinfo;
-        this.totalFiLoanVND = totalFiLoanVND ? totalFiLoanVND : '';
-        this.totalFiLoanUSD = totalFiLoanUSD ? totalFiLoanUSD : '';
+        this.totalFiLoanVND = totalFiLoanVND;
+        this.totalFiLoanUSD = totalFiLoanUSD;
     }
     if (_.isEmpty(outputLoanDetailinfo))
-        this.cmtLoanDetaiInfo = cmtLoanDetaiInfo ? cmtLoanDetaiInfo : '';
+        this.commentOnLoanDetail = cmtLoanDetaiInfo ? cmtLoanDetaiInfo : '';
     if (_.isEmpty(cmtCreditCard)) {
-        this.creditCardTotalLimit = creditCardTotalLimit ? creditCardTotalLimit : '';
-        this.creditCardTotalBalance = creditCardTotalBalance ? creditCardTotalBalance : '';
-        this.creditCardTotalArrears = creditCardTotalArrears ? creditCardTotalArrears : '';
-        this.numberOfCreditCard = numberOfCreditCard ? numberOfCreditCard : '';
-        this.creditCardIssueCompany = creditCardIssueCompany ? creditCardIssueCompany : '';
+        this.creditCardTotalLimit = creditCardTotalLimit;
+        this.creditCardTotalBalance = creditCardTotalBalance;
+        this.creditCardTotalArrears = creditCardTotalArrears;
+        this.numberOfCreditCard = numberOfCreditCard;
+        this.creditCardIssueCompany = creditCardIssueCompany;
     }
     if (_.isEmpty(creditCardTotalLimit) && _.isEmpty(creditCardTotalBalance) && _.isEmpty(creditCardTotalArrears) && _.isEmpty(numberOfCreditCard) && _.isEmpty(creditCardIssueCompany))
-        this.cmtCreditCard = cmtCreditCard ? cmtCreditCard : '';
+        this.commentOnCreditCard = cmtCreditCard ? cmtCreditCard : '';
     if (_.isEmpty(cmtVmacDisposalLoan))
         this.disposalLoanNode = arrVamcLoanInfo ? arrVamcLoanInfo : '';
     if (_.isEmpty(arrVamcLoanInfo))
-        this.cmtVmacDisposalLoan = cmtVmacDisposalLoan ? cmtVmacDisposalLoan : '';
+        this.commentOnVAMCDisposalLoan = cmtVmacDisposalLoan ? cmtVmacDisposalLoan : '';
     if (_.isEmpty(cmtLoanDetaiInfo))
         this.loanChangeNode = arrLoan12MInfo ? arrLoan12MInfo : '';
     if (_.isEmpty(arrLoan12MInfo))
-        this.cmtLoan12MInfo = cmtLoan12MInfo ? cmtLoan12MInfo : '';
+        this.commentOnLoanChange12Month = cmtLoan12MInfo ? cmtLoan12MInfo : '';
     if (_.isEmpty(cmtNPL5YearLoan))
         this.nplNode = arrNPL5YLoan ? arrNPL5YLoan : '';
     if (_.isEmpty(arrNPL5YLoan))
-        this.cmtNPL5YearLoan = cmtNPL5YearLoan ? cmtNPL5YearLoan : '';
+        this.commentOnNPL5Years = cmtNPL5YearLoan ? cmtNPL5YearLoan : '';
     if (_.isEmpty(cmtCard3Year)) {
-        this.borrowCreditCardArrear = borrowCreditCardArrear ? borrowCreditCardArrear : '';
-        this.creditCardLongestArrearDays = creditCardLongestArrearDays ? creditCardLongestArrearDays : '';
-        this.creditCardArrearCount = creditCardArrearCount ? creditCardArrearCount : '';
+        this.borrowCreditCardArrear = borrowCreditCardArrear;
+        this.creditCardLongestArrearDays = creditCardLongestArrearDays;
+        this.creditCardArrearCount = creditCardArrearCount;
     }
     if (_.isEmpty(borrowCreditCardArrear) && _.isEmpty(creditCardLongestArrearDays) && _.isEmpty(creditCardArrearCount))
-        this.cmtCard3Year = cmtCard3Year ? cmtCard3Year : '';
+        this.commentOnCreditCard3Years = cmtCard3Year ? cmtCard3Year : '';
     if (_.isEmpty(cmtLoan12MCat))
         this.cautiousLoanNode = arrLoan12MonCat ? arrLoan12MonCat : '';
     if (_.isEmpty(arrLoan12MonCat))
-        this.cmtLoan12MpnthCat = cmtLoan12MCat ? cmtLoan12MCat : '';
-    this.gurAmountOfAssetBackedLoan = gurAmountOfAssetBackedLoan ? gurAmountOfAssetBackedLoan : '';
-    this.numberOfCollateral = numberOfCollateral ? numberOfCollateral : '';
-    this.numberOfFiWithCollateral = numberOfFiWithCollateral ? numberOfFiWithCollateral : '';
+        this.commentOnCautiousLoan12Month = cmtLoan12MCat ? cmtLoan12MCat : '';
+    this.gurAmountOfAssetBackedLoan = gurAmountOfAssetBackedLoan;
+    this.numberOfCollateral = numberOfCollateral;
+    this.numberOfFiWithCollateral = numberOfFiWithCollateral;
     if (_.isEmpty(cmtFinancialContract))
         this.financialContractNode = arrFinancialContract ? arrFinancialContract : '';
     if (_.isEmpty(arrFinancialContract))
-        this.cmtFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
+        this.commentOnFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
     this.customerInquiryNode = arrCusLookup ? arrCusLookup : '';
 
 };

@@ -138,12 +138,13 @@ exports.cics11aRSLT = function (req, res) {
 			}
 
 			let responseUnknow = {
+				getdataReq,
 				responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
 				responseTime: dateutil.timeStamp(),
 				responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
 			}
 
-			if (!validation.isEmptyStr(reslt)) {
+			if (!_.isEmpty(reslt)) {
 				let responseData;
 				const arrloanDetailNode = [];
 				const arrVamcLoanInfo = [];
@@ -255,7 +256,6 @@ exports.cics11aRSLT = function (req, res) {
 						cmtLoan12MCat = reslt.cmtLoan12MCat;
 				}
 
-				//TODO
 				// 3.1 Collateral infor
 				if (!_.isEmpty(reslt.outputCollateral)) {
 					gurAmountOfAssetBackedLoan = reslt.outputCollateral[0].AST_SCRT_LOAN_GURT_AMT;
@@ -296,8 +296,8 @@ exports.cics11aRSLT = function (req, res) {
 					, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year);
 				return res.status(200).json(responseData);
 			} else {
-				let responseData = new cics11aRSLTRes(responseUnknow, {}, {}, {});
-				return res.status(400).json(responseData);
+				// let responseData = new cics11aRSLTRes(responseUnknow, {}, {}, {});
+				return res.status(400).json(responseUnknow);
 			}
 		});
 

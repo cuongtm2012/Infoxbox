@@ -1,3 +1,5 @@
+const validation = require('../../shared/util/validation');
+
 module.exports = function loan5Yearinfor(listData, niceSessionKey, sysDtim, workID, seqs) {
     const {
         seq,
@@ -13,8 +15,8 @@ module.exports = function loan5Yearinfor(listData, niceSessionKey, sysDtim, work
     this.OGZ_NM_BRANCH_NM = company ? company : null;
     this.RCT_OCR_DATE = date ? date : null;
     this.DEBT_GRP = group ? group : null;
-    this.AMT_VND = parseFloat(vnd) ? parseFloat(vnd) : 0;
-    this.AMD_USD = parseFloat(usd) ? parseFloat(usd) : 0;
+    this.AMT_VND = vnd ? parseFloat(vnd) : validation.setEmptyValue(vnd);
+    this.AMD_USD = usd ? parseFloat(usd) : validation.setEmptyValue(usd);
     this.SYS_DTIM = sysDtim;
     this.WORK_ID = workID;
 

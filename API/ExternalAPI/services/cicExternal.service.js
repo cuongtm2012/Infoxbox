@@ -167,6 +167,8 @@ async function selectCICS11aRSLT(req) {
 
         console.log("resultCicrptMain rows:", resultCicrptMain.rows);
         outputCicrptMain = resultCicrptMain.rows;
+        if (_.isEmpty(outputCicrptMain))
+            return {};
 
         /*
         ** 2.1. loan detail

@@ -1,3 +1,5 @@
+const validation = require('../../../shared/util/validation');
+
 module.exports = function DisposalVamcLoan(params) {
     const {
         SELL_OGZ_NM,
@@ -5,7 +7,7 @@ module.exports = function DisposalVamcLoan(params) {
         DATA_RPT_DATE
     } = params;
 
-    this.disposalFiName = SELL_OGZ_NM ? SELL_OGZ_NM : '';
-    this.originalBalance = PRCP_BAL ? PRCP_BAL : '';
-    this.dataReportingDate = DATA_RPT_DATE ? DATA_RPT_DATE : '';
+    this.disposalFiName = SELL_OGZ_NM;
+    this.originalBalance = PRCP_BAL;
+    this.dataReportingDate = validation.formatDateVN(DATA_RPT_DATE);
 }

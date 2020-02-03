@@ -15,15 +15,15 @@ module.exports = function ShortLoanTerm(TermNormalLoan, TermCautiousLoan, TermFi
         TermEstLossLoanVnd,
         TermEstLossLoanUsd } = TermEstLossLoan;
 
-    this.shortTermNormalLoanVnd = parseFloat(TermNormalLoanVnd) ? parseFloat(TermNormalLoanVnd) : 0;
-    this.shortTermNormalLoanUsd = parseFloat(TermNormalLoanUsd) ? parseFloat(TermNormalLoanUsd) : 0;
-    this.shortTermCautiousLoanVnd = parseFloat(TermCautiousLoanVnd) ? parseFloat(TermCautiousLoanVnd) : 0;
-    this.shortTermCautiousLoanUsd = parseFloat(TermCautiousLoanUsd) ? parseFloat(TermCautiousLoanUsd) : 0;
-    this.shortTermFixedLoanVnd = parseFloat(TermFixedLoanVnd) ? parseFloat(TermFixedLoanVnd) : 0;
-    this.shortTermFixedLoanUsd = parseFloat(TermFixedLoanUsd) ? parseFloat(TermFixedLoanUsd) : 0;
-    this.shortTermDaubtLoanVnd = parseFloat(TermDaubtLoanVnd) ? parseFloat(TermDaubtLoanVnd) : 0;
-    this.shortTermDaubtLoanUsd = parseFloat(TermDaubtLoanUsd) ? parseFloat(TermDaubtLoanUsd) : 0;
-    this.shortTermEstLossLoanVnd = parseFloat(TermEstLossLoanVnd) ? parseFloat(TermEstLossLoanVnd) : 0;
-    this.shortTermEstLossLoanUsd = parseFloat(TermEstLossLoanUsd) ? parseFloat(TermEstLossLoanUsd) : 0;
+    this.shortTermNormalLoanVnd = TermNormalLoanVnd ? parseFloat(TermNormalLoanVnd) : 0;
+    this.shortTermNormalLoanUsd = TermNormalLoanUsd ? parseFloat(TermNormalLoanUsd) : 0;
+    this.shortTermCautiousLoanVnd = TermCautiousLoanVnd ? parseFloat(TermCautiousLoanVnd) : 0;
+    this.shortTermCautiousLoanUsd = TermCautiousLoanUsd ? parseFloat(TermCautiousLoanUsd) : 0;
+    this.shortTermFixedLoanVnd = TermFixedLoanVnd ? parseFloat(TermFixedLoanVnd) : 0;
+    this.shortTermFixedLoanUsd = TermFixedLoanUsd ? parseFloat(TermFixedLoanUsd) : 0;
+    this.shortTermDaubtLoanVnd = TermDaubtLoanVnd ? parseFloat(TermDaubtLoanVnd) : 0;
+    this.shortTermDaubtLoanUsd = TermDaubtLoanUsd ? parseFloat(TermDaubtLoanUsd) : 0;
+    this.shortTermEstLossLoanVnd = TermEstLossLoanVnd ? parseFloat(TermEstLossLoanVnd) : 0;
+    this.shortTermEstLossLoanUsd = TermEstLossLoanUsd ? parseFloat(TermEstLossLoanUsd) : 0;
 
 }
