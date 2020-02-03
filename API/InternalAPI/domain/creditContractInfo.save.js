@@ -9,7 +9,7 @@ module.exports = function (listData, niceSessionKey, sysDtim, workID, seqs) {
     } = listData;
 
     this.NICE_SSIN_ID = niceSessionKey;
-    this.SEQ = parseInt(seq) ? parseInt(seq) : seqs;
+    this.SEQ = seq ? parseInt(seq) : seqs;
     this.FIN_CTRT = contract ? contract : null;
     this.OGZ_NM = company ? company : null;
     this.CTRT_START_DATE = contractDate1 ? contractDate1 : null;

@@ -10,7 +10,7 @@ module.exports = function (listData, niceSessionKey, sysDtim, workID, seqs) {
     } = listData;
 
     this.NICE_SSIN_ID = niceSessionKey;
-    this.SEQ = parseInt(seq) ? parseInt(seq) : seqs;
+    this.SEQ = seq ? parseInt(seq) : seqs;
     this.OGZ_NM_BRANCH_NM = company ? company : null;
     this.OGZ_CD = companyCode ? companyCode : null;
     this.INQ_GDS = product ? product : null;

@@ -1,3 +1,5 @@
+const validation = require('../../../shared/util/validation');
+
 module.exports = function CustomerLookupInfo(params) {
     const {
         OGZ_NM_BRANCH_NM,
@@ -7,10 +9,10 @@ module.exports = function CustomerLookupInfo(params) {
         INQ_TIME
     } = params;
 
-    this.fiName = OGZ_NM_BRANCH_NM ? OGZ_NM_BRANCH_NM : '';
-    this.cicFiCode = OGZ_CD ? OGZ_CD : '';
-    this.inquiryProduct = INQ_GDS ? INQ_GDS : '';
-    this.inquiryDate = INQ_DATE ? INQ_DATE : '';
-    this.inquiryTime = INQ_TIME ? INQ_TIME : '';
+    this.fiName = OGZ_NM_BRANCH_NM;
+    this.cicFiCode = OGZ_CD;
+    this.inquiryProduct = INQ_GDS;
+    this.inquiryDate = validation.formatDateVN(INQ_DATE);
+    this.inquiryTime = INQ_TIME;
 
 }
