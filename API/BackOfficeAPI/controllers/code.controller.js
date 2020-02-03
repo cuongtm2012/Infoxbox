@@ -105,10 +105,8 @@ exports.editCode = async function (req, res) {
     var codeNmEn = req.body.codeNmEn;
     var prtCdClass = req.body.prtCdClass;
     var prtCd = req.body.prtCd;
-    var sysDt = req.body.sysDt.replace(/[^0-9 ]/g, "");
-    var workID = req.body.workID;
 
-    var SQL = 'UPDATE TB_ITCODE SET  CODE_NM = :codeNm, CODE_NM_EN = :codeNmEn, PRT_CD_CLASS = :prtCdClass, PRT_CODE = :prtCd, SYS_DTIM = :sysDt, WORK_ID = :workID WHERE CODE = :code AND CD_CLASS = :codeClass AND VALID_START_DT = :valid_start_dt , VALID_END_DT = :valid_end_dt ';
+    var SQL = `UPDATE TB_ITCODE SET  CODE_NM = :codeNm, CODE_NM_EN = :codeNmEn, PRT_CD_CLASS = :prtCdClass, PRT_CODE = :prtCd WHERE CODE = :code AND CD_CLASS = :codeClass AND VALID_START_DT = :valid_start_dt AND VALID_END_DT = :valid_end_dt`;
     let params = {
         code: { val: code },
         codeClass: { val: codeClass },
@@ -118,8 +116,6 @@ exports.editCode = async function (req, res) {
         codeNmEn: { val: codeNmEn },
         prtCdClass: { val: prtCdClass },
         prtCd: { val: prtCd },
-        sysDt: { val: sysDt },
-        workID: { val: workID }
     };
     oracelService.queryOracel(res, SQL, params, optionAutoCommit)
 };
