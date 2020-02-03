@@ -95,11 +95,13 @@ const loanAtt12MInfo = require('../domain/loanAttention12mInfo');
 const creditContractInfor = require('../domain/creditContractInfo.save');
 const customerLookupInfo = require('../domain/customerLookUpInfo.save');
 const colletaralLoanSecuInfo = require('../domain/collateralLoanSecuInfo.save');
+const card3yearInfo = require('../domain/card3YearInfo.save');
 
 const excuteInsert = require('../services/excuteInsert.service');
 
 const getLoanDetail = require('../util/defineitem/defineLoan');
 const defineColletral = require('../util/defineitem/defineCollateral');
+const defineCard3Year = require('../util/defineitem/defineCard3Y');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -245,6 +247,20 @@ exports.internalCICB0003 = function (req, res, next) {
                             console.log('bindlistloan12monInfo', bindlistloan12monInfo);
 
                             /* 
+                           ** 2.6. Card 3 Year
+                           */
+                            let listCard3YearInfo = list.reportS11A.credit3yearInfo.list;
+                            let objCard3YearInfo;
+                            if (_.isEmpty(listCard3YearInfo)) {
+                                objCard3YearInfo = {};
+                            }
+                            else {
+                                let getCard3Year = defineCard3Year.getCard3YInfor(listCard3YearInfo);
+                                objCard3YearInfo = new card3yearInfo(getCard3Year, niceSessionKey);
+                            }
+                            console.log('objCard3YearInfo:', objCard3YearInfo);
+
+                            /* 
                             ** 2.7.Loan Attention 12M info
                             */
                             let listloanAtt12monInfo = list.reportS11A.loanAttention12monInfo.list;
@@ -309,25 +325,21 @@ exports.internalCICB0003 = function (req, res, next) {
                             ** 3.1. Colletaral Loan Secu info
                             */
                             let listloanSecurityInfo = list.reportS11A.loanSecurityInfo.list;
-                            let bindlistColletaralLoanSecuInfo = [];
-
-                            const arrCollateral = defineColletral.getCollateral(listloanSecurityInfo);
-                            _.forEach(arrCollateral, res => {
-                                const arrChildCollateralLoanSecuInfor = [];
-                                const preVal2 = new colletaralLoanSecuInfo(res, niceSessionKey, sysDtim, workID);
-                                _.forEach(preVal2, (val, key) => {
-                                    arrChildCollateralLoanSecuInfor.push(val)
-                                });
-                                bindlistColletaralLoanSecuInfo.push(arrChildCollateralLoanSecuInfor)
-                            });
-
-                            console.log('bindlistColletaralLoanSecuInfo', bindlistColletaralLoanSecuInfo);
+                            let objCollateralInfo;
+                            if (_.isEmpty(listloanSecurityInfo)) {
+                                objCollateralInfo = {};
+                            }
+                            else {
+                                let getCard3Year = defineColletral.getCollateral(listloanSecurityInfo);
+                                objCollateralInfo = new colletaralLoanSecuInfo(getCard3Year, niceSessionKey);
+                            }
+                            console.log('objCollateralInfo:', objCollateralInfo);
 
                             /*
                             ** Insert Scraping service
                             */
 
-                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, bindlistColletaralLoanSecuInfo).then(resultMSG => {
+                            excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, objCollateralInfo, objCard3YearInfo).then(resultMSG => {
                                 console.log('insert Scraping MSG:', resultMSG);
                                 if (!_.isEmpty(resultMSG)) {
                                     // update complete cic report inquiry status 10
