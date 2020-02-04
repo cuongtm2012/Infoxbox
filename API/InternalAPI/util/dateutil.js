@@ -15,15 +15,11 @@ module.exports = {
     },
 
     timeStamp: function () {
-        var timeStamp = dateFormat(new Date(), "yyyymmddHHMMss");
-        
-        return timeStamp;
+        return dateFormat(new Date(), "yyyymmddHHMMss");
     },
 
     getDate: function () {
-        var date = dateFormat(new Date(), "yyyymmdd");
-        
-        return date;
+        return dateFormat(new Date(), "yyyymmdd");
     },
 
     getSeconds: function(start) {

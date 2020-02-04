@@ -21,18 +21,10 @@ module.exports = class internalJob {
         }
 
         cicService.startProcessB0003().then(data => {
-            // Get each object in array data
-            // if (validation.isEmptyJson(data)) {
             if (_.isEmpty(data)) {
                 console.log('No request!');
-                // return next();
-                oncomplete(0, 0)
-                // return;
+                oncomplete(0, 0);
             } else {
-
-                // var count = 0;
-                // var maxLength = data.length;
-
                 //Get list cicID
                 let arrCicId = _.map(data, 'CICID');
                 let listCicId = '';
@@ -55,15 +47,12 @@ module.exports = class internalJob {
                 console.log('arrNiceSessionkey~~:', listNiceSessionkey);
                 // End get list nicesessionkey
 
-                // data.forEach(element => {
-                // let fnData = data[i].child;
-                // console.log("element::::", element);
-                // let inqDt1 = dateutil.getDate();
-                // let inqDt2 = dateutil.getDate();
+                let inqDt1 = data[0].INQ_DTIM;
+                let inqDt2 = data[0].INQ_DTIM;
 
                 // DEBUG
-                let inqDt1 = '20190125';
-                let inqDt2 = '20190125';
+                // let inqDt1 = '20190125';
+                // let inqDt2 = '20190125';
 
                 let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
@@ -77,11 +66,7 @@ module.exports = class internalJob {
                     cicService.updateScrpModCdPreRequestToScraping(listNiceSessionkey).then(() => {
                         axios.post(URI.internal_cicB0003, fnData, config)
                             .then((body) => {
-                                // console.log("body resultB0003~~~~~", body.outJson.outB0003.reportS11A.loanDetailInfo);
-                                // count++;
-                                // next process until data ending
                                 oncomplete(0, 0);
-                                // return res.status(200).json(body.data);
 
                             }).catch((error) => {
                                 console.log("error call to internal_cic url B0003~~", error);
@@ -94,7 +79,6 @@ module.exports = class internalJob {
                     });
                 }
             }
-            // });
         }).catch((error) => {
             console.log(error)
         });

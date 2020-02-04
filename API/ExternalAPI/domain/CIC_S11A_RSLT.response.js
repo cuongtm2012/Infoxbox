@@ -31,7 +31,10 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         R_ERRYN,
         S_DTIM,
         R_DTIM,
-        S_REQ_STATUS
+        S_REQ_STATUS,
+        SCRP_STAT_CD,
+        INQ_DTIM_SCRPLOG,
+        SYS_DTIM
     } = outputScrpTranlog;
 
     const {
@@ -56,9 +59,9 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.responseTime = responseTime;
     this.responseCode = responseCode ? responseCode : '';
     this.responseMessage = responseMessage ? responseMessage : '';
-    this.scrapingStatusCode = R_ERRYN ? R_ERRYN : '';
-    this.cicReportRequestDate = S_DTIM ? S_DTIM : '';
-    this.cicReportResponseDate = R_DTIM ? R_DTIM : '';
+    this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : '';
+    this.cicReportRequestDate = validation.formatDateVN(INQ_DTIM_SCRPLOG);
+    this.cicReportResponseDate = validation.formatDateVN(SYS_DTIM);
     this.cicReportInquiryUserId = S_REQ_STATUS ? S_REQ_STATUS : '';
     this.cicInquiryFiName = INQ_OGZ_NM ? INQ_OGZ_NM : '';
     this.cicInquiryFiAddress = INQ_OGZ_ADDR ? INQ_OGZ_ADDR : '';

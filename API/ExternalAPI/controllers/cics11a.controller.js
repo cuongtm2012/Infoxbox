@@ -75,7 +75,7 @@ exports.cics11aRQST = function (req, res, next) {
 						responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
 					}
 
-					if (!validation.isEmptyStr(result)) {
+					if (!_.isEmpty(result)) {
 						let responseData = new cics11aRQSTRes(getdataReq, response);
 						return res.status(200).json(responseData);
 					} else {

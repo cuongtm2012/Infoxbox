@@ -436,7 +436,7 @@ async function startProcessB0003() {
         //get curremt time
         // let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId
+        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim
         FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
         WHERE a.SCRP_STAT_CD = '04'
             and SCRP_MOD_CD = '00'

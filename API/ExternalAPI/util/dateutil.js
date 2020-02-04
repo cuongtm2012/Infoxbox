@@ -16,17 +16,22 @@ module.exports = {
 
     timeStamp: function () {
         var timeStamp = dateFormat(new Date(), "yyyymmddHHMMss");
-        
+
         return timeStamp;
     },
 
     timeStamp2: function () {
         var timeStamp = dateFormat(new Date(), "yyyymmddHHMMl");
-        
+
         return timeStamp;
     },
 
-    getSeconds: function(start) {
+    getSeconds: function (start) {
         return ((new Date() - start) % 60000 / 1000).toFixed(2) + "s";
+    },
+
+    getCurrentInquiryDate: function () {
+        return dateFormat(new Date(), 'yyyymmdd');
     }
+
 };

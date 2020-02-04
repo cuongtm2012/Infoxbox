@@ -18,8 +18,8 @@ async function insertSCRPLOG(req) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :SYS_DTIM)`;
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, INQ_DTIM, SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :INQ_DTIM, :SYS_DTIM)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -37,6 +37,7 @@ async function insertSCRPLOG(req) {
                 CIC_ID: { val: req.cicId },
                 SCRP_STAT_CD: { val: '01' },
                 AGR_FG: { val: req.infoProvConcent },
+                INQ_DTIM: { val: req.inquiryDate },
                 SYS_DTIM: { val: sysDim }
             },
             { autoCommit: true }
@@ -129,10 +130,10 @@ async function selectCICS11aRSLT(req) {
         /*
         ** scrp tranlosg
         */
-        let sqlScrpTranlog = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
-                FROM TB_SCRP_TRLOG
-                where NICE_SSIN_ID = :niceSessionKey
-                AND S_SVC_CD = 'B0003'`;
+        let sqlScrpTranlog = `SELECT distinct a.R_ERRYN, a.S_DTIM, a.R_DTIM, a.S_REQ_STATUS, b.SCRP_STAT_CD, b.INQ_DTIM AS INQ_DTIM_SCRPLOG, b.SYS_DTIM
+                                FROM TB_SCRP_TRLOG a inner join tb_scrplog b on  a.nice_ssin_id = b.nice_ssin_id
+                                where a.NICE_SSIN_ID = :niceSessionKey
+                                AND a.S_SVC_CD = 'B0003'`;
 
         resultScrpTranlog = await connection.execute(
             // The statement to execute
