@@ -96,7 +96,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         this.disposalLoanNode = arrVamcLoanInfo ? arrVamcLoanInfo : '';
     if (_.isEmpty(arrVamcLoanInfo))
         this.commentOnVAMCDisposalLoan = cmtVmacDisposalLoan ? cmtVmacDisposalLoan : '';
-    if (_.isEmpty(cmtLoanDetaiInfo))
+    if (_.isEmpty(cmtLoan12MInfo))
         this.loanChangeNode = arrLoan12MInfo ? arrLoan12MInfo : '';
     if (_.isEmpty(arrLoan12MInfo))
         this.commentOnLoanChange12Month = cmtLoan12MInfo ? cmtLoan12MInfo : '';
