@@ -88,7 +88,7 @@ async function insertINQLOG(req) {
                 TAX_ID: { val: req.taxCode },
                 OTR_ID: { val: req.oldNatId + "," + req.passportNumber },
                 CIC_ID: { val: req.cicId },
-                INQ_DTIM: { val: sysDim },
+                INQ_DTIM: { val: req.inquiryDate },
                 AGR_FG: { val: req.infoProvConcent },
                 SYS_DTIM: { val: sysDim },
                 WORK_ID: { val: gateway }
