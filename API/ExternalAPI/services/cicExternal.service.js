@@ -151,7 +151,7 @@ async function selectCICS11aRSLT(req) {
         /*
         ** cicrpt main
         */
-        let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.otr_iden_evd,
+        let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.psn_comt, a.otr_iden_evd,
                               a.CARD_CMT, a.LOAN_CMT_DETAIL, a.VAMC_CMT, a.LOAN_12MON_CMT, a.NPL_5YR_CMT, a.CAT_LOAN_12MON_CMT, a.FIN_CTRT_CMT, a.CARD_ARR_3YR_CMT
                               from tb_cicrpt_main a
                               where a.NICE_SSIN_ID = :niceSessionKey`;

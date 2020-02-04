@@ -1,4 +1,4 @@
-module.exports = function cicrptmain(cicrptinfor, custInfor, msg,  niceSessionKey, cusAdd) {
+module.exports = function cicrptmain(cicrptinfor, custInfor, msg,  niceSessionKey, cusAdd, cuscomt) {
     const {
         title,
         number,
@@ -40,12 +40,12 @@ module.exports = function cicrptmain(cicrptinfor, custInfor, msg,  niceSessionKe
     this.INQ_CD = voucherCode ? voucherCode : null;
     this.INQ_DTIM = requireDay + requireTime;
     this.RPT_SEND_DTIM = sendDay + sendTime;
-    this.PSN_COMT = waitdata ? waitdata : null;
+    this.PSN_COMT = cuscomt ? cuscomt : null;
     this.PSN_NM = name ? name : null;
     this.CIC_ID = cicCode ? cicCode : null;
     this.PSN_ADDR = cusAdd ? cusAdd : null;
     this.NATL_ID = idCardNumber ? idCardNumber : null;
-    this.OTR_IDEN_EVD = waitdata ? waitdata : null;
+    this.OTR_IDEN_EVD = otherDocument ? otherDocument : null;
     this.EWS_GRD = waitdata ? waitdata : null;
     this.BIRTH_YMD = waitdata ? waitdata : null;
     this.TEL_NO_MOBILE = waitdata ? waitdata : null;

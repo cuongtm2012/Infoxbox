@@ -65,7 +65,7 @@ async function select01(req, res, next) {
     }
 }
 
-async function select04NotExist(req, res, next) {
+async function select04NotExist() {
     let connection;
 
     try {
@@ -213,40 +213,35 @@ async function updateCICReportInquiryCompleted(req) {
     }
 }
 
-async function updateScrapingTargetRepostNotExist(req, res, next) {
+async function updateScrapingTargetRepostNotExist(niceSessionKey) {
     let connection;
 
     try {
-        let sql, result;
+        let sqlUpdateScrplog, resultScrpLog;
 
         let sysDim = dateUtil.timeStamp();
 
         connection = await oracledb.getConnection(dbconfig);
 
 
-        sql = `UPDATE TB_SCRPLOG
+        sqlUpdateScrplog = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '24', SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
 
-        result = await connection.execute(
+        resultScrpLog = await connection.execute(
             // The statement to execute
-            sql,
+            sqlUpdateScrplog,
             {
                 sysDim: { val: sysDim },
-                NICE_SSIN_ID: { val: req.NICE_SSIN_ID }
+                NICE_SSIN_ID: { val: niceSessionKey }
             },
             { autoCommit: true },
         );
+        console.log("updateScrapingTargetRepostNotExist updated::", resultScrpLog.rowsAffected);
 
-        console.log("updateScrapingTargetRepostNotExist updated::", result.rowsAffected);
-
-        return result.rowsAffected;
-        // return res.status(200).json(result.rows);
-
-
+        return resultScrpLog.rowsAffected;
     } catch (err) {
         console.log(err);
-        // return res.status(400);
     } finally {
         if (connection) {
             try {

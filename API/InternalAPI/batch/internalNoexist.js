@@ -14,18 +14,15 @@ module.exports = class internalJob {
             // Get each object in array data
             if (validation.isEmptyJson(data)) {
                 console.log('No request!');
-                // return next();
                 oncomplete(0, 0)
             }
             data.forEach(element => {
-                // let fnData = data[i].child;
                 console.log("element::::", element);
 
                 // update SCRP_MOD_CD = 01 before
-                cicService.updateScrpModCdPreRequestToScraping(element).then(() => {
+                cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
                     //Updatinh Scraping target report does not exist
-                    cicService.updateScrapingTargetRepostNotExist(element).then(() => {
-                        // return next();
+                    cicService.updateScrapingTargetRepostNotExist(element.NICE_SSIN_ID).then(() => {
                         count++;
                         oncomplete(count, maxLength)
                     });
@@ -33,6 +30,6 @@ module.exports = class internalJob {
             });
         }).catch((error) => {
             console.log(error)
-        });;
+        });
     }
 }

@@ -45,6 +45,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         INQ_OGZ_NM,
         INQ_USER_NM,
         NATL_ID,
+        PSN_COMT,
         OTR_IDEN_EVD,
         PSN_ADDR,
         PSN_NM,
@@ -56,24 +57,25 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.taskCode = taskCode;
     this.niceSessionKey = niceSessionKey;
     this.inquiryDate = inquiryDate;
-    this.responseTime = responseTime;
+    this.responseTime = validation.formatDateVN(responseTime);
     this.responseCode = responseCode ? responseCode : '';
     this.responseMessage = responseMessage ? responseMessage : '';
     this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : '';
     this.cicReportRequestDate = validation.formatDateVN(INQ_DTIM_SCRPLOG);
     this.cicReportResponseDate = validation.formatDateVN(SYS_DTIM);
-    this.cicReportInquiryUserId = S_REQ_STATUS ? S_REQ_STATUS : '';
-    this.cicInquiryFiName = INQ_OGZ_NM ? INQ_OGZ_NM : '';
-    this.cicInquiryFiAddress = INQ_OGZ_ADDR ? INQ_OGZ_ADDR : '';
-    this.cicUserName = INQ_USER_NM ? INQ_USER_NM : '';
-    this.cicInquiryCode = INQ_CD ? INQ_CD : '';
+    this.commentOnCustomer = PSN_COMT;
+    this.cicReportInquiryUserId = S_REQ_STATUS;
+    this.cicInquiryFiName = INQ_OGZ_NM;
+    this.cicInquiryFiAddress = INQ_OGZ_ADDR;
+    this.cicUserName = INQ_USER_NM;
+    this.cicInquiryCode = INQ_CD;
     this.cicReportInquiryDateTime = validation.formatDateVN(INQ_DTIM);
     this.cicReportResultDateTime = validation.formatDateVN(RPT_SEND_DTIM);
-    this.name = PSN_NM ? PSN_NM : '';
-    this.cicId = CIC_ID ? CIC_ID : '';
-    this.address = PSN_ADDR ? PSN_ADDR : '';
-    this.nationalId = NATL_ID ? NATL_ID : '';
-    this.docIdEvidance = OTR_IDEN_EVD ? OTR_IDEN_EVD : '';
+    this.name = PSN_NM;
+    this.cicId = CIC_ID;
+    this.address = PSN_ADDR;
+    this.nationalId = NATL_ID;
+    this.docIdEvidance = OTR_IDEN_EVD ? OTR_IDEN_EVD : NATL_ID;
     if (_.isEmpty(cmtLoanDetaiInfo)) {
         this.loanDetailNode = outputLoanDetailinfo;
         this.totalFiLoanVND = totalFiLoanVND;

@@ -149,7 +149,10 @@ exports.internalCICB0003 = function (req, res, next) {
                             const reportS11AMSG = list.reportS11A;
                             const msg = getMSG.getMSG(reportS11AMSG);
 
-                            const objciccptmain = new ciccptmain(listcicRptInfo, listcusInfor, msg, niceSessionKey, listcusInfor.address);
+                            // Customer comment
+                            const cuscomt = '';
+
+                            const objciccptmain = new ciccptmain(listcicRptInfo, listcusInfor, msg, niceSessionKey, listcusInfor.address, cuscomt);
                             console.log('objciccptmain:', objciccptmain);
 
                             // end get customer
