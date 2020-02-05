@@ -39,10 +39,10 @@ exports.getCode = async function (req, res) {
     TB_ITCODE.CODE_NM_EN as CODENM_EN, 
     TB_ITCODE.PRT_CD_CLASS as PRT_CD_CLASS, 
     TB_ITCODE.PRT_CODE as PRT_CODE, 
-    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'mm/dd/yyyy hh24:mi:ss') as SYS_DTIM, 
+    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') as SYS_DTIM, 
     WORK_ID as WORK_ID, 
-    to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT,
-    to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT `;
+    to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,
+    to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT `;
     var SQL_FROM = `FROM TB_ITCODE `;
     var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass OR TB_ITCODE.CODE_NM LIKE :codeNm OR TB_ITCODE.CODE LIKE :code `;
     var SQL_ORDER_BY = 'ORDER BY CODE_NM ';
