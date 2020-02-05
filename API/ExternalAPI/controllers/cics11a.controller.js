@@ -103,6 +103,8 @@ const loan12MCat = require('../domain/loan/loan12MCautious');
 const financialContract = require('../domain/loan/financialContract');
 const cusLookup = require('../domain/loan/customerLookupInfo');
 
+const convertMilionUnit = require('../../shared/util/convertUnit');
+
 exports.cics11aRSLT = function (req, res) {
 	try {
 		var start = new Date();
@@ -164,8 +166,8 @@ exports.cics11aRSLT = function (req, res) {
 				if (!_.isEmpty(reslt.outputLoanDetailinfo) && _.isEmpty(cmtLoanDetaiInfo)) {
 					reslt.outputLoanDetailinfo.forEach(em => {
 						arrloanDetailNode.push(new loanDetailNode(em));
-						totalFiLoanVND = em.SUM_TOT_OGZ_VND;
-						totalFiLoanUSD = em.SUM_TOT_OGZ_USD;
+						totalFiLoanVND = convertMilionUnit.milionUnit(em.SUM_TOT_OGZ_VND);
+						totalFiLoanUSD = convertMilionUnit.milionUnit(em.SUM_TOT_OGZ_USD);
 					});
 				} else {
 					if (_.includes(reslt.cmtLoanDetailInfo, '.'))
@@ -176,10 +178,10 @@ exports.cics11aRSLT = function (req, res) {
 
 				// 2.2 Credit card infor
 				if (!_.isEmpty(reslt.outputCreditCardInfo) && _.isEmpty(cmtCreditCard)) {
-					creditCardTotalLimit = reslt.outputCreditCardInfo[0].CARD_TOT_LMT;
-					creditCardTotalBalance = reslt.outputCreditCardInfo[0].CARD_TOT_SETL_AMT;
-					creditCardTotalArrears = reslt.outputCreditCardInfo[0].CARD_TOT_ARR_AMT;
-					numberOfCreditCard = reslt.outputCreditCardInfo[0].CARD_CNT;
+					creditCardTotalLimit = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_LMT);
+					creditCardTotalBalance = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_SETL_AMT);
+					creditCardTotalArrears = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_ARR_AMT);
+					numberOfCreditCard = convertMilionUnit.convertNumber(reslt.outputCreditCardInfo[0].CARD_CNT);
 					creditCardIssueCompany = reslt.outputCreditCardInfo[0].CARD_ISU_OGZ;
 
 				}

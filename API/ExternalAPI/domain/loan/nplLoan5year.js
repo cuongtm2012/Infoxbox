@@ -1,3 +1,4 @@
+const convertMilionUnit = require('../../../shared/util/convertUnit');
 
 module.exports = function NPLLoan5Year(params) {
     const {
@@ -11,7 +12,7 @@ module.exports = function NPLLoan5Year(params) {
     this.fiName = OGZ_NM_BRANCH_NM;
     this.recentOccurrenceDate = RCT_OCR_DATE;
     this.debitGroup = DEBT_GRP;
-    this.amountVnd = AMT_VND;
-    this.amountUsd = AMT_USD;
+    this.amountVnd = convertMilionUnit.milionUnit(AMT_VND);
+    this.amountUsd = convertMilionUnit.milionUnit(AMT_USD);
 
 }

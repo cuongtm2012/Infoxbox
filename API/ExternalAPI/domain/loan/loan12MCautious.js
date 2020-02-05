@@ -1,3 +1,4 @@
+const convertMilionUnit = require('../../../shared/util/convertUnit');
 
 module.exports = function Loan12MCatious(params) {
     const {
@@ -8,7 +9,7 @@ module.exports = function Loan12MCatious(params) {
     } = params;
 
     this.baseMonth = BASE_MONTH;
-    this.baseMonthCautiousLoanSum = BASE_MONTH_CAT_LOAN_SUM;
+    this.baseMonthCautiousLoanSum = convertMilionUnit.milionUnit(BASE_MONTH_CAT_LOAN_SUM);
     this.cicFiName = OGZ_NM;
     this.reportingDate = RPT_DATE;
 

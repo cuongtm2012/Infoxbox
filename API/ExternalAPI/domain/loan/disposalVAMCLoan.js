@@ -1,3 +1,4 @@
+const convertMilionUnit = require('../../../shared/util/convertUnit');
 
 module.exports = function DisposalVamcLoan(params) {
     const {
@@ -7,6 +8,6 @@ module.exports = function DisposalVamcLoan(params) {
     } = params;
 
     this.disposalFiName = SELL_OGZ_NM;
-    this.originalBalance = PRCP_BAL;
+    this.originalBalance = convertMilionUnit.milionUnit(PRCP_BAL);
     this.dataReportingDate = DATA_RPT_DATE;
 }

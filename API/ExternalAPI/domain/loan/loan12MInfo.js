@@ -1,3 +1,5 @@
+const convertMilionUnit = require('../../../shared/util/convertUnit');
+
 module.exports = function Loan12MInfo(params) {
     const {
         BASE_MONTH,
@@ -7,7 +9,7 @@ module.exports = function Loan12MInfo(params) {
     } = params;
 
     this.baseMonth = BASE_MONTH;
-    this.baseMonthLoanBalance = BASE_MONTH_BAL;
-    this.baseMonthCreditCardBalance = BASE_MONTH_CARD_BAL;
-    this.baseMonthSum = BASE_MONTH_SUM;
+    this.baseMonthLoanBalance = convertMilionUnit.milionUnit(BASE_MONTH_BAL);
+    this.baseMonthCreditCardBalance = convertMilionUnit.milionUnit(BASE_MONTH_CARD_BAL);
+    this.baseMonthSum = convertMilionUnit.milionUnit(BASE_MONTH_SUM);
 }
