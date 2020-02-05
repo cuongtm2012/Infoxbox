@@ -62,10 +62,10 @@ exports.cics11aRQST = function (req, res, next) {
 					console.log("result cics11aRQST: ", result);
 
 					let response = {
-						responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
+						responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
 						niceSessionKey: result,
 						responseTime: dateutil.timeStamp(),
-						responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
+						responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
 					}
 
 					let responseUnknow = {
@@ -107,8 +107,6 @@ const convertMilionUnit = require('../../shared/util/convertUnit');
 
 exports.cics11aRSLT = function (req, res) {
 	try {
-		var start = new Date();
-
 		const getdataReq = new cics11aRSLTReq(req.body);
 
 		/*
@@ -134,13 +132,18 @@ exports.cics11aRSLT = function (req, res) {
 			console.log("result selectCICS11aRSLT: ", reslt);
 
 			let response = {
-				responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
+				responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
 				responseTime: dateutil.timeStamp(),
-				responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
+				responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
 			}
 
 			let responseUnknow = {
-				getdataReq,
+
+				fiSessionKey: getdataReq.fiSessionKey,
+				fiCode: getdataReq.fiCode,
+				taskCode: getdataReq.taskCode,
+				niceSessionKey: getdataReq.niceSessionKey,
+				inquiryDate: getdataReq.inquiryDate,
 				responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
 				responseTime: dateutil.timeStamp(),
 				responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code

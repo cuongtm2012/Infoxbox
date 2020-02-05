@@ -23,7 +23,7 @@ exports.internalCIC = function (req, res, next) {
                 // console.log("body result~~~~~", body.data);
 
                 // update process status = 04 update process completed
-                if (!validation.isEmptyJson(body.data.outJson.outB0001) && body.data.outJson.outB0001.errYn == "N") {
+                if (!_.isEmpty(body.data.outJson.outB0001.list) && body.data.outJson.outB0001.errYn == "N") {
                     //update process status = 04, sucecssful recieve response from scraping service
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
                         console.log("CIC report inquiry successful!");
@@ -375,6 +375,9 @@ exports.internalCICB0003 = function (req, res, next) {
 
                                 // End insert Scraping MSG
                             });
+                        } else {
+                            //TODO
+                            console.log('CIC has not information for this customer');
                         }
                     });
 

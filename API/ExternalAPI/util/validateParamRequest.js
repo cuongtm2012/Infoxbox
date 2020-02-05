@@ -7,6 +7,7 @@ const validParams = require('../../shared/util/param_middleware');
 const nicekey = require('../util/niceSessionKey');
 const listProductCode = require('../../shared/constant/productcode');
 const checkContains = require('../../shared/util/checkcontains');
+const _ = require('lodash');
 
 module.exports = {
     checkParamRequest: function (getdataReq) {
@@ -65,6 +66,14 @@ module.exports = {
                 responseCode: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.code
             }
             return response;
+        }
+
+        if (_.isEmpty(getdataReq.taxCode || getdataReq.natId || getdataReq.oldNatId ||
+            getdataReq.passportNumber || getdataReq.cicId)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NIS11ARQSTNOTNULL.name,
+                responseCode: responcodeEXT.RESCODEEXT.NIS11ARQSTNOTNULL.code
+            }
         }
 
         else
