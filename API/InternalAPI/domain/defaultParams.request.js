@@ -2,7 +2,7 @@ module.exports = {
     defaultParams: function (inqDt1, inqDt2, step_input, step_data) {
         let data = {
             appCd: 'INFOBOX',
-            orgCd: 'cic.vn',
+            iftUrl: 'http://www.infotech3.co.kr/ift/deploy/',
             dispNm: 'cic.org.vn',
             customerType: '2',
             reportType: '06',

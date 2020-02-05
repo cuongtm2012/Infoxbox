@@ -62,10 +62,10 @@ exports.cics11aRQST = function (req, res, next) {
 					console.log("result cics11aRQST: ", result);
 
 					let response = {
-						responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
+						responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
 						niceSessionKey: result,
 						responseTime: dateutil.timeStamp(),
-						responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
+						responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
 					}
 
 					let responseUnknow = {
@@ -132,9 +132,9 @@ exports.cics11aRSLT = function (req, res) {
 			console.log("result selectCICS11aRSLT: ", reslt);
 
 			let response = {
-				responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
+				responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
 				responseTime: dateutil.timeStamp(),
-				responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
+				responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
 			}
 
 			let responseUnknow = {

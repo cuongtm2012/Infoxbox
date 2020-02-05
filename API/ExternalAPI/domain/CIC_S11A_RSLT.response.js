@@ -74,7 +74,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.cicId = CIC_ID;
     this.address = PSN_ADDR;
     this.nationalId = NATL_ID;
-    this.docIdEvidance = OTR_IDEN_EVD ? OTR_IDEN_EVD : NATL_ID;
+    this.docIdEvidance = OTR_IDEN_EVD;
     if (_.isEmpty(cmtLoanDetaiInfo)) {
         this.loanDetailNode = outputLoanDetailinfo;
         this.totalFiLoanVND = totalFiLoanVND;
