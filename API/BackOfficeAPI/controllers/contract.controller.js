@@ -39,7 +39,7 @@ exports.getContract = async function (req, res) {
     TB_ITCUST.CUST_NM as CUST_NM,
     to_char(to_date(TB_ITCTRT.VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_START_DT ,
     to_char(to_date(TB_ITCTRT.VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') AS VALID_END_DT ,
-    to_char(to_date(TB_ITCTRT.SYS_DTIM, 'YYYY/MM/DD HH:MI:SS'),'mm/dd/yyyy hh:mi:ss') AS SYS_DTIM , 
+    to_char(to_date(TB_ITCTRT.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'mm/dd/yyyy hh24:mi:ss') AS SYS_DTIM , 
     TB_ITCTRT.WORK_ID as WORK_ID  `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
     var SQL_INNER_JOIN = 'INNER JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD AND TB_ITCUST.CUST_GB = TB_ITCTRT.CUST_GB ';
