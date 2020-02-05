@@ -13,7 +13,7 @@ var RESCODEEXT = {
     NINAME: {value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
     NIMOBILEPHONENUMBER: {value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027"},
     UNKNOW: { value: 400, name: "UNKNOW", code: "400" },
-    NOTEXIST: { value: 405, name: "DOESN'T EXIST NICE SESSION KEY", code: "405" }
+    NOTEXIST: { value: 405, name: "DON'T HAVE RESULT FOR THIS NICE SESSION KEY", code: "405" }
 };
 
 module.exports.RESCODEEXT = RESCODEEXT;

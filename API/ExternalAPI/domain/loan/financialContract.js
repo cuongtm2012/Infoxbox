@@ -1,4 +1,3 @@
-const validation = require('../../../shared/util/validation');
 
 module.exports = function FinancialContract(params) {
     const {
@@ -11,5 +10,5 @@ module.exports = function FinancialContract(params) {
     this.financialContract = FIN_CTRT;
     this.cicFiName = OGZ_NM;
     this.beginningDateOfContract = CTRT_START_DATE;
-    this.endDateOfContract = validation.formatDateVN(CTRT_END_DATE);
+    this.endDateOfContract = CTRT_END_DATE;
 }

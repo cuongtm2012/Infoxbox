@@ -1,6 +1,5 @@
 
 const _ = require('lodash');
-const validation = require('../../shared/util/validation');
 
 module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
     , creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
@@ -56,21 +55,21 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.fiCode = fiCode;
     this.taskCode = taskCode;
     this.niceSessionKey = niceSessionKey;
-    this.inquiryDate = validation.formatDateVN(inquiryDate);
-    this.responseTime = validation.formatDateVN(responseTime);
+    this.inquiryDate = inquiryDate;
+    this.responseTime = responseTime;
     this.responseCode = responseCode ? responseCode : '';
     this.responseMessage = responseMessage ? responseMessage : '';
     this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : '';
-    this.cicReportRequestDate = validation.formatDateVN(INQ_DTIM_SCRPLOG);
-    this.cicReportResponseDate = validation.formatDateVN(SYS_DTIM);
+    this.cicReportRequestDate = INQ_DTIM_SCRPLOG;
+    this.cicReportResponseDate = SYS_DTIM;
     this.commentOnCustomer = PSN_COMT;
     this.cicReportInquiryUserId = S_REQ_STATUS;
     this.cicInquiryFiName = INQ_OGZ_NM;
     this.cicInquiryFiAddress = INQ_OGZ_ADDR;
     this.cicUserName = INQ_USER_NM;
     this.cicInquiryCode = INQ_CD;
-    this.cicReportInquiryDateTime = validation.formatDateVN(INQ_DTIM);
-    this.cicReportResultDateTime = validation.formatDateVN(RPT_SEND_DTIM);
+    this.cicReportInquiryDateTime = INQ_DTIM;
+    this.cicReportResultDateTime = RPT_SEND_DTIM;
     this.name = PSN_NM;
     this.cicId = CIC_ID;
     this.address = PSN_ADDR;

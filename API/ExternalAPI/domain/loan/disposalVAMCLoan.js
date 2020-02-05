@@ -1,4 +1,3 @@
-const validation = require('../../../shared/util/validation');
 
 module.exports = function DisposalVamcLoan(params) {
     const {
@@ -9,5 +8,5 @@ module.exports = function DisposalVamcLoan(params) {
 
     this.disposalFiName = SELL_OGZ_NM;
     this.originalBalance = PRCP_BAL;
-    this.dataReportingDate = validation.formatDateVN(DATA_RPT_DATE);
+    this.dataReportingDate = DATA_RPT_DATE;
 }

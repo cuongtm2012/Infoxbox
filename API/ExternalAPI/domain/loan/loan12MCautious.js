@@ -1,4 +1,3 @@
-const validation = require('../../../shared/util/validation');
 
 module.exports = function Loan12MCatious(params) {
     const {
@@ -8,9 +7,9 @@ module.exports = function Loan12MCatious(params) {
         RPT_DATE
     } = params;
 
-    this.baseMonth = validation.formatDateVN(BASE_MONTH);
+    this.baseMonth = BASE_MONTH;
     this.baseMonthCautiousLoanSum = BASE_MONTH_CAT_LOAN_SUM;
     this.cicFiName = OGZ_NM;
-    this.reportingDate = validation.formatDateVN(RPT_DATE);
+    this.reportingDate = RPT_DATE;
 
 }

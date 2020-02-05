@@ -1,4 +1,3 @@
-const validation = require('../../../shared/util/validation');
 
 module.exports = function LoanDetailNode(params) {
     const {
@@ -61,7 +60,7 @@ module.exports = function LoanDetailNode(params) {
 
     this.cicFiCode = OGZ_CD ? OGZ_CD : '';
     this.cicFiName = OGZ_NM ? OGZ_NM : '';
-    this.recentReportDate = validation.formatDateVN(RCT_RPT_DATE);
+    this.recentReportDate = RCT_RPT_DATE;
     this.shortTermLoanVnd = ST_LOAN_VND;
     this.shortTermLoanUsd = ST_LOAN_USD;
     this.shortTermNormalLoanVnd = ST_NORM_LOAN_VND;
