@@ -1,4 +1,6 @@
-module.exports = function OtherLoanTerm(OtherLoanTerm) {
+const validation = require('../../../shared/util/validation');
+
+module.exports = function OtherLoanTerm(TermNormalLoan, TermCautiousLoan, TermFixedLoan, TermDaubtLoan, TermEstLossLoan) {
     const {
         TermNormalLoanVnd,
         TermNormalLoanUsd } = TermNormalLoan;
@@ -15,14 +17,14 @@ module.exports = function OtherLoanTerm(OtherLoanTerm) {
         TermEstLossLoanVnd,
         TermEstLossLoanUsd } = TermEstLossLoan;
 
-    this.otherTermNormalLoanVnd = TermNormalLoanVnd ? parseFloat(TermNormalLoanVnd) : 0;
-    this.otherTermNormalLoanUsd = TermNormalLoanUsd ? parseFloat(TermNormalLoanUsd) : 0;
-    this.otherTermCautiousLoanVnd = TermCautiousLoanVnd ? parseFloat(TermCautiousLoanVnd) : 0;
-    this.otherTermCautiousLoanUsd = TermCautiousLoanUsd ? parseFloat(TermCautiousLoanUsd) : 0;
-    this.otherTermFixedLoanVnd = TermFixedLoanVnd ? parseFloat(TermFixedLoanVnd) : 0;
-    this.otherTermFixedLoanUsd = TermFixedLoanUsd ? parseFloat(TermFixedLoanUsd) : 0;
-    this.otherTermDaubtLoanVnd = TermDaubtLoanVnd ? parseFloat(TermDaubtLoanVnd) : 0;
-    this.otherTermDaubtLoanUsd = TermDaubtLoanUsd ? parseFloat(TermDaubtLoanUsd) : 0;
-    this.otherTermEstLossLoanVnd = TermEstLossLoanVnd ? parseFloat(TermEstLossLoanVnd) : 0;
-    this.otherTermEstLossLoanUsd = TermEstLossLoanUsd ? parseFloat(TermEstLossLoanUsd) : 0;
+    this.otherTermNormalLoanVnd = TermNormalLoanVnd ? parseFloat(TermNormalLoanVnd) : validation.setEmptyValue(TermNormalLoanVnd);
+    this.otherTermNormalLoanUsd = TermNormalLoanUsd ? parseFloat(TermNormalLoanUsd) : validation.setEmptyValue(TermNormalLoanUsd);
+    this.otherTermCautiousLoanVnd = TermCautiousLoanVnd ? parseFloat(TermCautiousLoanVnd) : validation.setEmptyValue(TermCautiousLoanVnd);
+    this.otherTermCautiousLoanUsd = TermCautiousLoanUsd ? parseFloat(TermCautiousLoanUsd) : validation.setEmptyValue(TermCautiousLoanUsd);
+    this.otherTermFixedLoanVnd = TermFixedLoanVnd ? parseFloat(TermFixedLoanVnd) : validation.setEmptyValue(TermFixedLoanVnd);
+    this.otherTermFixedLoanUsd = TermFixedLoanUsd ? parseFloat(TermFixedLoanUsd) : validation.setEmptyValue(TermFixedLoanUsd);
+    this.otherTermDaubtLoanVnd = TermDaubtLoanVnd ? parseFloat(TermDaubtLoanVnd) : validation.setEmptyValue(TermDaubtLoanVnd);
+    this.otherTermDaubtLoanUsd = TermDaubtLoanUsd ? parseFloat(TermDaubtLoanUsd) : validation.setEmptyValue(TermDaubtLoanUsd);
+    this.otherTermEstLossLoanVnd = TermEstLossLoanVnd ? parseFloat(TermEstLossLoanVnd) : validation.setEmptyValue(TermEstLossLoanVnd);
+    this.otherTermEstLossLoanUsd = TermEstLossLoanUsd ? parseFloat(TermEstLossLoanUsd) : validation.setEmptyValue(TermEstLossLoanUsd);
 }
