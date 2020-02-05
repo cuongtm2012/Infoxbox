@@ -97,37 +97,37 @@ module.exports = {
 
             ShortLoanTerm = new shortLoanTerm(ShortTermNormalLoan, ShortTermCautiousLoan, ShortTermFixedLoan, ShortTermDaubtLoan, ShortTermEstLossLoan);
         }
-        if (_.isEmpty(listTermLoan.midTermLoan)) {
+        if (_.isEmpty(listTermLoan.midTermLoad)) {
             MidLoanTerm = {};
         }
-        else if (!_.isEmpty(listTermLoan.midTermLoan)) {
-            console.log('listTermLoan.midTermLoan', listTermLoan.midTermLoan);
+        else if (!_.isEmpty(listTermLoan.midTermLoad)) {
+            console.log('listTermLoan.midTermLoan', listTermLoan.midTermLoad);
             let MidTermNormalLoan, MidTermCautiousLoan, MidTermFixedLoan, MidTermDaubtLoan, MidTermEstLossLoan;
 
-            if (_.isEmpty(listTermLoan.midTermLoan.TermNormalLoan)) {
+            if (_.isEmpty(listTermLoan.midTermLoad.TermNormalLoan)) {
                 MidTermNormalLoan = {};
             } else {
-                MidTermNormalLoan = listTermLoan.midTermLoan.TermNormalLoan;
+                MidTermNormalLoan = listTermLoan.midTermLoad.TermNormalLoan;
             }
-            if (_.isEmpty(listTermLoan.midTermLoan.TermCautiousLoan)) {
+            if (_.isEmpty(listTermLoan.midTermLoad.TermCautiousLoan)) {
                 MidTermCautiousLoan = {};
             } else {
-                MidTermCautiousLoan = listTermLoan.midTermLoan.TermCautiousLoan;
+                MidTermCautiousLoan = listTermLoan.midTermLoad.TermCautiousLoan;
             }
-            if (_.isEmpty(listTermLoan.midTermLoan.TermFixedLoan)) {
+            if (_.isEmpty(listTermLoan.midTermLoad.TermFixedLoan)) {
                 MidTermFixedLoan = {};
             } else {
-                MidTermFixedLoan = listTermLoan.midTermLoan.TermFixedLoan;
+                MidTermFixedLoan = listTermLoan.midTermLoad.TermFixedLoan;
             }
-            if (_.isEmpty(listTermLoan.midTermLoan.TermDaubtLoan)) {
+            if (_.isEmpty(listTermLoan.midTermLoad.TermDaubtLoan)) {
                 MidTermDaubtLoan = {};
             } else {
-                MidTermDaubtLoan = listTermLoan.midTermLoan.TermDaubtLoan;
+                MidTermDaubtLoan = listTermLoan.midTermLoad.TermDaubtLoan;
             }
-            if (_.isEmpty(listTermLoan.midTermLoan.TermEstLossLoan)) {
+            if (_.isEmpty(listTermLoan.midTermLoad.TermEstLossLoan)) {
                 MidTermEstLossLoan = {};
             } else {
-                MidTermEstLossLoan = listTermLoan.midTermLoan.TermEstLossLoan;
+                MidTermEstLossLoan = listTermLoan.midTermLoad.TermEstLossLoan;
             }
 
             MidLoanTerm = new midLoanTerm(MidTermNormalLoan, MidTermCautiousLoan, MidTermFixedLoan, MidTermDaubtLoan, MidTermEstLossLoan);
@@ -167,37 +167,37 @@ module.exports = {
 
             LongLoanTerm = new longLoanTerm(LongTermNormalLoan, LongTermCautiousLoan, LongTermFixedLoan, LongTermDaubtLoan, LongTermEstLossLoan);
         }
-        if (_.isEmpty(listTermLoan.otherTermLoan)) {
+        if (_.isEmpty(listTermLoan.otherBadLoan)) {
             OtherLoanTerm = {};
         }
-        else if (!_.isEmpty(listTermLoan.otherTermLoan)) {
-            console.log('listTermLoan.otherTermLoan', listTermLoan.otherTermLoan);
+        else if (!_.isEmpty(listTermLoan.otherBadLoan)) {
+            console.log('listTermLoan.otherBadLoan', listTermLoan.otherBadLoan);
             let OtherTermNormalLoan, OtherTermCautiousLoan, OtherTermFixedLoan, OtherTermDaubtLoan, OtherTermEstLossLoan;
 
-            if (_.isEmpty(listTermLoan.otherTermLoan.TermNormalLoan)) {
+            if (_.isEmpty(listTermLoan.otherBadLoan.TermNormalLoan)) {
                 OtherTermNormalLoan = {};
             } else {
-                OtherTermNormalLoan = listTermLoan.otherTermLoan.TermNormalLoan;
+                OtherTermNormalLoan = listTermLoan.otherBadLoan.TermNormalLoan;
             }
-            if (_.isEmpty(listTermLoan.otherTermLoan.TermCautiousLoan)) {
+            if (_.isEmpty(listTermLoan.otherBadLoan.TermCautiousLoan)) {
                 OtherTermCautiousLoan = {};
             } else {
-                OtherTermCautiousLoan = listTermLoan.otherTermLoan.TermCautiousLoan;
+                OtherTermCautiousLoan = listTermLoan.otherBadLoan.TermCautiousLoan;
             }
-            if (_.isEmpty(listTermLoan.otherTermLoan.TermFixedLoan)) {
+            if (_.isEmpty(listTermLoan.otherBadLoan.TermFixedLoan)) {
                 OtherTermFixedLoan = {};
             } else {
-                OtherTermFixedLoan = listTermLoan.otherTermLoan.TermFixedLoan;
+                OtherTermFixedLoan = listTermLoan.otherBadLoan.TermFixedLoan;
             }
-            if (_.isEmpty(listTermLoan.otherTermLoan.TermDaubtLoan)) {
+            if (_.isEmpty(listTermLoan.otherBadLoan.TermDaubtLoan)) {
                 OtherTermDaubtLoan = {};
             } else {
-                OtherTermDaubtLoan = listTermLoan.otherTermLoan.TermDaubtLoan;
+                OtherTermDaubtLoan = listTermLoan.otherBadLoan.TermDaubtLoan;
             }
-            if (_.isEmpty(listTermLoan.otherTermLoan.TermEstLossLoan)) {
+            if (_.isEmpty(listTermLoan.otherBadLoan.TermEstLossLoan)) {
                 OtherTermEstLossLoan = {};
             } else {
-                OtherTermEstLossLoan = listTermLoan.otherTermLoan.TermEstLossLoan;
+                OtherTermEstLossLoan = listTermLoan.otherBadLoan.TermEstLossLoan;
             }
 
             OtherLoanTerm = new otherLoanTerm(OtherTermNormalLoan, OtherTermCautiousLoan, OtherTermFixedLoan, OtherTermDaubtLoan, OtherTermEstLossLoan);

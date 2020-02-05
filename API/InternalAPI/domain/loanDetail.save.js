@@ -9,8 +9,8 @@ module.exports = function LoanDetailResponse(params, ShortLoanTerm, MidLoanTerm,
         seq,
         shortTermLoanVnd,
         shortTermLoanUsd,
-        midTermLoadnInVnd,
-        midTermLoadnInUsd,
+        midTermLoadVnd,
+        midTermLoadUsd,
         longTermLoanVnd,
         longTermLoanUsd,
         otherLoanVnd,
@@ -89,8 +89,8 @@ module.exports = function LoanDetailResponse(params, ShortLoanTerm, MidLoanTerm,
     this.ST_CQ_LOAN_USD = shortTermDaubtLoanUsd ? parseValue.parseFloat(shortTermDaubtLoanUsd) : validation.setEmptyValue(shortTermDaubtLoanUsd);
     this.ST_EL_LOAN_VND = shortTermEstLossLoanVnd ? parseValue.parseFloat(shortTermEstLossLoanVnd) : validation.setEmptyValue(shortTermEstLossLoanVnd);
     this.ST_EL_LOAN_USD = shortTermEstLossLoanUsd ? parseValue.parseFloat(shortTermEstLossLoanUsd) : validation.setEmptyValue(shortTermEstLossLoanUsd);
-    this.MT_LOAN_VND = midTermLoadnInVnd ? parseValue.parseFloat(midTermLoadnInVnd) : validation.setEmptyValue(midTermLoadnInVnd);
-    this.MT_LOAN_UDS = midTermLoadnInUsd ? parseValue.parseFloat(midTermLoadnInUsd) : validation.setEmptyValue(midTermLoadnInUsd);
+    this.MT_LOAN_VND = midTermLoadVnd ? parseValue.parseFloat(midTermLoadVnd) : validation.setEmptyValue(midTermLoadVnd);
+    this.MT_LOAN_UDS = midTermLoadUsd ? parseValue.parseFloat(midTermLoadUsd) : validation.setEmptyValue(midTermLoadUsd);
     this.MT_NORM_LOAN_VND = midTermNormalLoanVnd ? parseValue.parseFloat(midTermNormalLoanVnd) : validation.setEmptyValue(midTermNormalLoanVnd);
     this.MT_NORM_LOAN_USD = midTermNormalLoanUsd ? parseValue.parseFloat(midTermNormalLoanUsd) : validation.setEmptyValue(midTermNormalLoanUsd);
     this.MT_CAT_LOAN_VND = midTermCautiousLoanVnd ? parseValue.parseFloat(midTermCautiousLoanVnd) : validation.setEmptyValue(midTermCautiousLoanVnd);
@@ -127,8 +127,8 @@ module.exports = function LoanDetailResponse(params, ShortLoanTerm, MidLoanTerm,
     this.OTR_EL_LOAN_USD = otherEstLossLoanUsd ? parseValue.parseFloat(otherEstLossLoanUsd) : validation.setEmptyValue(otherEstLossLoanUsd);
     this.OTR_BAD_LOAN_VND = otherBadLoanVnd ? parseValue.parseFloat(otherBadLoanVnd) : validation.setEmptyValue(otherBadLoanVnd);
     this.OTR_BAD_LOAN_USD = otherBadLoanUsd ? parseValue.parseFloat(otherBadLoanUsd) : validation.setEmptyValue(otherBadLoanUsd);
-    this.OGZ_TOT_LOAN_VND = parseFloat(shortTermLoanVnd ? shortTermLoanVnd : 0 + midTermLoadnInVnd ? midTermLoadnInVnd : 0 + longTermLoanVnd ? longTermLoanVnd : 0 + otherBadLoanVnd ? otherBadLoanVnd : 0);
-    this.OGZ_TOT_LOAN_USD = parseFloat(shortTermLoanUsd ? shortTermLoanUsd : 0 + midTermLoadnInUsd ? midTermLoadnInUsd : 0 + longTermLoanUsd ? longTermLoanUsd : 0 + otherBadLoanUsd ? otherBadLoanUsd : 0);
+    this.OGZ_TOT_LOAN_VND = parseFloat(shortTermLoanVnd ? shortTermLoanVnd : 0 + midTermLoadVnd ? midTermLoadVnd : 0 + longTermLoanVnd ? longTermLoanVnd : 0 + otherBadLoanVnd ? otherBadLoanVnd : 0);
+    this.OGZ_TOT_LOAN_USD = parseFloat(shortTermLoanUsd ? shortTermLoanUsd : 0 + midTermLoadUsd ? midTermLoadUsd : 0 + longTermLoanUsd ? longTermLoanUsd : 0 + otherBadLoanUsd ? otherBadLoanUsd : 0);
     this.SUM_TOT_OGZ_VND = waitData ? waitData : null;
     this.SUM_TOT_OGZ_USD = waitData ? waitData : null;
     this.SYS_DTIM = sysDtim;
