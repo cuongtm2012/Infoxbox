@@ -102,7 +102,7 @@ exports.updateCaptcha = async function (req, res) {
         };
 
         let SQL = 'UPDATE ADMIN.TB_CAPTCHA_RSP SET ' +
-            'CAPTCHA_USER_NM = :userName, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT, TEL_NO_MOBILE = :phone, ADDR = :address, EMAIL = :email' +
+            ' CAPTCHA_USER_NM = :userName, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT, TEL_NO_MOBILE = :phone, ADDR = :address, EMAIL = :email' +
             ' WHERE CAPTCHA_USER_ID = :userID ';
         oracelService.queryOracel(res, SQL, param, optionAutoCommit);
     }
