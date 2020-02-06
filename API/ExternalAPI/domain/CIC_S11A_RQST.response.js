@@ -34,7 +34,6 @@ module.exports = function CIC_S11A_RQSTResponse(cics11aRQSTRequest, response) {
     this.cicId = cicId;
     this.inquiryDate = inquiryDate;
     this.infoProvConcent = infoProvConcent;
-    this.niceSessionKey = niceSessionKey;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";

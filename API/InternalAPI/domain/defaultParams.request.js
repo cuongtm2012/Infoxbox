@@ -3,6 +3,7 @@ module.exports = {
         let data = {
             appCd: 'INFOBOX',
             iftUrl: 'http://www.infotech3.co.kr/ift/deploy/',
+            orgCd: 'cic.vn',
             dispNm: 'cic.org.vn',
             customerType: '2',
             reportType: '06',

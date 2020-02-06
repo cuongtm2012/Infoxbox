@@ -15,6 +15,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
 
     const {
         appCd,
+        iftUrl,
         orgCd,
         dispNm,
         customerType,
@@ -30,6 +31,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     const natId = NATL_ID ? NATL_ID : OLD_NATL_ID;
 
     this.appCd = appCd;
+    this.iftUrl = iftUrl;
     this.orgCd = orgCd;
     this.svcCd = 'B0002';
     this.dispNm = dispNm;

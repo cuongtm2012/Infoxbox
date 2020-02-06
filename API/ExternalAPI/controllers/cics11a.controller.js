@@ -115,16 +115,20 @@ exports.cics11aRSLT = function (req, res) {
 		*/
 		let rsCheck = validS11ARQLT.checkParamRequestForResponse(getdataReq);
 
-		if (!validation.isEmptyJson(rsCheck)) {
+		if (!_.isEmpty(rsCheck)) {
 			let preResponse = {
+				fiSessionKey: getdataReq.fiSessionKey,
+				fiCode: getdataReq.fiCode,
+				taskCode: getdataReq.taskCode,
+				niceSessionKey: getdataReq.niceSessionKey,
+				inquiryDate: getdataReq.inquiryDate,
 				responseMessage: rsCheck.responseMessage,
 				responseTime: dateutil.timeStamp(),
 				responseCode: rsCheck.responseCode
 
 			}
 
-			let responseData = new cics11aRSLTRes(preResponse, {});
-			return res.status(200).json(responseData);
+			return res.status(200).json(preResponse);
 		}
 		//End check params request
 

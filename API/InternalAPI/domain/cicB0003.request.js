@@ -3,6 +3,7 @@
 module.exports = function cicB0003Request(listCicNo, listNiceSession, data, defaultValue) {
     const {
         appCd,
+        iftUrl,
         orgCd,
         dispNm,
         customerType,
@@ -18,6 +19,7 @@ module.exports = function cicB0003Request(listCicNo, listNiceSession, data, defa
     } = defaultValue;
 
     this.appCd = appCd;
+    this.iftUrl = iftUrl;
     this.orgCd = orgCd;
     this.svcCd = 'B0003';
     this.dispNm = dispNm;
