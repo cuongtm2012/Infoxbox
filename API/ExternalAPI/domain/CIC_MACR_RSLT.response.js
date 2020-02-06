@@ -15,7 +15,20 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
         S_REQ_STATUS
     } = dataRes;
 
-    this.requestData = new cicMacrRSLTReq(cicMacrRSLTRequest);
+    const {
+        fiSessionKey,
+        fiCode,
+        taskCode,
+        niceSessionKey,
+        inquiryDate
+
+    } = cicMacrRSLTRequest;
+
+    this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
+    this.fiCode = fiCode;
+    this.taskCode = taskCode;
+    this.niceSessionKey = niceSessionKey;
+    this.inquiryDate = inquiryDate ? inquiryDate : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
