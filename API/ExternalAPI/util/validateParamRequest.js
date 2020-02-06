@@ -4,7 +4,7 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const dataType = require('../../shared/constant/datatype');
 const validParams = require('../../shared/util/param_middleware');
 
-const nicekey = require('../util/niceSessionKey');
+const nicekey = require('./niceSessionKey');
 const listProductCode = require('../../shared/constant/productcode');
 const checkContains = require('../../shared/util/checkcontains');
 const _ = require('lodash');
@@ -13,6 +13,7 @@ module.exports = {
     checkParamRequest: function (getdataReq) {
         var response;
 
+        //cicGoodCode
         let producCode = nicekey.niceProductCode(getdataReq.cicGoodCode);
         if (!checkContains.contains.call(listProductCode.productCodes, producCode)) {
             response = {
@@ -21,7 +22,14 @@ module.exports = {
             }
             return response;
         }
-
+        if (validation.isEmptyStr(getdataReq.cicGoodCode)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NICICCODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NICICCODE.code
+            }
+            return response;
+        }
+        // fiCode
         if (validation.isEmptyStr(getdataReq.fiCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFICODE.name,
@@ -38,13 +46,24 @@ module.exports = {
             }
             return response;
         }
-        if (validation.isEmptyStr(getdataReq.cicGoodCode)) {
+
+        // Task code
+        if (_.isEmpty(getdataReq.taskCode)) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NICICCODE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NICICCODE.code
+                responseMessage: responcodeEXT.RESCODEEXT.NITASKCODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NITASKCODE.code
             }
             return response;
         }
+        // inforProvCOncent
+        if (_.isEmpty(getdataReq.infoProvConcent)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+        //LoginID
         if (validation.isEmptyStr(getdataReq.loginId)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NILOGINID.name,
@@ -52,6 +71,7 @@ module.exports = {
             }
             return response;
         }
+        //LoginPass
         if (validation.isEmptyStr(getdataReq.loginPw)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIPASSWORD.name,
@@ -59,15 +79,7 @@ module.exports = {
             }
             return response;
         }
-
-        if (validation.isEmptyStr(getdataReq.niceSessionKey)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,
-                responseCode: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.code
-            }
-            return response;
-        }
-
+        // taxcode, natif, oldNatId, passportNumber,cicId
         if (_.isEmpty(getdataReq.taxCode || getdataReq.natId || getdataReq.oldNatId ||
             getdataReq.passportNumber || getdataReq.cicId)) {
             response = {
