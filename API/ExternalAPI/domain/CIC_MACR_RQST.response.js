@@ -35,8 +35,6 @@ module.exports = function CIC_MACR_RQSTResponse(cicMacrRQSTRequest, response) {
     this.cicId = cicId ? cicId : "";
     this.inquiryDate = inquiryDate ? inquiryDate : "" ;
     this.infoProvConcent = infoProvConcent;
-
-    this.niceSessionKey = niceSessionKey;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
