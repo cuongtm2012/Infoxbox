@@ -1,7 +1,7 @@
 
 var cics37RSLTReq = require('./CIC_S37_RSLT.request');
 
-module.exports = function CIC_S37_RSLTResponse(cics11aRSLTRequest, response, dataRes) {
+module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, dataRes) {
 
     const {
         responseTime,
@@ -16,7 +16,20 @@ module.exports = function CIC_S37_RSLTResponse(cics11aRSLTRequest, response, dat
         S_REQ_STATUS
     } = dataRes;
 
-    this.requestData = new cics37RSLTReq(cics11aRSLTRequest);
+    const {
+        fiSessionKey,
+        fiCode,
+        taskCode,
+        niceSessionKey,
+        inquiryDate
+
+    } = cics37RSLTRequest;
+
+    this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
+    this.fiCode = fiCode;
+    this.taskCode = taskCode;
+    this.niceSessionKey = niceSessionKey;
+    this.inquiryDate = inquiryDate ? inquiryDate : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
