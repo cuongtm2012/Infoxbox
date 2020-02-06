@@ -16,6 +16,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     const {
         appCd,
         iftUrl,
+        orgCd,
         dispNm,
         customerType,
         reportType,
@@ -31,6 +32,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
 
     this.appCd = appCd;
     this.iftUrl = iftUrl;
+    this.orgCd = orgCd;
     this.svcCd = 'B0002';
     this.dispNm = dispNm;
     this.userId = LOGIN_ID;
