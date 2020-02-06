@@ -28,7 +28,7 @@ module.exports = function CIC_S11A_RQSTRequest(parameters, password, niceSession
     this.passportNumber = passportNumber ? passportNumber : "";
     this.cicId = cicId ? cicId : "";
     this.inquiryDate = inquiryDate ? inquiryDate : dateutil.getCurrentInquiryDate();
-    this.infoProvConcent = infoProvConcent;
+    this.infoProvConcent = infoProvConcent.toUpperCase();
     this.niceSessionKey = niceSessionKey;
 
 };

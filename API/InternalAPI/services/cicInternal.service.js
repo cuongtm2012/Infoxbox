@@ -434,8 +434,9 @@ async function startProcessB0003() {
         sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim
         FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
         WHERE a.SCRP_STAT_CD = '04'
-            and SCRP_MOD_CD = '00'
+            and a.SCRP_MOD_CD = '00'
             and b.S_SVC_CD = 'B0002'
+            and a.AGR_FG = 'Y'
             and ROWNUM <= 20
         ORDER BY a.SYS_DTIM ASC`;
         // --                and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
