@@ -11,10 +11,10 @@ router.post('/CIC_S11A_RQST',  cics11a_controller.cics11aRQST);
 
 router.post('/CIC_S11A_RSLT',  cics11a_controller.cics11aRSLT);
 
-router.post('/cics37RQST', cicS37Rqst_controller.cics37Rqst);
+router.post('/CIC_S37_RQST', cicS37Rqst_controller.cics37Rqst);
 
-router.post('/cics37RSLT',  cics11a_controller.cics11aRSLT);
+router.post('/CIC_S37_RSLT',  cics11a_controller.cics11aRSLT);
 //TODO
-router.post('/cicProcSTAT', cicProcStat_controller.cicProcStat);
+router.post('/CIC_PROC_STAT', cicProcStat_controller.cicProcStat);
 
 module.exports = router;
