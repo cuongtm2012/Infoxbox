@@ -168,7 +168,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 let niceSessionKeyUpdateStatus = req.body.niceSessionKey;
 
                 // update process status = 10 update process completed
-                if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {
+                if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N" && _.isEmpty(body.data.outJson.outB0003.errMsg)) {
                     //update process status = 10, sucecssful recieve response from scraping service
 
                     // Get customer
@@ -419,6 +419,12 @@ exports.internalCICB0003 = function (req, res, next) {
                         }
                     });
 
+                } else if (_.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list)) {
+                    //Update ScrpModCd 00
+                    cicService.updateCICReportInquiryReadyToRequestScraping(req.body.niceSessionKey).then(() => {
+                        console.log(" B0003 rowCount = 0 update SCRP_MOD_CD = 00 ");
+                        return next();
+                    });
                 } else {
                     // Log in error
                     if (checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {

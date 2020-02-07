@@ -78,12 +78,11 @@ async function select04NotExist() {
 
         sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID
             FROM TB_SCRPLOG a
-            WHERE a.SCRP_STAT_CD = '01' 
+            WHERE a.SCRP_STAT_CD in ('01', '04') 
                 and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) > 30 
                 and SCRP_MOD_CD = '00'
                 and ROWNUM <= 20
             ORDER BY a.SYS_DTIM ASC`;
-        // where CUS_ID = :CUS_ID`;
 
         result = await connection.execute(
             // The statement to execute
