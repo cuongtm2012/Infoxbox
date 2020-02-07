@@ -469,6 +469,90 @@ async function startProcessB0003() {
     }
 }
 
+async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET SCRP_STAT_CD  = :SCRP_STAT_CD
+                WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: { val: niceSessionKey },
+                SCRP_STAT_CD: { val: code }
+            },
+            { autoCommit: true },
+        );
+
+        console.log("updateScrpStatCdErrorResponseCodeScraping updated::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, code) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET SCRP_STAT_CD  = :SCRP_STAT_CD
+                WHERE NICE_SSIN_ID in (${niceSessionKey.map((name, index) => `'${name}'`).join(", ")})`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                SCRP_STAT_CD: { val: code }
+            },
+            { autoCommit: true },
+        );
+
+        console.log("updateScrpStatCdErrorResponseCodeScraping updated::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
 
 module.exports.select01 = select01;
 module.exports.select04NotExist = select04NotExist;
@@ -480,3 +564,5 @@ module.exports.startProcessB0003 = startProcessB0003;
 module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted;
 module.exports.updateCICReportInquiryReadyToRequestScraping = updateCICReportInquiryReadyToRequestScraping;
 module.exports.updateScrpModCdPreRequestToScrapingB0002 = updateScrpModCdPreRequestToScrapingB0002;
+module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
+module.exports.updateListScrpStatCdErrorResponseCodeScraping = updateListScrpStatCdErrorResponseCodeScraping;
