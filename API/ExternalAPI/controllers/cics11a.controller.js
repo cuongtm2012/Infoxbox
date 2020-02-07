@@ -335,9 +335,10 @@ exports.cics11aRSLT = function (req, res) {
 							taskCode: getdataReq.taskCode,
 							niceSessionKey: getdataReq.niceSessionKey,
 							inquiryDate: getdataReq.inquiryDate,
-							responseMessage: responseMessage,
 							responseTime: dateutil.timeStamp(),
-							responseCode: responseCode
+							responseCode: responseCode,
+							responseMessage: responseMessage,
+							scrapingStatusCode: result
 						}
 
 						return res.status(400).json(responseSrapingStatus);
