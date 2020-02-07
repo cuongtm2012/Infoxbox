@@ -8,7 +8,6 @@ const cicExternalService = require('../services/cicExternal.service');
 const cics37RQSTRes = require('../domain/CIC_S37_RQST.response');
 
 const validation = require('../../shared/util/validation');
-const dateutil = require('../util/dateutil');
 const validRequest = require('../util/validateParamRequest');
 const encryptPassword = require('../util/encryptPassword');
 
@@ -19,7 +18,6 @@ const common_service = require('../services/common.service');
 
 exports.cics37Rqst = function (req, res) {
     try {
-        var start = new Date();
 
         // encrypt password
         let password = encryptPassword.encrypt(req.body.loginPw);
@@ -46,7 +44,7 @@ exports.cics37Rqst = function (req, res) {
                 let preResponse = {
                     responseMessage: rsCheck.responseMessage,
                     niceSessionKey: "",
-                    responseTime: dateutil.getSeconds(start),
+                    responseTime: util.timeStamp(),
                     responseCode: rsCheck.responseCode
                 }
 
@@ -63,14 +61,14 @@ exports.cics37Rqst = function (req, res) {
                     let response = {
                         responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
                         niceSessionKey: result,
-                        responseTime: dateutil.getSeconds(start),
+                        responseTime: util.timeStamp(),
                         responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
                     }
 
                     let responseUnknow = {
                         responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
                         niceSessionKey: result,
-                        responseTime: dateutil.getSeconds(start),
+                        responseTime: util.timeStamp(),
                         responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
                     }
 
@@ -109,7 +107,7 @@ exports.cics11aRSLT = function (req, res) {
         if (!validation.isEmptyJson(rsCheck)) {
             let preResponse = {
                 responseMessage: rsCheck.responseMessage,
-                responseTime: dateutil.getSeconds(start),
+                responseTime: util.timeStamp(),
                 responseCode: rsCheck.responseCode
 
             }
@@ -124,13 +122,13 @@ exports.cics11aRSLT = function (req, res) {
 
             let response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-                responseTime: dateutil.getSeconds(start),
+                responseTime: util.timeStamp(),
                 responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
             }
 
             let responseUnknow = {
                 responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                responseTime: dateutil.getSeconds(start),
+                responseTime: util.timeStamp(),
                 responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
             }
 

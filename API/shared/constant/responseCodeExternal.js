@@ -12,12 +12,14 @@ var RESCODEEXT = {
     CICSiteAccessFailure: { value: 8, name: "CIC site log in failure", code: "F008" },
     ConsentProvisionIsNotValid: { value: 9, name: "Consent of data provision is not valid", code: "F009" },
     CICReportInqFailure: { value: 14, name: "CIC Report inquiry failure(from CIC site)", code: "F014" },
+    SearchDateFrom: { value: 80, name: "Need to input mandatory Beginning date of search(scraping request date basis)", code: "F080" },
+    SearchDateTo: { value: 81, name: "Need to input mandatory End date of search(scraping request date basis)", code: "F081" },
     ETCError: { value: 99, name: "ETC Error", code: "F099" },
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     NINAME: { value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
     NIMOBILEPHONENUMBER: { value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027" },
-    UNKNOW: { value: 400, name: "UNKNOW", code: "400" },
+    UNKNOW: { value: 400, name: "UNKNOW (No result query)", code: "400" },
     NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" }
 };
