@@ -19,7 +19,10 @@ var RESCODEEXT = {
     NIMOBILEPHONENUMBER: { value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027" },
     UNKNOW: { value: 400, name: "UNKNOW", code: "400" },
     NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
-    NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" }
+    NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" },
+    CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028"},
+    CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029"},
+    CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030"}
 };
 
 var SCRAPPINGERRORCODE = {

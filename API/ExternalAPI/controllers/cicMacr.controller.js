@@ -17,7 +17,7 @@ const util = require('../util/dateutil');
 const common_service = require('../services/common.service');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
-
+const _ = require('lodash');
 
 exports.cicMACRRQST = function (req, res, next) {
     
@@ -141,6 +141,47 @@ exports.cicMACRRSLT = function (req, res) {
 			}
 
         });
+
+        cicMobileService.selectScrapingStatusCodeSCRPLOG(getdataReq.niceSessionKey).then(rslt => {
+
+            if (_.isEmpty(rslt)) {
+                return res.status(400).json(responseUnknow);
+            }
+            else {
+                const result = rslt[0].SCRP_STAT_CD;
+                let responseMessage, responseCode;
+
+                if (_.isEqual(parseInt(result), 20)) {
+                    responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.name;
+                    responseCode = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.code;
+                } else if (_.isEqual(parseInt(result), 24)) {
+                    responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.name;
+                    responseCode = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.code;
+                } else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+                    responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
+                    responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
+                }
+                else {
+                    responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
+                    responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+                }
+
+                let responseSrapingStatus = {
+                    fiSessionKey: getdataReq.fiSessionKey,
+                    fiCode: getdataReq.fiCode,
+                    taskCode: getdataReq.taskCode,
+                    niceSessionKey: getdataReq.niceSessionKey,
+                    inquiryDate: getdataReq.inquiryDate,
+                    responseTime: dateutil.timeStamp(),
+                    responseCode: responseCode,
+                    responseMessage: responseMessage,
+                    scrapingStatusCode: result
+                }
+
+                return res.status(400).json(responseSrapingStatus);
+            }
+        });
+
     } catch (error) {
         console.log(error);
     }
