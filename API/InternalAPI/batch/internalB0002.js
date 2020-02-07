@@ -5,6 +5,7 @@ const URI = require('../../shared/URI');
 const dateutil = require('../util/dateutil');
 const defaultParams = require('../domain/defaultParams.request');
 const _ = require('lodash');
+const convertBase64 = require('../../shared/util/convertBase64ToText');
 
 const cicB0002Req = require('../domain/cicB0002.request');
 
@@ -44,8 +45,8 @@ module.exports = class internalJob {
                     let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
                     //Convert data to format cic site
-                    //decrypt password
-                    var decryptPW = decrypt.decrypt(element.LOGIN_PW);
+                    //decrypt password yyyymmddhhmmssPassword
+                    var decryptPW = convertBase64.convertBase64ToText(element.LOGIN_PW).substr(14);
                     var fnData = new cicB0002Req(element, defaultValue, decryptPW);
 
                     cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {

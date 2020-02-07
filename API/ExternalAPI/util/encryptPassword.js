@@ -4,10 +4,11 @@ const crypto = require('crypto'),
 
 module.exports = {
     encrypt: function (text) {
-        var cipher = crypto.createCipher(algorithm, password)
-        var crypted = cipher.update(text, 'utf8', 'hex')
-        crypted += cipher.final('hex');
-        return crypted;
+        // var cipher = crypto.createCipher(algorithm, password)
+        // var crypted = cipher.update(text, 'utf8', 'hex')
+        // crypted += cipher.final('hex');
+        // return crypted;
+        return text;
     },
     decrypt: function (text) {
         var decipher = crypto.createDecipher(algorithm, password)

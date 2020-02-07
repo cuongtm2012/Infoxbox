@@ -20,7 +20,6 @@ const _ = require('lodash');
 
 exports.cics11aRQST = function (req, res, next) {
 	try {
-		var start = new Date();
 
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
@@ -305,8 +304,47 @@ exports.cics11aRSLT = function (req, res) {
 					, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year);
 				return res.status(200).json(responseData);
 			} else {
-				// let responseData = new cics11aRSLTRes(responseUnknow, {}, {}, {});
-				return res.status(400).json(responseUnknow);
+				// select in SCRPLOG check SCRP_STAT_CD
+				cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq.niceSessionKey).then(rslt => {
+
+					if (_.isEmpty(rslt)) {
+						return res.status(400).json(responseUnknow);
+					}
+					else {
+						const result = rslt[0].SCRP_STAT_CD;
+						let responseMessage, responseCode;
+
+						if (_.isEqual(parseInt(result), 20)) {
+							responseMessage = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.name;
+							responseCode = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.code;
+						} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22) || _.isEqual(parseInt(result), 24)) {
+							responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailure.name;
+							responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailure.code;
+						} else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+							responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
+							responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
+						}
+						else {
+							responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
+							responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+						}
+
+						let responseSrapingStatus = {
+							fiSessionKey: getdataReq.fiSessionKey,
+							fiCode: getdataReq.fiCode,
+							taskCode: getdataReq.taskCode,
+							niceSessionKey: getdataReq.niceSessionKey,
+							inquiryDate: getdataReq.inquiryDate,
+							responseTime: dateutil.timeStamp(),
+							responseCode: responseCode,
+							responseMessage: responseMessage,
+							scrapingStatusCode: result
+						}
+
+						return res.status(400).json(responseSrapingStatus);
+					}
+				});
+
 			}
 		});
 
@@ -315,4 +353,3 @@ exports.cics11aRSLT = function (req, res) {
 	}
 
 };
-

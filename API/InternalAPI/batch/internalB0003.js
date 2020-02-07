@@ -47,12 +47,8 @@ module.exports = class internalJob {
                 console.log('arrNiceSessionkey~~:', listNiceSessionkey);
                 // End get list nicesessionkey
 
-                let inqDt1 = data[0].INQ_DTIM;
-                let inqDt2 = data[0].INQ_DTIM;
-
-                // DEBUG
-                // let inqDt1 = '20190125';
-                // let inqDt2 = '20190125';
+                let inqDt1 = data[0].INQ_DTIM.substring(0, 8);
+                let inqDt2 = data[0].INQ_DTIM.substring(0, 8);
 
                 let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
 
