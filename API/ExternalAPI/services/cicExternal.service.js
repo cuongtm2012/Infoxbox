@@ -518,7 +518,8 @@ async function selectProcStatus(req) {
         let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD FROM TB_SCRPLOG T
                     where to_date(T.INQ_DTIM , 'yyyymmdd') between to_date(:inqDtimFrom, 'yyyymmdd') and to_date (:inqDtimTo, 'yyyymmdd')
                         and T.CUST_CD =: fiCode
-                        order by T.INQ_DTIM`;
+                        order by T.INQ_DTIM
+                        OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY`;
 
         let result = await connection.execute(
             // The statement to execute
@@ -526,7 +527,9 @@ async function selectProcStatus(req) {
             {
                 inqDtimFrom: { val: req.searchDateFrom },
                 inqDtimTo: { val: req.searchDateTo },
-                fiCode: { val: req.fiCode }
+                fiCode: { val: req.fiCode },
+                offset: { val: req.offset },
+                maxnumrows: { val: req.maxnumrows }
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT

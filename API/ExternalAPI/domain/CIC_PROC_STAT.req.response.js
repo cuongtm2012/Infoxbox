@@ -1,3 +1,4 @@
+const _ = require('lodash');
 
 module.exports = function CicProcStatus(params) {
     const {
@@ -5,11 +6,21 @@ module.exports = function CicProcStatus(params) {
         taskCode,
         searchDateFrom,
         searchDateTo,
+        offset,
+        maxnumrows
 
     } = params;
+
+    let _offset, _maxnumrows;
+    if (_.isEmpty(offset))
+        _offset = 0;
+    if (_.isEmpty(maxnumrows))
+        _maxnumrows = 100;
+
     this.fiCode = fiCode;
     this.taskCode = taskCode;
     this.searchDateFrom = searchDateFrom;
     this.searchDateTo = searchDateTo;
-
+    this.offset = offset ? offset : _offset;
+    this.maxnumrows = maxnumrows ? maxnumrows : _maxnumrows;
 }
