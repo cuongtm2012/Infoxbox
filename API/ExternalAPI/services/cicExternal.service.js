@@ -18,8 +18,8 @@ async function insertSCRPLOG(req) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, INQ_DTIM, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :INQ_DTIM, :SYS_DTIM)`;
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, INQ_DTIM, SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :INQ_DTIM, :SYS_DTIM)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -28,6 +28,7 @@ async function insertSCRPLOG(req) {
                 NICE_SSIN_ID: { val: producCode + niceSessionKey },
                 CUST_SSID_ID: { val: req.fiSessionKey },
                 CUST_CD: { val: req.fiCode },
+                GDS_CD: { val: req.cicGoodCode },
                 LOGIN_ID: { val: req.loginId },
                 LOGIN_PW: { val: req.loginPw },
                 TAX_ID: { val: req.taxCode },
@@ -471,6 +472,84 @@ async function selectCICS11aRSLT(req) {
     }
 }
 
+async function selectScrapingStatusCodeSCRPLOG(niceSessionKey) {
+    let connection;
+
+    try {
+        //Connection db
+        connection = await oracledb.getConnection(dbconfig);
+
+        let sqlCusLookup = `SELECT T.SCRP_STAT_CD FROM TB_SCRPLOG T
+                            where T.NICE_SSIN_ID = :niceSessionKey`;
+
+        let result = await connection.execute(
+            // The statement to execute
+            sqlCusLookup,
+            {
+                niceSessionKey: { val: niceSessionKey }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+        console.log("selectScrapingStatusCodeSCRPLOG rows:", result.rows);
+
+        return result.rows;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function selectProcStatus(req) {
+    let connection;
+
+    try {
+        //Connection db
+        connection = await oracledb.getConnection(dbconfig);
+
+        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD FROM TB_SCRPLOG T
+                    where to_date(T.INQ_DTIM , 'yyyymmdd') between to_date(:inqDtimFrom, 'yyyymmdd') and to_date (:inqDtimTo, 'yyyymmdd')
+                        and T.CUST_CD =: fiCode
+                        order by T.INQ_DTIM`;
+
+        let result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                inqDtimFrom: { val: req.searchDateFrom },
+                inqDtimTo: { val: req.searchDateTo },
+                fiCode: { val: req.fiCode }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+        console.log("selectProcStatus rows:", result.rows);
+
+        return result.rows;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
+module.exports.selectScrapingStatusCodeSCRPLOG = selectScrapingStatusCodeSCRPLOG;
+module.exports.selectProcStatus = selectProcStatus;

@@ -11,11 +11,15 @@ var RESCODEEXT = {
     CICSiteLoginFailure: { value: 7, name: "CIC site log in failure", code: "F007" },
     CICSiteAccessFailure: { value: 8, name: "CIC site log in failure", code: "F008" },
     ConsentProvisionIsNotValid: { value: 9, name: "Consent of data provision is not valid", code: "F009" },
+    CICReportInqFailure: { value: 14, name: "CIC Report inquiry failure(from CIC site)", code: "F014" },
+    SearchDateFrom: { value: 80, name: "Need to input mandatory Beginning date of search(scraping request date basis)", code: "F080" },
+    SearchDateTo: { value: 81, name: "Need to input mandatory End date of search(scraping request date basis)", code: "F081" },
+    ETCError: { value: 99, name: "ETC Error", code: "F099" },
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     NINAME: { value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
     NIMOBILEPHONENUMBER: { value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027" },
-    UNKNOW: { value: 400, name: "UNKNOW", code: "400" },
+    UNKNOW: { value: 400, name: "UNKNOW (No result query)", code: "400" },
     NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" }
 };
@@ -35,5 +39,51 @@ var SCRAPPINGERRORCODE = {
     OtherError: { value: 29, name: "Other error", code: "29" }
 };
 
+const ScrappingResponseCodeLoginFailure = {
+    LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-002] login page check fail', value: 1 },
+    LoginFail2: { code: 'LOGIN-002', errMsg: '[LOGIN-002] login page check fail', value: 2 },
+    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-004] Login Fail.', value: 3 },
+    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
+    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-004] Login Fail.', value: 5 }
+};
+
+const ScrappingResponseCodeCicINQError = {
+    CicIdINQError1: { code: 'B0001-001', errMsg: '[B0001-001] page check fail', value: 1 },
+    CicIdINQError2: { code: 'B0001-002', errMsg: '[B0001-002] page check fail', value: 2 },
+    CicIdINQError3: { code: 'B0001-003', errMsg: '[B0001-003] CIC No Search Fail', value: 3 }
+};
+
+const ScrappingResponseCodeCicReportINQError = {
+    CicReportINQError1: { code: 'B0002-001', errMsg: '[B0002-001] page check fail', value: 1 },
+    CicReportINQError2: { code: 'B0002-002', errMsg: '[B0002-002] page check fail', value: 2 },
+    CicReportINQError3: { code: 'B0002-003', errMsg: '[B0002-003] CIC No Search Fail', value: 3 },
+    CicReportINQError101: { code: 'B0002-101', errMsg: '[B0002-101] Multiple CIC No.', value: 101 },
+    CicReportINQError102: { code: 'B0002-102', errMsg: '[B0002-102] page check fail', value: 102 },
+    CicReportINQError103: { code: 'B0002-103', errMsg: '[B0002-103] page check fail', value: 103 },
+    CicReportINQError104: { code: 'B0002-104', errMsg: '[B0002-104] Name Search Fail', value: 104 },
+    CicReportINQError105: { code: 'B0002-105', errMsg: '[B0002-105] Name Search Fail', value: 105 },
+    CicReportINQError106: { code: 'B0002-106', errMsg: '[B0002-106] Name Search Fail', value: 106 },
+    CicReportINQError107: { code: 'B0002-107', errMsg: "[B0002-107] Customer's inquiry may overlap with the last 1 day: Duplicate condition", value: 107 },
+    CicReportINQError108: { code: 'B0002-108', errMsg: '[B0002-108] success or fail', value: 108 }
+};
+
+const ScrappingResponseCodeCicReportResultINQError = {
+    CicReportResultINQError1: { value: 1, errMsg: '[B0003-001] page check fail', code: 'B0003-001' },
+    CicReportResultINQError2: { value: 2, errMsg: '[B0003-002] page check fail', code: 'B0003-002' }
+};
+
+const ScrapingStatusCode = {
+    LoginInError: { code: '20' },
+    CicIdInqError: { code: '21' },
+    CicReportInqError: { code: '22' },
+    CicReportResultInqError: { code: '23' },
+    OtherError: { code: '29' }
+};
+
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
+module.exports.ScrappingResponseCodeLoginFailure = ScrappingResponseCodeLoginFailure;
+module.exports.ScrappingResponseCodeCicINQError = ScrappingResponseCodeCicINQError;
+module.exports.ScrappingResponseCodeCicReportINQError = ScrappingResponseCodeCicReportINQError;
+module.exports.ScrappingResponseCodeCicReportResultINQError = ScrappingResponseCodeCicReportResultINQError;
+module.exports.ScrapingStatusCode = ScrapingStatusCode;

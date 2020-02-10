@@ -8,8 +8,6 @@ const cicMobileService = require('../services/cicMobile.service');
 
 const validation = require('../../shared/util/validation');
 
-const dateutil = require('../util/dateutil');
-
 const validRequest = require('../util/validateMacrParamRequest');
 
 const util = require('../util/dateutil');
@@ -48,7 +46,7 @@ exports.cicMACRRQST = function (req, res, next) {
             let preResponse = {
                 responseMessage: rsCheck.responseMessage,
                 niceSessionKey: "",
-                responseTime: dateutil.getSeconds(start),
+                responseTime: util.timeStamp(),
                 responseCode: rsCheck.responseCode
             }
             let responseData = new cicMacrRQSTRes(getdataReq, preResponse);
@@ -64,14 +62,14 @@ exports.cicMACRRQST = function (req, res, next) {
                 let response = {
                     responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
                     niceSessionKey: result,
-                    responseTime: dateutil.getSeconds(start),
+                    responseTime: util.timeStamp(),
                     responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
                 }
 
                 let responseUnknow = {
                     responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
                     niceSessionKey: result,
-                    responseTime: dateutil.getSeconds(start),
+                    responseTime: util.timeStamp(),
                     responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
                 }
 
@@ -108,7 +106,7 @@ exports.cicMACRRSLT = function (req, res) {
         if (!validation.isEmptyJson(rsCheck)) {
 			let preResponse = {
 				responseMessage: rsCheck.responseMessage,
-				responseTime: dateutil.getSeconds(start),
+				responseTime: util.getSeconds(start),
 				responseCode: rsCheck.responseCode
 
             }
@@ -122,13 +120,13 @@ exports.cicMACRRSLT = function (req, res) {
 
             let response = {
 				responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-				responseTime: dateutil.getSeconds(start),
+				responseTime: util.getSeconds(start),
 				responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
 			}
 
 			let responseUnknow = {
 				responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-				responseTime: dateutil.getSeconds(start),
+				responseTime: util.getSeconds(start),
 				responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
             }
             
