@@ -210,7 +210,44 @@ async function selectSCRPTRLOG(req) {
     }
 }
 
+async function selectScrapingStatusCodeSCRPLOG(niceSessionKey) {
+    let connection;
+
+    try {
+        
+        connection = await oracledb.getConnection(dbconfig);
+
+        let sqlCusLookup = `SELECT T.SCRP_STAT_CD FROM TB_SCRPLOG T
+                            where T.NICE_SSIN_ID = :niceSessionKey`;
+
+        let result = await connection.execute(
+            
+            sqlCusLookup,
+            {
+                niceSessionKey: { val: niceSessionKey }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+        console.log("selectScrapingStatusCodeSCRPLOG rows:", result.rows);
+
+        return result.rows;
+        
+    } catch (err) {
+        console.log(err);
+        
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
 
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectSCRPTRLOG = selectSCRPTRLOG;
+module.exports.selectScrapingStatusCodeSCRPLOG = selectScrapingStatusCodeSCRPLOG;
