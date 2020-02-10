@@ -18,8 +18,8 @@ async function insertSCRPLOG(req) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, INQ_DTIM, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :INQ_DTIM, :SYS_DTIM)`;
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, INQ_DTIM, SCRP_REQ_DTIM , SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :INQ_DTIM, :SCRP_REQ_DTIM ,:SYS_DTIM)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -39,6 +39,7 @@ async function insertSCRPLOG(req) {
                 SCRP_STAT_CD: { val: '01' },
                 AGR_FG: { val: req.infoProvConcent },
                 INQ_DTIM: { val: req.inquiryDate },
+                SCRP_REQ_DTIM: { val: sysDim },
                 SYS_DTIM: { val: sysDim }
             },
             { autoCommit: true }
