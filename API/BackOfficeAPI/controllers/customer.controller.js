@@ -22,29 +22,101 @@ exports.getCustInfo = async function (req, res) {
      PRT_CUST_CD as PRT_CUST_CD, 
      ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
     var SQL_FROM = 'FROM TB_ITCUST ';
-    var SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication OR CUST_CD LIKE :cusCd OR CUST_NM LIKE :custNm ';
-    var SQL_ORDER_BY = 'ORDER BY CUST_NM '
+    var SQL_ORDER_BY = 'ORDER BY CUST_NM ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            currentLocation: { val: currentLocation },
-            limitRow: { val: limitRow }
-        };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
-    } else {
-        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let param = {
-            custClassicfication: { val: custClassicfication },
-            cusCd: { val: cusCd },
-            custNm: { val: custNm },
-            currentLocation: { val: currentLocation },
-            limitRow: { val: limitRow }
+            currentLocation,
+            limitRow
         };
         oracelService.queryOracel(res, sql, param, optionFormatObj);
     }
 
+    if ((custClassicfication) && (cusCd) && (custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
+                                'AND CUST_CD LIKE :cusCd ' +
+                                'AND CUST_NM LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            custClassicfication,
+            cusCd,
+            custNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if ((custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            custClassicfication,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if (_.isEmpty(custClassicfication) && (cusCd) && _.isEmpty(custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            cusCd,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            custNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if ((custClassicfication) && (cusCd) && _.isEmpty(custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND CUST_CD LIKE :cusCd ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            custClassicfication,
+            cusCd,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if ((custClassicfication) && _.isEmpty(cusCd) && (custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND CUST_NM LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            custClassicfication,
+            custNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if (_.isEmpty(custClassicfication) && (cusCd) && (custNm)) {
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd AND CUST_NM LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            cusCd,
+            custNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
 };
 
 exports.addCust = async function (req, res) {

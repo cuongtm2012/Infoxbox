@@ -17,38 +17,217 @@ exports.getUserInfo = async function (req, res) {
     var limitRow = req.query.limitRow;
 
     var SQL_SELECT = `SELECT
-    USER_ID as USER_ID,
-    USER_NM as USER_NM,
-    CUST_CD as CUST_CD,
-    INOUT_GB as INOUT_GB,
-    ADDR as ADDR,
-    EMAIL as EMAIL,
-    TEL_NO_MOBILE as TEL_NO_MOBILE,
-    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') as SYS_DTIM,
-    to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
-    to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
-    WORK_ID as WORK_ID `;
+    TB_ITCUST.CUST_NM as CUST_NM,
+    TB_ITUSER.USER_ID as USER_ID,
+    TB_ITUSER.USER_NM as USER_NM,
+    TB_ITUSER.CUST_CD as CUST_CD,
+    TB_ITUSER.INOUT_GB as INOUT_GB,
+    TB_ITUSER. ADDR as ADDR,
+    TB_ITUSER.EMAIL as EMAIL,
+    TB_ITUSER.TEL_NO_MOBILE as TEL_NO_MOBILE,
+    to_char(to_date(TB_ITUSER.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') as SYS_DTIM,
+    to_char(to_date(TB_ITUSER.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
+    to_char(to_date(TB_ITUSER.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
+    TB_ITUSER.WORK_ID as WORK_ID `;
     var SQL_FROM = 'FROM TB_ITUSER ';
-    var SQL_WHERE_SEARCH = 'WHERE INOUT_GB LIKE :userClass ' +
-                                'OR USER_ID LIKE :userID ' +
-                                'OR USER_NM LIKE :userName ' +
-                                'OR CUST_CD LIKE :orgCode ';
+    var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
-        let sql = SQL_SELECT + SQL_FROM + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_LIMIT;
         let param = {
             currentLocation,
             limitRow
         };
         oracelService.queryOracel(res, sql, param, optionFormatObj);
-    } else {
-        let sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_LIMIT;
+    }
+    if ((userClass) && (userID) && (userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ' +
+            'AND TB_ITUSER.USER_ID LIKE :userID ' +
+            'AND TB_ITUSER.USER_NM LIKE :userName ' +
+            'AND TB_ITUSER.CUST_CD LIKE :orgCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
             userClass,
             userID,
             orgCode,
             userName,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userName,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.USER_ID LIKE :userID  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userID,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.USER_NM LIKE :userName  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userName,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.USER_NM LIKE :userName  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            userName,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userName,
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && (userID) && (userName) && _.isEmpty(orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
+                                ' AND TB_ITUSER.USER_ID LIKE :userID ' +
+                                ' AND TB_ITUSER.USER_NM LIKE :userName ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userID,
+            userName,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && (userID) && _.isEmpty(userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
+                                ' AND TB_ITUSER.USER_ID LIKE :userID ' +
+                                ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userID,
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if((userClass) && _.isEmpty(userID) && (userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
+                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+                                ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userName,
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+
+    if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
+                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+                                ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            userName,
+            orgCode,
             currentLocation,
             limitRow
         };

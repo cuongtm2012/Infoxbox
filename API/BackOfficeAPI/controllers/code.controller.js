@@ -10,16 +10,33 @@ exports.getCodeClassification = async function (req, res) {
     var codeClassificationName = _.isEmpty(req.query.codeClassificationName) ? '' : req.query.codeClassificationName;
     var SQL_SELECT = `SELECT CD_CLASS, CODE_NM, CODE_NM_EN `;
     var SQL_FROM = 'FROM TB_ITCODE ';
-    var SEARCH = 'WHERE CD_CLASS = :codeClassification OR CODE_NM = :codeClassificationName';
     if (_.isEmpty(codeClassification) && _.isEmpty(codeClassificationName)) {
         let sql = SQL_SELECT + SQL_FROM;
         let params = {};
         oracelService.queryOracel(res, sql, params, optionFormatObj);
-    } else {
+    }
+    if ((codeClassification) && (codeClassificationName)) {
+        let SEARCH = 'WHERE CD_CLASS = :codeClassification AND CODE_NM = :codeClassificationName';
         let sql = SQL_SELECT + SQL_FROM + SEARCH;
         let params = {
-            codeClassification: { val: codeClassification },
-            codeClassificationName: { val: codeClassificationName }
+            codeClassification,
+            codeClassificationName
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj);
+    }
+    if ((codeClassification) && _.isEmpty(codeClassificationName)) {
+        let SEARCH = 'WHERE CD_CLASS = :codeClassification ';
+        let sql = SQL_SELECT + SQL_FROM + SEARCH;
+        let params = {
+            codeClassification
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj);
+    }
+    if ((codeClassification) && _.isEmpty(codeClassificationName)) {
+        let SEARCH = 'WHERE CODE_NM = :codeClassificationName ';
+        let sql = SQL_SELECT + SQL_FROM + SEARCH;
+        let params = {
+            codeClassificationName
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj);
     }
@@ -44,24 +61,95 @@ exports.getCode = async function (req, res) {
     to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,
     to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT `;
     var SQL_FROM = `FROM TB_ITCODE `;
-    var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass OR TB_ITCODE.CODE_NM LIKE :codeNm OR TB_ITCODE.CODE LIKE :code `;
     var SQL_ORDER_BY = 'ORDER BY CODE_NM ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
-            currentLocation: { val: currentLocation },
-            limitRow: { val: limitRow }
+            currentLocation,
+            limitRow
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
-    } else {
+    }
+
+    if ((code) && (codeClass) && (codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm AND TB_ITCODE.CODE LIKE :code `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
-            code: { val: code },
-            codeClass: { val: codeClass },
-            codeNm: { val: codeNm },
-            currentLocation: { val: currentLocation },
-            limitRow: { val: limitRow }
+            code,
+            codeClass,
+            codeNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(code) && (codeClass) && _.isEmpty(codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass  `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            codeClass,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CODE LIKE :code  `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            code,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(code) && _.isEmpty(codeClass) && (codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CODE_NM LIKE :codeNm  `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            codeNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((code) && (codeClass) && _.isEmpty(codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE LIKE :code `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            codeClass,
+            code,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(code) && (codeClass) && (codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            codeClass,
+            codeNm,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((code) && _.isEmpty(codeClass) && (codeNm)) {
+        var SQL_SEARCH = `WHERE TB_ITCODE.CODE LIKE :code AND TB_ITCODE.CODE_NM LIKE :codeNm `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            code,
+            codeNm,
+            currentLocation,
+            limitRow
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     }
