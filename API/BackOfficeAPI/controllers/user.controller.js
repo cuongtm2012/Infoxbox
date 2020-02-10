@@ -24,9 +24,9 @@ exports.getUserInfo = async function (req, res) {
     ADDR as ADDR,
     EMAIL as EMAIL,
     TEL_NO_MOBILE as TEL_NO_MOBILE,
-    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'mm/dd/yyyy hh24:mi:ss') as SYS_DTIM,
-    to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') as VALID_START_DT,
-    to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') as VALID_END_DT,
+    to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') as SYS_DTIM,
+    to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
+    to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
     WORK_ID as WORK_ID `;
     var SQL_FROM = 'FROM TB_ITUSER ';
     var SQL_WHERE_SEARCH = 'WHERE INOUT_GB LIKE :userClass ' +
