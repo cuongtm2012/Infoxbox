@@ -2,13 +2,13 @@ const axios = require('axios');
 const URI = require('../../shared/URI');
 const cicService = require('../services/cicInternal.service');
 const cicServiceRes = require('../services/cicInternalRes.service');
-const validation = require('../../shared/util/validation');
 const cicTransSave = require('../domain/cicTrans.save');
 const encryptPassword = require('../util/encryptPassword');
 const getIdGetway = require('../../shared/util/getIPGateWay');
 const _ = require("lodash");
 const logger = require('../config/logger');
 const responCode = require('../../shared/constant/responseCodeExternal');
+const convertPassword = require('../../shared/util/convertBase64ToText');
 
 exports.internalCIC = function (req, res, next) {
     try {
@@ -29,9 +29,8 @@ exports.internalCIC = function (req, res, next) {
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
                         console.log("CIC report inquiry successful!");
 
-                        //TODO Update response to table
                         // encrypt password
-                        let password = encryptPassword.encrypt(req.body.userPw);
+                        let password = convertPassword.convertTextToBase64(req.body.userPw);
                         let requestParams = req.body;
                         let responseParams = body.data.outJson.outB0002;
                         let scrplogid = body.data.outJson.in.thread_id.substring(0, 13);
@@ -393,7 +392,7 @@ exports.internalCICB0003 = function (req, res, next) {
                                     **   update translog 
                                     */
                                     // encrypt password
-                                    let password = encryptPassword.encrypt(req.body.userPw);
+                                    let password = convertPassword.convertTextToBase64(req.body.userPw);
                                     let requestParams = req.body;
                                     let responseParams = body.data.outJson.outB0003;
                                     let scrplogid = body.data.outJson.in.thread_id.substring(0, 5) + rpCicId;
@@ -416,6 +415,7 @@ exports.internalCICB0003 = function (req, res, next) {
                         } else {
                             //TODO
                             console.log('CIC has not information for this customer');
+                            return;
                         }
                     });
 
