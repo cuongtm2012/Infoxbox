@@ -63,6 +63,24 @@ module.exports = {
             return response;
         }
 
+        //taskCode
+        if (validation.isEmptyStr(getdataReq.taskCode)){
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NITASKCODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NITASKCODE.code
+            }
+            return response;
+        }
+
+        //infoProvConcent
+        if (validation.isEmptyStr(getdataReq.infoProvConcent)){
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+
         else
             response = {};
 
