@@ -73,7 +73,7 @@ module.exports = {
         }
 
         //infoProvConcent
-        if (validation.isEmptyStr(getdataReq.infoProvConcent)){
+        if (validation.isEmptyStr(getdataReq.infoProvConcent) || getdataReq.infoProvConcent == 'N'){
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
                 responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
