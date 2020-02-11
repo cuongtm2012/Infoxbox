@@ -27,7 +27,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             RCT_OCR_DATE,
             DEBT_GRP,
             AMT_VND,
-            AMD_USD,
+            AMT_USD,
             SYS_DTIM,
             WORK_ID)  values (:1, :2, :3, :4, :5, :6, :7, :8, :9)`;
 

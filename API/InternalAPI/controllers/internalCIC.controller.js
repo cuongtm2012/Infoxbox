@@ -412,11 +412,7 @@ exports.internalCICB0003 = function (req, res, next) {
 
                                 // End insert Scraping MSG
                             });
-                        } else {
-                            //TODO
-                            console.log('CIC has not information for this customer');
-                            return;
-                        }
+                        } 
                     });
 
                 } else if (_.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list)) {
