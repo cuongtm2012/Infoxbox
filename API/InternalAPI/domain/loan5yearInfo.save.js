@@ -12,7 +12,7 @@ module.exports = function loan5Yearinfor(listData, niceSessionKey, sysDtim, work
     } = listData;
 
     this.NICE_SSIN_ID = niceSessionKey;
-    this.SEQ = seq ? parseInt(seq) : seqs;
+    this.SEQ = seqs;
     this.OGZ_NM_BRANCH_NM = company ? company : null;
     this.RCT_OCR_DATE = date ? date : null;
     this.DEBT_GRP = group ? group : null;
