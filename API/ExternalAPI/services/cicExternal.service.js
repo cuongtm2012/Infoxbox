@@ -2,7 +2,7 @@ const oracledb = require('oracledb');
 const dbconfig = require('../../shared/config/dbconfig');
 
 const convertTime = require('../util/dateutil');
-const nicekey = require('../util/niceSessionKey');
+const niceGoodCode = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 const _ = require('lodash');
 
@@ -13,7 +13,7 @@ async function insertSCRPLOG(req) {
         let sql, result;
 
         let sysDim = convertTime.timeStamp();
-        let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let producCode = niceGoodCode.niceProductCode(req.cicGoodCode);
         let niceSessionKey = req.niceSessionKey;
 
         connection = await oracledb.getConnection(dbconfig);

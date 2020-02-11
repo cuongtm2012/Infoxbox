@@ -1,82 +1,85 @@
 const validation = require('../../shared/util/validation');
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
-const dataType = require('../../shared/constant/datatype');
-const validParams = require('../../shared/util/param_middleware');
-const nicekey = require('../util/niceSessionKey');
-const listProductCode = require('../../shared/constant/productcode.js');
 const checkContains = require('../../shared/util/checkcontains');
+const _ = require('lodash');
+const dateUtil = require('../util/dateutil');
+const dataType = require('../../shared/constant/datatype');
 
 module.exports = {
-     checkMacrParamRequest: function (getdataReq) {
+    checkMacrParamRequest: function (getdataReq) {
         var response;
-        let producCode = nicekey.niceProductCode(getdataReq);
 
-        if (!checkContains.contains.call(listProductCode.productCodes, producCode)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.IVCICCODE.name,
-                responseCode: responcodeEXT.RESCODEEXT.IVCICCODE.code
-            }
-            return response;
-        }
-
-        if (!validParams.checkParamType(getdataReq.fiCode, dataType.DATATYPE.STRING.type)) {
-            response = {
-               
-                responseMessage: responcodeEXT.RESCODEEXT.IVFICODE.name + `, FI code is of type ` +
-                    `${typeof getdataReq.fiCode}` + ` but should be ` + dataType.DATATYPE.STRING.type,
-                responseCode: responcodeEXT.RESCODEEXT.IVFICODE.code
-            }
-            return response;
-        }
-
-        
+        //ficode
         if (validation.isEmptyStr(getdataReq.fiCode)) {
             response = {
-                responseMessage : responcodeEXT.RESCODEEXT.NIFICODE.name,
-                responseCode : responcodeEXT.RESCODEEXT.NIFICODE.code
+                responseMessage: responcodeEXT.RESCODEEXT.NIFICODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NIFICODE.code
             }
             return response;
         }
-        
- 
-        if (validation.isEmptyStr(getdataReq.name)){
-            response = {
-                responseMessage : responcodeEXT.RESCODEEXT.NINAME.name,
-                responseCode : responcodeEXT.RESCODEEXT.NINAME.code
-            }
-            return response;
-        }
-
-        if (validation.isEmptyStr(getdataReq.mobilePhoneNumber)){
-            response = {
-                responseMessage : responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
-                responseCode : responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
-            }
-            return response;
-        }
-
-        if (validation.isEmptyStr(getdataReq.niceSessionKey)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,
-                responseCode: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.code
-            }
-            return response;
-        }
-
         //taskCode
-        if (validation.isEmptyStr(getdataReq.taskCode)){
+        if (validation.isEmptyStr(getdataReq.taskCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NITASKCODE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NITASKCODE.code
             }
             return response;
         }
+        if (!(_.isEqual(responcodeEXT.TaskCode.CIC_MACR_RQST.code, getdataReq.taskCode) || _.isEqual(responcodeEXT.TaskCode.CIC_S11A_RSLT.code, getdataReq.taskCode))) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code
+            }
+            return response;
+        }
+        //name
+        if (validation.isEmptyStr(getdataReq.name)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINAME.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINAME.code
+            }
+            return response;
+        }
+        //mobilePhoneNumber
+        //TODO check with list available phone number, data type
+        if (validation.isEmptyStr(getdataReq.mobilePhoneNumber)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
+                responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
+            }
+            return response;
+        } 
+        // else if (!_.isEmpty(getdataReq.mobilePhoneNumber)) {
+        //     response = {
+
+        //         responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name + `, Mobile number is of type ` +
+        //             `${typeof getdataReq.mobilePhoneNumber}` + ` but should be ` + dataType.DATATYPE.NUMBER.type,
+        //         responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
+        //     }
+        //     return response;
+        // }
+
 
         //infoProvConcent
-        if (validation.isEmptyStr(getdataReq.infoProvConcent) || getdataReq.infoProvConcent == 'N'){
+        if (validation.isEmptyStr(getdataReq.infoProvConcent)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
                 responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+        if (!checkContains.contains.call(responcodeEXT.InfoProvConcent, getdataReq.infoProvConcent.toUpperCase())) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+        // valid inquiryDate less than today
+        if (!dateUtil.validDateAndCurrentDate(getdataReq.inquiryDate, '')) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.INQDateInvalid.name,
+                responseCode: responcodeEXT.RESCODEEXT.INQDateInvalid.code
             }
             return response;
         }

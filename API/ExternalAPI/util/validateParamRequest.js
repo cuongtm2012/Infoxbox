@@ -1,24 +1,20 @@
 const validation = require('../../shared/util/validation');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
-const dataType = require('../../shared/constant/datatype');
-const validParams = require('../../shared/util/param_middleware');
 
-const nicekey = require('./niceSessionKey');
-const listProductCode = require('../../shared/constant/productcode');
 const checkContains = require('../../shared/util/checkcontains');
 const _ = require('lodash');
+const dateUtil = require('../util/dateutil');
 
 module.exports = {
     checkParamRequest: function (getdataReq) {
         var response;
 
         //cicGoodCode
-        let producCode = nicekey.niceProductCode(getdataReq.cicGoodCode);
-        if (!checkContains.contains.call(listProductCode.productCodes, producCode)) {
+        if (!checkContains.contains.call(responcodeEXT.ProductCode, getdataReq.cicGoodCode)) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.IVCICCODE.name,
-                responseCode: responcodeEXT.RESCODEEXT.IVCICCODE.code
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code
             }
             return response;
         }
@@ -30,23 +26,13 @@ module.exports = {
             return response;
         }
         // fiCode
-        if (validation.isEmptyStr(getdataReq.fiCode)) {
+        if (_.isEmpty(getdataReq.fiCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFICODE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIFICODE.code
             }
             return response;
         }
-        if (!validParams.checkParamType(getdataReq.fiCode, dataType.DATATYPE.STRING.type)) {
-            response = {
-                // responseMessage: responcodeEXT.RESCODEEXT.IVFICODE.name,
-                responseMessage: responcodeEXT.RESCODEEXT.IVFICODE.name + `, FI code is of type ` +
-                    `${typeof getdataReq.fiCode}` + ` but should be ` + dataType.DATATYPE.STRING.type,
-                responseCode: responcodeEXT.RESCODEEXT.IVFICODE.code
-            }
-            return response;
-        }
-
         // Task code
         if (_.isEmpty(getdataReq.taskCode)) {
             response = {
@@ -55,8 +41,22 @@ module.exports = {
             }
             return response;
         }
+        if (!(_.isEqual(responcodeEXT.TaskCode.CIC_S11A_RQST.code, getdataReq.taskCode) || _.isEqual(responcodeEXT.TaskCode.CIC_S11A_RSLT.code, getdataReq.taskCode))) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code
+            }
+            return response;
+        }
         // inforProvCOncent
         if (_.isEmpty(getdataReq.infoProvConcent)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+        if (!checkContains.contains.call(responcodeEXT.InfoProvConcent, getdataReq.infoProvConcent.toUpperCase())) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
                 responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
@@ -86,6 +86,15 @@ module.exports = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIS11ARQSTNOTNULL.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIS11ARQSTNOTNULL.code
             }
+            return response;
+        }
+        // valid inquiryDate less than today
+        if (!dateUtil.validDateAndCurrentDate(getdataReq.inquiryDate, '')) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.INQDateInvalid.name,
+                responseCode: responcodeEXT.RESCODEEXT.INQDateInvalid.code
+            }
+            return response;
         }
 
         else

@@ -6,6 +6,8 @@ const cicExternalService = require('../services/cicExternal.service');
 const preProStatRes = require('../domain/procStatus/preProStatus.response');
 const dateutil = require('../util/dateutil');
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
+const validS11AService = require('../services/validS11A.service');
+const PreResponse = require('../domain/preResponse.response');
 
 exports.cicProcStat = function (req, res) {
     try {
@@ -16,6 +18,7 @@ exports.cicProcStat = function (req, res) {
 		* Request data
 		*/
         let rsCheck = validParam.checkParamRequestForResponse(getdataReq);
+        let preResponse, responseData;
 
         if (!_.isEmpty(rsCheck)) {
             let preResponse = {
@@ -27,38 +30,46 @@ exports.cicProcStat = function (req, res) {
             let responseData = new CICProcStatRes(getdataReq, preResponse);
             return res.status(200).json(responseData);
         }
-        //End check params request
+        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+            if (_.isEmpty(dataFICode)) {
+                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
 
-        cicExternalService.selectProcStatus(getdataReq, res).then(reslt => {
-            console.log("result selectProcStatus: ", reslt);
-            var responseDataFinal;
-            var cicReportStatus = [];
-
-            let response = {
-                responseTime: dateutil.timeStamp(),
-                responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-                responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
+                responseData = new CICProcStatRes(req.body, preResponse);
+                return res.status(200).json(responseData);
             }
+            //End check params request
 
-            let responseUnknow = {
-                responseTime: dateutil.timeStamp(),
-                responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-            }
+            cicExternalService.selectProcStatus(getdataReq, res).then(reslt => {
+                console.log("result selectProcStatus: ", reslt);
+                var responseDataFinal;
+                var cicReportStatus = [];
 
-            if (!_.isEmpty(reslt)) {
-                _.forEach(reslt, res => {
-                    let responseData = new preProStatRes(res);
-                    cicReportStatus.push(responseData);
-                });
-                let countResult = reslt.length;
-                responseDataFinal = new CICProcStatRes(getdataReq, response, countResult, cicReportStatus);
+                let response = {
+                    responseTime: dateutil.timeStamp(),
+                    responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
+                    responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
+                }
 
-                return res.status(200).json(responseDataFinal);
-            } else {
-                let responseData = new CICProcStatRes(getdataReq, responseUnknow);
-                return res.status(400).json(responseData);
-            }
+                let responseUnknow = {
+                    responseTime: dateutil.timeStamp(),
+                    responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
+                    responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
+                }
+
+                if (!_.isEmpty(reslt)) {
+                    _.forEach(reslt, res => {
+                        let responseData = new preProStatRes(res);
+                        cicReportStatus.push(responseData);
+                    });
+                    let countResult = reslt.length;
+                    responseDataFinal = new CICProcStatRes(getdataReq, response, countResult, cicReportStatus);
+
+                    return res.status(200).json(responseDataFinal);
+                } else {
+                    let responseData = new CICProcStatRes(getdataReq, responseUnknow);
+                    return res.status(400).json(responseData);
+                }
+            });
         });
 
     } catch (error) {

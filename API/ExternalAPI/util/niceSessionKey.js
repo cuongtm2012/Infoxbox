@@ -4,21 +4,6 @@ module.exports = {
     makeNiceSessionKey: function (cicGoodCode) {
         //Total 25 Length: “IB”(2) + NICE Product Code(5) + YYYYMMDDhhmmsss (15) + random(3)
         return util.timeStamp2() + generate(5);
-    },
-
-    niceProductCode: function (cicGoodCode) {
-        var productCode;
-
-        switch (cicGoodCode) {
-            case "06":
-                productCode = "S1001";
-                break;
-
-            default:
-                productCode = "S1001";
-        }
-
-        return productCode;
     }
 };
 

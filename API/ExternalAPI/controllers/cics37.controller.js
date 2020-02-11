@@ -15,70 +15,64 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 
 const util = require('../util/dateutil');
 const common_service = require('../services/common.service');
+const validS11AService = require('../services/validS11A.service');
+const PreResponse = require('../domain/preResponse.response');
 
 exports.cics37Rqst = function (req, res) {
     try {
 
         // encrypt password
         let password = encryptPassword.encrypt(req.body.loginPw);
-        // let niceSessionKey = nicekey.makeNiceSessionKey();
         let niceSessionKey;
-        common_service.getSequence().then(resSeq => {
-            niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
 
-            const getdataReq = new cics37RQSTReq(req.body, password, niceSessionKey);
-            // JSON.stringify(getdataReq);
-            console.log("getdataReq=====", getdataReq);
+        /*
+        * Checking parameters request
+        * Request data
+        */
+        let rsCheck = validRequest.checkParamRequest(req.body);
+        let preResponse, responseData;
 
-            //Logging request
-            logger.debug('Log request parameters from routes after manage request');
-            logger.info(getdataReq);
+        if (!_.isEmpty(rsCheck)) {
+            preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
 
-			/*
-			* Checking parameters request
-			* Request data
-			*/
-            let rsCheck = validRequest.checkParamRequest(getdataReq);
+            let responseData = new cics37RQSTRes(req.body, preResponse);
+            return res.status(200).json(responseData);
+        }
+        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+            if (_.isEmpty(dataFICode)) {
+                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
 
-            if (!validation.isEmptyJson(rsCheck)) {
-                let preResponse = {
-                    responseMessage: rsCheck.responseMessage,
-                    niceSessionKey: "",
-                    responseTime: util.timeStamp(),
-                    responseCode: rsCheck.responseCode
-                }
-
-                let responseData = new cics37RQSTRes(getdataReq, preResponse);
+                responseData = new cics37RQSTRes(req.body, preResponse);
                 return res.status(200).json(responseData);
             }
             //End check params request
+            common_service.getSequence().then(resSeq => {
+                niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
 
-            cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
-                console.log('insertINQLOG::', res1);
-                cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
-                    console.log("result cics11aRQST: ", result);
+                const getdataReq = new cics37RQSTReq(req.body, password, niceSessionKey);
+                // JSON.stringify(getdataReq);
+                console.log("getdataReq=====", getdataReq);
 
-                    let response = {
-                        responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
-                        niceSessionKey: result,
-                        responseTime: util.timeStamp(),
-                        responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
-                    }
+                //Logging request
+                logger.debug('Log request parameters from routes after manage request');
+                logger.info(getdataReq);
 
-                    let responseUnknow = {
-                        responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                        niceSessionKey: result,
-                        responseTime: util.timeStamp(),
-                        responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-                    }
+                cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
+                    console.log('insertINQLOG::', res1);
+                    cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
+                        console.log("result cics11aRQST: ", result);
 
-                    if (!validation.isEmptyStr(result)) {
-                        let responseData = new cics37RQSTRes(getdataReq, response);
-                        return res.status(200).json(responseData);
-                    } else {
-                        let responseData = new cics37RQSTRes(getdataReq, responseUnknow);
-                        return res.status(400).json(responseData);
-                    }
+                        let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
+                        let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
+
+                        if (!validation.isEmptyStr(result)) {
+                            let responseData = new cics37RQSTRes(getdataReq, responseSuccess);
+                            return res.status(200).json(responseData);
+                        } else {
+                            let responseData = new cics37RQSTRes(getdataReq, responseUnknow);
+                            return res.status(400).json(responseData);
+                        }
+                    });
                 });
             });
         });
@@ -92,10 +86,8 @@ const cics37RSLTReq = require('../domain/CIC_S37_RSLT.request');
 const cics37RSLTRes = require('../domain/CIC_S37_RSLT.response');
 const validS11ARQLT = require('../util/validRequestS11AResponse');
 
-exports.cics11aRSLT = function (req, res) {
+exports.cics37RSLT = function (req, res) {
     try {
-        var start = new Date();
-
         const getdataReq = new cics37RSLTReq(req.body);
 
 		/*
@@ -103,42 +95,37 @@ exports.cics11aRSLT = function (req, res) {
 		* Request data
 		*/
         let rsCheck = validS11ARQLT.checkParamRequestForResponse(getdataReq);
+        let preResponse, responseData;
 
-        if (!validation.isEmptyJson(rsCheck)) {
-            let preResponse = {
-                responseMessage: rsCheck.responseMessage,
-                responseTime: util.timeStamp(),
-                responseCode: rsCheck.responseCode
+        if (!_.isEmpty(rsCheck)) {
+            preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
 
-            }
-
-            let responseData = new cics37RSLTRes(getdataReq, preResponse, {});
+            responseData = new cics37RSLTRes(getdataReq, preResponse, {});
             return res.status(200).json(responseData);
         }
-        //End check params request
+        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+            if (_.isEmpty(dataFICode)) {
+                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
 
-        cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
-            console.log("result selectCICS11aRSLT: ", reslt);
-
-            let response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-                responseTime: util.timeStamp(),
-                responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
-            }
-
-            let responseUnknow = {
-                responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                responseTime: util.timeStamp(),
-                responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-            }
-
-            if (!validation.isEmptyStr(reslt)) {
-                let responseData = new cics37RSLTRes(getdataReq, response, reslt[0]);
+                responseData = new cics37RQSTRes(req.body, preResponse);
                 return res.status(200).json(responseData);
-            } else {
-                let responseData = new cics37RSLTRes(getdataReq, responseUnknow, {});
-                return res.status(400).json(responseData);
             }
+            //End check params request
+
+            cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
+                console.log("result selectCICS11aRSLT: ", reslt);
+
+                let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
+                let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
+
+                if (!validation.isEmptyStr(reslt)) {
+                    let responseData = new cics37RSLTRes(getdataReq, responseSuccess, reslt[0]);
+                    return res.status(200).json(responseData);
+                } else {
+                    let responseData = new cics37RSLTRes(getdataReq, responseUnknow, {});
+                    return res.status(400).json(responseData);
+                }
+            });
         });
 
     } catch (error) {

@@ -1,4 +1,5 @@
 const dateFormat = require('dateformat');
+const _ = require('lodash');
 
 module.exports = {
     formatDate: function (date) {
@@ -32,6 +33,15 @@ module.exports = {
 
     getCurrentInquiryDate: function () {
         return dateFormat(new Date(), 'yyyymmdd');
+    },
+
+    validDateAndCurrentDate: function (startDate, endDate) {
+        if (!_.isEmpty(startDate) && _.isEmpty(endDate))
+            return parseFloat(startDate.substring(0, 8)) <= parseFloat(this.getCurrentInquiryDate());
+        else if (!(_.isEmpty(startDate) && _.isEmpty(endDate)))
+            return parseFloat(startDate.substring(0, 8)) <= parseFloat(endDate.substring(0, 8));
+        else
+            return true;
     }
 
 };

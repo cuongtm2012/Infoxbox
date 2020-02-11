@@ -21,7 +21,6 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 var cicExternalRoute = require('./routes/cicExternal.route');
-var cicMobileRoute = require('./routes/cicMobile.route');
 
 // Config DB
 var config = require('./config/config');
@@ -82,7 +81,6 @@ app.use(function (req, res, next) {
 // app.use(expressValidator());
 
 app.use('/external', cicExternalRoute);
-app.use('/mobile', cicMobileRoute);
 
 
 app.use(function (err, req, res, next) {

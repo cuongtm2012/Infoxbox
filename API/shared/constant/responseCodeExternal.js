@@ -17,14 +17,18 @@ var RESCODEEXT = {
     ETCError: { value: 99, name: "ETC Error", code: "F099" },
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
+    InvalidTaskCode: { value: 20, name: "Invalid task code", code: "F020" },
+    NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
+    InvalidNiceProductCode: { value: 22, name: "Invalid NICE product code(no contract for this product)", code: "F022" },
     NINAME: { value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
     NIMOBILEPHONENUMBER: { value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027" },
+    InvalidMobileNumber: { value: 44, name: "Invalid mobile number", code: "F044" },
     UNKNOW: { value: 400, name: "UNKNOW (No result query)", code: "400" },
-    NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" },
-    CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028"},
-    CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029"},
-    CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030"}
+    CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028" },
+    CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029" },
+    INQDateInvalid: { value: 40, name: "Invalid inquiry date (Less than curent date or start date less than end date)", code: "F040" },
+    CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" }
 };
 
 var SCRAPPINGERRORCODE = {
@@ -83,6 +87,20 @@ const ScrapingStatusCode = {
     OtherError: { code: '29' }
 };
 
+const TaskCode = {
+    CIC_S11A_RQST: { code: 'CIC_S11A_RQST' },
+    CIC_S11A_RSLT: { code: 'CIC_S11A_RSLT' },
+    CIC_S37_RQST: { code: 'CIC_S37_RQST' },
+    CIC_S37_RSLT: { code: 'CIC_S37_RSLT' },
+    CIC_MACR_RQST: { code: 'CIC_MACR_RQST' },
+    CIC_MACR_RSLT: { code: 'CIC_MACR_RSLT' },
+    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
+};
+
+const ProductCode = ['06'];
+
+const InfoProvConcent = ['Y'];
+
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
 module.exports.ScrappingResponseCodeLoginFailure = ScrappingResponseCodeLoginFailure;
@@ -90,3 +108,6 @@ module.exports.ScrappingResponseCodeCicINQError = ScrappingResponseCodeCicINQErr
 module.exports.ScrappingResponseCodeCicReportINQError = ScrappingResponseCodeCicReportINQError;
 module.exports.ScrappingResponseCodeCicReportResultINQError = ScrappingResponseCodeCicReportResultINQError;
 module.exports.ScrapingStatusCode = ScrapingStatusCode;
+module.exports.TaskCode = TaskCode;
+module.exports.ProductCode = ProductCode;
+module.exports.InfoProvConcent = InfoProvConcent;
