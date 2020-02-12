@@ -1,6 +1,4 @@
 const cicService = require('../services/cicInternal.service');
-const validation = require('../../shared/util/validation');
-const decrypt = require('../util/encryptPassword');
 const URI = require('../../shared/URI');
 const dateutil = require('../util/dateutil');
 const defaultParams = require('../domain/defaultParams.request');

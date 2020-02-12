@@ -5,6 +5,7 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const checkContains = require('../../shared/util/checkcontains');
 const _ = require('lodash');
 const dateUtil = require('../util/dateutil');
+const isBase64 = require('is-base64');
 
 module.exports = {
     checkParamRequest: function (getdataReq) {
@@ -46,6 +47,13 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIPASSWORD.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIPASSWORD.code
+            }
+            return response;
+        }
+        if (!isBase64(getdataReq.loginPw)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ErrorDecryptError.name,
+                responseCode: responcodeEXT.RESCODEEXT.ErrorDecryptError.code
             }
             return response;
         }

@@ -284,7 +284,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         // 2.6.Card 3 year info
         if (!_.isEmpty(objCard3YearInfo)) {
 
-            const sqlInsertCard3year = `INSERT INTO TB_CRDT_CARD (NICE_SSIN_ID,
+            const sqlInsertCard3year = `INSERT INTO TB_CRDT_CARD_DEQ (NICE_SSIN_ID,
                 CARD_ARR_PSN_YN,
                 CARD_ARR_LGST_DAYS,
                 CARD_ARR_CNT,                            

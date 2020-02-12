@@ -81,7 +81,7 @@ exports.InternalCICB0002NotExist = function (req, res, next) {
             });
         }).catch((error) => {
             console.log(error)
-        });;
+        });
 
     } catch (err) {
         return next(err)
