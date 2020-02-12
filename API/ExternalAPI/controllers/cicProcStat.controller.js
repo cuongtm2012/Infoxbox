@@ -32,7 +32,7 @@ exports.cicProcStat = function (req, res) {
         }
         validS11AService.selectFiCode(req.body.fiCode, '%%').then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
-                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
+                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
                 responseData = new CICProcStatRes(req.body, preResponse);
                 return res.status(200).json(responseData);
