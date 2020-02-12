@@ -127,8 +127,18 @@ module.exports = function LoanDetailResponse(params, ShortLoanTerm, MidLoanTerm,
     this.OTR_EL_LOAN_USD = otherEstLossLoanUsd ? parseValue.parseFloat(otherEstLossLoanUsd) : validation.setEmptyValue(otherEstLossLoanUsd);
     this.OTR_BAD_LOAN_VND = otherBadLoanVnd ? parseValue.parseFloat(otherBadLoanVnd) : validation.setEmptyValue(otherBadLoanVnd);
     this.OTR_BAD_LOAN_USD = otherBadLoanUsd ? parseValue.parseFloat(otherBadLoanUsd) : validation.setEmptyValue(otherBadLoanUsd);
-    this.OGZ_TOT_LOAN_VND = parseFloat(shortTermLoanVnd ? shortTermLoanVnd : 0 + midTermLoadVnd ? midTermLoadVnd : 0 + longTermLoanVnd ? longTermLoanVnd : 0 + otherBadLoanVnd ? otherBadLoanVnd : 0);
-    this.OGZ_TOT_LOAN_USD = parseFloat(shortTermLoanUsd ? shortTermLoanUsd : 0 + midTermLoadUsd ? midTermLoadUsd : 0 + longTermLoanUsd ? longTermLoanUsd : 0 + otherBadLoanUsd ? otherBadLoanUsd : 0);
+
+    let _shortTermLoanVnd = shortTermLoanVnd ? parseFloat(shortTermLoanVnd) : 0;
+    let _midTermLoadVnd = midTermLoadVnd ? parseFloat(midTermLoadVnd) : 0;
+    let _longTermLoanVnd = longTermLoanVnd ? parseFloat(longTermLoanVnd) : 0;
+    let _otherBadLoanVnd = otherBadLoanVnd ? parseFloat(otherBadLoanVnd) : 0;
+    let _shortTermLoanUsd = shortTermLoanUsd ? parseFloat(shortTermLoanUsd) : 0;
+    let _midTermLoadUsd = midTermLoadUsd ? parseFloat(midTermLoadUsd) : 0;
+    let _longTermLoanUsd = longTermLoanUsd ? parseFloat(longTermLoanUsd) : 0;
+    let _otherBadLoanUsd = otherBadLoanUsd ? parseFloat(otherBadLoanUsd) : 0;
+    this.OGZ_TOT_LOAN_VND = parseFloat(_shortTermLoanVnd + _midTermLoadVnd + _longTermLoanVnd + _otherBadLoanVnd);
+    this.OGZ_TOT_LOAN_USD = parseFloat(_shortTermLoanUsd + _midTermLoadUsd + _longTermLoanUsd + _otherBadLoanUsd);
+
     this.SUM_TOT_OGZ_VND = waitData ? waitData : null;
     this.SUM_TOT_OGZ_USD = waitData ? waitData : null;
     this.SYS_DTIM = sysDtim;
