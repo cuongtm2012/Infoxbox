@@ -1,6 +1,12 @@
-var cicMacrRSLTReq = require('./CIC_MACR_RSLT.request');
-
-module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, dataRes) {
+module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, outputScrpTranlog, outputCicrptMain, outputCicMRPT) {
+    
+    const {
+        fiSessionKey,
+        fiCode,
+        taskCode,
+        niceSessionKey,
+        inquiryDate
+    } = cicMacrRSLTRequest;
 
     const {
         responseTime,
@@ -9,20 +15,28 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     } = response;
 
     const {
-        R_ERRYN,
-        S_DTIM,
-        R_DTIM,
-        S_REQ_STATUS
-    } = dataRes;
+        S_REQ_STATUS,
+        SCRP_STAT_CD,
+        INQ_DTIM_SCRPLOG,
+        SYS_DTIM
+    } = outputScrpTranlog;
 
     const {
-        fiSessionKey,
-        fiCode,
-        taskCode,
-        niceSessionKey,
-        inquiryDate
+        PSN_NM,
+        BIRTH_YMD,
+        CIC_ID,
+        PSN_ADDR,
+        TEL_NO_MOLBILE,
+        NATL_ID
+    } = outputCicrptMain;
 
-    } = cicMacrRSLTRequest;
+    const{
+        SCORE,
+        GRADE,
+        BASE_DATE,
+        CC_BAL,
+        REL_OGZ_LIST,
+    } = outputCicMRPT;
 
     this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
     this.fiCode = fiCode;
@@ -32,10 +46,19 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.scrapingStatusCode = R_ERRYN ? R_ERRYN : "";
-    this.cicReportRequestDate = S_DTIM ? S_DTIM : "";
-    this.cicReportResponseDate = R_DTIM ? R_DTIM : "";
-    this.cicReportInquiryUserId = S_REQ_STATUS ? S_REQ_STATUS : "";
-
+    this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : "";
+    this.cicReportRequestDate = INQ_DTIM_SCRPLOG;
+    this.cicReportResponseDate = SYS_DTIM;
+    this.cicReportInquiryUserId = S_REQ_STATUS;
+    this.name = PSN_NM ? PSN_NM : '';
+    this.birth = BIRTH_YMD;
+    this.cicId = CIC_ID;
+    this.address = PSN_ADDR;
+    this.phoneNumber = TEL_NO_MOLBILE;
+    this.natId = NATL_ID;
+    this.creditScore = SCORE;
+    this.creditGrade = GRADE;
+    this.baseDate = BASE_DATE;
+    this.creditCardBalance = CC_BAL;
+    this.relatedFiName = REL_OGZ_LIST;
 };
-

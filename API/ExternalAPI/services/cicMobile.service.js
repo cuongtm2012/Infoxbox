@@ -172,17 +172,26 @@ async function selectSCRPTRLOG(req) {
     let connection;
 
     try {
-        let sql, result;
+        let sqlScrpTranlog, resultScrpTranlog, outputScrpTranlog, ouputCicrptMain,  outputCicMRPT;
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `SELECT  R_ERRYN, S_DTIM, R_DTIM, S_REQ_STATUS 
-               FROM TB_SCRP_TRLOG
-               where NICE_SSIN_ID = :niceSessionKey`;
+        sqlScrpTranlog = `SELECT DISTINCT 
+                            a.R_ERRYN, 
+                            a.S_DTIM, 
+                            a.R_DTIM, 
+                            a.S_REQ_STATUS,
+                            b.SCRP_STAT_CD, 
+                            b.INQ_DTIM AS INQ_DTIM_SCRPLOG,
+                            b.SYS_DTIM  
+                          FROM TB_SCRP_TRLOG a INNER JOIN TB_SCRPLOG b on  
+                            a.NICE_SSIN_ID = b.NICE_SSIN_ID
+                          WHERE a.NICE_SSIN_ID = :niceSessionKey
+                          AND a.S_SCV_CD = 'B0003'`;
 
-        result = await connection.execute(
+        resultScrpTranlog = await connection.execute(
             // The statement to execute
-            sql,
+            sqlScrpTranlog,
             {
                 niceSessionKey: { val: req.niceSessionKey }
             },
@@ -193,9 +202,51 @@ async function selectSCRPTRLOG(req) {
                 //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
 
-        console.log("rows::", result.rows);
+        console.log("rows::", resultScrpTranlog.rows);
+        outputScrpTranlog = resultScrpTranlog.rows;
+        
+        //CicRptMain
+        let sqlCicrptMain = `SELECT a.PSN_NM, a.BIRTH_YMD, a.CIC_ID, a.PSN_ADDR, a.TEL_NO_MOBILE, a.NATL_ID
+                             FROM TB_CICRPT_MAIN a
+                             WHERE a.NICE_SSIN_ID = :niceSessionKey`;
 
-        return result.rows;
+        resultCicrptMain = await connection.execute(
+            sqlCicrptMain,
+            {
+                niceSessionKey: { val: req.niceSessionKey}
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+
+        console.log("resultCicrptMain rows:", resultCicrptMain.rows);
+        ouputCicrptMain = resultCicrptMain.rows;
+        
+        if (_.isEmpty(ouputCicrptMain))
+           return {}; 
+
+        //CicMRPT    
+        let sqlCicMRPT = `SELECT a.SCORE, a.GRADE, a.BASE_DATE, a.CC_BAL, a.REL_OGZ_LIST
+                          FROM TB_CIC_MRPT a
+                          WHERE a.NICE_SSIN_ID = :niceSessionKey`;    
+
+        resultCicMRPT = await connection.execute(
+            sqlCicMRPT,
+            {
+                niceSessionKey: { val: req.niceSessionKey}
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            }
+        ); 
+
+        console.log("resultCicMRPT rows:", resultCicMRPT.rows);
+        outputCicMRPT = resultCicMRPT.rows;
+
+        if (_.isEmpty(outputCicMRPT))
+           return {};  
+           
+        return { outputScrpTranlog, ouputCicrptMain, outputCicMRPT }  
 
     } catch (err) {
         console.log(err);
