@@ -6,6 +6,6 @@ var router = express.Router();
 var cicReportController = require('../controllers/cic-report.controller');
 
 router.get('/viewHistoryCICReport', cicReportController.viewHistoryCICReport);
-router.get('/viewDetailInfoCICReport', cicReportController.viewDetailInfoCICReport);
+router.get('/handledViewReportCIC', cicReportController.handledViewReportCIC);
 
 module.exports = router;

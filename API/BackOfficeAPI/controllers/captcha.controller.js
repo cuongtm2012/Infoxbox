@@ -22,9 +22,6 @@ exports.getCaptchaInfo = async function (req, res) {
     to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') as VALID_END_DT,
     WORK_ID as WORK_ID `;
     var SQL_FROM = 'FROM TB_CAPTCHA_RSP ';
-    var SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_ID LIKE :userID ' +
-                            'OR CAPTCHA_USER_NM LIKE :userName ';
-
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(userID) && _.isEmpty(userName)) {
@@ -34,10 +31,33 @@ exports.getCaptchaInfo = async function (req, res) {
             limitRow
         };
         oracelService.queryOracel(res, sql, param, optionFormatObj);
-    } else {
+    }
+    if ((userID) && (userName)) {
+        let SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_ID LIKE :userID ' +
+            'AND CAPTCHA_USER_NM LIKE :userName ';
         let sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
             userID,
+            userName,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+    if ((userID) && _.isEmpty(userName)) {
+        let SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_ID LIKE :userID ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, param, optionFormatObj);
+    }
+    if (_.isEmpty(userID) && (userName)) {
+        let SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_NM LIKE :userName ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
             userName,
             currentLocation,
             limitRow

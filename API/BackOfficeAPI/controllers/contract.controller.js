@@ -9,17 +9,38 @@ exports.getProduct = async function (req, res) {
     var productNM = req.query.productNM;
     var SQL_SELECT = `SELECT TB_ITCODE.CODE, TB_ITCODE.CODE_NM `;
     var SQL_FROM = `FROM TB_ITCODE WHERE TB_ITCODE.CD_CLASS = 'C0005' `;
-    var SQL_SEARCH = 'AND TB_ITCODE.CODE LIKE :productCode OR TB_ITCODE.CODE_NM LIKE :productNM ';
+
 
     if (_.isEmpty(productCode) && _.isEmpty(productNM)) {
         let sql = SQL_SELECT + SQL_FROM;
         let params = {};
         oracelService.queryOracel(res, sql, params, optionFormatObj)
-    } else {
+    }
+
+    if ((productCode) && (productNM)){
+        let SQL_SEARCH = 'AND TB_ITCODE.CODE LIKE :productCode AND TB_ITCODE.CODE_NM LIKE :productNM ';
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
         let params = {
             productCode: { val: productCode },
             productNM: { val: productNM }
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((productCode) && _.isEmpty(productNM)){
+        let SQL_SEARCH = 'AND TB_ITCODE.CODE LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
+        let params = {
+            productCode: { val: productCode },
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(productCode) && (productNM)){
+        let SQL_SEARCH = 'AND TB_ITCODE.CODE_NM LIKE :productNM ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
+        let params = {
+            productNM: { val: productNM },
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     }
@@ -42,26 +63,196 @@ exports.getContract = async function (req, res) {
     to_char(to_date(TB_ITCTRT.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM , 
     TB_ITCTRT.WORK_ID as WORK_ID  `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
-    var SQL_INNER_JOIN = 'INNER JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD AND TB_ITCUST.CUST_GB = TB_ITCTRT.CUST_GB ';
-    var SQL_SEARCH = 'WHERE TB_ITCUST.CUST_GB LIKE :organClassifi OR TB_ITCTRT.CUST_CD LIKE :organCd OR TB_ITCUST.CUST_NM LIKE :organNM OR TB_ITCTRT.GDS_CD LIKE :productCode ';
+    var SQL_INNER_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD AND TB_ITCUST.CUST_GB = TB_ITCTRT.CUST_GB ';
     var SQL_ORDER_BY = 'ORDER BY TB_ITCTRT.CUST_CD ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
-            currentLocation: { val: currentLocation },
-            limitRow: { val: limitRow }
+            currentLocation,
+            limitRow
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
-    } else {
+    }
+
+    if ((organClassifi) && (organCd) && (organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let params = {
-            organClassifi: { val: organClassifi },
-            organCd: { val: organCd },
-            productCode: { val: productCode },
-            organNM: { val: organNM },
-            currentLocation: { val: currentLocation },
-            limitRow: { val: limitRow }
+            organClassifi,
+            organCd,
+            productCode,
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organClassifi,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && (organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organCd,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && (organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCUST.CUST_NM LIKE :organNM ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            productCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && (organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organClassifi,
+            organCd,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && _.isEmpty(organCd) && (organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCUST.CUST_NM LIKE :organNM ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organClassifi,
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organClassifi,
+            productCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && (organCd) && (organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organCd,
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && (organCd) && _.isEmpty(organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organCd,
+            productCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && (organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organNM,
+            productCode,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && (organCd) && (organNM) && _.isEmpty(productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            organClassifi,
+            organCd,
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if (_.isEmpty(organClassifi) && (organCd) && (organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            productCode,
+            organCd,
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && _.isEmpty(organCd) && (organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            productCode,
+            organClassifi,
+            organNM,
+            currentLocation,
+            limitRow
+        };
+        oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+
+    if ((organClassifi) && (organCd) && _.isEmpty(organNM) && (productCode)) {
+        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCTRT.GDS_CD LIKE :productCode ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let params = {
+            productCode,
+            organClassifi,
+            organCd,
+            currentLocation,
+            limitRow
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj)
     }
