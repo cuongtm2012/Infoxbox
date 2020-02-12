@@ -168,7 +168,7 @@ async function insertINQLOG(req, res) {
     }
 }
 
-async function selectSCRPTRLOG(req) {
+async function selectCICMacrRSLT(req) {
     let connection;
 
     try {
@@ -300,5 +300,5 @@ async function selectScrapingStatusCodeSCRPLOG(niceSessionKey) {
 
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
-module.exports.selectSCRPTRLOG = selectSCRPTRLOG;
+module.exports.selectCICMacrRSLT = selectCICMacrRSLT;
 module.exports.selectScrapingStatusCodeSCRPLOG = selectScrapingStatusCodeSCRPLOG;
