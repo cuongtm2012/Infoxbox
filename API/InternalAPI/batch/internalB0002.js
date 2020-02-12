@@ -46,7 +46,13 @@ module.exports = class internalJob {
 
                     //Convert data to format cic site
                     //decrypt password yyyymmddhhmmssPassword
-                    var decryptPW = convertBase64.convertBase64ToText(element.LOGIN_PW).substr(14);
+                    let decryptPW;
+                    let _decryptPW = convertBase64.convertBase64ToText(element.LOGIN_PW);
+                    if (14 < _decryptPW.length)
+                        decryptPW = _decryptPW.substr(14);
+                    else
+                        decryptPW = _decryptPW;
+
                     var fnData = new cicB0002Req(element, defaultValue, decryptPW);
 
                     cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
