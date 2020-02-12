@@ -13,6 +13,7 @@ async function insertSCRPLOG(req, res) {
         let sql, result;
 
         let sysDim = convertTime.timeStamp();
+        //TODO
         let producCode = nicekey.niceProductCode(req.cicGoodCode);
         let niceSessionKey = req.niceSessionKey;
 

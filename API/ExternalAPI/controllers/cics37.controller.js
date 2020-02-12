@@ -38,7 +38,7 @@ exports.cics37Rqst = function (req, res) {
             let responseData = new cics37RQSTRes(req.body, preResponse);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+        validS11AService.selectFiCode(req.body.fiCode, responcodeEXT.NiceProductCode.S37.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
 
@@ -59,13 +59,13 @@ exports.cics37Rqst = function (req, res) {
 
                 cicExternalService.insertINQLOG(getdataReq, res).then(res1 => {
                     console.log('insertINQLOG::', res1);
-                    cicExternalService.insertSCRPLOG(getdataReq, res).then(result => {
-                        console.log("result cics11aRQST: ", result);
+                    cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
+                        console.log("result cics11aRQST: ", niceSessionK);
 
                         let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
                         let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 
-                        if (!validation.isEmptyStr(result)) {
+                        if (!validation.isEmptyStr(niceSessionK)) {
                             let responseData = new cics37RQSTRes(getdataReq, responseSuccess);
                             return res.status(200).json(responseData);
                         } else {
@@ -103,7 +103,7 @@ exports.cics37RSLT = function (req, res) {
             responseData = new cics37RSLTRes(getdataReq, preResponse, {});
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+        validS11AService.selectFiCode(req.body.fiCode, responcodeEXT.NiceProductCode.S37.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
 
@@ -115,7 +115,7 @@ exports.cics37RSLT = function (req, res) {
             cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
                 console.log("result selectCICS11aRSLT: ", reslt);
 
-                let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
+                let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
                 let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 
                 if (!validation.isEmptyStr(reslt)) {

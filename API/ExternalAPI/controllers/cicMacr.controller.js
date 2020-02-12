@@ -38,11 +38,11 @@ exports.cicMACRRQST = function (req, res, next) {
             let responseData = new cicMacrRQSTRes(req.body, preResponse);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+        validS11AService.selectFiCode(req.body.fiCode, responcodeEXT.NiceProductCode.Mobile.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
-                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
+                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
-                responseData = new cics37RQSTRes(req.body, preResponse);
+                responseData = new cicMacrRQSTRes(req.body, preResponse);
                 return res.status(200).json(responseData);
             }
             //End check params request
@@ -61,25 +61,14 @@ exports.cicMACRRQST = function (req, res, next) {
 
                 cicMobileService.insertINQLOG(getdataReq, res).then(res1 => {
                     console.log('insertINQLOG:', res1)
-                    cicMobileService.insertSCRPLOG(getdataReq, res).then(result => {
-                        console.log("result cicMacrRQST: ", result);
+                    cicMobileService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
+                        console.log("result cicMacrRQST: ", niceSessionK);
 
-                        let response = {
-                            responseMessage: responcodeEXT.RESCODEEXT.INPROCESS.name,
-                            niceSessionKey: result,
-                            responseTime: util.timeStamp(),
-                            responseCode: responcodeEXT.RESCODEEXT.INPROCESS.code
-                        }
+                        let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
+                        let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 
-                        let responseUnknow = {
-                            responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                            niceSessionKey: result,
-                            responseTime: util.timeStamp(),
-                            responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-                        }
-
-                        if (!validation.isEmptyStr(result)) {
-                            let responseData = new cicMacrRQSTRes(getdataReq, response);
+                        if (!validation.isEmptyStr(niceSessionK)) {
+                            let responseData = new cicMacrRQSTRes(getdataReq, responseSuccess);
                             return res.status(200).json(responseData);
                         } else {
                             let responseData = new cicMacrRQSTRes(getdataReq, responseUnknow);
@@ -116,9 +105,9 @@ exports.cicMACRRSLT = function (req, res) {
             responseData = new cicMacrRSLTRes(getdataReq, preResponse, {});
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+        validS11AService.selectFiCode(req.body.fiCode, responcodeEXT.NiceProductCode.Mobile.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
-                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
+                preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
                 responseData = new cicMacrRSLTRes(req.body, preResponse);
                 return res.status(200).json(responseData);
@@ -128,20 +117,12 @@ exports.cicMACRRSLT = function (req, res) {
             cicMobileService.selectSCRPTRLOG(getdataReq, res).then(reslt => {
                 console.log("result selectSCRPTRLOG: ", reslt);
 
-                let response = {
-                    responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-                    responseTime: util.getSeconds(start),
-                    responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
-                }
+                let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
+                let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 
-                let responseUnknow = {
-                    responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                    responseTime: util.getSeconds(start),
-                    responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-                }
 
                 if (!validation.isEmptyStr(reslt)) {
-                    let responseData = new cicMacrRSLTRes(getdataReq, response, reslt[0]);
+                    let responseData = new cicMacrRSLTRes(getdataReq, responseSuccess, reslt[0]);
                     return res.status(200).json(responseData);
                 } else {
                     let responseData = new cicMacrRSLTRes(getdataReq, responseUnknow, {});

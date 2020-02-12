@@ -10,21 +10,6 @@ module.exports = {
     checkParamRequest: function (getdataReq) {
         var response;
 
-        //cicGoodCode
-        if (!checkContains.contains.call(responcodeEXT.ProductCode, getdataReq.cicGoodCode)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name,
-                responseCode: responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code
-            }
-            return response;
-        }
-        if (validation.isEmptyStr(getdataReq.cicGoodCode)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NICICCODE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NICICCODE.code
-            }
-            return response;
-        }
         // fiCode
         if (_.isEmpty(getdataReq.fiCode)) {
             response = {
@@ -48,21 +33,6 @@ module.exports = {
             }
             return response;
         }
-        // inforProvCOncent
-        if (_.isEmpty(getdataReq.infoProvConcent)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
-                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
-            }
-            return response;
-        }
-        if (!checkContains.contains.call(responcodeEXT.InfoProvConcent, getdataReq.infoProvConcent.toUpperCase())) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
-                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
-            }
-            return response;
-        }
         //LoginID
         if (validation.isEmptyStr(getdataReq.loginId)) {
             response = {
@@ -76,6 +46,36 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIPASSWORD.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIPASSWORD.code
+            }
+            return response;
+        }
+        //cicGoodCode
+        if (!checkContains.contains.call(responcodeEXT.ProductCode, getdataReq.cicGoodCode)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.IVCICCODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.IVCICCODE.code
+            }
+            return response;
+        }
+        if (validation.isEmptyStr(getdataReq.cicGoodCode)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NICICCODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NICICCODE.code
+            }
+            return response;
+        }
+        // inforProvCOncent
+        if (_.isEmpty(getdataReq.infoProvConcent)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+        if (!checkContains.contains.call(responcodeEXT.InfoProvConcent, getdataReq.infoProvConcent.toUpperCase())) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
             }
             return response;
         }

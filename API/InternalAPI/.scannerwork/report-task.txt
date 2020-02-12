@@ -1,0 +1,6 @@
+projectKey=infobox
+serverUrl=http://1.55.215.214:9010
+serverVersion=7.9.1.27448
+dashboardUrl=http://1.55.215.214:9010/dashboard?id=infobox
+ceTaskId=AXAzPRZKNB0fBEOow_59
+ceTaskUrl=http://1.55.215.214:9010/api/ce/task?id=AXAzPRZKNB0fBEOow_59

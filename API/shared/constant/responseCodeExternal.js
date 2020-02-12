@@ -101,6 +101,12 @@ const ProductCode = ['06'];
 
 const InfoProvConcent = ['Y'];
 
+const NiceProductCode = {
+    S11A: { code: 'S1001' },
+    S37: { code: 'S1002' },
+    Mobile: { code: 'S1003' }
+};
+
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
 module.exports.ScrappingResponseCodeLoginFailure = ScrappingResponseCodeLoginFailure;
@@ -111,3 +117,4 @@ module.exports.ScrapingStatusCode = ScrapingStatusCode;
 module.exports.TaskCode = TaskCode;
 module.exports.ProductCode = ProductCode;
 module.exports.InfoProvConcent = InfoProvConcent;
+module.exports.NiceProductCode = NiceProductCode;

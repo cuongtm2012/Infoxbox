@@ -37,9 +37,9 @@ exports.cics11aRQST = function (req, res, next) {
 			responseData = new cics11aRQSTRes(req.body, preResponse);
 			return res.status(200).json(responseData);
 		}
-		validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+		validS11AService.selectFiCode(req.body.fiCode, responcodeEXT.NiceProductCode.S11A.code).then(dataFICode => {
 			if (_.isEmpty(dataFICode)) {
-				preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
+				preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
 				responseData = new cics11aRQSTRes(req.body, preResponse);
 				return res.status(200).json(responseData);
@@ -119,9 +119,9 @@ exports.cics11aRSLT = function (req, res) {
 
 			return res.status(200).json(preResponse);
 		}
-		validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+		validS11AService.selectFiCode(req.body.fiCode, responcodeEXT.NiceProductCode.S11A.code).then(dataFICode => {
 			if (_.isEmpty(dataFICode)) {
-				preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
+				preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
 				responseData = new cics11aRQSTRes(getdataReq, preResponse);
 				return res.status(200).json(responseData);
@@ -131,11 +131,7 @@ exports.cics11aRSLT = function (req, res) {
 			cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
 				console.log("result selectCICS11aRSLT: ", reslt);
 
-				let response = {
-					responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-					responseTime: dateutil.timeStamp(),
-					responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
-				}
+				let response = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name,'', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
 
 				let responseUnknow = {
 

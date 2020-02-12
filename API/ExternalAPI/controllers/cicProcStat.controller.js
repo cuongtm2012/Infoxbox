@@ -30,7 +30,7 @@ exports.cicProcStat = function (req, res) {
             let responseData = new CICProcStatRes(getdataReq, preResponse);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode).then(dataFICode => {
+        validS11AService.selectFiCode(req.body.fiCode, '%%').then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responcodeEXT.RESCODEEXT.IVFICODE.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.IVFICODE.code);
 
@@ -44,17 +44,9 @@ exports.cicProcStat = function (req, res) {
                 var responseDataFinal;
                 var cicReportStatus = [];
 
-                let response = {
-                    responseTime: dateutil.timeStamp(),
-                    responseMessage: responcodeEXT.RESCODEEXT.NORMAL.name,
-                    responseCode: responcodeEXT.RESCODEEXT.NORMAL.code
-                }
+                let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
+                let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 
-                let responseUnknow = {
-                    responseTime: dateutil.timeStamp(),
-                    responseMessage: responcodeEXT.RESCODEEXT.UNKNOW.name,
-                    responseCode: responcodeEXT.RESCODEEXT.UNKNOW.code
-                }
 
                 if (!_.isEmpty(reslt)) {
                     _.forEach(reslt, res => {
@@ -62,7 +54,7 @@ exports.cicProcStat = function (req, res) {
                         cicReportStatus.push(responseData);
                     });
                     let countResult = reslt.length;
-                    responseDataFinal = new CICProcStatRes(getdataReq, response, countResult, cicReportStatus);
+                    responseDataFinal = new CICProcStatRes(getdataReq, responseSuccess, countResult, cicReportStatus);
 
                     return res.status(200).json(responseDataFinal);
                 } else {
