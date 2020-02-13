@@ -125,7 +125,7 @@ const getMSG = require('../util/getMSG');
 const loan12MInforSave = require('../domain/loan12monInfo.save');
 const loan5YearInfo = require('../domain/loan5yearInfo.save');
 const vamcLoanInfo = require('../domain/vamcLoanInfo.save');
-const loanAtt12MInfo = require('../domain/loanAttention12mInfo');
+const LoanAttention12MInfor = require('../domain/loanAttention12mInfo');
 const creditContractInfor = require('../domain/creditContractInfo.save');
 const customerLookupInfo = require('../domain/customerLookUpInfo.save');
 const colletaralLoanSecuInfo = require('../domain/collateralLoanSecuInfo.save');
@@ -313,7 +313,17 @@ exports.internalCICB0003 = function (req, res, next) {
                                     _.forEach(listloanAtt12monInfo, res => {
                                         seqAttLoan = seqAttLoan + 1;
                                         const arrChildLoanAtt12MonInfo = [];
-                                        const preVal2 = new loanAtt12MInfo(res, niceSessionKey, sysDtim, workID, seqAttLoan);
+                                        let _listName = '';
+                                        let _listDate = '';
+                                        let count = 0;
+                                        _.forEach(res.companyList, (resCompany, key) => {
+                                            count++;
+                                            _listName = _listName + resCompany.name + "\n";
+                                            _listDate = _listDate + resCompany.date + "\n";
+                                        });
+                                        let listName = _listName.substring(0, _listName.length - 1);
+                                        let listDate = _listDate.substring(0, _listDate.length - 1);
+                                        const preVal2 = new LoanAttention12MInfor(res, niceSessionKey, sysDtim, workID, seqAttLoan, listName, listDate);
                                         _.forEach(preVal2, (val, key) => {
                                             arrChildLoanAtt12MonInfo.push(val)
                                         });
