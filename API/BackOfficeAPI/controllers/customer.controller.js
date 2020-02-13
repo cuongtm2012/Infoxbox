@@ -182,10 +182,9 @@ exports.editCust = async function (req, res) {
         prtOrganizationClass: { val: prtOrganizationClass },
         prtOrganizationCD: { val: prtOrganizationCD },
         addr: { val: addr },
-        validStartDT: { val: validStartDT },
         validEndDT: { val: validEndDT },
     };
-    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT WHERE CUST_GB = :classFication AND CUST_CD = :custCD `;
+    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_END_DT = :validEndDT WHERE CUST_GB = :classFication AND CUST_CD = :custCD `;
     oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 

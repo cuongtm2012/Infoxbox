@@ -58,12 +58,14 @@ exports.getContract = async function (req, res) {
     TB_ITCTRT.CUST_CD as CUST_CODE, 
     TB_ITCTRT.GDS_CD as PRODUCT_CODE, 
     TB_ITCUST.CUST_NM as CUST_NM,
+    TB_ITCUST.BRANCH_NM as BRANCH_NM,
+    TB_ITCODE.CODE_NM as CODE_NM,
     to_char(to_date(TB_ITCTRT.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT ,
     to_char(to_date(TB_ITCTRT.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT ,
     to_char(to_date(TB_ITCTRT.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM , 
     TB_ITCTRT.WORK_ID as WORK_ID  `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
-    var SQL_INNER_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD AND TB_ITCUST.CUST_GB = TB_ITCTRT.CUST_GB ';
+    var SQL_INNER_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD AND TB_ITCUST.CUST_GB = TB_ITCTRT.CUST_GB LEFT JOIN TB_ITCODE ON TB_ITCTRT.GDS_CD = TB_ITCODE.CODE ';
     var SQL_ORDER_BY = 'ORDER BY TB_ITCTRT.CUST_CD ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
@@ -282,13 +284,11 @@ exports.insertContract = async function (req, res) {
 
 exports.updateContract = async function (req, res) {
     var gdsCD = req.body.gdsCD;
-    var validStartDt = (_.isEmpty(req.body.validStartDt) ? null : req.body.validStartDt.replace(/[^0-9 ]/g, ""));
     var validEndDt = (_.isEmpty(req.body.validEndDt) ? null : req.body.validEndDt.replace(/[^0-9 ]/g, ""));
-    var SQL = 'UPDATE TB_ITCTRT SET  VALID_START_DT = :validStartDt, VALID_END_DT = :validEndDt WHERE GDS_CD = :gdsCD';
+    var SQL = 'UPDATE TB_ITCTRT SET  VALID_END_DT = :validEndDt WHERE GDS_CD = :gdsCD';
 
     let params = {
         gdsCD: { val: gdsCD },
-        validStartDt: { val: validStartDt },
         validEndDt: { val: validEndDt },
     };
     oracelService.queryOracel(res, SQL, params, optionAutoCommit)
