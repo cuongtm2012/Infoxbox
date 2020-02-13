@@ -168,7 +168,6 @@ exports.editCust = async function (req, res) {
     var prtOrganizationClass = req.body.prtOrganizationClass;
     var prtOrganizationCD = req.body.prtOrganizationCD;
     var addr = req.body.addr;
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
     var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
     
     var param = {
