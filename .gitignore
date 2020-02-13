@@ -34,3 +34,5 @@ dist/
 Thumbs.db
 UserInterfaceState.xcuserstate
 API/InternalAPI/.scannerwork/.sonar_lock
+API/ExternalAPI/.scannerwork/.sonar_lock
+API/ExternalAPI/.scannerwork/report-task.txt
