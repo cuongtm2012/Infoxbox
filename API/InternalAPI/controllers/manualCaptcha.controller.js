@@ -51,7 +51,7 @@ exports.internalCICManualCaptcha = function (req, res, next) {
                     manualCaptchaService.insertManulCaptcha(dataStep, niceSessionKey, imgBase64).then(result => {
 
                         if (!_.isEmpty(result)) {
-                            if (_.isEqual('LOGIN', dataStep.step)) {
+                            if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                                 return res.status(400).json(dataStep);
                             }
                             // update process status = 04 update process completed
@@ -79,10 +79,9 @@ exports.internalCICManualCaptcha = function (req, res, next) {
                                         }
                                         return next();
                                     });
-
-
-
                                 });
+
+                                return res.status(400).json(body.data.outJson);
                             } else {
                                 // Log in error
                                 if (checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
@@ -125,15 +124,11 @@ exports.internalCICManualCaptcha = function (req, res, next) {
 
                             }
 
-                        }
-                        else
+                        } else {
                             return res.status(200);
+                        }
                     });
                 }
-
-
-                // return res.status(200).json(body.data);
-
             }).catch((error) => {
                 console.log("error scraping service B0002~~", error);
                 //Update ScrpModCd 00

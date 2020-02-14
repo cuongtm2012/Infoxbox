@@ -47,7 +47,7 @@ module.exports = class internalJob {
                 let inqDt1 = data[0].INQ_DTIM.substring(0, 8);
                 let inqDt2 = data[0].INQ_DTIM.substring(0, 8);
 
-                let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
+                let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '', '');
 
                 //Convert data to format cic site
                 //decrypt password

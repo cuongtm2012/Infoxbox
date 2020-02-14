@@ -24,6 +24,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
         reqStatus,
         inqDt1,
         inqDt2,
+        step_useYn,
         step_input,
         step_data
     } = defaultValue;
@@ -46,6 +47,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     this.reqStatus = reqStatus;
     this.inqDt1 = inqDt1;
     this.inqDt2 = inqDt2;
+    this.step_useYn = step_useYn;
     this.step_input = step_input;
     this.step_data = step_data;
     this.niceSessionKey = NICE_SSIN_ID;
