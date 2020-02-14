@@ -107,6 +107,8 @@ const NiceProductCode = {
     Mobile: { code: 'S1003' }
 };
 
+const NiceOganizationCode = ['B100000012'];
+
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
 module.exports.ScrappingResponseCodeLoginFailure = ScrappingResponseCodeLoginFailure;
@@ -118,3 +120,4 @@ module.exports.TaskCode = TaskCode;
 module.exports.ProductCode = ProductCode;
 module.exports.InfoProvConcent = InfoProvConcent;
 module.exports.NiceProductCode = NiceProductCode;
+module.exports.NiceOganizationCode = NiceOganizationCode;

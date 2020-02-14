@@ -17,6 +17,13 @@ module.exports = {
             }
             return response;
         }
+        if (!(_.isEqual(responcodeEXT.NiceOganizationCode,getdataReq.fiCode))){
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.IVFICODE.name,
+                responseCode: responcodeEXT.RESCODEEXT.IVFICODE.code
+            }
+            return response;
+        }
         //taskCode
         if (validation.isEmptyStr(getdataReq.taskCode)) {
             response = {
@@ -25,7 +32,7 @@ module.exports = {
             }
             return response;
         }
-        if (!(_.isEqual(responcodeEXT.TaskCode.CIC_MACR_RQST.code, getdataReq.taskCode) || _.isEqual(responcodeEXT.TaskCode.CIC_S11A_RSLT.code, getdataReq.taskCode))) {
+        if (!(_.isEqual(responcodeEXT.TaskCode.CIC_MACR_RQST.code, getdataReq.taskCode) || _.isEqual(responcodeEXT.TaskCode.CIC_MACR_RSLT.code, getdataReq.taskCode))) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code
