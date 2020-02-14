@@ -22,7 +22,6 @@ var code = require('./routes/code.route');
 var cicreport = require('./routes/cicreport.route');
 var user = require('./routes/user.route');
 var captcha = require('./routes/captcha.route');
-var manualCaptcha = require('./routes/manualCaptcha.route');
 // Config DB
 var config = require('./config/config');
 
@@ -83,7 +82,6 @@ app.use('/code', code);
 app.use('/cicreport', cicreport);
 app.use('/user' , user);
 app.use('/captcha' , captcha);
-app.use('/manualCaptcha', manualCaptcha);
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
