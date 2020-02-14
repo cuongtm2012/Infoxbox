@@ -14,6 +14,7 @@ const manualCaptchaService = require('../services/manualCaptcha.service');
 
 exports.internalCICManualCaptcha = function (req, res, next) {
     try {
+        console.log('start~~~~~~~');
         const config = {
             headers: {
                 'Content-Type': 'application/json'
@@ -30,7 +31,7 @@ exports.internalCICManualCaptcha = function (req, res, next) {
 
         //decrypt password yyyymmddhhmmssPassword
         let decryptPW;
-        let _decryptPW = convertBase64.convertBase64ToText(req.body.LOGIN_PW);
+        let _decryptPW = convertPassword.convertBase64ToText(req.body.LOGIN_PW);
         if (14 < _decryptPW.length)
             decryptPW = _decryptPW.substr(14);
         else
@@ -42,8 +43,9 @@ exports.internalCICManualCaptcha = function (req, res, next) {
 
         axios.post(URI.cicInternalJson, fnData, config)
             .then((body) => {
+                console.log('body', body);
                 if (!_.isEmpty(body.data.outJson.step_data) && _.isEqual("N", body.data.outJson.errYn)) {
-                    let niceSessionKey = req.body.niceSessionKey;
+                    let niceSessionKey = fnData.niceSessionKey;
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 

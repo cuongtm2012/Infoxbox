@@ -22,8 +22,7 @@ async function insertManulCaptcha(req, niceSessionKey, imgBase64) {
             ST_DT_REF,
             ST_DT_STAE,
             ST_DT_AFRLOOP,
-            SYS_DTIM) VALUES (
-                (NICE_SSIN_ID,
+            SYS_DTIM) VALUES (:NICE_SSIN_ID,
                     :CAP_IMG,
                     :ST_DT_STEP,
                     :ST_DT_CICORGVN,
