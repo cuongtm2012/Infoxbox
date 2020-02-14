@@ -216,7 +216,7 @@ exports.cics11aRSLT = function (req, res) {
 
 					// 2.6 Card 3 year infor
 					if (!_.isEmpty(reslt.outputCard3year) && _.isEmpty(reslt.cmtCard3Year)) {
-						borrowCreditCardArrear = reslt.outputCard3year[0].CARD_ARR_PSN_YN;
+						borrowCreditCardArrear = convertBorrowCreditCard3Years(reslt.outputCard3year[0].CARD_ARR_PSN_YN);
 						creditCardLongestArrearDays = reslt.outputCard3year[0].CARD_ARR_LGST_DAYS;
 						creditCardArrearCount = reslt.outputCard3year[0].CARD_ARR_CNT;
 
@@ -343,3 +343,11 @@ exports.cics11aRSLT = function (req, res) {
 	}
 
 };
+
+function convertBorrowCreditCard3Years(value) {
+	if (!_.isEmpty(value) && 0 <= _.indexOf(['checked', 'check'], value)) {
+		return "Y";
+	} else {
+		return value;
+	}
+}
