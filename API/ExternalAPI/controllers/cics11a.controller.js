@@ -59,14 +59,12 @@ exports.cics11aRQST = function (req, res, next) {
 					console.log('insertINQLOG::', res1);
 					cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
 						console.log("result cics11aRQST: ", niceSessionK);
-
-						let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
-						let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
-
 						if (!_.isEmpty(niceSessionK)) {
+							let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
 							let responseData = new cics11aRQSTRes(getdataReq, responseSuccess);
 							return res.status(200).json(responseData);
 						} else {
+							let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 							let responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
 							return res.status(400).json(responseData);
 						}
@@ -130,20 +128,6 @@ exports.cics11aRSLT = function (req, res) {
 
 			cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
 				console.log("result selectCICS11aRSLT: ", reslt);
-
-				let response = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name,'', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
-
-				let responseUnknow = {
-
-					fiSessionKey: getdataReq.fiSessionKey,
-					fiCode: getdataReq.fiCode,
-					taskCode: getdataReq.taskCode,
-					niceSessionKey: getdataReq.niceSessionKey,
-					inquiryDate: getdataReq.inquiryDate,
-					responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
-					responseTime: dateutil.timeStamp(),
-					responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
-				}
 
 				if (!_.isEmpty(reslt)) {
 					let responseData;
@@ -284,6 +268,7 @@ exports.cics11aRSLT = function (req, res) {
 							arrCusLookup.push(new cusLookup(el));
 						});
 					}
+					let response = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
 
 					responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
 						, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
@@ -301,6 +286,17 @@ exports.cics11aRSLT = function (req, res) {
 					cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq.niceSessionKey).then(rslt => {
 
 						if (_.isEmpty(rslt)) {
+							let responseUnknow = {
+
+								fiSessionKey: getdataReq.fiSessionKey,
+								fiCode: getdataReq.fiCode,
+								taskCode: getdataReq.taskCode,
+								niceSessionKey: getdataReq.niceSessionKey,
+								inquiryDate: getdataReq.inquiryDate,
+								responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
+								responseTime: dateutil.timeStamp(),
+								responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
+							}
 							return res.status(400).json(responseUnknow);
 						}
 						else {

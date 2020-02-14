@@ -44,11 +44,8 @@ exports.cicProcStat = function (req, res) {
                 var responseDataFinal;
                 var cicReportStatus = [];
 
-                let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
-                let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
-
-
                 if (!_.isEmpty(reslt)) {
+                    let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
                     _.forEach(reslt, res => {
                         let responseData = new preProStatRes(res);
                         cicReportStatus.push(responseData);
@@ -58,6 +55,7 @@ exports.cicProcStat = function (req, res) {
 
                     return res.status(200).json(responseDataFinal);
                 } else {
+                    let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
                     let responseData = new CICProcStatRes(getdataReq, responseUnknow);
                     return res.status(400).json(responseData);
                 }
