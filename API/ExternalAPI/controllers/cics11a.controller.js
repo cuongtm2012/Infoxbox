@@ -345,7 +345,7 @@ exports.cics11aRSLT = function (req, res) {
 };
 
 function convertBorrowCreditCard3Years(value) {
-	if (!_.isEmpty(value) && 0 <= _.indexOf(['checked', 'check'], value)) {
+	if (!_.isEmpty(value) && 0 <= _.indexOf(['checked', 'check'], value.toLowerCase())) {
 		return "Y";
 	} else {
 		return value;
