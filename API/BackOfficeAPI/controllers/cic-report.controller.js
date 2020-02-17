@@ -23,6 +23,7 @@ exports.viewHistoryCICReport = async function (req, res) {
     TB_SCRPLOG.CUST_SSID_ID as CUST_SSID_ID,
     TB_SCRPLOG.GDS_CD as GDS_CD,
     TB_SCRPLOG.LOGIN_ID as LOGIN_ID,
+    TB_SCRPLOG.LOGIN_PW as LOGIN_PW,
     TB_SCRPLOG.NATL_ID as NATL_ID,
     TB_SCRPLOG.OLD_NATL_ID as OLD_NATL_ID,
     TB_SCRPLOG.CUST_ID as CUST_ID,

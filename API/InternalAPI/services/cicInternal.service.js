@@ -224,7 +224,7 @@ async function updateScrapingTargetRepostNotExist(niceSessionKey) {
 
 
         sqlUpdateScrplog = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD = '24', SYS_DTIM = :sysDim
+                SET SCRP_STAT_CD = '23', SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
 
         resultScrpLog = await connection.execute(
