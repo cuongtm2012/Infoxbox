@@ -27,7 +27,7 @@ exports.internalCIC = function (req, res, next) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
-                    return res.status(400).json(imgBase64, dataStep);
+                    return res.status(400).json({ imgBase64, dataStep });
                 }
 
                 // update process status = 04 update process completed
@@ -177,7 +177,7 @@ exports.internalCICB0003 = function (req, res, next) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
-                    return res.status(400).json(imgBase64, dataStep);
+                    return res.status(400).json({ imgBase64, dataStep });
                 }
 
                 // update process status = 10 update process completed
