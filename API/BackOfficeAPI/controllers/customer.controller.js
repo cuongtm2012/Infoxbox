@@ -168,7 +168,6 @@ exports.editCust = async function (req, res) {
     var prtOrganizationClass = req.body.prtOrganizationClass;
     var prtOrganizationCD = req.body.prtOrganizationCD;
     var addr = req.body.addr;
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
     var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
     
     var param = {
@@ -183,10 +182,9 @@ exports.editCust = async function (req, res) {
         prtOrganizationClass: { val: prtOrganizationClass },
         prtOrganizationCD: { val: prtOrganizationCD },
         addr: { val: addr },
-        validStartDT: { val: validStartDT },
         validEndDT: { val: validEndDT },
     };
-    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_START_DT = :validStartDT, VALID_END_DT = :validEndDT WHERE CUST_GB = :classFication AND CUST_CD = :custCD `;
+    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_END_DT = :validEndDT WHERE CUST_GB = :classFication AND CUST_CD = :custCD `;
     oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 

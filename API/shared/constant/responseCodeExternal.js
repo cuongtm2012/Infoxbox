@@ -12,6 +12,7 @@ var RESCODEEXT = {
     CICSiteAccessFailure: { value: 8, name: "CIC site log in failure", code: "F008" },
     ConsentProvisionIsNotValid: { value: 9, name: "Consent of data provision is not valid", code: "F009" },
     CICReportInqFailure: { value: 14, name: "CIC Report inquiry failure(from CIC site)", code: "F014" },
+    CICReportInqFailureTimeout: { value: 16, name: "CIC Report result inquiry failure(timeout)", code: "F016" },
     SearchDateFrom: { value: 80, name: "Need to input mandatory Beginning date of search(scraping request date basis)", code: "F080" },
     SearchDateTo: { value: 81, name: "Need to input mandatory End date of search(scraping request date basis)", code: "F081" },
     ETCError: { value: 99, name: "ETC Error", code: "F099" },
