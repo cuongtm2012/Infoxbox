@@ -109,9 +109,9 @@ exports.cics11aRSLT = function (req, res) {
 				taskCode: getdataReq.taskCode,
 				niceSessionKey: getdataReq.niceSessionKey,
 				inquiryDate: getdataReq.inquiryDate,
-				responseMessage: rsCheck.responseMessage,
 				responseTime: dateutil.timeStamp(),
-				responseCode: rsCheck.responseCode
+				responseCode: rsCheck.responseCode,
+				responseMessage: rsCheck.responseMessage
 
 			}
 
@@ -293,9 +293,9 @@ exports.cics11aRSLT = function (req, res) {
 								taskCode: getdataReq.taskCode,
 								niceSessionKey: getdataReq.niceSessionKey,
 								inquiryDate: getdataReq.inquiryDate,
-								responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
 								responseTime: dateutil.timeStamp(),
-								responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
+								responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code,
+								responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name
 							}
 							return res.status(400).json(responseUnknow);
 						}
