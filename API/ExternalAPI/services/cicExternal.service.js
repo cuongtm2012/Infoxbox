@@ -77,8 +77,8 @@ async function insertINQLOG(req) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
-        VALUES (:INQ_LOG_ID, :CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+        sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID) 
+        VALUES (:INQ_LOG_ID, :CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -93,6 +93,7 @@ async function insertINQLOG(req) {
                 CIC_ID: { val: req.cicId },
                 INQ_DTIM: { val: req.inquiryDate },
                 AGR_FG: { val: req.infoProvConcent },
+                RSP_CD: { val: req.respCd },
                 SYS_DTIM: { val: sysDim },
                 WORK_ID: { val: gateway }
             },

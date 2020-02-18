@@ -1,4 +1,6 @@
-module.exports = function DataInqLogSave(params) {
+const dateutil = require('../util/dateutil');
+
+module.exports = function DataInqLogSave(params, respCd) {
     const {
         fiSessionKey,
         fiCode,
@@ -10,10 +12,10 @@ module.exports = function DataInqLogSave(params) {
         oldNatId,
         passportNumber,
         cicId,
-        infoProvConcent,
+        infoProvConcent
     } = params;
 
-    this.niceSessionKey = niceSessionKey.substring(5, 25);
+    this.niceSessionKey = niceSessionKey ? niceSessionKey.substring(5, 25) : dateutil.timeStamp();
     this.fiCode = fiCode ? fiCode : null;
     this.taskCode = taskCode ? taskCode : null;
     this.natId = natId ? natId : null;
@@ -23,4 +25,5 @@ module.exports = function DataInqLogSave(params) {
     this.cicId = cicId ? cicId : null;
     this.inquiryDate = inquiryDate ? inquiryDate : null;
     this.infoProvConcent = infoProvConcent ? infoProvConcent : null;
+    this.respCd = respCd ? respCd : null;
 }
