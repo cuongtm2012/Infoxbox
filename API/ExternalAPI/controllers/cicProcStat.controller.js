@@ -57,12 +57,13 @@ exports.cicProcStat = function (req, res) {
                 } else {
                     let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
                     let responseData = new CICProcStatRes(getdataReq, responseUnknow);
-                    return res.status(400).json(responseData);
+                    return res.status(200).json(responseData);
                 }
             });
         });
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ error: error.toString() });
     }
 };

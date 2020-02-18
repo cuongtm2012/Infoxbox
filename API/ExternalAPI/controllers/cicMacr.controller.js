@@ -72,7 +72,7 @@ exports.cicMACRRQST = function (req, res, next) {
                             return res.status(200).json(responseData);
                         } else {
                             let responseData = new cicMacrRQSTRes(getdataReq, responseUnknow);
-                            return res.status(400).json(responseData);
+                            return res.status(200).json(responseData);
                         }
                     });
                 });
@@ -80,7 +80,7 @@ exports.cicMACRRQST = function (req, res, next) {
         });
 
     } catch (err) {
-        return next(err);
+        return res.status(500).json({ error: err.toString() });
     }
 };
 
@@ -91,7 +91,6 @@ const validMacrRSLT = require('../util/validRequestMACRResponse');
 exports.cicMACRRSLT = function (req, res) {
 
     try {
-        var start = new Date();
         const getdataReq = new cicMacrRSLTReq(req.body);
 
         // check parameters request
@@ -126,7 +125,7 @@ exports.cicMACRRSLT = function (req, res) {
                     return res.status(200).json(responseData);
                 } else {
                     let responseData = new cicMacrRSLTRes(getdataReq, responseUnknow, {});
-                    return res.status(400).json(responseData);
+                    return res.status(200).json(responseData);
                 }
 
             });
@@ -134,7 +133,7 @@ exports.cicMACRRSLT = function (req, res) {
             cicMobileService.selectScrapingStatusCodeSCRPLOG(getdataReq.niceSessionKey).then(rslt => {
 
                 if (_.isEmpty(rslt)) {
-                    return res.status(400).json(responseUnknow);
+                    return res.status(200).json(responseUnknow);
                 }
                 else {
                     const result = rslt[0].SCRP_STAT_CD;
@@ -167,12 +166,13 @@ exports.cicMACRRSLT = function (req, res) {
                         scrapingStatusCode: result
                     }
 
-                    return res.status(400).json(responseSrapingStatus);
+                    return res.status(200).json(responseSrapingStatus);
                 }
             });
         });
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ error: error.toString() });
     }
 };

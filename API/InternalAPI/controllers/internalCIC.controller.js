@@ -31,7 +31,7 @@ exports.internalCIC = function (req, res, next) {
                 }
 
                 // update process status = 04 update process completed
-                else if (!_.isEmpty(body.data.outJson.outB0001) && (body.data.outJson.outB0001.errYn == "N" ) && !_.isEmpty(body.data.outJson.outB0002.cicNo)) {
+                else if (!_.isEmpty(body.data.outJson.outB0001) && (body.data.outJson.outB0001.errYn == "N") && !_.isEmpty(body.data.outJson.outB0002.cicNo)) {
                     //update process status = 04, sucecssful recieve response from scraping service
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
                         console.log("CIC report inquiry successful!");
@@ -114,6 +114,7 @@ exports.internalCIC = function (req, res, next) {
 
     } catch (err) {
         console.log("error cicInternalJson", err);
+        return res.status(500).json({ error: err.toString() });
     }
 };
 
@@ -446,7 +447,7 @@ exports.internalCICB0003 = function (req, res, next) {
                                     return next();
                                 });
                             }
-                        } 
+                        }
                         // Update  SCRP_MOD_CD = 0 continute request to scrapping service
                         else {
                             cicService.updateCICReportInquiryReadyToRequestScraping(niceSessionKeyUpdateStatus).then(() => {
@@ -509,6 +510,7 @@ exports.internalCICB0003 = function (req, res, next) {
 
     } catch (err) {
         console.log("error internalCICB0003", err);
+        return res.status(500).json({ error: err.toString() });
     }
 };
 

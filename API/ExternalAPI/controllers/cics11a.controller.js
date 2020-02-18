@@ -66,14 +66,14 @@ exports.cics11aRQST = function (req, res, next) {
 						} else {
 							let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 							let responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
-							return res.status(400).json(responseData);
+							return res.status(200).json(responseData);
 						}
 					});
 				});
 			});
 		});
 	} catch (err) {
-		return next(err)
+		return res.status(500).json({ error: err.toString() });
 	}
 };
 
@@ -297,7 +297,7 @@ exports.cics11aRSLT = function (req, res) {
 								responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code,
 								responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name
 							}
-							return res.status(400).json(responseUnknow);
+							return res.status(200).json(responseUnknow);
 						}
 						else {
 							const result = rslt[0].SCRP_STAT_CD;
@@ -334,7 +334,7 @@ exports.cics11aRSLT = function (req, res) {
 								scrapingStatusCode: result
 							}
 
-							return res.status(400).json(responseSrapingStatus);
+							return res.status(200).json(responseSrapingStatus);
 						}
 					});
 
@@ -344,6 +344,7 @@ exports.cics11aRSLT = function (req, res) {
 
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({ error: error.toString() });
 	}
 
 };

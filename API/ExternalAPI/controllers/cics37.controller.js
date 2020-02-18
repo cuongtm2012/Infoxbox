@@ -70,7 +70,7 @@ exports.cics37Rqst = function (req, res) {
                             return res.status(200).json(responseData);
                         } else {
                             let responseData = new cics37RQSTRes(getdataReq, responseUnknow);
-                            return res.status(400).json(responseData);
+                            return res.status(200).json(responseData);
                         }
                     });
                 });
@@ -78,7 +78,7 @@ exports.cics37Rqst = function (req, res) {
         });
 
     } catch (err) {
-        return next(err)
+        return res.status(500).json({ error: err.toString() });
     }
 };
 
@@ -123,13 +123,14 @@ exports.cics37RSLT = function (req, res) {
                     return res.status(200).json(responseData);
                 } else {
                     let responseData = new cics37RSLTRes(getdataReq, responseUnknow, {});
-                    return res.status(400).json(responseData);
+                    return res.status(200).json(responseData);
                 }
             });
         });
 
     } catch (error) {
         console.log(error);
+        return res.status(500).json({ error: error.toString() });
     }
 
 };
