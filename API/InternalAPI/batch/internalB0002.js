@@ -40,7 +40,7 @@ module.exports = class internalJob {
                     let inqDt1 = dateutil.getDate();
                     let inqDt2 = dateutil.getDate();
 
-                    let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '');
+                    let defaultValue = defaultParams.defaultParams(inqDt1, inqDt2, '', '', '');
 
                     //Convert data to format cic site
                     //decrypt password yyyymmddhhmmssPassword

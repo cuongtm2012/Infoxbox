@@ -23,8 +23,15 @@ exports.internalCIC = function (req, res, next) {
             .then((body) => {
                 let niceSessionKey = req.body.niceSessionKey;
 
+                if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                    let dataStep = body.data.outJson.step_data;
+                    let imgBase64 = body.data.outJson.step_img;
+
+                    return res.status(200).json({ imgBase64, dataStep });
+                }
+
                 // update process status = 04 update process completed
-                if (!_.isEmpty(body.data.outJson.outB0001) && body.data.outJson.outB0001.errYn == "N" && !_.isEmpty(body.data.outJson.outB0002.cicNo)) {
+                else if (!_.isEmpty(body.data.outJson.outB0001) && (body.data.outJson.outB0001.errYn == "N" ) && !_.isEmpty(body.data.outJson.outB0002.cicNo)) {
                     //update process status = 04, sucecssful recieve response from scraping service
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
                         console.log("CIC report inquiry successful!");
@@ -166,8 +173,15 @@ exports.internalCICB0003 = function (req, res, next) {
                 // get nice session key to update scrapping fail status
                 let niceSessionKeyUpdateStatus = req.body.niceSessionKey;
 
+                if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                    let dataStep = body.data.outJson.step_data;
+                    let imgBase64 = body.data.outJson.step_img;
+
+                    return res.status(200).json({ imgBase64, dataStep });
+                }
+
                 // update process status = 10 update process completed
-                if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N" && _.isEmpty(body.data.outJson.outB0003.errMsg)) {
+                else if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N" && _.isEmpty(body.data.outJson.outB0003.errMsg)) {
                     //update process status = 10, sucecssful recieve response from scraping service
 
                     // Get customer
@@ -432,6 +446,13 @@ exports.internalCICB0003 = function (req, res, next) {
                                     return next();
                                 });
                             }
+                        } 
+                        // Update  SCRP_MOD_CD = 0 continute request to scrapping service
+                        else {
+                            cicService.updateCICReportInquiryReadyToRequestScraping(niceSessionKeyUpdateStatus).then(() => {
+                                console.log(" B0003 uppdate case output B0003 empty ");
+                                return next();
+                            });
                         }
                     });
 

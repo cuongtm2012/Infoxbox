@@ -109,9 +109,9 @@ exports.cics11aRSLT = function (req, res) {
 				taskCode: getdataReq.taskCode,
 				niceSessionKey: getdataReq.niceSessionKey,
 				inquiryDate: getdataReq.inquiryDate,
-				responseMessage: rsCheck.responseMessage,
 				responseTime: dateutil.timeStamp(),
-				responseCode: rsCheck.responseCode
+				responseCode: rsCheck.responseCode,
+				responseMessage: rsCheck.responseMessage
 
 			}
 
@@ -293,9 +293,9 @@ exports.cics11aRSLT = function (req, res) {
 								taskCode: getdataReq.taskCode,
 								niceSessionKey: getdataReq.niceSessionKey,
 								inquiryDate: getdataReq.inquiryDate,
-								responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name,
 								responseTime: dateutil.timeStamp(),
-								responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code
+								responseCode: responcodeEXT.RESCODEEXT.NOTEXIST.code,
+								responseMessage: responcodeEXT.RESCODEEXT.NOTEXIST.name
 							}
 							return res.status(400).json(responseUnknow);
 						}
@@ -306,10 +306,14 @@ exports.cics11aRSLT = function (req, res) {
 							if (_.isEqual(parseInt(result), 20)) {
 								responseMessage = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.name;
 								responseCode = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.code;
-							} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22) || _.isEqual(parseInt(result), 24)) {
+							} else if (_.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22)) {
 								responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailure.name;
 								responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailure.code;
-							} else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+							} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
+								responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.name;
+								responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.code;
+							}
+							else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
 								responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
 								responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
 							}
