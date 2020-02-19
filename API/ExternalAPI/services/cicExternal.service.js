@@ -482,7 +482,7 @@ async function selectScrapingStatusCodeSCRPLOG(niceSessionKey) {
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
 
-        let sqlCusLookup = `SELECT T.SCRP_STAT_CD FROM TB_SCRPLOG T
+        let sqlCusLookup = `SELECT T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
                             where T.NICE_SSIN_ID = :niceSessionKey`;
 
         let result = await connection.execute(

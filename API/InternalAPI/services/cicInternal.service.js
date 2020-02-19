@@ -4,6 +4,7 @@ const dbconfig = require('../../shared/config/dbconfig');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
+const responseCode = require('../../shared/constant/responseCodeExternal');
 
 /*
     B0002 : CIC보고서 요청 (Request for CIC Report)
@@ -179,7 +180,7 @@ async function updateCICReportInquiryCompleted(req) {
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD = '10', SYS_DTIM = :sysDim
+                SET SCRP_STAT_CD = '10', RSP_CD = 'P000', SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:niceSessionKey`;
 
         result = await connection.execute(
@@ -224,13 +225,15 @@ async function updateScrapingTargetRepostNotExist(niceSessionKey) {
 
 
         sqlUpdateScrplog = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD = '23', SYS_DTIM = :sysDim
+                SET SCRP_STAT_CD = :SCRP_STAT_CD, RSP_CD = :RSP_CD , SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
 
         resultScrpLog = await connection.execute(
             // The statement to execute
             sqlUpdateScrplog,
             {
+                SCRP_STAT_CD: { val: responseCode.ScrapingStatusCode.CicReportResultInqError.code },
+                RSP_CD: { val: responseCode.RESCODEEXT.CICReportInqFailureTimeout.code },
                 sysDim: { val: sysDim },
                 NICE_SSIN_ID: { val: niceSessionKey }
             },
@@ -468,11 +471,11 @@ async function startProcessB0003() {
     }
 }
 
-async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code) {
+async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, niceCode) {
     let connection;
 
     try {
-        let sql, result;
+        let sql, result, sqlNiceCode, resultNiceCode;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -493,7 +496,24 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code) {
 
         console.log("updateScrpStatCdErrorResponseCodeScraping updated::", result.rowsAffected);
 
-        return result.rowsAffected;
+        // for update nice code
+        sqlNiceCode = `UPDATE TB_SCRPLOG
+                        SET RSP_CD  = :RSP_CD
+                        WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        resultNiceCode = await connection.execute(
+            // The statement to execute
+            sqlNiceCode,
+            {
+                NICE_SSIN_ID: { val: niceSessionKey },
+                RSP_CD: { val: niceCode }
+            },
+            { autoCommit: true },
+        );
+
+        console.log("update Nice code updated::", resultNiceCode.rowsAffected);
+
+        return result.rowsAffected + resultNiceCode.rowsAffected;
         // return res.status(200).json(result.rows);
 
 

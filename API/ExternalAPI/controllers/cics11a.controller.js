@@ -336,25 +336,39 @@ exports.cics11aRSLT = function (req, res) {
 						}
 						else {
 							const result = rslt[0].SCRP_STAT_CD;
+							let rsp_cd = rslt[0].RSP_CD;
 							let responseMessage, responseCode;
 
-							if (_.isEqual(parseInt(result), 20)) {
-								responseMessage = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.name;
-								responseCode = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.code;
-							} else if (_.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22)) {
-								responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailure.name;
-								responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailure.code;
-							} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
-								responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.name;
-								responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.code;
-							}
-							else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
-								responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
-								responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
-							}
-							else {
-								responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
-								responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+							if (!_.isEmpty(rsp_cd)) {
+								_.forEach(responcodeEXT.RESCODEEXT, res => {
+									_.forEach(res, (val, key) => {
+										if (_.isEqual(val, rsp_cd)) {
+											console.log('response nice code:', res.code + '-' + res.name);
+											responseMessage = res.name;
+											responseCode = res.code;
+										}
+									});
+								});
+							} else {
+
+								if (_.isEqual(parseInt(result), 20)) {
+									responseMessage = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.name;
+									responseCode = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.code;
+								} else if (_.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22)) {
+									responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailure.name;
+									responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailure.code;
+								} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
+									responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.name;
+									responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.code;
+								}
+								else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+									responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
+									responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
+								}
+								else {
+									responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
+									responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+								}
 							}
 
 							let responseSrapingStatus = {
