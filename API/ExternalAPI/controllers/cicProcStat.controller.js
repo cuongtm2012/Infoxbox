@@ -19,7 +19,7 @@ exports.cicProcStat = function (req, res) {
 		* Request data
 		*/
         let rsCheck = validParam.checkParamRequestForResponse(getdataReq);
-        let preResponse, responseData;
+        let preResponse, responseData, dataInqLogSave;
 
         if (!_.isEmpty(rsCheck)) {
             let preResponse = {
@@ -28,7 +28,7 @@ exports.cicProcStat = function (req, res) {
                 responseMessage: rsCheck.responseMessage
             }
 
-            let responseData = new CICProcStatRes(getdataReq, preResponse);
+            responseData = new CICProcStatRes(getdataReq, preResponse);
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
@@ -43,18 +43,16 @@ exports.cicProcStat = function (req, res) {
                 responseData = new CICProcStatRes(req.body, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then(() => {
-                    return res.status(200).json(responseData);
+                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                    console.log('insert INQLOG:', r);
                 });
+                return res.status(200).json(responseData);
             }
             //End check params request
 
             cicExternalService.selectProcStatus(getdataReq, res).then(reslt => {
                 console.log("result selectProcStatus: ", reslt);
-                var responseDataFinal;
                 var cicReportStatus = [];
-                let resFinal;
-
                 if (!_.isEmpty(reslt)) {
                     let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
                     _.forEach(reslt, res => {
@@ -62,18 +60,17 @@ exports.cicProcStat = function (req, res) {
                         cicReportStatus.push(responseData);
                     });
                     let countResult = reslt.length;
-                    responseDataFinal = new CICProcStatRes(getdataReq, responseSuccess, countResult, cicReportStatus);
-                    resFinal = responseDataFinal;
+                    responseData = new CICProcStatRes(getdataReq, responseSuccess, countResult, cicReportStatus);
+
                 } else {
                     let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
-                    let responseData = new CICProcStatRes(getdataReq, responseUnknow);
-                    resFinal = responseData;
+                    responseData = new CICProcStatRes(getdataReq, responseUnknow);
                 }
 
                 // update INQLOG
-                dataInqLogSave = new DataInqLogSave(getdataReq, resFinal.responseCode);
+                dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                 cicExternalService.insertINQLOG(dataInqLogSave).then(() => {
-                    return res.status(200).json(resFinal);
+                    return res.status(200).json(responseData);
                 });
             });
         });

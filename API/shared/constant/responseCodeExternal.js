@@ -30,7 +30,9 @@ var RESCODEEXT = {
     CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028" },
     CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029" },
     INQDateInvalid: { value: 40, name: "Invalid inquiry date (Less than curent date or start date less than end date)", code: "F040" },
-    CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" }
+    CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" },
+    FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
+    TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" }
 };
 
 var SCRAPPINGERRORCODE = {
