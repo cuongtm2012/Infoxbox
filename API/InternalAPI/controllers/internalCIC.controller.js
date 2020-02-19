@@ -31,7 +31,7 @@ exports.internalCIC = function (req, res, next) {
                 }
 
                 // update process status = 04 update process completed
-                else if (!_.isEmpty(body.data.outJson.outB0001) && (body.data.outJson.outB0001.errYn == "N") && !_.isEmpty(body.data.outJson.outB0002.cicNo) && _.isEqual("N", body.data.outJson.outB0002.errYn)) {
+                else if (!_.isEmpty(body.data.outJson.outB0002.cicNo) && _.isEqual("N", body.data.outJson.outB0002.errYn)) {
                     //update process status = 04, sucecssful recieve response from scraping service
                     cicService.updateCICReportInquirySuccessful(req.body, res).then(resultUpdated => {
                         console.log("CIC report inquiry successful!");
