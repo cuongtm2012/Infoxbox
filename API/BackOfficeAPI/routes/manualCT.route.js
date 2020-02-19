@@ -5,5 +5,5 @@ var router = express.Router();
 
 var manualCaptcha = require('../controllers/manualCaptcha.conroller');
 
-router.get('/getListScrpLog',  manualCaptcha.getListScrpLog);
+router.get('/getListB003',  manualCaptcha.getListScrpLog);
 module.exports = router;
