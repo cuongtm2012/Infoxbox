@@ -476,6 +476,7 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
 
     try {
         let sql, result, sqlNiceCode, resultNiceCode;
+        let res = 0;
 
         connection = await oracledb.getConnection(dbconfig);
 
@@ -497,26 +498,25 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
         console.log("updateScrpStatCdErrorResponseCodeScraping updated::", result.rowsAffected);
 
         // for update nice code
-        sqlNiceCode = `UPDATE TB_SCRPLOG
+        if (!_.isEmpty(niceCode)) {
+            sqlNiceCode = `UPDATE TB_SCRPLOG
                         SET RSP_CD  = :RSP_CD
                         WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
 
-        resultNiceCode = await connection.execute(
-            // The statement to execute
-            sqlNiceCode,
-            {
-                NICE_SSIN_ID: { val: niceSessionKey },
-                RSP_CD: { val: niceCode }
-            },
-            { autoCommit: true },
-        );
+            resultNiceCode = await connection.execute(
+                // The statement to execute
+                sqlNiceCode,
+                {
+                    NICE_SSIN_ID: { val: niceSessionKey },
+                    RSP_CD: { val: niceCode }
+                },
+                { autoCommit: true },
+            );
+            console.log("update Nice code updated::", resultNiceCode.rowsAffected);
+            res = resultNiceCode.rowsAffected;
+        }
 
-        console.log("update Nice code updated::", resultNiceCode.rowsAffected);
-
-        return result.rowsAffected + resultNiceCode.rowsAffected;
-        // return res.status(200).json(result.rows);
-
-
+        return result.rowsAffected + res;
     } catch (err) {
         console.log(err);
         // return res.status(400);
