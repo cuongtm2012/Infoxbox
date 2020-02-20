@@ -20,7 +20,7 @@ module.exports = function CIC_PROC_StatusResponse(cicsProcStatRequest, response,
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.responseCount = responseCount ? responseCount : 0;
+    this.responseCount = responseCount ? responseCount : null;
     this.cicReportStatus = dataRes ? dataRes : '';
 
 
