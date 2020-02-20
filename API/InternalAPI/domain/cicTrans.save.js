@@ -1,3 +1,5 @@
+const dateutil = require('../util/dateutil');
+
 module.exports = function cicTransSave(requestParams, responseParams, scrplogid, workId, password, cicNos, niceSessionKey) {
     const {
         svcCd,
@@ -22,8 +24,7 @@ module.exports = function cicTransSave(requestParams, responseParams, scrplogid,
         errYn,
         errMsg,
         recStepImg,
-        recStepData,
-        recDtim
+        recStepData
     } = responseParams;
 
     this.SCRP_LOG_ID = scrplogid;
@@ -42,12 +43,12 @@ module.exports = function cicTransSave(requestParams, responseParams, scrplogid,
     this.S_INQ_DT2 = inqDt2 ? inqDt2 : null;
     this.S_STEP_INPUT = step_input ? step_input : null;
     this.S_STEP_DATA = step_data ? step_data : null;
-    this.S_DTIM = sendTime ? sendTime : null;
+    this.S_DTIM = sendTime ? sendTime : dateutil.timeStamp();
     this.R_ERRYN = errYn ? errYn : null;
     this.R_ERRMSG = errMsg ? errMsg : null;
     this.R_STEP_IMG = recStepImg ? recStepImg : null;
     this.R_STEP_DATA = recStepData ? recStepData : null;
-    this.R_DTIM = recDtim ? recDtim : null;
+    this.R_DTIM = dateutil.timeStamp();
     this.WORK_ID = workId ? workId : null;
 
 

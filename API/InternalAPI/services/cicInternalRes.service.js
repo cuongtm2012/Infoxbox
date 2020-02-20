@@ -78,7 +78,7 @@ async function updateScrapingTranslog(req) {
                 S_INQ_DT2: { val: req.S_INQ_DT2 },
                 S_STEP_INPUT: { val: req.S_STEP_INPUT },
                 S_STEP_DATA: { val: req.S_STEP_DATA },
-                S_DTIM: { val: sysDtim },
+                S_DTIM: { val: req.S_DTIM },
                 R_ERRYN: { val: req.R_ERRYN },
                 R_ERRMSG: { val: req.R_ERRMSG },
                 R_STEP_IMG: { val: req.R_STEP_IMG },
