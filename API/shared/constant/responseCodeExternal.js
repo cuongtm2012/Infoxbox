@@ -79,7 +79,8 @@ const ScrappingResponseCodeCicReportINQError = {
     CicReportINQError105: { code: 'B0002-105', errMsg: '[B0002-105] Name Search Fail', value: 105 },
     CicReportINQError106: { code: 'B0002-106', errMsg: '[B0002-106] Name Search Fail', value: 106 },
     CicReportINQError107: { code: 'B0002-107', errMsg: "[B0002-107] Customer's inquiry may overlap with the last 1 day: Duplicate condition", value: 107 },
-    CicReportINQError108: { code: 'B0002-108', errMsg: '[B0002-108] success or fail', value: 108 }
+    CicReportINQError108: { code: 'B0002-108', errMsg: '[B0002-108] success or fail', value: 108 },
+    CicReportINQError201: { code: 'B0002-201', errMsg: '[B0002-201] No result for CIC No', value: 201 }
 };
 
 const ScrappingResponseCodeCicReportResultINQError = {
