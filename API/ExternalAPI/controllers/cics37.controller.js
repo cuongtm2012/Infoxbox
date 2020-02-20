@@ -73,7 +73,7 @@ exports.cics37Rqst = function (req, res) {
                     console.log("result cics11aRQST: ", niceSessionK);
 
                     if (!validation.isEmptyStr(niceSessionK)) {
-                        let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
+                        let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
                         responseData = new cics37RQSTRes(getdataReq, responseSuccess);
                     } else {
                         let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);

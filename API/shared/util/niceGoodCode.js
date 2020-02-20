@@ -1,16 +1,21 @@
 const responcodeEXT = require('../constant/responseCodeExternal');
 
 module.exports = {
-    niceProductCode: function (cicGoodCode) {
+    niceProductCode: function (taskCode) {
         var productCode;
 
-        switch (cicGoodCode) {
-            case "06":
+        switch (taskCode) {
+            case responcodeEXT.TaskCode.CIC_S11A_RQST.code:
                 productCode = responcodeEXT.NiceProductCode.S11A.code;
                 break;
-
+            case responcodeEXT.TaskCode.CIC_S37_RQST.code:
+                productCode = responcodeEXT.NiceProductCode.S37.code;
+                break;
+            case responcodeEXT.TaskCode.CIC_MACR_RQST.code:
+                productCode = responcodeEXT.NiceProductCode.Mobile.code;
+                break;
             default:
-                productCode = responcodeEXT.NiceProductCode.S11A.code;
+                productCode = '';
         }
 
         return productCode;

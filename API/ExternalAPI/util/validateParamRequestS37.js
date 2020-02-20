@@ -71,21 +71,6 @@ module.exports = {
             }
             return response;
         }
-        //cicGoodCode
-        if (!checkContains.contains.call(responcodeEXT.ProductCode, getdataReq.cicGoodCode)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.IVCICCODE.name,
-                responseCode: responcodeEXT.RESCODEEXT.IVCICCODE.code
-            }
-            return response;
-        }
-        if (validation.isEmptyStr(getdataReq.cicGoodCode)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NICICCODE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NICICCODE.code
-            }
-            return response;
-        }
         // inforProvCOncent
         if (_.isEmpty(getdataReq.infoProvConcent)) {
             response = {

@@ -14,7 +14,7 @@ async function insertSCRPLOG(req, res) {
 
         let sysDim = convertTime.timeStamp();
         //TODO
-        let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
         connection = await oracledb.getConnection(dbconfig);
@@ -98,7 +98,7 @@ async function insertINQLOG(req, res) {
         let sql, result;
 
         let sysDim = convertTime.timeStamp();
-        let producCode = nicekey.niceProductCode(req.cicGoodCode);
+        let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
         connection = await oracledb.getConnection(dbconfig);

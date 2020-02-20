@@ -25,7 +25,7 @@ module.exports = {
             }
             return response;
         }
-        if (!(_.isEqual(responcodeEXT.TaskCode.CIC_MACR_RQST.code, getdataReq.taskCode) || _.isEqual(responcodeEXT.TaskCode.CIC_S11A_RSLT.code, getdataReq.taskCode))) {
+        if (!(_.isEqual(responcodeEXT.TaskCode.CIC_MACR_RQST.code, getdataReq.taskCode))) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code

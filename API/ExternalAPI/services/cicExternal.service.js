@@ -13,7 +13,7 @@ async function insertSCRPLOG(req) {
         let sql, result;
 
         let sysDim = convertTime.timeStamp();
-        let producCode = niceGoodCode.niceProductCode(req.cicGoodCode);
+        let producCode = niceGoodCode.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
         connection = await oracledb.getConnection(dbconfig);
