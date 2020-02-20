@@ -12,17 +12,17 @@ module.exports = {
         var response;
 
         // fiCode
-        if (10 < getdataReq.fiCode.length) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.FiCodeOverLength.name,
-                responseCode: responcodeEXT.RESCODEEXT.FiCodeOverLength.code
-            }
-            return response;
-        }
         if (_.isEmpty(getdataReq.fiCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFICODE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIFICODE.code
+            }
+            return response;
+        }
+        if (10 < getdataReq.fiCode.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FiCodeOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FiCodeOverLength.code
             }
             return response;
         }

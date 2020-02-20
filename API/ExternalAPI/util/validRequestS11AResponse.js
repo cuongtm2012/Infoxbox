@@ -17,17 +17,17 @@ module.exports = {
             return response;
         }
         //ficode
-        if (10 < getdataReq.fiCode.length) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.FiCodeOverLength.name,
-                responseCode: responcodeEXT.RESCODEEXT.FiCodeOverLength.code
-            }
-            return response;
-        }
         if (validation.isEmptyStr(getdataReq.fiCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFICODE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIFICODE.code
+            }
+            return response;
+        }
+        if (10 < getdataReq.fiCode.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FiCodeOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FiCodeOverLength.code
             }
             return response;
         }
