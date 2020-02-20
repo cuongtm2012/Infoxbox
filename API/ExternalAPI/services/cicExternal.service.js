@@ -134,16 +134,33 @@ async function selectCICS11aRSLT(req) {
         /*
         ** scrp tranlosg
         */
+        let _fiSessionKey, _inquiryDate;
+        if (_.isEmpty(req.fiSessionKey))
+            _fiSessionKey = '%%';
+        else
+            _fiSessionKey = req.fiSessionKey;
+
+        if (_.isEmpty(req.inquiryDate))
+            _inquiryDate = '%%';
+        else
+            _inquiryDate = req.inquiryDate;
+
         let sqlScrpTranlog = `SELECT distinct a.R_ERRYN, a.S_DTIM, a.R_DTIM, a.S_REQ_STATUS, b.SCRP_STAT_CD, b.INQ_DTIM AS INQ_DTIM_SCRPLOG, b.SYS_DTIM
                                 FROM TB_SCRP_TRLOG a inner join tb_scrplog b on  a.nice_ssin_id = b.nice_ssin_id
                                 where a.NICE_SSIN_ID = :niceSessionKey
-                                AND a.S_SVC_CD = 'B0003'`;
+                                AND a.S_SVC_CD = 'B0003'
+                                AND b.CUST_CD = :fiCode
+                                AND b.CUST_SSID_ID like :fiSessionKey
+                                AND b.INQ_DTIM like :inquiryDate`;
 
         resultScrpTranlog = await connection.execute(
             // The statement to execute
             sqlScrpTranlog,
             {
-                niceSessionKey: { val: req.niceSessionKey }
+                niceSessionKey: { val: req.niceSessionKey },
+                fiCode: { val: req.fiCode },
+                fiSessionKey: { val: _fiSessionKey },
+                inquiryDate: { val: _inquiryDate }
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -152,33 +169,37 @@ async function selectCICS11aRSLT(req) {
         console.log("resultScrpTranlog rows:", resultScrpTranlog.rows);
         outputScrpTranlog = resultScrpTranlog.rows;
 
-        /*
-        ** cicrpt main
-        */
-        let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.psn_comt, a.otr_iden_evd,
+        if (_.isEmpty(outputScrpTranlog))
+            return {};
+        else {
+
+            /*
+            ** cicrpt main
+            */
+            let sqlCicrptMain = `select a.inq_ogz_nm, a.inq_ogz_addr, a.inq_user_nm, a.inq_cd, a.inq_dtim, a.rpt_send_dtim, a.psn_nm, a.cic_id, a.psn_addr, a.natl_id, a.psn_comt, a.otr_iden_evd,
                               a.CARD_CMT, a.LOAN_CMT_DETAIL, a.VAMC_CMT, a.LOAN_12MON_CMT, a.NPL_5YR_CMT, a.CAT_LOAN_12MON_CMT, a.FIN_CTRT_CMT, a.CARD_ARR_3YR_CMT
                               from tb_cicrpt_main a
                               where a.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultCicrptMain = await connection.execute(
-            // The statement to execute
-            sqlCicrptMain,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultCicrptMain = await connection.execute(
+                // The statement to execute
+                sqlCicrptMain,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultCicrptMain rows:", resultCicrptMain.rows);
-        outputCicrptMain = resultCicrptMain.rows;
-        if (_.isEmpty(outputCicrptMain))
-            return {};
+            console.log("resultCicrptMain rows:", resultCicrptMain.rows);
+            outputCicrptMain = resultCicrptMain.rows;
+            if (_.isEmpty(outputCicrptMain))
+                return {};
 
-        /*
-        ** 2.1. loan detail
-        */
-        const sqlLoanDetailInfo = `select B.OGZ_CD,
+            /*
+            ** 2.1. loan detail
+            */
+            const sqlLoanDetailInfo = `select B.OGZ_CD,
             B.OGZ_NM,
             B.RCT_RPT_DATE,
             B.ST_LOAN_VND,
@@ -241,226 +262,226 @@ async function selectCICS11aRSLT(req) {
                 sum(OGZ_TOT_LOAN_USD) AS SUM_TOT_OGZ_USD
                 from tb_loan_detail where nice_ssin_id =:niceSessionKey group by nice_ssin_id) A left join tb_loan_detail B on A.NICE_SSIN_ID = B.NICE_SSIN_ID`;
 
-        resultLoanDetailInfo = await connection.execute(
-            // The statement to execute
-            sqlLoanDetailInfo,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultLoanDetailInfo = await connection.execute(
+                // The statement to execute
+                sqlLoanDetailInfo,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultLoanDetailInfo rows:", resultLoanDetailInfo.rows);
+            console.log("resultLoanDetailInfo rows:", resultLoanDetailInfo.rows);
 
-        if (_.isEmpty(resultLoanDetailInfo.rows)) {
-            cmtLoanDetailInfo = outputCicrptMain[0].LOAN_CMT_DETAIL;
-        }
-        else
-            outputLoanDetailinfo = resultLoanDetailInfo.rows;
+            if (_.isEmpty(resultLoanDetailInfo.rows)) {
+                cmtLoanDetailInfo = outputCicrptMain[0].LOAN_CMT_DETAIL;
+            }
+            else
+                outputLoanDetailinfo = resultLoanDetailInfo.rows;
 
-        /*
-        ** 2.2. Credit Card infor
-        */
-        let sqlCreditCardInfo = `select a.CARD_TOT_LMT, a.CARD_TOT_SETL_AMT, a.CARD_TOT_ARR_AMT, a.CARD_CNT, a.CARD_ISU_OGZ 
+            /*
+            ** 2.2. Credit Card infor
+            */
+            let sqlCreditCardInfo = `select a.CARD_TOT_LMT, a.CARD_TOT_SETL_AMT, a.CARD_TOT_ARR_AMT, a.CARD_CNT, a.CARD_ISU_OGZ 
                              from TB_CRDT_CARD a
                              where a.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultCreditCardInfo = await connection.execute(
-            // The statement to execute
-            sqlCreditCardInfo,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultCreditCardInfo = await connection.execute(
+                // The statement to execute
+                sqlCreditCardInfo,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultCreditCardInfo rows:", resultCreditCardInfo.rows);
-        if (_.isEmpty(resultCreditCardInfo.rows)) {
-            cmtCreditCard = outputCicrptMain[0].CARD_CMT;
-        }
-        else
-            outputCreditCardInfo = resultCreditCardInfo.rows;
+            console.log("resultCreditCardInfo rows:", resultCreditCardInfo.rows);
+            if (_.isEmpty(resultCreditCardInfo.rows)) {
+                cmtCreditCard = outputCicrptMain[0].CARD_CMT;
+            }
+            else
+                outputCreditCardInfo = resultCreditCardInfo.rows;
 
-        /*
-        ** 2.3. VAMC Loan infor
-        */
-        let sqlVamcLoan = `SELECT T.SELL_OGZ_NM, T.PRCP_BAL, T.DATA_RPT_DATE FROM TB_VAMC_LOAN T
+            /*
+            ** 2.3. VAMC Loan infor
+            */
+            let sqlVamcLoan = `SELECT T.SELL_OGZ_NM, T.PRCP_BAL, T.DATA_RPT_DATE FROM TB_VAMC_LOAN T
                                  where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultVamcLoan = await connection.execute(
-            // The statement to execute
-            sqlVamcLoan,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultVamcLoan = await connection.execute(
+                // The statement to execute
+                sqlVamcLoan,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultVamcLoan rows:", resultVamcLoan.rows);
-        if (_.isEmpty(resultVamcLoan.rows)) {
-            cmtVamcLoan = outputCicrptMain[0].VAMC_CMT;
-        }
-        else
-            outputVamcLoan = resultVamcLoan.rows;
+            console.log("resultVamcLoan rows:", resultVamcLoan.rows);
+            if (_.isEmpty(resultVamcLoan.rows)) {
+                cmtVamcLoan = outputCicrptMain[0].VAMC_CMT;
+            }
+            else
+                outputVamcLoan = resultVamcLoan.rows;
 
-        /*
-        ** 2.4. Loan 12Month infor
-        */
-        let sqlLoan12MInfo = `SELECT T.BASE_MONTH, T.BASE_MONTH_BAL, T.BASE_MONTH_CARD_BAL, T.BASE_MONTH_SUM FROM TB_LOAN_12MON T
+            /*
+            ** 2.4. Loan 12Month infor
+            */
+            let sqlLoan12MInfo = `SELECT T.BASE_MONTH, T.BASE_MONTH_BAL, T.BASE_MONTH_CARD_BAL, T.BASE_MONTH_SUM FROM TB_LOAN_12MON T
                             where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultLoan12MInfo = await connection.execute(
-            // The statement to execute
-            sqlLoan12MInfo,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultLoan12MInfo = await connection.execute(
+                // The statement to execute
+                sqlLoan12MInfo,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultLoan12MInfo rows:", resultLoan12MInfo.rows);
-        if (_.isEmpty(resultLoan12MInfo.rows)) {
-            cmtLoan12MInfo = outputCicrptMain[0].LOAN_12MON_CMT;
-        }
-        else
-            outputLoan12MInfo = resultLoan12MInfo.rows;
+            console.log("resultLoan12MInfo rows:", resultLoan12MInfo.rows);
+            if (_.isEmpty(resultLoan12MInfo.rows)) {
+                cmtLoan12MInfo = outputCicrptMain[0].LOAN_12MON_CMT;
+            }
+            else
+                outputLoan12MInfo = resultLoan12MInfo.rows;
 
-        /*
-        ** 2.5. NPL Loan 5 year infor
-        */
-        let sqlNPL5YLoan = `SELECT T.OGZ_NM_BRANCH_NM, T.RCT_OCR_DATE, T.DEBT_GRP, T.AMT_VND, T.AMT_USD FROM TB_NPL_5YR T
+            /*
+            ** 2.5. NPL Loan 5 year infor
+            */
+            let sqlNPL5YLoan = `SELECT T.OGZ_NM_BRANCH_NM, T.RCT_OCR_DATE, T.DEBT_GRP, T.AMT_VND, T.AMT_USD FROM TB_NPL_5YR T
                             where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultNPL5YLoan = await connection.execute(
-            // The statement to execute
-            sqlNPL5YLoan,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultNPL5YLoan = await connection.execute(
+                // The statement to execute
+                sqlNPL5YLoan,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultNPL5YLoan rows:", resultNPL5YLoan.rows);
-        if (_.isEmpty(resultNPL5YLoan.rows)) {
-            cmtNPL5YearLoan = outputCicrptMain[0].NPL_5YR_CMT;
-        }
-        else
-            outputNPL5YLoan = resultNPL5YLoan.rows;
+            console.log("resultNPL5YLoan rows:", resultNPL5YLoan.rows);
+            if (_.isEmpty(resultNPL5YLoan.rows)) {
+                cmtNPL5YearLoan = outputCicrptMain[0].NPL_5YR_CMT;
+            }
+            else
+                outputNPL5YLoan = resultNPL5YLoan.rows;
 
-        /*
-        ** 2.6. Card 3 year
-        */
-        let sqlCard3Year = `SELECT T.CARD_ARR_PSN_YN, T.CARD_ARR_LGST_DAYS, T.CARD_ARR_CNT FROM TB_CRDT_CARD_DEQ T
+            /*
+            ** 2.6. Card 3 year
+            */
+            let sqlCard3Year = `SELECT T.CARD_ARR_PSN_YN, T.CARD_ARR_LGST_DAYS, T.CARD_ARR_CNT FROM TB_CRDT_CARD_DEQ T
                             where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultCard3Year = await connection.execute(
-            // The statement to execute
-            sqlCard3Year,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultCard3Year = await connection.execute(
+                // The statement to execute
+                sqlCard3Year,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultCard3Year rows:", resultCard3Year.rows);
-        if (_.isEmpty(resultCard3Year.rows)) {
-            cmtCard3Year = outputCicrptMain[0].CARD_ARR_3YR_CMT;
-        } else
-            outputCard3year = resultCard3Year.rows;
+            console.log("resultCard3Year rows:", resultCard3Year.rows);
+            if (_.isEmpty(resultCard3Year.rows)) {
+                cmtCard3Year = outputCicrptMain[0].CARD_ARR_3YR_CMT;
+            } else
+                outputCard3year = resultCard3Year.rows;
 
-        /*
-        ** 2.7.Loan 12M Cautiou infor
-        */
-        let sqlLoan12MCat = `SELECT T.BASE_MONTH, T.BASE_MONTH_CAT_LOAN_SUM, T.OGZ_NM, T.RPT_DATE FROM TB_LOAN_12MON_PC T
+            /*
+            ** 2.7.Loan 12M Cautiou infor
+            */
+            let sqlLoan12MCat = `SELECT T.BASE_MONTH, T.BASE_MONTH_CAT_LOAN_SUM, T.OGZ_NM, T.RPT_DATE FROM TB_LOAN_12MON_PC T
                             where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultLoan12MCat = await connection.execute(
-            // The statement to execute
-            sqlLoan12MCat,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultLoan12MCat = await connection.execute(
+                // The statement to execute
+                sqlLoan12MCat,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultLoan12MCat rows:", resultLoan12MCat.rows);
-        if (_.isEmpty(resultLoan12MCat.rows)) {
-            cmtLoan12MCat = outputCicrptMain[0].CAT_LOAN_12MON_CMT;
-        }
-        else
-            outputloan12MCat = resultLoan12MCat.rows;
+            console.log("resultLoan12MCat rows:", resultLoan12MCat.rows);
+            if (_.isEmpty(resultLoan12MCat.rows)) {
+                cmtLoan12MCat = outputCicrptMain[0].CAT_LOAN_12MON_CMT;
+            }
+            else
+                outputloan12MCat = resultLoan12MCat.rows;
 
-        /*
-        ** 3.1. Collateral infor
-        */
-        let sqlCollateral = `SELECT T.AST_SCRT_LOAN_GURT_AMT, T.SCRT_AST_CNT, T.SCRT_AST_OGZ_CNT FROM TB_LOAN_GURT T
+            /*
+            ** 3.1. Collateral infor
+            */
+            let sqlCollateral = `SELECT T.AST_SCRT_LOAN_GURT_AMT, T.SCRT_AST_CNT, T.SCRT_AST_OGZ_CNT FROM TB_LOAN_GURT T
                                 where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultCollateral = await connection.execute(
-            // The statement to execute
-            sqlCollateral,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultCollateral = await connection.execute(
+                // The statement to execute
+                sqlCollateral,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultCollateral rows:", resultCollateral.rows);
-        outputCollateral = resultCollateral.rows;
+            console.log("resultCollateral rows:", resultCollateral.rows);
+            outputCollateral = resultCollateral.rows;
 
-        /*
-        ** 3.2. Financial contract
-        */
-        let sqlFiancialContract = `SELECT T.FIN_CTRT, T.OGZ_NM, T.CTRT_START_DATE, T.CTRT_END_DATE FROM TB_FINL_CTRT T
+            /*
+            ** 3.2. Financial contract
+            */
+            let sqlFiancialContract = `SELECT T.FIN_CTRT, T.OGZ_NM, T.CTRT_START_DATE, T.CTRT_END_DATE FROM TB_FINL_CTRT T
                                     where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultFinancialContract = await connection.execute(
-            // The statement to execute
-            sqlFiancialContract,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultFinancialContract = await connection.execute(
+                // The statement to execute
+                sqlFiancialContract,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultFinancialContract rows:", resultFinancialContract.rows);
-        if (_.isEmpty(resultFinancialContract.rows)) {
-            cmtFinancialContract = outputCicrptMain[0].FIN_CTRT_CMT;
-        }
-        else
-            outputFinanCialContract = resultFinancialContract.rows;
+            console.log("resultFinancialContract rows:", resultFinancialContract.rows);
+            if (_.isEmpty(resultFinancialContract.rows)) {
+                cmtFinancialContract = outputCicrptMain[0].FIN_CTRT_CMT;
+            }
+            else
+                outputFinanCialContract = resultFinancialContract.rows;
 
-        /*
-        ** 3.3. Customer lookup infor
-        */
-        let sqlCusLookup = `SELECT T.OGZ_NM_BRANCH_NM, T.OGZ_CD, T.INQ_GDS, T.INQ_DATE, T.INQ_TIME FROM TB_INQ_FINL_LST T
+            /*
+            ** 3.3. Customer lookup infor
+            */
+            let sqlCusLookup = `SELECT T.OGZ_NM_BRANCH_NM, T.OGZ_CD, T.INQ_GDS, T.INQ_DATE, T.INQ_TIME FROM TB_INQ_FINL_LST T
                             where T.NICE_SSIN_ID = :niceSessionKey`;
 
-        resultCusLookup = await connection.execute(
-            // The statement to execute
-            sqlCusLookup,
-            {
-                niceSessionKey: { val: req.niceSessionKey }
-            },
-            {
-                outFormat: oracledb.OUT_FORMAT_OBJECT
-            });
+            resultCusLookup = await connection.execute(
+                // The statement to execute
+                sqlCusLookup,
+                {
+                    niceSessionKey: { val: req.niceSessionKey }
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
 
-        console.log("resultCusLookup rows:", resultCusLookup.rows);
-        outputCusLookup = resultCusLookup.rows;
+            console.log("resultCusLookup rows:", resultCusLookup.rows);
+            outputCusLookup = resultCusLookup.rows;
 
 
-        return { outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, outputCreditCardInfo, cmtLoanDetailInfo, cmtCreditCard, outputVamcLoan, cmtVamcLoan, outputLoan12MInfo, cmtLoan12MInfo, outputNPL5YLoan, cmtNPL5YearLoan, outputloan12MCat, cmtLoan12MCat, outputCollateral, outputFinanCialContract, cmtFinancialContract, outputCusLookup, outputCard3year, cmtCard3Year };
-
+            return { outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, outputCreditCardInfo, cmtLoanDetailInfo, cmtCreditCard, outputVamcLoan, cmtVamcLoan, outputLoan12MInfo, cmtLoan12MInfo, outputNPL5YLoan, cmtNPL5YearLoan, outputloan12MCat, cmtLoan12MCat, outputCollateral, outputFinanCialContract, cmtFinancialContract, outputCusLookup, outputCard3year, cmtCard3Year };
+        }
     } catch (err) {
         console.log(err);
         // return res.status(400);
@@ -475,21 +496,38 @@ async function selectCICS11aRSLT(req) {
     }
 }
 
-async function selectScrapingStatusCodeSCRPLOG(niceSessionKey) {
+async function selectScrapingStatusCodeSCRPLOG(req) {
     let connection;
 
     try {
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
 
+        let _fiSessionKey, _inquiryDate;
+        if (_.isEmpty(req.fiSessionKey))
+            _fiSessionKey = '%%';
+        else
+            _fiSessionKey = req.fiSessionKey;
+
+        if (_.isEmpty(req.inquiryDate))
+            _inquiryDate = '%%';
+        else
+            _inquiryDate = req.inquiryDate;
+
         let sqlCusLookup = `SELECT T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
-                            where T.NICE_SSIN_ID = :niceSessionKey`;
+                            where T.NICE_SSIN_ID = :niceSessionKey
+                            AND T.CUST_CD = :fiCode
+                            AND T.CUST_SSID_ID like :fiSessionKey
+                            AND T.INQ_DTIM like :inquiryDate`;
 
         let result = await connection.execute(
             // The statement to execute
             sqlCusLookup,
             {
-                niceSessionKey: { val: niceSessionKey }
+                niceSessionKey: { val: req.niceSessionKey },
+                fiCode: { val: req.fiCode },
+                fiSessionKey: { val: _fiSessionKey },
+                inquiryDate: { val: _inquiryDate }
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT

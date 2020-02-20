@@ -148,7 +148,7 @@ exports.cics37RSLT = function (req, res) {
                     });
                     return res.status(200).json(responseData);
                 } else {
-                    cicMobileService.selectScrapingStatusCodeSCRPLOG(getdataReq.niceSessionKey).then(rslt => {
+                    cicMobileService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
                         if (_.isEmpty(rslt)) {
                             let responseUnknow = {

@@ -313,7 +313,7 @@ exports.cics11aRSLT = function (req, res) {
 					return res.status(200).json(responseData);
 				} else {
 					// select in SCRPLOG check SCRP_STAT_CD
-					cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq.niceSessionKey).then(rslt => {
+					cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
 						if (_.isEmpty(rslt)) {
 							let responseUnknow = {
