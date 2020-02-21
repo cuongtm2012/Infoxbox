@@ -1,11 +1,11 @@
 
 var internalCIC = require('./batch/internalNoexist');
-var internalCIC = new internalCIC();
+var internalCICNoExist = new internalCIC();
 var config = require('./config/config');
 
 module.exports.start = function () {
     setTimeout(() => {
-        internalCIC.cron((current, max) => {
+        internalCICNoExist.cron((current, max) => {
             if (current == max) {
                 // finish
                 console.log("call internall batch noexist~~~");

@@ -7,7 +7,6 @@ async function updateScrapingTranslog(req) {
 
     try {
         let sql, result;
-        let sysDtim = dateutil.timeStamp();
 
         connection = await oracledb.getConnection(dbconfig);
 

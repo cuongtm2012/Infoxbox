@@ -17,6 +17,7 @@ const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'u
 var jobB0002 = require('./job-B0002');
 var jobnoexist = require('./job-noexist');
 var jobB0003 = require('./job-B0003');
+var jobB1003 = require('./job-B1003');
 
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -91,6 +92,7 @@ app.use('/internal', cicInternalroute);
 jobB0002.start();
 jobnoexist.start();
 jobB0003.start();
+jobB1003.start();
 
 
 // force: true will drop the table if it already exists

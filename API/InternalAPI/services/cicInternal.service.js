@@ -20,10 +20,12 @@ async function select01(req, res, next) {
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM
+        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '01' 
-                and (SCRP_MOD_CD = '00' or SCRP_MOD_CD is null)
+                and (a.SCRP_MOD_CD = '00' or a.SCRP_MOD_CD is null)
+                and a.GDS_CD = 'S1001'
+                and a.AGR_FG = 'Y'
                 and ROWNUM <= 20
             ORDER BY a.SYS_DTIM ASC`;
         // and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
@@ -438,6 +440,7 @@ async function startProcessB0003() {
         WHERE a.SCRP_STAT_CD = '04'
             and a.SCRP_MOD_CD = '00'
             and b.S_SVC_CD = 'B0002'
+            and a.GDS_CD = 'S1001'
             and a.AGR_FG = 'Y'
             and ROWNUM <= 20
         ORDER BY a.SYS_DTIM ASC`;
@@ -456,6 +459,50 @@ async function startProcessB0003() {
         return result.rows;
         // return res.status(200).json(result.rows);
 
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+/*
+    B1003 : CIC보고서요청 (Inquriy for CIC Report-S37)
+*/
+async function startProcessB1003() {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM
+                FROM TB_SCRPLOG a
+                WHERE a.SCRP_STAT_CD = '01' 
+                    and (a.SCRP_MOD_CD = '00' or a.SCRP_MOD_CD is null)
+                    and a.GDS_CD = 'S1002'
+                    and a.AGR_FG = 'Y'
+                    and ROWNUM <= 20
+                ORDER BY a.SYS_DTIM ASC`;
+        result = await connection.execute(
+            sql,
+            {},
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+
+        console.log("startProcessB1003", result.rows);
+
+        return result.rows;
 
     } catch (err) {
         console.log(err);
@@ -585,3 +632,4 @@ module.exports.updateCICReportInquiryReadyToRequestScraping = updateCICReportInq
 module.exports.updateScrpModCdPreRequestToScrapingB0002 = updateScrpModCdPreRequestToScrapingB0002;
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
 module.exports.updateListScrpStatCdErrorResponseCodeScraping = updateListScrpStatCdErrorResponseCodeScraping;
+module.exports.startProcessB1003 = startProcessB1003;
