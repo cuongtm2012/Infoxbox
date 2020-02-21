@@ -1,12 +1,12 @@
 var express = require('express');
 var router = express.Router();
-// var verifyToken = require('../shared/auth/verifyToken');
+var verifyToken = require('../util/verifyToken');
 
 
 var customer_router = require('../controllers/customer.controller');
 
-router.get('/getCustInfo',  customer_router.getCustInfo);
-router.post('/addCust', customer_router.addCust);
-router.put('/editCust', customer_router.editCust);
+router.get('/getCustInfo',  verifyToken , customer_router.getCustInfo);
+router.post('/addCust',  verifyToken ,customer_router.addCust);
+router.put('/editCust', verifyToken , customer_router.editCust);
 module.exports = router;
 
