@@ -21,9 +21,9 @@ var config = {
 		orgLog: '../../logs/Internal'
 	},
 	batch: {
-		TIME_OUT: 2*60*60*1000, // 10000 milisecond = 1 seconds
-		TIME_OUT1: 2*60*60*1000,
-		TIME_OUT2: 2*60*60*1000, // 15 minutes
+		TIME_OUT: 1*60*1000, // 10000 milisecond = 1 seconds
+		TIME_OUT1: 3*60*1000,
+		TIME_OUT2: 30*60*1000, // 15 minutes
 	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
