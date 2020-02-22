@@ -544,7 +544,7 @@ exports.internalCICB0003 = function (req, res, next) {
                             let scrplogid = 'S37' + dateutil.timeStamp();
                             let workId = getIdGetway.getIPGateWay();
 
-                            let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password,  body.data.outJson.outB1003.cicNo, niceSessionKeyUpdateStatus);
+                            let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password, body.data.outJson.outB1003.cicNo, niceSessionKeyUpdateStatus);
                             cicServiceRes.updateScrapingTranslog(dataTransSave).then(() => {
                                 console.log("Updated to scraping transaction log B1003!");
                                 return next();
@@ -569,14 +569,14 @@ exports.internalCICB0003 = function (req, res, next) {
                     // Log in error
                     if (checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail2.code], getStatusScrappingCode(body.data.outJson.errMsg))) {
-                            cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
+                            cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteAccessFailure.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], getStatusScrappingCode(body.data.outJson.errMsg))) {
-                            cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
+                            cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteLoginFailure.code);
                                 else
@@ -600,7 +600,7 @@ exports.internalCICB0003 = function (req, res, next) {
                         //     console.log(" B0003 update SCRP_MOD_CD = 00 ");
                         //     return next();
                         // });
-                        cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                        cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
                             if (_.isEqual(rslt, 1))
                                 console.log('Update scraping status:' + responCode.ScrapingStatusCode.OtherError.code + '-' + responCode.RESCODEEXT.ETCError.code);
                             else
