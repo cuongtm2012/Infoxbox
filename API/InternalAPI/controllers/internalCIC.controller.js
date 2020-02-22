@@ -601,7 +601,7 @@ exports.internalCICB0003 = function (req, res, next) {
                         //     return next();
                         // });
                         cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
-                            if (_.isEqual(rslt, 1))
+                            if (1 <= rslt)
                                 console.log('Update scraping status:' + responCode.ScrapingStatusCode.OtherError.code + '-' + responCode.RESCODEEXT.ETCError.code);
                             else
                                 console.log('Update scraping status failure!');
