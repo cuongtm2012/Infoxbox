@@ -522,14 +522,13 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     let connection;
 
     try {
-        let sql, result, sqlNiceCode, resultNiceCode;
-        let res = 0;
+        let sql, result;
 
         connection = await oracledb.getConnection(dbconfig);
 
 
         sql = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD  = :SCRP_STAT_CD
+                SET SCRP_STAT_CD  = :SCRP_STAT_CD, RSP_CD = :RSP_CD
                 WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
 
         result = await connection.execute(
@@ -537,33 +536,15 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
             sql,
             {
                 NICE_SSIN_ID: { val: niceSessionKey },
-                SCRP_STAT_CD: { val: code }
+                SCRP_STAT_CD: { val: code },
+                RSP_CD: { val: niceCode }
             },
             { autoCommit: true },
         );
 
         console.log("updateScrpStatCdErrorResponseCodeScraping updated::", result.rowsAffected);
 
-        // for update nice code
-        if (!_.isEmpty(niceCode)) {
-            sqlNiceCode = `UPDATE TB_SCRPLOG
-                        SET RSP_CD  = :RSP_CD
-                        WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
-
-            resultNiceCode = await connection.execute(
-                // The statement to execute
-                sqlNiceCode,
-                {
-                    NICE_SSIN_ID: { val: niceSessionKey },
-                    RSP_CD: { val: niceCode }
-                },
-                { autoCommit: true },
-            );
-            console.log("update Nice code updated::", resultNiceCode.rowsAffected);
-            res = resultNiceCode.rowsAffected;
-        }
-
-        return result.rowsAffected + res;
+        return result.rowsAffected;
     } catch (err) {
         console.log(err);
         // return res.status(400);
@@ -578,7 +559,7 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     }
 }
 
-async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, code) {
+async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, niceCode) {
     let connection;
 
     try {
@@ -588,14 +569,15 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
 
 
         sql = `UPDATE TB_SCRPLOG
-                SET SCRP_STAT_CD  = :SCRP_STAT_CD
+                SET SCRP_STAT_CD  = :SCRP_STAT_CD, RSP_CD = :RSP_CD
                 WHERE NICE_SSIN_ID in (${niceSessionKey.map((name, index) => `'${name}'`).join(", ")})`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
-                SCRP_STAT_CD: { val: code }
+                SCRP_STAT_CD: { val: code },
+                RSP_CD: { val: niceCode }
             },
             { autoCommit: true },
         );
