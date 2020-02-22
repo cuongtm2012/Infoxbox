@@ -4,6 +4,7 @@ const logger = require('../config/logger');
 const cics37RQSTReq = require('../domain/CIC_S37_RQST.request');
 
 const cicExternalService = require('../services/cicExternal.service');
+const cicCicS37Service = require('../services/cicS37.service');
 
 const cics37RQSTRes = require('../domain/CIC_S37_RQST.response');
 
@@ -135,11 +136,11 @@ exports.cics37RSLT = function (req, res) {
             }
             //End check params request
 
-            cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
-                console.log("result selectCICS11aRSLT: ", reslt);
-                if (!validation.isEmptyStr(reslt)) {
+            cicCicS37Service.selectCicS37DetailReport(getdataReq, res).then(reslt => {
+                console.log("result selectCicS37DetailReport: ", reslt);
+                if (!_.isEmpty(reslt)) {
                     let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
-                    responseData = new cics37RSLTRes(getdataReq, responseSuccess, reslt[0]);
+                    responseData = new cics37RSLTRes(getdataReq, responseSuccess, reslt.outputScrpTranlog[0], reslt.outputS37Detail[0]);
 
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
@@ -148,7 +149,7 @@ exports.cics37RSLT = function (req, res) {
                     });
                     return res.status(200).json(responseData);
                 } else {
-                    cicMobileService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+                    cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
                         if (_.isEmpty(rslt)) {
                             let responseUnknow = {

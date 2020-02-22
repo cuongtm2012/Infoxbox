@@ -503,7 +503,10 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
 
-        let _fiSessionKey, _inquiryDate;
+        let _fiSessionKey, _inquiryDate, gdscd;
+
+        gdscd = niceGoodCode.niceProductCode(req.taskCode);
+
         if (_.isEmpty(req.fiSessionKey))
             _fiSessionKey = '%%';
         else
@@ -518,7 +521,8 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
                             where T.NICE_SSIN_ID = :niceSessionKey
                             AND T.CUST_CD = :fiCode
                             AND T.CUST_SSID_ID like :fiSessionKey
-                            AND T.INQ_DTIM like :inquiryDate`;
+                            AND T.INQ_DTIM like :inquiryDate
+                            AND T.GDS_CD = :gdscd`;
 
         let result = await connection.execute(
             // The statement to execute
@@ -527,7 +531,8 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
                 niceSessionKey: { val: req.niceSessionKey },
                 fiCode: { val: req.fiCode },
                 fiSessionKey: { val: _fiSessionKey },
-                inquiryDate: { val: _inquiryDate }
+                inquiryDate: { val: _inquiryDate },
+                gdscd: { val: gdscd }
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
