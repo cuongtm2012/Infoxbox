@@ -17,7 +17,6 @@ module.exports = class internalJob {
                 oncomplete(0, 0)
             }
             data.forEach(element => {
-                console.log("element::::", element);
 
                 // update SCRP_MOD_CD = 01 before
                 cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {

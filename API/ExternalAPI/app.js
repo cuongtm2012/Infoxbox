@@ -6,10 +6,13 @@ var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');
 
+var path = require('path');
+
 const https = require('https');
 const fss = require('fs');
-const privateKey = fss.readFileSync('../sslcert/key.pem', 'utf8');
-const certificate = fss.readFileSync('../sslcert/cert.pem', 'utf8');
+const __dad = path.join(__dirname, '..');
+const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
+const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 
 var app = express();
 app.use(cors());

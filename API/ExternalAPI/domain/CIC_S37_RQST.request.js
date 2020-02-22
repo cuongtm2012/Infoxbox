@@ -1,3 +1,4 @@
+const dateutil = require('../util/dateutil');
 
 module.exports = function CIC_S37_RQSTRequest(parameters, password, niceSessionKey) {
     const { fiSessionKey,
@@ -26,8 +27,8 @@ module.exports = function CIC_S37_RQSTRequest(parameters, password, niceSessionK
     this.oldNatId = oldNatId ? oldNatId : null;
     this.passportNumber = passportNumber ? passportNumber : null;
     this.cicId = cicId ? cicId : null;
-    this.inquiryDate = inquiryDate ? inquiryDate : null;
-    this.infoProvConcent = infoProvConcent;
+    this.inquiryDate = inquiryDate ? inquiryDate : dateutil.getCurrentInquiryDate();
+    this.infoProvConcent = infoProvConcent.toUpperCase();
     this.niceSessionKey = niceSessionKey;
 
 };

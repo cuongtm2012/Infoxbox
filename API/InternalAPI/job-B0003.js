@@ -1,11 +1,11 @@
 
 var internalCIC = require('./batch/internalB0003');
-var internalCIC = new internalCIC();
+var internalCICB0003 = new internalCIC();
 var config = require('./config/config');
 
 module.exports.start = function () {
     setTimeout(() => {
-        internalCIC.cron((current, max) => {
+        internalCICB0003.cron((current, max) => {
             if (current == max) { // prevent process is running in array
                 // finish
                 console.log("call internall batch B0003~~~");
