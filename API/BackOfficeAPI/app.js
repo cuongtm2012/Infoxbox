@@ -1,3 +1,4 @@
+
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
@@ -15,6 +16,14 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+const https = require('https');
+const fss = require('fs');
+const privateKey = fss.readFileSync('./sslcert/key.pem', 'utf8');
+const certificate = fss.readFileSync('./sslcert/cert.pem', 'utf8');
+
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
+
 var auth = require('./routes/auth.route');
 var customer = require('./routes/customer.route');
 var contract = require('./routes/contract.route');
@@ -22,6 +31,7 @@ var code = require('./routes/code.route');
 var cicreport = require('./routes/cicreport.route');
 var user = require('./routes/user.route');
 var captcha = require('./routes/captcha.route');
+var manualCaptcha = require('./routes/manualCT.route');
 // Config DB
 var config = require('./config/config');
 
@@ -82,6 +92,7 @@ app.use('/code', code);
 app.use('/cicreport', cicreport);
 app.use('/user' , user);
 app.use('/captcha' , captcha);
+app.use('/manualCaptcha' , manualCaptcha);
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
@@ -95,7 +106,6 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 	res.render('error');
 });
-
-app.listen(config.server.port, function () {
+httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
