@@ -1,11 +1,9 @@
 
 
-module.exports = function cicB1003Request(parameters, defaultValue, decryptPW) {
+module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, niceSessionKey) {
     const {
-        NICE_SSIN_ID,
         CIC_ID,
         LOGIN_ID,
-        LOGIN_PW,
         PSPT_NO,
         TAX_ID,
         NATL_ID,
@@ -50,7 +48,7 @@ module.exports = function cicB1003Request(parameters, defaultValue, decryptPW) {
     this.step_useYn = step_useYn;
     this.step_input = step_input;
     this.step_data = step_data;
-    this.niceSessionKey = NICE_SSIN_ID;
+    this.niceSessionKey = niceSessionKey;
     this.sendTime = SYS_DTIM;
 
 };

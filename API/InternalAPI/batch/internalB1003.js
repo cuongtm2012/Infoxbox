@@ -42,7 +42,11 @@ module.exports = class internalJob {
                     else
                         decryptPW = _decryptPW;
 
-                    var fnData = new cicB1003Req(element, defaultValue, decryptPW);
+                    // create list nice sessionkey (only 1 key to using update follow list nice in controller)
+                    let _niceSessionKey = [];
+                    _niceSessionKey.push(element.NICE_SSIN_ID);
+
+                    var fnData = new cicB1003Req(element, defaultValue, decryptPW, _niceSessionKey);
 
                     cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
                         // "?inJsonList=%5B" + querystrings + "%5D"
