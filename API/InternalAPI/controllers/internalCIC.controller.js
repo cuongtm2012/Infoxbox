@@ -522,14 +522,16 @@ exports.internalCICB0003 = function (req, res, next) {
                 // start B10003
                 else if (!_.isEmpty(body.data.outJson.outB1003) && body.data.outJson.outB1003.errYn == "N" && _.isEmpty(body.data.outJson.outB1003.errMsg)) {
                     let dataB1003 = body.data.outJson.outB1003;
+                    // convert nice session key for B1003 process
+                    let niceKey = req.body.niceSessionKey[0];
 
-                    CICB1003 = new CICB1003Save(dataB1003, niceSessionKeyUpdateStatus);
+                    CICB1003 = new CICB1003Save(dataB1003, niceKey);
                     cicS37Service.insertS37Detail(CICB1003).then(resultS37 => {
                         console.log('resultS37:', resultS37);
                         if (1 < resultS37) {
                             console.log('Successfully insert into S37 detail table');
                             // update complete cic report inquiry status 10
-                            cicService.updateCICReportInquiryCompleted(niceSessionKeyUpdateStatus).then(resultUpdated => {
+                            cicService.updateCICReportInquiryCompleted(niceKey).then(resultUpdated => {
                                 console.log("CIC report inquiry completed B1003!", resultUpdated);
 
                             });
@@ -544,13 +546,13 @@ exports.internalCICB0003 = function (req, res, next) {
                             let scrplogid = 'S37' + dateutil.timeStamp();
                             let workId = getIdGetway.getIPGateWay();
 
-                            let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password, body.data.outJson.outB1003.cicNo, niceSessionKeyUpdateStatus);
+                            let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password, body.data.outJson.outB1003.cicNo, niceKey);
                             cicServiceRes.updateScrapingTranslog(dataTransSave).then(() => {
                                 console.log("Updated to scraping transaction log B1003!");
                                 return next();
                             });
                         } else {
-                            cicService.updateScrpModCdHasNoResponseFromScraping(niceSessionKeyUpdateStatus).then(() => {
+                            cicService.updateScrpModCdHasNoResponseFromScraping(niceKey).then(() => {
                                 console.log("B0003 update SCRP_MOD_CD = 00 ");
                                 return next();
                             });
@@ -559,6 +561,7 @@ exports.internalCICB0003 = function (req, res, next) {
 
                 }
                 // End B1003
+
                 else if (_.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list)) {
                     //Update ScrpModCd 00
                     cicService.updateCICReportInquiryReadyToRequestScraping(req.body.niceSessionKey).then(() => {

@@ -28,7 +28,7 @@ module.exports = function cicTransSave(requestParams, responseParams, scrplogid,
     } = responseParams;
 
     this.SCRP_LOG_ID = scrplogid;
-    this.NICE_SSIN_ID = niceSessionKey ? niceSessionKey : null;
+    this.NICE_SSIN_ID = niceSessionKey;
     this.S_SVC_CD = svcCd ? svcCd : null;
     this.S_USER_ID = userId ? userId : null;
     this.S_USER_PW = password ? password : null;
