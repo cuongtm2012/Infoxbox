@@ -1,6 +1,7 @@
+const dateutil = require('../util/dateutil');
 
 
-module.exports = function cicB0003Request(listCicNo, listNiceSession, data, defaultValue) {
+module.exports = function cicB0003Request(listCicNo, listNiceSession, data, defaultValue, loginUser, decryptPW) {
     const {
         appCd,
         iftUrl,
@@ -23,12 +24,11 @@ module.exports = function cicB0003Request(listCicNo, listNiceSession, data, defa
     this.orgCd = orgCd;
     this.svcCd = 'B0003';
     this.dispNm = dispNm;
-    this.userId = userId;
-    this.userPw = userPw;
+    this.userId = loginUser ? loginUser : userId;
+    this.userPw = decryptPW ? decryptPW : userPw;
     this.customerType = customerType;
     this.cicNo = '';
     this.taxNo = '';
-    // this.cmtNo = PSPT_NO ? PSPT_NO : "";
     this.cmtNo = '';
     this.reportType = reportType;
     this.voteNo = voteNo;
@@ -37,7 +37,7 @@ module.exports = function cicB0003Request(listCicNo, listNiceSession, data, defa
     this.inqDt2 = inqDt2;
     this.step_input = step_input;
     this.step_data = step_data;
-    // this.sendTime = SYS_DTIM;
+    this.sendTime = dateutil.timeStamp();
     this.reportCicNo = listCicNo ? listCicNo : "";
     this.niceSessionKey = listNiceSession ? listNiceSession : "";
     this.dataCic = data;
