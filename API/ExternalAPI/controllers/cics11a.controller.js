@@ -76,6 +76,9 @@ exports.cics11aRQST = function (req, res, next) {
 						let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
 					}
+					//TODO
+					// call directly to scrapping service
+
 					// update INQLOG
 					dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
 					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
