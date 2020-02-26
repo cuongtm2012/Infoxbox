@@ -1,14 +1,12 @@
 
+const dateutil = require('../util/dateutil');
 
 module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, niceSessionKey) {
     const {
-        CIC_ID,
-        LOGIN_ID,
-        PSPT_NO,
-        TAX_ID,
-        NATL_ID,
-        OLD_NATL_ID,
-        SYS_DTIM
+        loginId,
+        natId,
+        oldNatId,
+        passportNumber
     } = parameters;
 
     const {
@@ -27,19 +25,19 @@ module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, n
         step_data
     } = defaultValue;
 
-    const natId = NATL_ID ? NATL_ID : OLD_NATL_ID;
+    const _natId = natId ? natId : oldNatId;
 
     this.appCd = appCd;
     this.iftUrl = iftUrl;
     this.orgCd = orgCd;
     this.svcCd = 'B1003';
     this.dispNm = dispNm;
-    this.userId = LOGIN_ID;
+    this.userId = loginId;
     this.userPw = decryptPW;
     this.customerType = customerType;
-    this.cicNo = CIC_ID ? CIC_ID : "";
-    this.taxNo = TAX_ID ? TAX_ID : "";
-    this.cmtNo = natId ? natId : PSPT_NO;
+    this.cicNo = '';
+    this.taxNo = '';
+    this.cmtNo = _natId ? _natId : passportNumber;
     this.reportType = reportType;
     this.voteNo = voteNo;
     this.reqStatus = reqStatus;
@@ -49,6 +47,6 @@ module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, n
     this.step_input = step_input;
     this.step_data = step_data;
     this.niceSessionKey = niceSessionKey;
-    this.sendTime = SYS_DTIM;
+    this.sendTime = dateutil.timeStamp();
 
 };

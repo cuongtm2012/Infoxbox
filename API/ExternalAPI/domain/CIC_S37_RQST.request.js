@@ -6,6 +6,7 @@ module.exports = function CIC_S37_RQSTRequest(parameters, password, niceSessionK
         taskCode,
         loginId,
         loginPw,
+        cicGoodCode,
         taxCode,
         natId,
         oldNatId,
@@ -20,6 +21,7 @@ module.exports = function CIC_S37_RQSTRequest(parameters, password, niceSessionK
     this.taskCode = taskCode;
     this.loginId = loginId;
     this.loginPw = password ? password : loginPw;
+    this.cicGoodCode = cicGoodCode ? cicGoodCode : null;
     this.taxCode = taxCode ? taxCode : null;
     this.natId = natId ? natId : null;
     this.oldNatId = oldNatId ? oldNatId : null;
