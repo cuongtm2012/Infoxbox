@@ -35,6 +35,7 @@ const convertPassword = require('../../shared/util/convertBase64ToText');
 const getIdGetway = require('../../shared/util/getIPGateWay');
 const cicTransSave = require('../../InternalAPI/domain/cicTrans.save');
 const cicServiceRes = require('../../InternalAPI/services/cicInternalRes.service');
+const cics37RSLTRes = require('../domain/CIC_S37_RSLT.response');
 
 exports.cics37Rqst = function (req, res) {
     try {
@@ -384,6 +385,12 @@ function selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, scrapingStatusCo
         fiSessionKey: getdataReqFullNiceKey.fiSessionKey,
         fiCode: getdataReqFullNiceKey.fiCode,
         taskCode: getdataReqFullNiceKey.taskCode,
+        taxCode: getdataReqFullNiceKey.taxCode ? getdataReqFullNiceKey.taxCode : '',
+        natId: getdataReqFullNiceKey.natId ? getdataReqFullNiceKey.natId : '',
+        oldNatId: getdataReqFullNiceKey.oldNatId ? getdataReqFullNiceKey.oldNatId : '',
+        passportNumber: getdataReqFullNiceKey.passportNumber ? getdataReqFullNiceKey.passportNumber : '',
+        cicId: getdataReqFullNiceKey.cicId ? getdataReqFullNiceKey.cicId : '',
+        infoProvConcent: getdataReqFullNiceKey.infoProvConcent,
         niceSessionKey: getdataReqFullNiceKey.niceSessionKey,
         inquiryDate: getdataReqFullNiceKey.inquiryDate,
         responseTime: dateutil.timeStamp(),
@@ -398,7 +405,7 @@ function selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, scrapingStatusCo
 
 
 const cics37RSLTReq = require('../domain/CIC_S37_RSLT.request');
-const cics37RSLTRes = require('../domain/CIC_S37_RSLT.manual.res');
+const cics37RSLTManualRes = require('../domain/CIC_S37_RSLT.manual.res');
 const validS11ARQLT = require('../util/validRequestS11AResponse');
 
 exports.cics37RSLT = function (req, res) {
@@ -415,7 +422,7 @@ exports.cics37RSLT = function (req, res) {
         if (!_.isEmpty(rsCheck)) {
             preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
 
-            responseData = new cics37RSLTRes(getdataReq, preResponse, {});
+            responseData = new cics37RQSTRes(getdataReq, preResponse);
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
@@ -427,7 +434,7 @@ exports.cics37RSLT = function (req, res) {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
-                responseData = new cics37RQSTRes(req.body, preResponse);
+                responseData = new cics37RQSTRes(getdataReq, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                 cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
@@ -441,7 +448,7 @@ exports.cics37RSLT = function (req, res) {
                 console.log("result selectCicS37DetailReport: ", reslt);
                 if (!_.isEmpty(reslt)) {
                     let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
-                    responseData = new cics37RSLTRes(getdataReq, responseSuccess, reslt.outputScrpTranlog[0], reslt.outputS37Detail[0]);
+                    responseData = new cics37RSLTManualRes(getdataReq, responseSuccess, reslt.outputScrpTranlog[0], reslt.outputS37Detail[0]);
 
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);

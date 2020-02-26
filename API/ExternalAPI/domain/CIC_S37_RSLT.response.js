@@ -13,8 +13,15 @@ module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, CICB
         fiSessionKey,
         fiCode,
         taskCode,
-        niceSessionKey,
-        inquiryDate
+        loginId,
+        taxCode,
+        natId,
+        oldNatId,
+        passportNumber,
+        cicId,
+        inquiryDate,
+        infoProvConcent,
+        niceSessionKey
 
     } = cics37RSLTRequest;
 
@@ -38,8 +45,15 @@ module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, CICB
     this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
     this.fiCode = fiCode;
     this.taskCode = taskCode;
-    this.niceSessionKey = niceSessionKey;
+    this.loginId = loginId;
+    this.taxCode = taxCode ? taxCode : '';
+    this.natId = natId ? natId : '';
+    this.oldNatId = oldNatId;
+    this.passportNumber = passportNumber;
+    this.cicId = cicId ? cicId : '';
     this.inquiryDate = inquiryDate ? inquiryDate : "";
+    this.infoProvConcent = infoProvConcent;
+    this.niceSessionKey = niceSessionKey;
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
