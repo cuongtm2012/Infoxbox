@@ -14,6 +14,9 @@ const __dad = path.join(__dirname, '..');
 const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 
+//Turn of SSL SSL certificate verification
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 var app = express();
 app.use(cors());
 app.use(express.static('public'));

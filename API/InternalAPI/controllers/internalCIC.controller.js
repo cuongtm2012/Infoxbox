@@ -61,8 +61,8 @@ exports.internalCIC = function (req, res, next) {
                     });
                 } else {
                     // Log in error
-                    if (checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
-                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail2.code], getStatusScrappingCode(body.data.outJson.errMsg))) {
+                    if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail2.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteAccessFailure.code);
@@ -70,7 +70,7 @@ exports.internalCIC = function (req, res, next) {
                                     console.log('Update scraping status failure!');
                             });
                         }
-                        else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], getStatusScrappingCode(body.data.outJson.errMsg))) {
+                        else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteLoginFailure.code);
@@ -80,15 +80,15 @@ exports.internalCIC = function (req, res, next) {
                         }
                     }
                     // CIC ID inquiry error
-                    else if (checkStatusCodeScraping(responCode.ScrappingResponseCodeCicINQError, body.data.outJson.outB0001.errMsg)) {
-                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicINQError.CicIdINQError1.code, responCode.ScrappingResponseCodeCicINQError.CicIdINQError2.code], getStatusScrappingCode(body.data.outJson.outB0001.errMsg))) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicINQError, body.data.outJson.outB0001.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicINQError.CicIdINQError1.code, responCode.ScrappingResponseCodeCicINQError.CicIdINQError2.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0001.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicIdInqError.code + '-' + responCode.RESCODEEXT.CICSiteAccessFailure.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicINQError.CicIdINQError3.code], getStatusScrappingCode(body.data.outJson.outB0001.errMsg))) {
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicINQError.CicIdINQError3.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0001.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicIdInqError.code + '-' + responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code);
@@ -98,49 +98,42 @@ exports.internalCIC = function (req, res, next) {
                         }
                     }
                     // CIC report inquiry error
-                    else if (checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportINQError, body.data.outJson.outB0002.errMsg)) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportINQError, body.data.outJson.outB0002.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError1.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError2.code
                             , responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError102.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError103.code
                             , responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError104.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError105.code
-                            , responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError106.code], getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
+                            , responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError106.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CICReportInqReqFaliure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + '-' + responCode.RESCODEEXT.CICReportInqReqFaliure.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError3.code], getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError3.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError201.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code).then(rslt => {
                                 if (1 <= rslt)
-                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code);
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicIdInqError.code + responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError101.code], getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError101.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NotUniquePersonInCIC.code).then(rslt => {
                                 if (1 <= rslt)
-                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + responCode.RESCODEEXT.NotUniquePersonInCIC.code);
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicIdInqError.code + responCode.RESCODEEXT.NotUniquePersonInCIC.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError107.code], getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError107.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.DuplicateAppOfCICReportADay.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + responCode.RESCODEEXT.DuplicateAppOfCICReportADay.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError108.code], getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError108.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CICReportInqFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + responCode.RESCODEEXT.CICReportInqFailure.code);
-                                else
-                                    console.log('Update scraping status failure!');
-                            });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError201.code], getStatusScrappingCode(body.data.outJson.outB0002.errMsg))) {
-                            cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code).then(rslt => {
-                                if (1 <= rslt)
-                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
@@ -203,8 +196,9 @@ const excuteInsert = require('../services/excuteInsert.service');
 const getLoanDetail = require('../util/defineitem/defineLoan');
 const defineColletral = require('../util/defineitem/defineCollateral');
 const defineCard3Year = require('../util/defineitem/defineCard3Y');
-const CICB1003Save = require('../domain/cicB1003.save');
-const cicS37Service = require('../services/cicInternalS37.service');
+const utilFunction = require('../../shared/util/util');
+const CICB1003Save = require('../../ExternalAPI/domain/cicB1003.save');
+const cicS37Service = require('../../ExternalAPI/services/cicInternalS37.service');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -519,13 +513,14 @@ exports.internalCICB0003 = function (req, res, next) {
                     });
 
                 }
+
                 // start B10003
                 else if (!_.isEmpty(body.data.outJson.outB1003) && body.data.outJson.outB1003.errYn == "N" && _.isEmpty(body.data.outJson.outB1003.errMsg)) {
                     let dataB1003 = body.data.outJson.outB1003;
                     // convert nice session key for B1003 process
                     let niceKey = req.body.niceSessionKey[0];
 
-                    CICB1003 = new CICB1003Save(dataB1003, niceKey);
+                    let CICB1003 = new CICB1003Save(dataB1003, niceKey);
                     cicS37Service.insertS37Detail(CICB1003).then(resultS37 => {
                         console.log('resultS37:', resultS37);
                         if (1 < resultS37) {
@@ -570,15 +565,15 @@ exports.internalCICB0003 = function (req, res, next) {
                     });
                 } else {
                     // Log in error
-                    if (checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
-                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail2.code], getStatusScrappingCode(body.data.outJson.errMsg))) {
+                    if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail2.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                             cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteAccessFailure.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
-                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], getStatusScrappingCode(body.data.outJson.errMsg))) {
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                             cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteLoginFailure.code);
@@ -588,22 +583,11 @@ exports.internalCICB0003 = function (req, res, next) {
                         }
                     }
                     // CIC report result inquiry error S11
-                    else if (checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQError, body.data.outJson.outB0003.errMsg)) {
-                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError1.code, responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError2.code], getStatusScrappingCode(body.data.outJson.outB0003.errMsg))) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQError, body.data.outJson.outB0003.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError1.code, responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError2.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0003.errMsg))) {
                             cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.CicReportResultInqError.code, responCode.RESCODEEXT.CICReportInqFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status B0003:' + responCode.ScrapingStatusCode.CicReportResultInqError.code + '-' + responCode.RESCODEEXT.CICReportInqFailure.code);
-                                else
-                                    console.log('Update scraping status failure!');
-                            });
-                        }
-                    }
-                    // CIC report result inquiry error S37
-                    else if (checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.outB1003.errMsg)) {
-                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportResultINQS37Error1.code], getStatusScrappingCode(body.data.outJson.outB1003.errMsg))) {
-                            cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
-                                if (1 <= rslt)
-                                    console.log('Update scraping status B0003:' + responCode.ScrapingStatusCode.CicReportInqError.code + '-' + responCode.RESCODEEXT.S37ReportScreenAccsError.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
@@ -640,17 +624,3 @@ exports.internalCICB0003 = function (req, res, next) {
         return res.status(500).json({ error: err.toString() });
     }
 };
-
-function checkStatusCodeScraping(checkedObject, msg) {
-    let result = false;
-    _.forEach(checkedObject, res => {
-        if (_.isEqual(msg.split(']')[0].split('[')[1], res.code))
-            result = true;
-
-    });
-    return result;
-}
-
-function getStatusScrappingCode(msg) {
-    return msg.split(']')[0].split('[')[1];
-}

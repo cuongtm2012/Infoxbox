@@ -1,7 +1,7 @@
 const cicService = require('../services/cicInternal.service');
 const URI = require('../../shared/URI');
 const dateutil = require('../util/dateutil');
-const defaultParams = require('../domain/defaultParams.request');
+const defaultParams = require('../../shared/domain/defaultParams.request');
 const _ = require('lodash');
 const convertBase64 = require('../../shared/util/convertBase64ToText');
 

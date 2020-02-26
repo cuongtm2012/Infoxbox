@@ -90,7 +90,19 @@ const ScrappingResponseCodeCicReportResultINQError = {
 };
 
 const ScrappingResponseCodeCicReportResultINQS37Error = {
-    CicReportResultINQS37Error1: { value: 1, errMsg: '[B10003-106] page check fail', code: 'B10003-106' }
+    CicReportResultINQS37Error1: { value: 1, errMsg: '[B10003-106] page check fail', code: 'B10003-106' },
+    CicReportINQError1: { code: 'B1003-001', errMsg: '[B1003-001] page check fail', value: 1 },
+    CicReportINQError2: { code: 'B1003-002', errMsg: '[B1003-002] page check fail', value: 2 },
+    CicReportINQError3: { code: 'B1003-003', errMsg: '[B1003-003] CIC No Search Fail', value: 3 },
+    CicReportINQError101: { code: 'B1003-101', errMsg: '[B1003-101] Multiple CIC No.', value: 101 },
+    CicReportINQError102: { code: 'B1003-102', errMsg: '[B1003-102] page check fail', value: 102 },
+    CicReportINQError103: { code: 'B1003-103', errMsg: '[B1003-103] page check fail', value: 103 },
+    CicReportINQError104: { code: 'B1003-104', errMsg: '[B1003-104] Name Search Fail', value: 104 },
+    CicReportINQError105: { code: 'B1003-105', errMsg: '[B1003-105] Name Search Fail', value: 105 },
+    CicReportINQError106: { code: 'B1003-106', errMsg: '[B1003-106] Name Search Fail', value: 106 },
+    CicReportINQError107: { code: 'B1003-107', errMsg: "[B1003-107] Customer's inquiry may overlap with the last 1 day: Duplicate condition", value: 107 },
+    CicReportINQError108: { code: 'B1003-108', errMsg: '[B1003-108] success or fail', value: 108 },
+    CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] No result for CIC No', value: 201 }
 };
 
 const ScrapingStatusCode = {
