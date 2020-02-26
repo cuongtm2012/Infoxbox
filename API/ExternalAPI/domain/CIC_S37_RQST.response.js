@@ -14,7 +14,6 @@ module.exports = function CIC_S37_RQSTResponse(cics37RQSTRequest, response) {
         fiCode,
         taskCode,
         loginId,
-        cicGoodCode,
         taxCode,
         natId,
         oldNatId,
@@ -28,7 +27,6 @@ module.exports = function CIC_S37_RQSTResponse(cics37RQSTRequest, response) {
     this.fiCode = fiCode;
     this.taskCode = taskCode;
     this.loginId = loginId;
-    this.cicGoodCode = cicGoodCode;
     this.taxCode = taxCode ? taxCode : "";
     this.natId = natId ? natId : "";
     this.oldNatId = oldNatId ? oldNatId : "";

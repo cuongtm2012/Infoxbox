@@ -15,8 +15,9 @@ var RESCODEEXT = {
     NotUniquePersonInCIC: { value: 12, name: "Not unique person in CIC ID with input value", code: "F012" },
     CICReportInqFailure: { value: 14, name: "CIC Report inquiry failure(from CIC site)", code: "F014" },
     CICReportInqFailureTimeout: { value: 16, name: "CIC Report result inquiry failure(timeout)", code: "F016" },
-    SearchDateFrom: { value: 80, name: "Need to input mandatory Beginning date of search(scraping request date basis)", code: "F080" },
-    SearchDateTo: { value: 81, name: "Need to input mandatory End date of search(scraping request date basis)", code: "F081" },
+    SearchDateFrom: { value: 36, name: "Need to input mandatory item(searchDateFrom)", code: "F036" },
+    S37ReportScreenAccsError: { value: 35, name: "S37 report screen access error", code: "F035" },
+    SearchDateTo: { value: 37, name: "Need to input mandatory item(searchDateTo)", code: "F037" },
     ETCError: { value: 99, name: "ETC Error", code: "F099" },
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
@@ -33,7 +34,7 @@ var RESCODEEXT = {
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" },
     CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028" },
     CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029" },
-    INQDateInvalid: { value: 40, name: "Invalid inquiry date (Less than curent date or start date less than end date)", code: "F040" },
+    INQDateInvalid: { value: 39, name: "searchDateFrom should be same or earlier than searchDateTo", code: "F039" },
     CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" },
     FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
     TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" }
@@ -88,6 +89,10 @@ const ScrappingResponseCodeCicReportResultINQError = {
     CicReportResultINQError2: { value: 2, errMsg: '[B0003-002] page check fail', code: 'B0003-002' }
 };
 
+const ScrappingResponseCodeCicReportResultINQS37Error = {
+    CicReportResultINQS37Error1: { value: 1, errMsg: '[B10003-106] page check fail', code: 'B10003-106' }
+};
+
 const ScrapingStatusCode = {
     LoginInError: { code: '20' },
     CicIdInqError: { code: '21' },
@@ -122,6 +127,7 @@ module.exports.ScrappingResponseCodeLoginFailure = ScrappingResponseCodeLoginFai
 module.exports.ScrappingResponseCodeCicINQError = ScrappingResponseCodeCicINQError;
 module.exports.ScrappingResponseCodeCicReportINQError = ScrappingResponseCodeCicReportINQError;
 module.exports.ScrappingResponseCodeCicReportResultINQError = ScrappingResponseCodeCicReportResultINQError;
+module.exports.ScrappingResponseCodeCicReportResultINQS37Error = ScrappingResponseCodeCicReportResultINQS37Error;
 module.exports.ScrapingStatusCode = ScrapingStatusCode;
 module.exports.TaskCode = TaskCode;
 module.exports.ProductCode = ProductCode;

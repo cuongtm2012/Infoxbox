@@ -587,12 +587,23 @@ exports.internalCICB0003 = function (req, res, next) {
                             });
                         }
                     }
-                    // CIC report result inquiry error
+                    // CIC report result inquiry error S11
                     else if (checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQError, body.data.outJson.outB0003.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError1.code, responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError2.code], getStatusScrappingCode(body.data.outJson.outB0003.errMsg))) {
                             cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.CicReportResultInqError.code, responCode.RESCODEEXT.CICReportInqFailure.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status B0003:' + responCode.ScrapingStatusCode.CicReportResultInqError.code + '-' + responCode.RESCODEEXT.CICReportInqFailure.code);
+                                else
+                                    console.log('Update scraping status failure!');
+                            });
+                        }
+                    }
+                    // CIC report result inquiry error S37
+                    else if (checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.outB1003.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportResultINQS37Error1.code], getStatusScrappingCode(body.data.outJson.outB1003.errMsg))) {
+                            cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
+                                if (1 <= rslt)
+                                    console.log('Update scraping status B0003:' + responCode.ScrapingStatusCode.CicReportInqError.code + '-' + responCode.RESCODEEXT.S37ReportScreenAccsError.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
