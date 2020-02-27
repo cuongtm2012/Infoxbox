@@ -57,22 +57,21 @@ exports.getListForB001 = async function (req, res) {
     TB_SCRPLOG.SCRP_STAT_CD as SCRP_STAT_CD,
     TB_SCRPLOG.RSP_CD as RSP_CD,
     TB_SCRPLOG.RSP_CD as RSP_CD,
-    to_char(to_date(TB_SCRPLOG.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'mm/dd/yyyy hh24:mi:ss') as SYS_DTIM,
-    to_char(to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD'),'mm/dd/yyyy') as INQ_DTIM,
-    TB_SCRPLOG.SCRP_MOD_CD as SCRP_MOD_CD,
+    TB_SCRPLOG.SYS_DTIM as SYS_DTIM,
+    TB_SCRP_TRLOG.S_INQ_DT1 as S_INQ_DT1,
+    TB_SCRP_TRLOG.S_INQ_DT2 as S_INQ_DT2,
+    TB_SCRPLOG.INQ_DTIM as INQ_DTIM,
     TB_SCRPLOG.SCRP_REQ_DTIM as SCRP_REQ_DTIM,
     TB_SCRPLOG.WORK_ID as WORK_ID  `;
     var SQL_FROM = 'FROM TB_SCRPLOG ';
-    var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_SCRPLOG.CUST_CD = TB_ITCUST.CUST_CD ' +
-        'LEFT JOIN TB_ITCODE ON TB_SCRPLOG.GDS_CD = TB_ITCODE.CODE ';
+    var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_SCRPLOG.CUST_CD = TB_ITCUST.CUST_CD LEFT JOIN TB_ITCODE ON TB_SCRPLOG.GDS_CD = TB_ITCODE.CODE LEFT JOIN TB_SCRP_TRLOG ON TB_SCRPLOG.NICE_SSIN_ID = TB_SCRP_TRLOG.NICE_SSIN_ID ';
     var SQL_ORDER_BY = `ORDER BY CASE WHEN TB_SCRPLOG.INQ_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, TB_SCRPLOG.INQ_DTIM DESC `;
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if(_.isEmpty(niceSsID) ) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.GDS_CD = 'S1002' `;
+        let SQL_WHERE = ` WHERE TB_SCRPLOG.GDS_CD = 'S1002' AND TB_SCRPLOG.SCRP_STAT_CD = '01'  `;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            niceSsID,
             currentLocation,
             limitRow
         };
@@ -80,7 +79,7 @@ exports.getListForB001 = async function (req, res) {
     }
 
     if( niceSsID) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.NICE_SSIN_ID LIKE :niceSsID AND TB_SCRPLOG.GDS_CD = 'S1002' `;
+        let SQL_WHERE = `WHERE TB_SCRPLOG.NICE_SSIN_ID LIKE :niceSsID AND TB_SCRPLOG.GDS_CD = 'S1002' AND TB_SCRPLOG.SCRP_STAT_CD = '01' `;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             niceSsID,
