@@ -13,6 +13,7 @@ var RESCODEEXT = {
     ConsentProvisionIsNotValid: { value: 9, name: "Consent of data provision is not valid", code: "F009" },
     NoMatchingCICIDWithNalID: { value: 11, name: "No matching CIC ID with input National ID", code: "F011" },
     NotUniquePersonInCIC: { value: 12, name: "Not unique person in CIC ID with input value", code: "F012" },
+    CaptchaProcessFailure: { value: 13, name: "Captcha processing failure", code: "F013" },
     CICReportInqFailure: { value: 14, name: "CIC Report inquiry failure(from CIC site)", code: "F014" },
     CICReportInqFailureTimeout: { value: 16, name: "CIC Report result inquiry failure(timeout)", code: "F016" },
     SearchDateFrom: { value: 36, name: "Need to input mandatory item(searchDateFrom)", code: "F036" },
@@ -56,17 +57,20 @@ var SCRAPPINGERRORCODE = {
 };
 
 const ScrappingResponseCodeLoginFailure = {
-    LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-002] login page check fail', value: 1 },
+    LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-001] login page check fail', value: 1 },
     LoginFail2: { code: 'LOGIN-002', errMsg: '[LOGIN-002] login page check fail', value: 2 },
-    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-004] Login Fail.', value: 3 },
+    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
     LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
-    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-004] Login Fail.', value: 5 }
+    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
+    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
+    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 }
 };
 
 const ScrappingResponseCodeCicINQError = {
     CicIdINQError1: { code: 'B0001-001', errMsg: '[B0001-001] page check fail', value: 1 },
     CicIdINQError2: { code: 'B0001-002', errMsg: '[B0001-002] page check fail', value: 2 },
-    CicIdINQError3: { code: 'B0001-003', errMsg: '[B0001-003] CIC No Search Fail', value: 3 }
+    CicIdINQError3: { code: 'B0001-003', errMsg: '[B0001-003] CIC No Search Fail', value: 3 },
+    CicIdINQError4: { code: 'B0001-004', errMsg: '[B0001-004] Captcha input error.', value: 4 }
 };
 
 const ScrappingResponseCodeCicReportINQError = {
@@ -90,7 +94,6 @@ const ScrappingResponseCodeCicReportResultINQError = {
 };
 
 const ScrappingResponseCodeCicReportResultINQS37Error = {
-    CicReportResultINQS37Error1: { value: 1, errMsg: '[B10003-106] page check fail', code: 'B10003-106' },
     CicReportINQError1: { code: 'B1003-001', errMsg: '[B1003-001] page check fail', value: 1 },
     CicReportINQError2: { code: 'B1003-002', errMsg: '[B1003-002] page check fail', value: 2 },
     CicReportINQError3: { code: 'B1003-003', errMsg: '[B1003-003] CIC No Search Fail', value: 3 },
@@ -99,10 +102,10 @@ const ScrappingResponseCodeCicReportResultINQS37Error = {
     CicReportINQError103: { code: 'B1003-103', errMsg: '[B1003-103] page check fail', value: 103 },
     CicReportINQError104: { code: 'B1003-104', errMsg: '[B1003-104] Name Search Fail', value: 104 },
     CicReportINQError105: { code: 'B1003-105', errMsg: '[B1003-105] Name Search Fail', value: 105 },
-    CicReportINQError106: { code: 'B1003-106', errMsg: '[B1003-106] Name Search Fail', value: 106 },
-    CicReportINQError107: { code: 'B1003-107', errMsg: "[B1003-107] Customer's inquiry may overlap with the last 1 day: Duplicate condition", value: 107 },
-    CicReportINQError108: { code: 'B1003-108', errMsg: '[B1003-108] success or fail', value: 108 },
-    CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] No result for CIC No', value: 201 }
+    CicReportINQError106: { code: 'B1003-106', errMsg: '[B1003-106] page check fail', value: 106 },
+    CicReportINQError107: { code: 'B1003-107', errMsg: "[B1003-107] report check fail", value: 107 },
+    CicReportINQError108: { code: 'B1003-108', errMsg: '[B1003-108] Captcha input error.', value: 108 },
+    CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] CIC No not found.', value: 201 }
 };
 
 const ScrapingStatusCode = {
@@ -120,7 +123,7 @@ const TaskCode = {
     CIC_S37_RSLT: { code: 'CIC_S37_RSLT' },
     CIC_MACR_RQST: { code: 'CIC_MACR_RQST' },
     CIC_MACR_RSLT: { code: 'CIC_MACR_RSLT' },
-    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
+    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' }
 };
 
 const ProductCode = ['06'];
