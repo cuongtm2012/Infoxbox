@@ -466,22 +466,36 @@ exports.cics37RSLT = function (req, res) {
                         else {
                             const result = rslt[0].SCRP_STAT_CD;
                             let responseMessage, responseCode;
+                            let rsp_cd = rslt[0].RSP_CD;
 
-                            if (_.isEqual(parseInt(result), 20)) {
-                                responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.name;
-                                responseCode = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.code;
-                            } else if (_.isEqual(parseInt(result), 24)) {
-                                responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.name;
-                                responseCode = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.code;
-                            } else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
-                                responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
-                                responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
+                            if (!_.isEmpty(rsp_cd)) {
+                                _.forEach(responcodeEXT.RESCODEEXT, res => {
+                                    _.forEach(res, (val, key) => {
+                                        if (_.isEqual(val, rsp_cd)) {
+                                            console.log('response nice code:', res.code + '-' + res.name);
+                                            responseMessage = res.name;
+                                            responseCode = res.code;
+                                        }
+                                    });
+                                });
                             }
                             else {
-                                responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
-                                responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
-                            }
 
+                                if (_.isEqual(parseInt(result), 20)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.code;
+                                } else if (_.isEqual(parseInt(result), 24)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.code;
+                                } else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
+                                }
+                                else {
+                                    responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+                                }
+                            }
                             let responseSrapingStatus = {
                                 fiSessionKey: getdataReq.fiSessionKey,
                                 fiCode: getdataReq.fiCode,
