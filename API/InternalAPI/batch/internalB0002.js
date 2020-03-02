@@ -4,6 +4,7 @@ const dateutil = require('../util/dateutil');
 const defaultParams = require('../../shared/domain/defaultParams.request');
 const _ = require('lodash');
 const convertBase64 = require('../../shared/util/convertBase64ToText');
+const processRunTime = require('../../shared/util/processRunTime');
 
 const cicB0002Req = require('../domain/cicB0002.request');
 
@@ -22,12 +23,9 @@ module.exports = class internalJob {
 
         cicService.select01().then(data => {
             // Get each object in array data
-            // if (validation.isEmptyJson(data)) {
             if (_.isEmpty(data)) {
                 console.log('No request!');
-                // return next();
-                oncomplete(0, 0)
-                // return;
+                oncomplete(0, 0);
             } else {
 
                 var count = 0;
@@ -49,10 +47,14 @@ module.exports = class internalJob {
                     else
                         decryptPW = _decryptPW;
 
-                    var fnData = new cicB0002Req(element, defaultValue, decryptPW);
+                    // Update for try again Naltid, Old_naltId, Passportnumber
+                    let runTimeValue = processRunTime.getProcessRunTime(element);
+                    console.log('runTimeValue:', runTimeValue);
 
-                    cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
-                        // "?inJsonList=%5B" + querystrings + "%5D"
+                    var fnData = new cicB0002Req(element, defaultValue, decryptPW, runTimeValue);
+
+                    cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID, runTimeValue).then(() => {
+
                         axios.post(URI.internal_cic, fnData, config)
                             .then((body) => {
                                 console.log("body resultB0002~~~~~", body.data);
@@ -60,7 +62,6 @@ module.exports = class internalJob {
                                 count++;
                                 // next process until data ending
                                 oncomplete(count, maxLength);
-                                // return res.status(200).json(body.data);
 
                             }).catch((error) => {
                                 console.log("error call to internal_cic url B0002~~", error);

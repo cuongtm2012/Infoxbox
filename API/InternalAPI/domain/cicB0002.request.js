@@ -1,6 +1,6 @@
 
 
-module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
+module.exports = function cicB0002Request(parameters, defaultValue, decryptPW, runTimeValue) {
     const {
         NICE_SSIN_ID,
         CIC_ID,
@@ -29,7 +29,11 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
         step_data
     } = defaultValue;
 
-    const natId = NATL_ID ? NATL_ID : OLD_NATL_ID;
+    const {
+        totalCount,
+        trycount,
+        cmtNo
+    } = runTimeValue;
 
     this.appCd = appCd;
     this.iftUrl = iftUrl;
@@ -39,9 +43,9 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     this.userId = LOGIN_ID;
     this.userPw = decryptPW;
     this.customerType = customerType;
-    this.cicNo = CIC_ID ? CIC_ID : "";
-    this.taxNo = TAX_ID ? TAX_ID : "";
-    this.cmtNo = natId ? natId : PSPT_NO;
+    this.cicNo = '';
+    this.taxNo = '';
+    this.cmtNo = cmtNo;
     this.reportType = reportType;
     this.voteNo = voteNo;
     this.reqStatus = reqStatus;
@@ -52,5 +56,7 @@ module.exports = function cicB0002Request(parameters, defaultValue, decryptPW) {
     this.step_data = step_data;
     this.niceSessionKey = NICE_SSIN_ID;
     this.sendTime = SYS_DTIM;
+    this.totalCount = totalCount;
+    this.trycount = trycount;
 
 };

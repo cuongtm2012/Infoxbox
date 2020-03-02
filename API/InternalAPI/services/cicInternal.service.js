@@ -9,7 +9,7 @@ const responseCode = require('../../shared/constant/responseCodeExternal');
 /*
     B0002 : CIC보고서 요청 (Request for CIC Report)
 */
-async function select01(req, res, next) {
+async function select01() {
     let connection;
 
     try {
@@ -20,7 +20,7 @@ async function select01(req, res, next) {
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM
+        sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM, CIC_USED_ID, TRY_COUNT
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '01' 
                 and (a.SCRP_MOD_CD = '00' or a.SCRP_MOD_CD is null)
@@ -34,29 +34,17 @@ async function select01(req, res, next) {
             // The statement to execute
             sql,
             {},
-            // [currentTimeStamp],
-            // [1],
-            // The "bind value" 3 for the bind variable ":idbv"
-            // Options argument.  Since the query only returns one
-            // row, we can optimize memory usage by reducing the default
-            // maxRows value.  For the complete list of other options see
-            // the documentation.
             {
-                // maxRows: 1,
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
-                //, extendedMetaData: true                 // get extra metadata
-                //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
 
         console.log("rows::", result.rows);
 
         return result.rows;
-        // return res.status(200).json(result.rows);
 
 
     } catch (err) {
         console.log(err);
-        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -88,26 +76,15 @@ async function select04NotExist() {
             ORDER BY a.SYS_DTIM ASC`;
 
         result = await connection.execute(
-            // The statement to execute
             sql,
             [currentTimeStamp],
-            // [1],
-            // The "bind value" 3 for the bind variable ":idbv"
-            // Options argument.  Since the query only returns one
-            // row, we can optimize memory usage by reducing the default
-            // maxRows value.  For the complete list of other options see
-            // the documentation.
             {
-                // maxRows: 1,
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
-                //, extendedMetaData: true                 // get extra metadata
-                //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
 
         console.log("rows::", result.rows);
 
         return result.rows;
-        // return res.status(200).json(result.rows);
 
 
     } catch (err) {
@@ -298,7 +275,7 @@ async function updateScrpModCdPreRequestToScraping(req) {
     }
 }
 
-async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey) {
+async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey, runTimeValue) {
     let connection;
 
     try {
@@ -308,14 +285,16 @@ async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey) {
 
 
             sql = `UPDATE TB_SCRPLOG
-                SET SCRP_MOD_CD  = '01'
+                SET SCRP_MOD_CD  = '01', TRY_COUNT = :trycount, CIC_USED_ID = :cicUsedId
                 WHERE NICE_SSIN_ID =:niceSessionKey`;
 
             result = await connection.execute(
                 // The statement to execute
                 sql,
                 {
-                    niceSessionKey: { val: niceSessionKey }
+                    niceSessionKey: { val: niceSessionKey },
+                    trycount: { val: runTimeValue.trycount },
+                    cicUsedId: { val: runTimeValue.cicUsedId }
                 },
                 { autoCommit: true },
             );
