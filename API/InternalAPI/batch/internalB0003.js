@@ -8,6 +8,8 @@ const cicB0003Req = require('../domain/cicB0003.request');
 
 const axios = require('axios');
 
+const runRestartPm2 = require('../util/runShellScript');
+
 module.exports = class internalJob {
     //Cron request internal scraping
     cron(oncomplete) {
@@ -83,7 +85,8 @@ module.exports = class internalJob {
                                     console.log("error call to internal_cic url B0003~~", error);
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
                                         console.log("B0003 update SCRP_MOD_CD = 00 ");
-                                        return;
+                                        // Restart internal
+                                        runRestartPm2.restartInternal();
                                     });
                                     throw error;
                                 });

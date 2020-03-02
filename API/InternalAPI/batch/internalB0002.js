@@ -9,6 +9,7 @@ const processRunTime = require('../../shared/util/processRunTime');
 const cicB0002Req = require('../domain/cicB0002.request');
 
 const axios = require('axios');
+const runRestartPm2 = require('../util/runShellScript');
 
 module.exports = class internalJob {
     //Cron request internal scraping
@@ -67,7 +68,8 @@ module.exports = class internalJob {
                                 console.log("error call to internal_cic url B0002~~", error);
                                 cicService.updateScrpModCdHasNoResponseFromScraping(element.NICE_SSIN_ID).then(() => {
                                     console.log("update SCRP_MOD_CD = 00 ");
-                                    return;
+                                    // Restart internal
+                                    runRestartPm2.restartInternal();
                                 });
                                 throw error;
                             });
