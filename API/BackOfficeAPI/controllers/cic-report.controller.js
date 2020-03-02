@@ -6,9 +6,9 @@ const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 
 exports.viewHistoryCICReport = async function (req, res) {
-    var orgCode = '%' + req.query.orgCode + '%';
-    var productCode = '%' + req.query.productCode + '%';
-    var CICNumber = '%' + req.query.CICNumber + '%';
+    var orgCode = req.query.orgCode ? '%' + req.query.orgCode + '%' : '';
+    var productCode = req.query.productCode ? '%' + req.query.productCode + '%' : '';
+    var CICNumber = req.query.CICNumber ? '%' + req.query.CICNumber + '%' : '';
     var inqDateFrom = (_.isEmpty(req.query.inqDateFrom)) ? '': req.query.inqDateFrom.replace(/[^0-9 ]/g, "");
     var inqDateTo = (_.isEmpty(req.query.inqDateTo)) ? '': req.query.inqDateTo.replace(/[^0-9 ]/g, "");
     var currentLocation = req.query.currentLocation;
