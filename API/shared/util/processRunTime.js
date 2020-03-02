@@ -25,13 +25,14 @@ module.exports = {
                 trycount = trycount + 1;
                 cmtNo = element.OLD_NATL_ID;
                 cicUsedId = '2';
-            } else if (!_.isEmptyStr(element.PSPT_NO) && parseInt(cicUsedId) <= 2) {
-                trycount = trycount + 1;
-                cmtNo = element.PSPT_NO;
-                cicUsedId = '3';
-            } else if (!_.isEmptyStr(element.TAX_ID) && parseInt(cicUsedId) <= 3) {
+            } else if (!_.isEmptyStr(element.TAX_ID) && parseInt(cicUsedId) <= 2) {
                 trycount = trycount + 1;
                 cmtNo = element.TAX_ID;
+                cicUsedId = '3';
+            }
+            else if (!_.isEmptyStr(element.PSPT_NO) && parseInt(cicUsedId) <= 3) {
+                trycount = trycount + 1;
+                cmtNo = element.PSPT_NO;
                 cicUsedId = '4';
             }
         } else if (!_.isEmptyStr(element.OLD_NATL_ID)) {
@@ -39,28 +40,29 @@ module.exports = {
                 trycount = trycount + 1;
                 cmtNo = element.OLD_NATL_ID;
                 cicUsedId = '2';
-            } else if (!_.isEmptyStr(element.PSPT_NO) && parseInt(cicUsedId) <= 2) {
-                trycount = trycount + 1;
-                cmtNo = element.PSPT_NO;
-                cicUsedId = '3';
-            } else if (!_.isEmptyStr(element.TAX_ID) && parseInt(cicUsedId) <= 3) {
+            } else if (!_.isEmptyStr(element.TAX_ID) && parseInt(cicUsedId) <= 2) {
                 trycount = trycount + 1;
                 cmtNo = element.TAX_ID;
+                cicUsedId = '3';
+            }
+            else if (!_.isEmptyStr(element.PSPT_NO) && parseInt(cicUsedId) <= 3) {
+                trycount = trycount + 1;
+                cmtNo = element.PSPT_NO;
                 cicUsedId = '4';
             }
-        } else if (!_.isEmptyStr(element.PSPT_NO)) {
+        } else if (!_.isEmptyStr(element.TAX_ID)) {
             if (_.isEmptyStr(cicUsedId)) {
                 trycount = trycount + 1;
-                cmtNo = element.PSPT_NO;
-                cicUsedId = '3';
-            } else if (!_.isEmptyStr(element.TAX_ID) && parseInt(cicUsedId) <= 3) {
-                trycount = trycount + 1;
                 cmtNo = element.TAX_ID;
+                cicUsedId = '3';
+            } else if (!_.isEmptyStr(element.PSPT_NO) && parseInt(cicUsedId) <= 3) {
+                trycount = trycount + 1;
+                cmtNo = element.PSPT_NO;
                 cicUsedId = '4';
             }
         } else {
             trycount = trycount + 1;
-            cmtNo = element.TAX_ID;
+            cmtNo = element.PSPT_NO;
             cicUsedId = '4';
         }
 
