@@ -89,3 +89,7 @@ exports.getListForB001 = async function (req, res) {
         return oracelService.queryOracel(res, sql, param, optionFormatObj);
     }
 };
+
+exports.getListB002 = async function (req, res) {
+    var niceSsID = '%' + req.query.niceSsID + '%';
+};

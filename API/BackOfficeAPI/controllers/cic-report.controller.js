@@ -6,10 +6,9 @@ const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 
 exports.viewHistoryCICReport = async function (req, res) {
-    var niceSsID = req.query.niceSsID;
-    var orgCode = req.query.orgCode;
-    var productCode = req.query.productCode;
-    var CICNumber = req.query.CICNumber;
+    var orgCode = '%' + req.query.orgCode + '%';
+    var productCode = '%' + req.query.productCode + '%';
+    var CICNumber = '%' + req.query.CICNumber + '%';
     var inqDateFrom = (_.isEmpty(req.query.inqDateFrom)) ? '': req.query.inqDateFrom.replace(/[^0-9 ]/g, "");
     var inqDateTo = (_.isEmpty(req.query.inqDateTo)) ? '': req.query.inqDateTo.replace(/[^0-9 ]/g, "");
     var currentLocation = req.query.currentLocation;
@@ -54,7 +53,7 @@ exports.viewHistoryCICReport = async function (req, res) {
     var SQL_ORDER_BY = `ORDER BY CASE WHEN TB_SCRPLOG.INQ_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, TB_SCRPLOG.INQ_DTIM DESC `;
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
-    if (_.isEmpty(niceSsID) &&_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+    if (_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_ORDER_BY  + SQL_LIMIT;
         let param = {
             currentLocation,
@@ -67,17 +66,6 @@ exports.viewHistoryCICReport = async function (req, res) {
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            currentLocation,
-            limitRow
-        };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
-    }
-
-    if( niceSsID &&_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.NICE_SSIN_ID LIKE :niceSsID ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
-        let param = {
-            niceSsID,
             currentLocation,
             limitRow
         };
