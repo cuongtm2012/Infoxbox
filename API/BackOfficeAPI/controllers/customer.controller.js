@@ -21,17 +21,27 @@ exports.getCustInfo = async function (req, res) {
     BIZ_CG_CD as BIZ_CG_CD, PRT_CUST_GB as PRT_CUST_GB,
      PRT_CUST_CD as PRT_CUST_CD, 
      ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITCUST ';
     var SQL_ORDER_BY = 'ORDER BY CUST_NM ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
         let param = {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+
     }
 
     if ((custClassicfication) && (cusCd) && (custNm)) {
