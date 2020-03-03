@@ -29,7 +29,7 @@ const mappingData = {
         vnd: 'longTermLoanVnd',
         usd: 'longTermLoanUsd'
     },
-    "Dư nợ xấu khác": {
+    "Dư nợ xấu khác:": {
         vnd: "otherBadLoanVnd",
         usd: "otherBadLoanUsd"
     },
@@ -45,7 +45,7 @@ const mappingData = {
         vnd: "TermFixedLoanVnd",
         usd: "TermFixedLoanUsd"
     },
-    "Dư nợ nghi ngờ": {
+    "- Dư nợ nghi ngờ": {
         vnd: "TermDaubtLoanVnd",
         usd: "TermDaubtLoanUsd"
     },
