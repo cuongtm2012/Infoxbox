@@ -104,23 +104,31 @@ exports.getContract = async function (req, res) {
     to_char(to_date(TB_ITCTRT.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT ,
     to_char(to_date(TB_ITCTRT.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM , 
     TB_ITCTRT.WORK_ID as WORK_ID  `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITCTRT ';
     var SQL_INNER_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITCUST.CUST_CD = TB_ITCTRT.CUST_CD AND TB_ITCUST.CUST_GB = TB_ITCTRT.CUST_GB LEFT JOIN TB_ITCODE ON TB_ITCTRT.GDS_CD = TB_ITCODE.CODE ';
     var SQL_ORDER_BY = 'ORDER BY TB_ITCTRT.CUST_CD ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && (organCd) && (organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organClassifi,
             organCd,
             productCode,
@@ -128,175 +136,280 @@ exports.getContract = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organClassifi,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && (organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organCd,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && (organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCUST.CUST_NM LIKE :organNM ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organNM,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             productCode,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && (organCd) && _.isEmpty(organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organClassifi,
             organCd,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && _.isEmpty(organCd) && (organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCUST.CUST_NM LIKE :organNM ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organClassifi,
             organNM,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && _.isEmpty(organCd) && _.isEmpty(organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organClassifi,
             productCode,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && (organCd) && (organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organCd,
             organNM,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && (organCd) && _.isEmpty(organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organCd,
             productCode,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && (organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organNM,
             productCode,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && (organCd) && (organNM) && _.isEmpty(productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             organClassifi,
             organCd,
             organNM,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(organClassifi) && (organCd) && (organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             productCode,
             organCd,
             organNM,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && _.isEmpty(organCd) && (organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCUST.CUST_NM LIKE :organNM AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             productCode,
             organClassifi,
             organNM,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((organClassifi) && (organCd) && _.isEmpty(organNM) && (productCode)) {
         let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.CUST_CD LIKE :organCd AND TB_ITCTRT.GDS_CD LIKE :productCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             productCode,
             organClassifi,
             organCd,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 
