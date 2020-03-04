@@ -6,8 +6,8 @@ const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true }; ''
 
 exports.getCodeClassification = async function (req, res) {
-    var codeClassification = _.isEmpty(req.query.codeClassification) ? '' : req.query.codeClassification;
-    var codeClassificationName = _.isEmpty(req.query.codeClassificationName) ? '' : req.query.codeClassificationName;
+    var codeClassification = req.query.codeClassification ? '%' + req.query.codeClassification + '%' : '';
+    var codeClassificationName = req.query.codeClassificationName ? '%' + req.query.codeClassificationName + '%' : '';
     var SQL_SELECT = `SELECT CD_CLASS, CODE_NM, CODE_NM_EN `;
     var SQL_FROM = 'FROM TB_ITCODE ';
     if (_.isEmpty(codeClassification) && _.isEmpty(codeClassificationName)) {
@@ -16,7 +16,7 @@ exports.getCodeClassification = async function (req, res) {
         oracelService.queryOracel(res, sql, params, optionFormatObj);
     }
     if ((codeClassification) && (codeClassificationName)) {
-        let SEARCH = 'WHERE CD_CLASS = :codeClassification AND CODE_NM = :codeClassificationName';
+        let SEARCH = 'WHERE CD_CLASS LIKE :codeClassification AND CODE_NM LIKE :codeClassificationName';
         let sql = SQL_SELECT + SQL_FROM + SEARCH;
         let params = {
             codeClassification,
@@ -25,15 +25,15 @@ exports.getCodeClassification = async function (req, res) {
         oracelService.queryOracel(res, sql, params, optionFormatObj);
     }
     if ((codeClassification) && _.isEmpty(codeClassificationName)) {
-        let SEARCH = 'WHERE CD_CLASS = :codeClassification ';
+        let SEARCH = 'WHERE CD_CLASS LIKE :codeClassification ';
         let sql = SQL_SELECT + SQL_FROM + SEARCH;
         let params = {
             codeClassification
         };
         oracelService.queryOracel(res, sql, params, optionFormatObj);
     }
-    if ((codeClassification) && _.isEmpty(codeClassificationName)) {
-        let SEARCH = 'WHERE CODE_NM = :codeClassificationName ';
+    if (_.isEmpty(codeClassification) && (codeClassificationName)) {
+        let SEARCH = 'WHERE CODE_NM LIKE :codeClassificationName ';
         let sql = SQL_SELECT + SQL_FROM + SEARCH;
         let params = {
             codeClassificationName
@@ -45,9 +45,9 @@ exports.getCodeClassification = async function (req, res) {
 
 
 exports.getCode = async function (req, res) {
-    var code = _.isEmpty(req.query.code) ? '' : req.query.code;
-    var codeClass = _.isEmpty(req.query.codeClass) ? '' : req.query.codeClass;
-    var codeNm = _.isEmpty(req.query.codeNm) ? '' : req.query.codeNm;
+    var code =  req.query.code ? '%' + req.query.code + '%': '';
+    var codeClass = req.query.codeClass ? '%' + req.query.codeClass + '%': '';
+    var codeNm = req.query.codeNm ? '%' + req.query.codeNm + '%' : '';
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT TB_ITCODE.CODE as CODE, 

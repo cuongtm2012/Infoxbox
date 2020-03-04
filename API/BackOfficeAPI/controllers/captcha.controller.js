@@ -6,8 +6,8 @@ const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 
 exports.getCaptchaInfo = async function (req, res) {
-    var userID = req.query.userID;
-    var userName = req.query.userName;
+    var userID = req.query.userID ? '%' + req.query.userID + '%' : '';
+    var userName = req.query.userName ? '%' + req.query.userName + '%' : '';;
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
 

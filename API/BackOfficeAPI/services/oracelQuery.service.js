@@ -1,13 +1,14 @@
-const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+
+let oracledb = require('oracledb');
+let dbconfig = require('../../shared/config/dbconfig');
 var _ = require('lodash');
 
-async function queryOracel(res, sql, param, option) {
-    let connection;
+exports.queryOracel = async function (res, sql, param, option) {
     try {
-        connection = await oracledb.getConnection(dbconfig);
-        result = await connection.execute(
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
             sql, param, option);
+        console.log(result);
             if (!(result.rows === undefined)) {
                 res.status(200).send(result.rows)
             } else {
@@ -17,9 +18,9 @@ async function queryOracel(res, sql, param, option) {
         console.log(err);
         res.send({error: 1});
     } finally {
-        if (connection) {
+        if (this.connection) {
             try {
-                await connection.close();
+                await this.connection.close();
             } catch (error) {
                 console.log(error);
             }
@@ -27,4 +28,26 @@ async function queryOracel(res, sql, param, option) {
     }
 }
 
-module.exports.queryOracel = queryOracel;
+exports.queryGetTotalRow = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        console.log(result);
+        if (!(result.rows === undefined)) {
+            return result.rows;
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+

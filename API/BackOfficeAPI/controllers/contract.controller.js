@@ -5,8 +5,8 @@ const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 
 exports.getProduct = async function (req, res) {
-    var productCode = req.query.productCode;
-    var productNM = req.query.productNM;
+    var productCode = req.query.productCode ? '%' + req.query.productCode + '%' : '';
+    var productNM = req.query.productNM ? '%' + req.query.productNM + '%' : '';
     var SQL_SELECT = `SELECT TB_ITCODE.CODE, TB_ITCODE.CODE_NM `;
     var SQL_FROM = `FROM TB_ITCODE WHERE TB_ITCODE.CD_CLASS = 'C0005' `;
 
@@ -47,10 +47,10 @@ exports.getProduct = async function (req, res) {
 };
 
 exports.getContract = async function (req, res) {
-    var organClassifi = req.query.organClassifi;
-    var organCd = req.query.organCd;
-    var organNM = req.query.organNM;
-    var productCode = req.query.productCode;
+    var organClassifi = req.query.organClassifi ? '%' + req.query.organClassifi + '%' : '';
+    var organCd = req.query.organCd ? '%' + req.query.organCd + '%' : '';
+    var organNM = req.query.organNM ? '%' + req.query.organNM + '%' : '';
+    var productCode =req.query.productCode ? '%' + req.query.productCode + '%' : '';
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT 

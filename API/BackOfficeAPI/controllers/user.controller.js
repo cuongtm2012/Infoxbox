@@ -9,10 +9,10 @@ const defaultPW = 'nice1234';
 
 
 exports.getUserInfo = async function (req, res) {
-    var userClass = req.query.userClass;
-    var userID = req.query.userID;
-    var userName = req.query.userName;
-    var orgCode = req.query.orgCode;
+    var userClass = req.query.userClass ? '%' + req.query.userClass + '%' : '';
+    var userID = req.query.userID ? '%' + req.query.userID + '%' : '';
+    var userName = req.query.userName ? '%' + req.query.userName + '%' : '';
+    var orgCode = req.query.orgCode ? '%' + req.query.orgCode + '%' : '';
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
 

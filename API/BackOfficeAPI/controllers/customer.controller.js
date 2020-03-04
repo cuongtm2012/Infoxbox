@@ -5,9 +5,9 @@ var _ = require('lodash');
 const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 exports.getCustInfo = async function (req, res) {
-    var custClassicfication = req.query.custClassicfication;
-    var cusCd = req.query.cusCd;
-    var custNm = req.query.custNm;
+    var custClassicfication = req.query.custClassicfication ? '%' + req.query.custClassicfication + '%' : '';
+    var cusCd = req.query.cusCd ? '%' + req.query.cusCd + '%' : '';
+    var custNm = req.query.custNm ? '%' + req.query.custNm + '%' : '';
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT 
@@ -21,6 +21,7 @@ exports.getCustInfo = async function (req, res) {
     BIZ_CG_CD as BIZ_CG_CD, PRT_CUST_GB as PRT_CUST_GB,
      PRT_CUST_CD as PRT_CUST_CD, 
      ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITCUST ';
     var SQL_ORDER_BY = 'ORDER BY CUST_NM ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
@@ -31,7 +32,15 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+
     }
 
     if ((custClassicfication) && (cusCd) && (custNm)) {
@@ -46,7 +55,17 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            custClassicfication,
+            cusCd,
+            custNm,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
@@ -57,7 +76,15 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            custClassicfication,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && _.isEmpty(custNm)) {
@@ -68,7 +95,15 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            cusCd,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm)) {
@@ -79,7 +114,15 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            custNm,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((custClassicfication) && (cusCd) && _.isEmpty(custNm)) {
@@ -91,7 +134,16 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            custClassicfication,
+            cusCd,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((custClassicfication) && _.isEmpty(cusCd) && (custNm)) {
@@ -103,7 +155,16 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            custClassicfication,
+            custNm,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && (custNm)) {
@@ -115,7 +176,16 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            cusCd,
+            custNm,
+        };
+        let totalRow;
+        let rowRs;
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 
