@@ -7,42 +7,82 @@ const optionAutoCommit = { autoCommit: true };
 exports.getProduct = async function (req, res) {
     var productCode = req.query.productCode ? '%' + req.query.productCode + '%' : '';
     var productNM = req.query.productNM ? '%' + req.query.productNM + '%' : '';
+    var currentLocation = req.query.currentLocation;
+    var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT TB_ITCODE.CODE, TB_ITCODE.CODE_NM `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = `FROM TB_ITCODE WHERE TB_ITCODE.CD_CLASS = 'C0005' `;
-
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(productCode) && _.isEmpty(productNM)) {
-        let sql = SQL_SELECT + SQL_FROM;
-        let params = {};
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sql = SQL_SELECT + SQL_FROM + SQL_LIMIT;
+        let param = {
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((productCode) && (productNM)){
         let SQL_SEARCH = 'AND TB_ITCODE.CODE LIKE :productCode AND TB_ITCODE.CODE_NM LIKE :productNM ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
-        let params = {
-            productCode: { val: productCode },
-            productNM: { val: productNM }
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_LIMIT;
+        let param = {
+            productCode,
+            productNM,
+            currentLocation,
+            limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((productCode) && _.isEmpty(productNM)){
         let SQL_SEARCH = 'AND TB_ITCODE.CODE LIKE :productCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
-        let params = {
-            productCode: { val: productCode },
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_LIMIT;
+        let param = {
+            productCode,
+            currentLocation,
+            limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(productCode) && (productNM)){
         let SQL_SEARCH = 'AND TB_ITCODE.CODE_NM LIKE :productNM ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH;
-        let params = {
-            productNM: { val: productNM },
+        let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_LIMIT;
+        let param = {
+            productNM,
+            currentLocation,
+            limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 
