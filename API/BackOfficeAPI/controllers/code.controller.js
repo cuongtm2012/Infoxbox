@@ -103,98 +103,174 @@ exports.getCode = async function (req, res) {
     WORK_ID as WORK_ID, 
     to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,
     to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = `FROM TB_ITCODE `;
     var SQL_ORDER_BY = 'ORDER BY CODE_NM ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((code) && (codeClass) && (codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm AND TB_ITCODE.CODE LIKE :code `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             code,
             codeClass,
             codeNm,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            code,
+            codeClass,
+            codeNm,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(code) && (codeClass) && _.isEmpty(codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass  `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             codeClass,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            codeClass,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CODE LIKE :code  `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             code,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            code,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(code) && _.isEmpty(codeClass) && (codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CODE_NM LIKE :codeNm  `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             codeNm,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            codeNm,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((code) && (codeClass) && _.isEmpty(codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE LIKE :code `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             codeClass,
             code,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            codeClass,
+            code,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if (_.isEmpty(code) && (codeClass) && (codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CD_CLASS LIKE :codeClass AND TB_ITCODE.CODE_NM LIKE :codeNm `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             codeClass,
             codeNm,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            codeClass,
+            codeNm,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if ((code) && _.isEmpty(codeClass) && (codeNm)) {
         var SQL_SEARCH = `WHERE TB_ITCODE.CODE LIKE :code AND TB_ITCODE.CODE_NM LIKE :codeNm `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
-        let params = {
+        let param = {
             code,
             codeNm,
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj)
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
+        let paramSearch = {
+            code,
+            codeNm
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 
