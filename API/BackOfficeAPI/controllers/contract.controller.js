@@ -137,7 +137,12 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {
+            organClassifi,
+            organCd,
+            productCode,
+            organNM,
+        };
         let totalRow;
         let rowRs;
 
@@ -155,7 +160,7 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organClassifi,};
         let totalRow;
         let rowRs;
 
@@ -173,7 +178,7 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organCd,};
         let totalRow;
         let rowRs;
 
@@ -191,7 +196,7 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organNM,};
         let totalRow;
         let rowRs;
 
@@ -209,7 +214,7 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = { productCode,};
         let totalRow;
         let rowRs;
 
@@ -228,7 +233,8 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = { organClassifi,
+            organCd,};
         let totalRow;
         let rowRs;
 
@@ -247,7 +253,8 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organClassifi,
+            organNM,};
         let totalRow;
         let rowRs;
 
@@ -266,7 +273,8 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = { organClassifi,
+            productCode,};
         let totalRow;
         let rowRs;
 
@@ -285,7 +293,8 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organCd,
+            organNM,};
         let totalRow;
         let rowRs;
 
@@ -304,7 +313,8 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organCd,
+            productCode,};
         let totalRow;
         let rowRs;
 
@@ -323,7 +333,8 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = { organNM,
+            productCode,};
         let totalRow;
         let rowRs;
 
@@ -343,7 +354,9 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {organClassifi,
+            organCd,
+            organNM,};
         let totalRow;
         let rowRs;
 
@@ -363,7 +376,9 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = { productCode,
+            organCd,
+            organNM,};
         let totalRow;
         let rowRs;
 
@@ -383,7 +398,9 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {productCode,
+            organClassifi,
+            organNM,};
         let totalRow;
         let rowRs;
 
@@ -403,7 +420,9 @@ exports.getContract = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_INNER_JOIN + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {productCode,
+            organClassifi,
+            organCd,};
         let totalRow;
         let rowRs;
 
