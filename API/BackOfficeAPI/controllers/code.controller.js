@@ -8,37 +8,80 @@ const optionAutoCommit = { autoCommit: true }; ''
 exports.getCodeClassification = async function (req, res) {
     var codeClassification = req.query.codeClassification ? '%' + req.query.codeClassification + '%' : '';
     var codeClassificationName = req.query.codeClassificationName ? '%' + req.query.codeClassificationName + '%' : '';
+    var currentLocation = req.query.currentLocation;
+    var limitRow = req.query.limitRow;
     var SQL_SELECT = `SELECT CD_CLASS, CODE_NM, CODE_NM_EN `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITCODE ';
+    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(codeClassification) && _.isEmpty(codeClassificationName)) {
-        let sql = SQL_SELECT + SQL_FROM;
-        let params = {};
-        oracelService.queryOracel(res, sql, params, optionFormatObj);
+        let sql = SQL_SELECT + SQL_FROM + SQL_LIMIT;
+        let param = {
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ((codeClassification) && (codeClassificationName)) {
-        let SEARCH = 'WHERE CD_CLASS LIKE :codeClassification AND CODE_NM LIKE :codeClassificationName';
-        let sql = SQL_SELECT + SQL_FROM + SEARCH;
-        let params = {
+        let SEARCH = 'WHERE CD_CLASS LIKE :codeClassification AND CODE_NM LIKE :codeClassificationName ';
+        let sql = SQL_SELECT + SQL_FROM + SEARCH + SQL_LIMIT;
+        let param = {
             codeClassification,
-            codeClassificationName
+            codeClassificationName,
+            currentLocation,
+            limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SEARCH ;
+        let paramSearch = {
+            codeClassification,
+            codeClassificationName};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ((codeClassification) && _.isEmpty(codeClassificationName)) {
         let SEARCH = 'WHERE CD_CLASS LIKE :codeClassification ';
-        let sql = SQL_SELECT + SQL_FROM + SEARCH;
-        let params = {
-            codeClassification
+        let sql = SQL_SELECT + SQL_FROM + SEARCH + SQL_LIMIT;
+        let param = {
+            codeClassification,
+            currentLocation,
+            limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SEARCH ;
+        let paramSearch = {codeClassification,};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if (_.isEmpty(codeClassification) && (codeClassificationName)) {
         let SEARCH = 'WHERE CODE_NM LIKE :codeClassificationName ';
-        let sql = SQL_SELECT + SQL_FROM + SEARCH;
-        let params = {
-            codeClassificationName
+        let sql = SQL_SELECT + SQL_FROM + SEARCH + SQL_LIMIT;
+        let param = {
+            codeClassificationName,
+            currentLocation,
+            limitRow
         };
-        oracelService.queryOracel(res, sql, params, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SEARCH ;
+        let paramSearch = {codeClassificationName,};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 

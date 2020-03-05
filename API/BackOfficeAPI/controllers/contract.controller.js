@@ -40,7 +40,10 @@ exports.getProduct = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {
+            productCode,
+            productNM,
+        };
         let totalRow;
         let rowRs;
 
@@ -58,7 +61,9 @@ exports.getProduct = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {
+            productCode,
+        };
         let totalRow;
         let rowRs;
 
@@ -76,7 +81,9 @@ exports.getProduct = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_SEARCH;
-        let paramSearch = {};
+        let paramSearch = {
+            productNM,
+        };
         let totalRow;
         let rowRs;
 
