@@ -197,7 +197,7 @@ exports.getListB002 = async function (req, res) {
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN;
-        let paramSearch = {niceSsID};
+        let paramSearch = {};
         let totalRow;
         let rowRs;
 
