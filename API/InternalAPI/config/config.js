@@ -15,7 +15,7 @@ var config = {
 	},
 	server: {
 		host: '127.0.0.1',
-		port: '3000'
+		port: '3200'
 	},
 	log: {
 		orgLog: '../../logs/Internal'
@@ -24,6 +24,7 @@ var config = {
 		TIME_OUT: 1*60*1000, // 10000 milisecond = 1 seconds
 		TIME_OUT1: 3*60*1000,
 		TIME_OUT2: 30*60*1000, // 15 minutes
+		TIME_OUT3: 2*60*1000 // 2 m
 	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
