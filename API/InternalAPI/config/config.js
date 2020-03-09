@@ -21,10 +21,10 @@ var config = {
 		orgLog: '../../logs/Internal'
 	},
 	batch: {
-		TIME_OUT: 1*60*1000, // 10000 milisecond = 1 seconds
-		TIME_OUT1: 3*60*1000,
-		TIME_OUT2: 30*60*1000, // 15 minutes
-		TIME_OUT3: 2*60*1000 // 2 m
+		TIME_OUT: 1*60*1000, //B0002 jov
+		TIME_OUT1: 3*60*1000, //B0003
+		TIME_OUT2: 30*60*1000, //Job no exist
+		TIME_OUT3: 20*1000 // Mobile A0001
 	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
