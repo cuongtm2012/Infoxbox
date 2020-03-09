@@ -50,6 +50,4 @@ module.exports = function cicTransSave(requestParams, responseParams, scrplogid,
     this.R_STEP_DATA = recStepData ? recStepData : null;
     this.R_DTIM = dateutil.timeStamp();
     this.WORK_ID = workId ? workId : null;
-
-
 }
