@@ -7,7 +7,8 @@ module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, n
         natId,
         oldNatId,
         passportNumber,
-        taxCode
+        taxCode,
+        cicId
     } = parameters;
 
     const {
@@ -37,7 +38,7 @@ module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, n
     this.userId = loginId;
     this.userPw = decryptPW;
     this.customerType = customerType;
-    this.cicNo = '';
+    this.cicNo = cicId;
     this.taxNo = '';
     this.cmtNo = _passportNumber ? _passportNumber : taxCode;
     this.reportType = reportType;
