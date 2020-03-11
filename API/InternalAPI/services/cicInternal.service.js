@@ -149,7 +149,7 @@ async function updateCICReportInquirySuccessful(req) {
 /*
     update statu == 10
 */
-async function updateCICReportInquiryCompleted(req) {
+async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
     let connection;
 
     try {
@@ -157,17 +157,21 @@ async function updateCICReportInquiryCompleted(req) {
 
         let sysDim = dateUtil.timeStamp();
         connection = await oracledb.getConnection(dbconfig);
-
-        sql = `UPDATE TB_SCRPLOG
+        if (_.isEqual('A0001', svcCd)) {
+            sql = `UPDATE TB_SCRPLOG
+                SET SCRP_STAT_CD = '10', RSP_CD = 'P000', SYS_DTIM = :sysDim, LOGIN_PW = null
+                WHERE NICE_SSIN_ID =:niceSessionKey`;
+        } else {
+            sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '10', RSP_CD = 'P000', SYS_DTIM = :sysDim
                 WHERE NICE_SSIN_ID =:niceSessionKey`;
-
+        }
         result = await connection.execute(
             // The statement to execute
             sql,
             {
                 sysDim: { val: sysDim },
-                niceSessionKey: { val: req }
+                niceSessionKey: { val: niceSessionKey }
             },
             { autoCommit: true }
         );
@@ -192,7 +196,7 @@ async function updateCICReportInquiryCompleted(req) {
     }
 }
 
-async function updateScrapingTargetRepostNotExist(niceSessionKey) {
+async function updateScrapingTargetRepostNotExist(req) {
     let connection;
 
     try {
@@ -205,7 +209,7 @@ async function updateScrapingTargetRepostNotExist(niceSessionKey) {
 
         sqlUpdateScrplog = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = :SCRP_STAT_CD, RSP_CD = :RSP_CD , SYS_DTIM = :sysDim
-                WHERE NICE_SSIN_ID =:NICE_SSIN_ID `;
+                WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
 
         resultScrpLog = await connection.execute(
             // The statement to execute
@@ -213,8 +217,7 @@ async function updateScrapingTargetRepostNotExist(niceSessionKey) {
             {
                 SCRP_STAT_CD: { val: responseCode.ScrapingStatusCode.CicReportResultInqError.code },
                 RSP_CD: { val: responseCode.RESCODEEXT.CICReportInqFailureTimeout.code },
-                sysDim: { val: sysDim },
-                NICE_SSIN_ID: { val: niceSessionKey }
+                sysDim: { val: sysDim }
             },
             { autoCommit: true },
         );
@@ -581,6 +584,57 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
     }
 }
 
+/*
+    A0001 : Mobile (Request for CIC Report)
+*/
+async function selectExcuteA0001() {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        //get curremt time
+        let currentTimeStamp = dateUtil.timeStamp();
+
+        sql = `SELECT NICE_SSIN_ID, LOGIN_ID, LOGIN_PW, NATL_ID, TEL_NO_MOBILE, INQ_DTIM
+            FROM TB_SCRPLOG a
+            WHERE a.SCRP_STAT_CD = '01' 
+                and (a.SCRP_MOD_CD = '00' or a.SCRP_MOD_CD is null)
+                and a.GDS_CD = 'S1003'
+                and a.AGR_FG = 'Y'
+                and a.LOGIN_PW is not null
+                and ROWNUM <= 20
+            ORDER BY a.SYS_DTIM ASC`;
+        // and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {},
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
+            });
+
+        console.log("rows::", result.rows);
+
+        return result.rows;
+
+
+    } catch (err) {
+        console.log(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.select01 = select01;
 module.exports.select04NotExist = select04NotExist;
 module.exports.updateCICReportInquirySuccessful = updateCICReportInquirySuccessful;
@@ -594,3 +648,4 @@ module.exports.updateScrpModCdPreRequestToScrapingB0002 = updateScrpModCdPreRequ
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
 module.exports.updateListScrpStatCdErrorResponseCodeScraping = updateListScrpStatCdErrorResponseCodeScraping;
 module.exports.startProcessB1003 = startProcessB1003;
+module.exports.selectExcuteA0001 = selectExcuteA0001;

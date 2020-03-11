@@ -20,6 +20,9 @@ module.exports = {
             case responcodeEXT.TaskCode.CIC_MACR_RQST.code:
                 productCode = responcodeEXT.NiceProductCode.Mobile.code;
                 break;
+            case responcodeEXT.TaskCode.CIC_MACR_RSLT.code:
+                productCode = responcodeEXT.NiceProductCode.Mobile.code;
+                break;
             default:
                 productCode = '';
         }

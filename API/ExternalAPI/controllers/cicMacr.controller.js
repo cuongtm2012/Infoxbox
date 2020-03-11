@@ -34,7 +34,7 @@ exports.cicMACRRQST = function (req, res, next) {
         */
         let rsCheck = validRequest.checkMacrParamRequest(req.body);
 
-        if (!validation.isEmptyJson(rsCheck)) {
+        if (!_.isEmpty(rsCheck)) {
             preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
 
             responseData = new cicMacrRQSTRes(req.body, preResponse);
@@ -68,13 +68,13 @@ exports.cicMACRRQST = function (req, res, next) {
 
                 //logging request
                 logger.debug('log request parameters from routes after manage request');
-                logger.info(getdataReq);
+                logger.info(req.body);
 
                 cicMobileService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
                     console.log("result cicMacrRQST: ", niceSessionK);
 
-                    if (!validation.isEmptyStr(niceSessionK)) {
-                        let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.INPROCESS.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.INPROCESS.code);
+                    if (!_.isEmpty(niceSessionK) && niceSessionK.length <= 25) {
+                        let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseSuccess);
                     } else {
                         let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
@@ -135,7 +135,7 @@ exports.cicMACRRSLT = function (req, res) {
             }
             // end check params reqest
 
-            cicMobileService.selectSCRPTRLOG(getdataReq, res).then(reslt => {
+            cicMobileService.selectCicMobileDetailReport(getdataReq, res).then(reslt => {
                 console.log("result selectSCRPTRLOG: ", reslt);
                 if (!validation.isEmptyStr(reslt)) {
                     let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
@@ -149,7 +149,7 @@ exports.cicMACRRSLT = function (req, res) {
                     return res.status(200).json(responseData);
 
                 } else {
-                    cicMobileService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+                    cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
                         if (_.isEmpty(rslt)) {
                             let responseUnknow = {
@@ -172,21 +172,39 @@ exports.cicMACRRSLT = function (req, res) {
                         }
                         else {
                             const result = rslt[0].SCRP_STAT_CD;
+                            let rsp_cd = rslt[0].RSP_CD;
                             let responseMessage, responseCode;
 
-                            if (_.isEqual(parseInt(result), 20)) {
-                                responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.name;
-                                responseCode = responcodeEXT.RESCODEEXT.CICMobileAppLoginFailure.code;
-                            } else if (_.isEqual(parseInt(result), 24)) {
-                                responseMessage = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.name;
-                                responseCode = responcodeEXT.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.code;
-                            } else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
-                                responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
-                                responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
-                            }
-                            else {
-                                responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
-                                responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+                            if (!_.isEmpty(rsp_cd)) {
+                                _.forEach(responcodeEXT.RESCODEEXT, res => {
+                                    _.forEach(res, (val, key) => {
+                                        if (_.isEqual(val, rsp_cd)) {
+                                            console.log('response nice code:', res.code + '-' + res.name);
+                                            responseMessage = res.name;
+                                            responseCode = res.code;
+                                        }
+                                    });
+                                });
+                            } else {
+
+                                if (_.isEqual(parseInt(result), 20)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.CICSiteLoginFailure.code;
+                                } else if (_.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailure.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailure.code;
+                                } else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.CICReportInqFailureTimeout.code;
+                                }
+                                else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+                                    responseMessage = responcodeEXT.RESCODEEXT.INPROCESS.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.INPROCESS.code;
+                                }
+                                else {
+                                    responseMessage = responcodeEXT.RESCODEEXT.ETCError.name;
+                                    responseCode = responcodeEXT.RESCODEEXT.ETCError.code;
+                                }
                             }
 
                             let responseSrapingStatus = {

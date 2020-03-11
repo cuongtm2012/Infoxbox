@@ -2,7 +2,8 @@ const validation = require('../../shared/util/validation');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const dateUtil = require('../util/dateutil');
-
+const _ = require('lodash')
+    ;
 module.exports = {
     checkParamRequestForResponse: function (getdataReq) {
         var response;

@@ -3,7 +3,7 @@ const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const checkContains = require('../../shared/util/checkcontains');
 const _ = require('lodash');
 const dateUtil = require('../util/dateutil');
-const dataType = require('../../shared/constant/datatype');
+const util = require('../../shared/util/util');
 
 module.exports = {
     checkMacrParamRequest: function (getdataReq) {
@@ -48,17 +48,13 @@ module.exports = {
                 responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
             }
             return response;
-        } 
-        // else if (!_.isEmpty(getdataReq.mobilePhoneNumber)) {
-        //     response = {
-
-        //         responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name + `, Mobile number is of type ` +
-        //             `${typeof getdataReq.mobilePhoneNumber}` + ` but should be ` + dataType.DATATYPE.NUMBER.type,
-        //         responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
-        //     }
-        //     return response;
-        // }
-
+        } else if (!util.validPhoneNumber(getdataReq.mobilePhoneNumber)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
+            }
+            return response;
+        }
 
         //infoProvConcent
         if (validation.isEmptyStr(getdataReq.infoProvConcent)) {

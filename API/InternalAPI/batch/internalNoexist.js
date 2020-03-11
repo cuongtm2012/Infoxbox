@@ -1,32 +1,31 @@
 const cicService = require('../services/cicInternal.service');
-const validation = require('../../shared/util/validation');
+const _ = require('lodash');
 
 module.exports = class internalJob {
     //Cron request internal scraping
     cron(oncomplete) {
 
         cicService.select04NotExist().then(data => {
-
-            var count = 0;
-            var maxLength = data.length;
-            console.log("maxLength2~~~", maxLength);
+            const listNiceSessinKey = [];
 
             // Get each object in array data
-            if (validation.isEmptyJson(data)) {
+            if (_.isEmpty(data)) {
                 console.log('No request!');
-                oncomplete(0, 0)
+                oncomplete(0, 0);
             }
-            data.forEach(element => {
+            else {
+                // Get list nice session key
+                _.forEach(data, res => {
+                    listNiceSessinKey.push(res.NICE_SSIN_ID);
+                });
 
-                // update SCRP_MOD_CD = 01 before
-                cicService.updateScrpModCdPreRequestToScrapingB0002(element.NICE_SSIN_ID).then(() => {
+                cicService.updateScrpModCdPreRequestToScraping(listNiceSessinKey).then(() => {
                     //Updatinh Scraping target report does not exist
-                    cicService.updateScrapingTargetRepostNotExist(element.NICE_SSIN_ID).then(() => {
-                        count++;
-                        oncomplete(count, maxLength)
+                    cicService.updateScrapingTargetRepostNotExist(listNiceSessinKey).then(() => {
+                        oncomplete(0, 0);
                     });
                 })
-            });
+            }
         }).catch((error) => {
             console.log(error)
         });

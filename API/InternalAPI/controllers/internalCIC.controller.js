@@ -505,7 +505,7 @@ exports.internalCICB0003 = function (req, res, next) {
                                     console.log('insert Scraping MSG:', resultMSG);
                                     if (!_.isEmpty(resultMSG)) {
                                         // update complete cic report inquiry status 10
-                                        cicService.updateCICReportInquiryCompleted(niceSessionKey).then(resultUpdated => {
+                                        cicService.updateCICReportInquiryCompleted(niceSessionKey, '').then(resultUpdated => {
                                             console.log("CIC report inquiry completed!", resultUpdated);
 
                                         });
@@ -566,7 +566,7 @@ exports.internalCICB0003 = function (req, res, next) {
                         if (1 < resultS37) {
                             console.log('Successfully insert into S37 detail table');
                             // update complete cic report inquiry status 10
-                            cicService.updateCICReportInquiryCompleted(niceKey).then(resultUpdated => {
+                            cicService.updateCICReportInquiryCompleted(niceKey, '').then(resultUpdated => {
                                 console.log("CIC report inquiry completed B1003!", resultUpdated);
 
                             });

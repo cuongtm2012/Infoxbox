@@ -144,7 +144,7 @@ exports.cics37Rqst = function (req, res) {
                                         if (1 < resultS37) {
                                             console.log('Successfully insert into S37 detail table');
                                             // update complete cic report inquiry status 10
-                                            cicService.updateCICReportInquiryCompleted(niceKey).then(resultUpdated => {
+                                            cicService.updateCICReportInquiryCompleted(niceKey, '').then(resultUpdated => {
                                                 console.log("CIC report inquiry completed B1003!", resultUpdated);
 
                                             });
