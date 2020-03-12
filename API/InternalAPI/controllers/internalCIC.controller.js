@@ -239,6 +239,7 @@ const defineCard3Year = require('../util/defineitem/defineCard3Y');
 const utilFunction = require('../../shared/util/util');
 const CICB1003Save = require('../../ExternalAPI/domain/cicB1003.save');
 const cicS37Service = require('../../ExternalAPI/services/cicInternalS37.service');
+const cicDelayReportService = require('../services/cicDelayReport.service');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -533,6 +534,14 @@ exports.internalCICB0003 = function (req, res, next) {
                                     }
 
                                     // End insert Scraping MSG
+                                });
+                            }
+                            // Update delay report = 02
+                            else if (_.isEqual('Wait'.toUpperCase().trim(), list.status.toUpperCase().trim())) {
+                                cicDelayReportService.updateDelayReportS11A(niceSessionKey).then(resUpdatedDelay => {
+                                    if (1 <= resUpdatedDelay) {
+                                        console.log('Update sucessfully delay report!');
+                                    }
                                 });
                             }
                             // Update  SCRP_MOD_CD = 0 continute request to scrapping service

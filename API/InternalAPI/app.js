@@ -19,6 +19,7 @@ var jobB0002 = require('./job-B0002');
 var jobnoexist = require('./job-noexist');
 var jobB0003 = require('./job-B0003');
 var jobA0001 = require('./job-A0001');
+var jobB0003DelayReport = require('./job-B0003delayReport');
 
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -98,7 +99,7 @@ jobB0002.start();
 jobnoexist.start();
 jobB0003.start();
 jobA0001.start();
-
+jobB0003DelayReport.start();
 
 // force: true will drop the table if it already exists
 // db.sequelize.sync({force: true}).then(() => {
