@@ -163,3 +163,21 @@ exports.updateCaptcha = async function (req, res) {
         oracelService.queryOracel(res, SQL, param, optionAutoCommit);
     }
 };
+
+exports.checkStatusTrigger = async function (req, res) {
+    let SQL_CHECK_STATUS = `SELECT STATUS FROM USER_TRIGGERS WHERE TRIGGER_NAME = 'UPDATE_SCRP_MOD_01'`;
+    let param =  {};
+    await oracelService.queryOracel(res, SQL_CHECK_STATUS, param, optionFormatObj);
+};
+
+exports.enableTrigger = async function (req, res) {
+    let SQL_ENABLE = `ALTER TRIGGER UPDATE_SCRP_MOD_01 ENABLE `;
+    let param =  {};
+    await oracelService.queryOracel(res, SQL_ENABLE, param, optionFormatObj);
+};
+
+exports.disableTrigger = async function (req, res) {
+    let SQL_DISABLE = `ALTER TRIGGER UPDATE_SCRP_MOD_01 DISABLE `;
+    let param =  {};
+    await oracelService.queryOracel(res, SQL_DISABLE, param, optionFormatObj);
+};
