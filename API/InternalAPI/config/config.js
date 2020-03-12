@@ -25,6 +25,7 @@ var config = {
 		TIME_OUT1: 3*60*1000, //B0003
 		TIME_OUT2: 30*60*1000, //Job no exist
 		TIME_OUT3: 20*1000 // Mobile A0001
+		TIME_OUT_DELAY: 60 * 60 * 1000, // DelayReport 1h
 	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
