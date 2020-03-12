@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');
+const moment = require('moment-timezone');
 
 var path = require('path');
 
@@ -61,6 +62,10 @@ app.use(session({
 app.use(flash());
 
 //logging winston
+morgan.token('date', (req, res, tz) => {
+	return moment().tz(tz).format();
+})
+morgan.format('myformat', '[:date[Asia/Ho_Chi_Minh]] ":method :url" :status :res[content-length] - :response-time ms');
 app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
