@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');
+const moment = require('moment-timezone');
 
 var path = require('path');
 
@@ -18,6 +19,7 @@ var jobB0002 = require('./job-B0002');
 var jobnoexist = require('./job-noexist');
 var jobB0003 = require('./job-B0003');
 var jobA0001 = require('./job-A0001');
+var jobB0003DelayReport = require('./job-B0003delayReport');
 
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -61,6 +63,10 @@ app.use(session({
 app.use(flash());
 
 //logging winston
+morgan.token('date', (req, res, tz) => {
+	return moment().tz(tz).format();
+})
+morgan.format('myformat', '[:date[Asia/Ho_Chi_Minh]] ":method :url" :status :res[content-length] - :response-time ms');
 app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
@@ -93,7 +99,7 @@ jobB0002.start();
 jobnoexist.start();
 jobB0003.start();
 jobA0001.start();
-
+jobB0003DelayReport.start();
 
 // force: true will drop the table if it already exists
 // db.sequelize.sync({force: true}).then(() => {

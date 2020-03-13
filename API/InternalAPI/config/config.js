@@ -11,7 +11,7 @@ var config = {
 			min: 0,
 			acquire: 30000,
 			idle: 10000
-		  }
+		}
 	},
 	server: {
 		host: '127.0.0.1',
@@ -21,9 +21,12 @@ var config = {
 		orgLog: '../../logs/Internal'
 	},
 	batch: {
-		TIME_OUT: 1*60*1000, // 10000 milisecond = 1 seconds
-		TIME_OUT1: 3*60*1000,
-		TIME_OUT2: 30*60*1000, // 15 minutes
+		TIME_OUT: 1 * 60 * 1000, //B0002 jov
+		TIME_OUT1: 3 * 60 * 1000, //B0003
+		TIME_OUT2: 30 * 60 * 1000, //Job no exist
+		TIME_OUT3: 20 * 1000, // Mobile A0001
+		TIME_OUT_DELAY: 60 * 60 * 1000 // DelayReport 1h
+
 	},
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
