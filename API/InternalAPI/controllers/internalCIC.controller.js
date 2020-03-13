@@ -278,7 +278,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 }
 
                 // update process status = 10 update process completed
-                else if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N" && _.isEmpty(body.data.outJson.outB0003.errMsg)) {
+                else if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {
                     //update process status = 10, sucecssful recieve response from scraping service
 
                     // Get customer
