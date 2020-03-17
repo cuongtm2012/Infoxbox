@@ -35,7 +35,7 @@ var config = {
 		TIME_OUT: 5000
 	},
 	authprefix: 'Bearer ',
-	jwtExpiresIn: 86400,
+	jwtExpiresIn: 1800,
 	secret: 'apisecretinfoplus12!@',
 };
 
