@@ -188,14 +188,16 @@ exports.getListB002 = async function (req, res) {
         'LEFT JOIN TB_ITCODE ON TB_SCRPLOG.GDS_CD = TB_ITCODE.CODE ';
     var SQL_ORDER_BY = `ORDER BY CASE WHEN TB_SCRPLOG.INQ_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, TB_SCRPLOG.INQ_DTIM DESC `;
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    var SQL_AND_WHERE = ` AND TB_SCRPLOG.SCRP_STAT_CD= 01 AND TB_SCRPLOG.SCRP_MOD_CD = 01 `;
 
     if (_.isEmpty(niceSsID) &&_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_ORDER_BY  + SQL_LIMIT;
+        let SQL_WHERE = ` WHERE TB_SCRPLOG.SCRP_STAT_CD= 01 AND TB_SCRPLOG.SCRP_MOD_CD = 01 `;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY  + SQL_LIMIT;
         let param = {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {};
         let totalRow;
         let rowRs;
@@ -206,13 +208,13 @@ exports.getListB002 = async function (req, res) {
     }
     if(orgCode && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE ;
         let paramSearch = {orgCode};
         let totalRow;
         let rowRs;
@@ -224,13 +226,13 @@ exports.getListB002 = async function (req, res) {
 
     if( niceSsID &&_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.NICE_SSIN_ID LIKE :niceSsID ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE  + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             niceSsID,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE ;
         let paramSearch = {niceSsID};
         let totalRow;
         let rowRs;
@@ -242,13 +244,13 @@ exports.getListB002 = async function (req, res) {
 
     if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.GDS_CD LIKE :productCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE  + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             productCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE ;
         let paramSearch = {productCode};
         let totalRow;
         let rowRs;
@@ -260,13 +262,13 @@ exports.getListB002 = async function (req, res) {
 
     if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.CIC_ID LIKE :CICNumber ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE  + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             CICNumber,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE ;
         let paramSearch = {CICNumber};
         let totalRow;
         let rowRs;
@@ -278,14 +280,14 @@ exports.getListB002 = async function (req, res) {
 
     if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
         let SQL_WHERE = `WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             inqDateFrom,
             inqDateTo,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {inqDateFrom,
             inqDateTo};
         let totalRow;
@@ -298,14 +300,14 @@ exports.getListB002 = async function (req, res) {
 
     if((orgCode) && (productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND TB_SCRPLOG.GDS_CD LIKE :productCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             productCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             productCode,
@@ -320,14 +322,14 @@ exports.getListB002 = async function (req, res) {
 
     if((orgCode) && _.isEmpty(productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND TB_SCRPLOG.CIC_ID LIKE :CICNumber ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             CICNumber,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             CICNumber,
@@ -342,7 +344,7 @@ exports.getListB002 = async function (req, res) {
 
     if((orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             inqDateFrom,
@@ -350,7 +352,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             inqDateFrom,
@@ -366,14 +368,14 @@ exports.getListB002 = async function (req, res) {
 
     if(_.isEmpty(orgCode) && (productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.GDS_CD LIKE :productCode AND TB_SCRPLOG.CIC_ID LIKE :CICNumber ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             productCode,
             CICNumber,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             productCode,
             CICNumber,
@@ -389,7 +391,7 @@ exports.getListB002 = async function (req, res) {
     if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.GDS_CD LIKE :productCode AND 
          to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             productCode,
             inqDateFrom,
@@ -397,7 +399,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             productCode,
             inqDateFrom,
@@ -414,7 +416,7 @@ exports.getListB002 = async function (req, res) {
     if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.CIC_ID LIKE :CICNumber :orgCode AND 
          to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             CICNumber,
             inqDateFrom,
@@ -422,7 +424,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             CICNumber,
             inqDateFrom,
@@ -440,7 +442,7 @@ exports.getListB002 = async function (req, res) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND 
                                TB_SCRPLOG.GDS_CD LIKE :productCode AND 
                                TB_SCRPLOG.CIC_ID LIKE :CICNumber  `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             productCode,
@@ -448,7 +450,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             productCode,
@@ -466,7 +468,7 @@ exports.getListB002 = async function (req, res) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND 
                                TB_SCRPLOG.GDS_CD LIKE :productCode AND 
                                to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             productCode,
@@ -475,7 +477,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             productCode,
@@ -494,7 +496,7 @@ exports.getListB002 = async function (req, res) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND 
                                TB_SCRPLOG.CIC_ID LIKE :CICNumber AND 
                                to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             CICNumber,
@@ -503,7 +505,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             CICNumber,
@@ -522,7 +524,7 @@ exports.getListB002 = async function (req, res) {
         let SQL_WHERE = `WHERE TB_SCRPLOG.GDS_CD LIKE :productCode AND 
                                TB_SCRPLOG.CIC_ID LIKE :CICNumber AND 
                                to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             productCode,
             CICNumber,
@@ -531,7 +533,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             productCode,
             CICNumber,
@@ -551,7 +553,7 @@ exports.getListB002 = async function (req, res) {
                                TB_SCRPLOG.GDS_CD LIKE :productCode AND 
                                TB_SCRPLOG.CIC_ID LIKE :CICNumber AND 
                                to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
             productCode,
@@ -561,7 +563,7 @@ exports.getListB002 = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_AND_WHERE;
         let paramSearch = {
             orgCode,
             productCode,
