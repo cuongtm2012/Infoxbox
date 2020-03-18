@@ -21,7 +21,7 @@ module.exports = class internalJob {
             }, timeout: 60 * 3 * 1000
         }
 
-        cicDeplayReportService.selectDeplayReport().then(resdata => {
+        cicDeplayReportService.selectDeplayReport2().then(resdata => {
             if (_.isEmpty(resdata)) {
                 console.log('No request!');
                 oncomplete(0, 0);
@@ -77,15 +77,15 @@ module.exports = class internalJob {
                     let fnData = new cicB0003Req(listCicNo, listNiceSessionkey, data, defaultValue, loginUser, decryptPW);
 
                     if (!_.isEmpty(listCicNo)) {
-                        cicService.updateScrpModCdPreRequestToScraping(listNiceSessionkey).then(() => {
+                        cicDeplayReportService.updateScrpModCd03(listNiceSessionkey).then(() => {
                             axios.post(URI.internal_cicB0003, fnData, config)
                                 .then((body) => {
                                     oncomplete(0, 0);
 
                                 }).catch((error) => {
-                                    console.log("error call to internal_cic url delay 1 B0003~~", error);
+                                    console.log("error call to internal_cic url delay 2 B0003!", error);
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
-                                        console.log("B0003 update delay 1 SCRP_MOD_CD = 00 ");
+                                        console.log("B0003 update delay 2 SCRP_MOD_CD = 00 ");
                                         // Restart internal
                                         runRestartPm2.restartInternal();
                                     });
