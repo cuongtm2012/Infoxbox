@@ -47,6 +47,7 @@ exports.viewHistoryCICReport = async function (req, res) {
     TB_SCRPLOG.SCRP_MOD_CD as SCRP_MOD_CD,
     TB_SCRPLOG.SCRP_REQ_DTIM as SCRP_REQ_DTIM,
     TB_SCRPLOG.WORK_ID as WORK_ID  `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_SCRPLOG ';
     var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_SCRPLOG.CUST_CD = TB_ITCUST.CUST_CD ' +
                          'LEFT JOIN TB_ITCODE ON TB_SCRPLOG.GDS_CD = TB_ITCODE.CODE ';
@@ -59,7 +60,14 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if(orgCode && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode ';
@@ -69,7 +77,16 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
@@ -80,7 +97,16 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            productCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
@@ -91,7 +117,16 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            CICNumber,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -103,7 +138,17 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((orgCode) && (productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
@@ -115,7 +160,17 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            productCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((orgCode) && _.isEmpty(productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
@@ -127,7 +182,17 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            CICNumber,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -140,7 +205,18 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && (productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
@@ -152,7 +228,17 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            productCode,
+            CICNumber,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -166,7 +252,18 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            productCode,
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -180,7 +277,18 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            CICNumber,
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((orgCode) && (productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
@@ -195,7 +303,18 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            productCode,
+            CICNumber,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((orgCode) && (productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -211,7 +330,19 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            productCode,
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((orgCode) && _.isEmpty(productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -227,7 +358,19 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            CICNumber,
+            inqDateFrom,
+            inqDateTo
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(orgCode) && (productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -243,7 +386,19 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            productCode,
+            CICNumber,
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_(orgCode) && (productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
@@ -261,7 +416,20 @@ exports.viewHistoryCICReport = async function (req, res) {
             currentLocation,
             limitRow
         };
-        return oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+            productCode,
+            CICNumber,
+            inqDateFrom,
+            inqDateTo,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 

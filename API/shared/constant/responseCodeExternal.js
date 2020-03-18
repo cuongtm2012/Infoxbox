@@ -140,7 +140,8 @@ const NiceProductCode = {
 const StatusCodeBatchProcess = {
     ReportInquiryRequest: '01',
     CICReportInquirySuccess: '04',
-    CICReportInquiryDelay: '02'
+    CICReportInquiryDelay: '02',
+    CICReportInquiryDelay3: '03'
 };
 
 module.exports.RESCODEEXT = RESCODEEXT;

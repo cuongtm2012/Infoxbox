@@ -21,6 +21,7 @@ exports.getCaptchaInfo = async function (req, res) {
     to_char(to_date(VALID_START_DT, 'yyyymmdd'),'mm/dd/yyyy') as VALID_START_DT,
     to_char(to_date(VALID_END_DT, 'yyyymmdd'),'mm/dd/yyyy') as VALID_END_DT,
     WORK_ID as WORK_ID `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_CAPTCHA_RSP ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
@@ -30,7 +31,14 @@ exports.getCaptchaInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ((userID) && (userName)) {
         let SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_ID LIKE :userID ' +
@@ -42,7 +50,17 @@ exports.getCaptchaInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ((userID) && _.isEmpty(userName)) {
         let SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_ID LIKE :userID ';
@@ -52,7 +70,16 @@ exports.getCaptchaInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if (_.isEmpty(userID) && (userName)) {
         let SQL_WHERE_SEARCH = 'WHERE CAPTCHA_USER_NM LIKE :userName ';
@@ -62,7 +89,16 @@ exports.getCaptchaInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 
@@ -126,4 +162,22 @@ exports.updateCaptcha = async function (req, res) {
             ' WHERE CAPTCHA_USER_ID = :userID ';
         oracelService.queryOracel(res, SQL, param, optionAutoCommit);
     }
+};
+
+exports.checkStatusTrigger = async function (req, res) {
+    let SQL_CHECK_STATUS = `SELECT STATUS FROM USER_TRIGGERS WHERE TRIGGER_NAME = 'UPDATE_SCRP_MOD_01'`;
+    let param =  {};
+    await oracelService.queryOracel(res, SQL_CHECK_STATUS, param, optionFormatObj);
+};
+
+exports.enableTrigger = async function (req, res) {
+    let SQL_ENABLE = `ALTER TRIGGER UPDATE_SCRP_MOD_01 ENABLE `;
+    let param =  {};
+    await oracelService.queryOracel(res, SQL_ENABLE, param, optionFormatObj);
+};
+
+exports.disableTrigger = async function (req, res) {
+    let SQL_DISABLE = `ALTER TRIGGER UPDATE_SCRP_MOD_01 DISABLE `;
+    let param =  {};
+    await oracelService.queryOracel(res, SQL_DISABLE, param, optionFormatObj);
 };

@@ -13,5 +13,5 @@ module.exports.start = function () {
                 this.start();
             }
         });
-    }, config.batch.TIME_OUT_DELAY);
+    }, config.batch.TIME_OUT1);
 }

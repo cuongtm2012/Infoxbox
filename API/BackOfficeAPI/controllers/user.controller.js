@@ -29,6 +29,7 @@ exports.getUserInfo = async function (req, res) {
     to_char(to_date(TB_ITUSER.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
     to_char(to_date(TB_ITUSER.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
     TB_ITUSER.WORK_ID as WORK_ID `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITUSER ';
     var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
@@ -39,7 +40,14 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN;
+        let paramSearch = {};
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ((userClass) && (userID) && (userName) && (orgCode)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ' +
@@ -55,7 +63,19 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userID,
+            orgCode,
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
@@ -66,7 +86,16 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
@@ -77,7 +106,16 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)) {
@@ -88,7 +126,16 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)) {
@@ -99,7 +146,16 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
@@ -111,7 +167,16 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)) {
@@ -123,7 +188,17 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)) {
@@ -135,7 +210,17 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode)) {
@@ -147,7 +232,17 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode)) {
@@ -159,7 +254,17 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode)) {
@@ -171,7 +276,17 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userName,
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && (userID) && (userName) && _.isEmpty(orgCode)) {
@@ -186,7 +301,18 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userID,
+            userName,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && (userID) && _.isEmpty(userName) && (orgCode)) {
@@ -201,7 +327,18 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userID,
+            orgCode
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if((userClass) && _.isEmpty(userID) && (userName) && (orgCode)) {
@@ -216,7 +353,18 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userName,
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
     if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode)) {
@@ -231,7 +379,18 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        oracelService.queryOracel(res, sql, param, optionFormatObj);
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            userName,
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
 

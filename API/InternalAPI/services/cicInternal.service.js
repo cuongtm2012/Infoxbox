@@ -601,7 +601,7 @@ async function selectExcuteA0001() {
         sql = `SELECT NICE_SSIN_ID, LOGIN_ID, LOGIN_PW, NATL_ID, TEL_NO_MOBILE, INQ_DTIM
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '01' 
-                and (a.SCRP_MOD_CD = '00' or a.SCRP_MOD_CD is null)
+                and a.SCRP_MOD_CD = '05'
                 and a.GDS_CD = 'S1003'
                 and a.AGR_FG = 'Y'
                 and a.LOGIN_PW is not null
