@@ -374,7 +374,7 @@ async function updateCICReportInquiryReadyToRequestScraping(req) {
         connection = await oracledb.getConnection(dbconfig);
 
         sql = `UPDATE TB_SCRPLOG
-                SET SCRP_MOD_CD = '00'
+                SET SCRP_MOD_CD = '00', CIC_USED_ID = null, TRY_COUNT = null
                 WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
 
         result = await connection.execute(
