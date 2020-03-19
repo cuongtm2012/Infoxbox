@@ -43,7 +43,7 @@ exports.cics37Rqst = function (req, res) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 1 * 60 * 10000
+            timeout: 70 * 10000
         }
         // encrypt password
         let password = encryptPassword.encrypt(req.body.loginPw);
@@ -334,6 +334,21 @@ exports.cics37Rqst = function (req, res) {
 
                                 }
 
+                            }).catch((error) => {
+                                console.log("error scraping service S37 report~~", error);
+                                //Update ScrpModCd 00
+                                cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responcodeEXT.RESCODEEXT.TimeoutError.code).then(rslt => {
+                                    if (1 <= rslt)
+                                        console.log("Update scraping status:", responCode.ScrapingStatusCode.OtherError.code + '-' + responcodeEXT.RESCODEEXT.TimeoutError.code);
+                                    else
+                                        console.log('Update scraping status failure!');
+
+
+                                    let responseTimeOut = new PreResponse(responcodeEXT.RESCODEEXT.TimeoutError.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.TimeoutError.code);
+                                    responseData = new cics37RQSTRes(getdataReq, responseTimeOut);
+
+                                    return res.status(200).json(responseData);
+                                });
                             });
                     } else {
                         let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
