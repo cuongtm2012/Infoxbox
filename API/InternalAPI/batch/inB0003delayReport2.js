@@ -77,7 +77,7 @@ module.exports = class internalJob {
                     let fnData = new cicB0003Req(listCicNo, listNiceSessionkey, data, defaultValue, loginUser, decryptPW);
 
                     if (!_.isEmpty(listCicNo)) {
-                        cicDeplayReportService.updateScrpModCd03(listNiceSessionkey).then(() => {
+                        cicService.updateScrpModCdPreRequestToScraping(listNiceSessionkey).then(() => {
                             axios.post(URI.internal_cicB0003, fnData, config)
                                 .then((body) => {
                                     oncomplete(0, 0);

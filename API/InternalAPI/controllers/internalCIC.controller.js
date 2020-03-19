@@ -198,7 +198,7 @@ exports.internalCIC = function (req, res, next) {
             }).catch((error) => {
                 console.log("error scraping service B0002~~", error);
                 //Update ScrpModCd 00
-                cicService.updateScrpModCdHasNoResponseFromScraping(req.body.niceSessionKey, res).then(() => {
+                cicService.updateScrpModCdTryCntHasNoResponseFromScraping(req.body.niceSessionKey, res).then(() => {
                     console.log("update SCRP_MOD_CD = 00 ");
                     return next();
                 });
@@ -240,6 +240,8 @@ const utilFunction = require('../../shared/util/util');
 const CICB1003Save = require('../../ExternalAPI/domain/cicB1003.save');
 const cicS37Service = require('../../ExternalAPI/services/cicInternalS37.service');
 const cicDelayReportService = require('../services/cicDelayReport.service');
+
+const calBetweenDate = require('../util/calBetweenDate');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -289,6 +291,7 @@ exports.internalCICB0003 = function (req, res, next) {
                         if (!_.isEmpty(listDataCicidAndNiceSessionkey)) {
                             console.log('niceSessionKey:', listDataCicidAndNiceSessionkey.NICESESSIONKEY);
                             let niceSessionKey = listDataCicidAndNiceSessionkey.NICESESSIONKEY;
+                            let sysDtimDelay = listDataCicidAndNiceSessionkey.SYS_DTIM;
 
                             if (!_.isEmpty(list.reportS11A)) {
                                 // 3.CICRPT main
@@ -536,14 +539,24 @@ exports.internalCICB0003 = function (req, res, next) {
                                     // End insert Scraping MSG
                                 });
                             }
-                            // Update delay report = 02
+                            // Update delay report = 02, 03
                             else if (_.isEqual('Wait'.toUpperCase().trim(), list.status.toUpperCase().trim())) {
-                                cicDelayReportService.updateDelayReportS11A(niceSessionKey).then(resUpdatedDelay => {
-                                    if (1 <= resUpdatedDelay) {
-                                        console.log('Update sucessfully delay report!');
-                                    }
-                                });
+                                // Update delay report = 03
+                                if (_.isEqual('Wait'.toUpperCase().trim(), list.status.toUpperCase().trim()) && 30 < calBetweenDate.getMinute(sysDtimDelay, req.body.sendTime)) {
+                                    cicDelayReportService.updateScrpModCd03(niceSessionKey).then(resUpdatedDelay03 => {
+                                        if (1 <= resUpdatedDelay03) {
+                                            console.log('Update sucessfully delay report = 03!');
+                                        }
+                                    });
+                                } else {
+                                    cicDelayReportService.updateDelayReportS11A(niceSessionKey).then(resUpdatedDelay02 => {
+                                        if (1 <= resUpdatedDelay02) {
+                                            console.log('Update sucessfully delay report = 02!');
+                                        }
+                                    });
+                                }
                             }
+
                             // Update  SCRP_MOD_CD = 0 continute request to scrapping service
                             else {
                                 cicService.updateScrpModCdHasNoResponseFromScraping(niceSessionKey).then(() => {

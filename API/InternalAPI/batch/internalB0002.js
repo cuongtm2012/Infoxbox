@@ -66,7 +66,7 @@ module.exports = class internalJob {
 
                             }).catch((error) => {
                                 console.log("error call to internal_cic url B0002~~", error);
-                                cicService.updateScrpModCdHasNoResponseFromScraping(element.NICE_SSIN_ID).then(() => {
+                                cicService.updateScrpModCdTryCntHasNoResponseFromScraping(element.NICE_SSIN_ID).then(() => {
                                     console.log("update SCRP_MOD_CD = 00 ");
                                     // Restart internal
                                     runRestartPm2.restartInternal();
