@@ -365,6 +365,48 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     }
 }
 
+async function updateScrpModCdTryCntHasNoResponseFromScraping(req) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET SCRP_MOD_CD  = '00', CIC_USED_ID = null, TRY_COUNT = null
+                WHERE NICE_SSIN_ID =:NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: { val: req }
+            },
+            { autoCommit: true },
+        );
+
+        console.log("updateScrpModCdHasNoResponseFromScraping trycount updated::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 async function updateCICReportInquiryReadyToRequestScraping(req) {
     let connection;
 
@@ -417,7 +459,7 @@ async function startProcessB0003() {
         //get curremt time
         // let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim, a.login_id, a.login_pw
+        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim, a.login_id, a.login_pw, a.sys_dtim
         FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
         WHERE a.SCRP_STAT_CD = '04'
             and a.SCRP_MOD_CD = '00'
@@ -649,3 +691,4 @@ module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdError
 module.exports.updateListScrpStatCdErrorResponseCodeScraping = updateListScrpStatCdErrorResponseCodeScraping;
 module.exports.startProcessB1003 = startProcessB1003;
 module.exports.selectExcuteA0001 = selectExcuteA0001;
+module.exports.updateScrpModCdTryCntHasNoResponseFromScraping = updateScrpModCdTryCntHasNoResponseFromScraping;
