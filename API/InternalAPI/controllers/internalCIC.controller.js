@@ -565,13 +565,13 @@ exports.internalCICB0003 = function (req, res, next) {
                                 });
                             }
                         }
-                        // Update  SCRP_MOD_CD = 0 continute request to scrapping service
-                        else {
-                            cicService.updateCICReportInquiryReadyToRequestScraping(niceSessionKeyUpdateStatus).then(() => {
-                                console.log(" B0003 uppdate case output B0003 empty ");
-                                return next();
-                            });
-                        }
+                        // // Update  SCRP_MOD_CD = 0 continute request to scrapping service
+                        // else {
+                        //     cicService.updateCICReportInquiryReadyToRequestScraping(niceSessionKeyUpdateStatus).then(() => {
+                        //         console.log(" B0003 uppdate case output B0003 empty ");
+                        //         return next();
+                        //     });
+                        // }
                     });
 
                 }
