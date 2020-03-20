@@ -39,7 +39,15 @@ var RESCODEEXT = {
     INQDateInvalid: { value: 39, name: "searchDateFrom should be same or earlier than searchDateTo", code: "F039" },
     CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" },
     FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
-    TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" }
+    TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
+    ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" }
+};
+
+const OracleError = {
+    ErrorDatabaseConnection: { code: "ORA-12537", errMsg: "Error: ORA-12537: TNS:connection closed", value: 12537 },
+    ErrorOIDGenerationFailed: { code: "ORA-21561", errMsg: "Error: ORA-21561: OID generation failed", value: 21561 },
+    ErrorTNSLostContact: { code: "ORA-12547", errMsg: "Error: ORA-12547: TNS:lost contact", value: 12547 },
+    ErrorTNSLostContact: { code: "ORA-12170", errMsg: "Error: ORA-12170: TNS:Connect timeout occurred", value: 12170 }
 };
 
 var SCRAPPINGERRORCODE = {
@@ -158,3 +166,4 @@ module.exports.ProductCode = ProductCode;
 module.exports.InfoProvConcent = InfoProvConcent;
 module.exports.NiceProductCode = NiceProductCode;
 module.exports.StatusCodeBatchProcess = StatusCodeBatchProcess;
+module.exports.OracleError = OracleError;
