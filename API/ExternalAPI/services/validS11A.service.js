@@ -35,8 +35,8 @@ async function selectFiCode(fiCode, goodCode) {
 
         return result.rows;
     } catch (err) {
-        console.log(err);
-        // return res.status(400);
+        console.log('err:', err);
+        return err;
     } finally {
         if (connection) {
             try {

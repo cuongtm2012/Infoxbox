@@ -39,5 +39,10 @@ module.exports = {
             return string.replace(regex, '');
         else
             return string;
+    },
+
+    getOracleCode: function (msg) {
+        let _result = msg.toString();
+        return '[' + _result.split(':')[1].split(':')[0].trim() + ']';
     }
 }
