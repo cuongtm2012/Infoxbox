@@ -47,7 +47,8 @@ const OracleError = {
     ErrorDatabaseConnection: { code: "ORA-12537", errMsg: "Error: ORA-12537: TNS:connection closed", value: 12537 },
     ErrorOIDGenerationFailed: { code: "ORA-21561", errMsg: "Error: ORA-21561: OID generation failed", value: 21561 },
     ErrorTNSLostContact: { code: "ORA-12547", errMsg: "Error: ORA-12547: TNS:lost contact", value: 12547 },
-    ErrorTNSLostContact: { code: "ORA-12170", errMsg: "Error: ORA-12170: TNS:Connect timeout occurred", value: 12170 }
+    ErrorTNSLostContact: { code: "ORA-12170", errMsg: "Error: ORA-12170: TNS:Connect timeout occurred", value: 12170 },
+    ErrorTNSLostContact: { code: "ORA-01017", errMsg: "Error: ORA-01017: invalid username/password; logon denied", value: 01017 }
 };
 
 var SCRAPPINGERRORCODE = {
