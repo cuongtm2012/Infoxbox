@@ -15,7 +15,7 @@ var config = {
 	},
 	redis: {
 		host: 'localhost',
-		port: 6379
+		port: 9411
 	},
 	server: {
 		host: '127.0.0.1',
