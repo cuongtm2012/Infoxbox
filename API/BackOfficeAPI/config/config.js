@@ -19,7 +19,7 @@ var config = {
 	},
 	server: {
 		host: '127.0.0.1',
-		port: '3200'
+		port: '3401'
 	},
 	email: {
 		service: 'Gmail',
