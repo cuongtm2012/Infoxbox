@@ -4,8 +4,9 @@ let dbconfig = require('../../shared/config/dbconfig');
 var _ = require('lodash');
 
 exports.queryOracel = async function (res, sql, param, option) {
+    let connection;
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(dbconfig);
         let result = await this.connection.execute(
             sql, param, option);
         console.log(result);
