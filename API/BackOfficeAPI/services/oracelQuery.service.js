@@ -7,21 +7,21 @@ exports.queryOracel = async function (res, sql, param, option) {
     let connection;
     try {
         connection = await oracledb.getConnection(dbconfig);
-        let result = await this.connection.execute(
+        let result = await connection.execute(
             sql, param, option);
         console.log(result);
-            if (!(result.rows === undefined)) {
-                res.status(200).send(result.rows)
-            } else {
-                res.status(200).send(result);
-            }
+        if (!(result.rows === undefined)) {
+            res.status(200).send(result.rows)
+        } else {
+            res.status(200).send(result);
+        }
     } catch (err) {
         console.log(err);
-        res.send({error: 1});
+        res.send({ error: 1 });
     } finally {
-        if (this.connection) {
+        if (connection) {
             try {
-                await this.connection.close();
+                await connection.close();
             } catch (error) {
                 console.log(error);
             }
@@ -30,9 +30,10 @@ exports.queryOracel = async function (res, sql, param, option) {
 }
 
 exports.queryGetTotalRow = async function (res, sql, param, option) {
+    let connection;
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
-        let result = await this.connection.execute(
+        connection = await oracledb.getConnection(dbconfig);
+        let result = await connection.execute(
             sql, param, option);
         console.log(result);
         if (!(result.rows === undefined)) {
@@ -42,9 +43,9 @@ exports.queryGetTotalRow = async function (res, sql, param, option) {
         return err;
     } finally {
 
-        if (this.connection) {
+        if (connection) {
             try {
-                await this.connection.close();
+                await connection.close();
             } catch (error) {
                 console.log(error);
             }
