@@ -17,6 +17,8 @@ const optionFormatObj = {
 const optionAutoCommit = { 
     autoCommit: true 
 };
+const mailHost = 'smtp.gmail.com';
+const mailPort = 465;
 exports.login = function (req, res) {
     try {
         var jwt = require('jsonwebtoken');
@@ -52,25 +54,6 @@ exports.login = function (req, res) {
     }
 };
 
-exports.checkemail = async function (req, res) {
-    sqlCheckUser = `SELECT  * FROM TB_ITUSER where USER_NM = :user_name`;
-    params = { user_name: { val: req.body.username } };
-    oracelService.queryOracel(res, sqlCheckUser, params, optionFormatObj).then(result => {
-        if (result.rows.length >= 1) {
-            res.send({ msg: 0 });
-        } else {
-            emailExistence.check(req.body.email, async function (error, response) {
-                console.log('res: ' + response);
-                if (response === true) {
-                    res.send({ msg: 1 })
-                } else {
-                    res.send({ msg: 2 })
-                }
-            });
-        }
-    });
-};
-
 exports.register = async function (req, res) {
     var username = req.body.username;
     var custCd = req.body.custCd;
@@ -84,7 +67,7 @@ exports.register = async function (req, res) {
     var systemDate = req.body.systemDate;
     var workId = req.body.workId;
     
-    var params = {
+    let params = {
         user_id: { val: null },
         user_name: { val: username },
         custCd: { val: custCd },
@@ -97,43 +80,48 @@ exports.register = async function (req, res) {
         addressUser: { val: addressUser },
         systemDate: { val: systemDate },
         workId: { val: workId }
-    }
-    var sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
+    };
+    let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
     oracelService.queryOracel(res, sql, params, optionAutoCommit);
 };
 
 
-exports.sendEmail = function (req, res) {
+exports.sendEmail = async function (req, res) {
     var userName = req.body.username;
-    var pincode = Math.floor(100000 + Math.random() * 900000);
-    var smtpTransport = nodemailer.createTransport({
-        service: config.email.service,
-        auth: {
-            user: config.email.user,
-            pass: config.email.password
-        }
-    });
+    var email = req.body.email;
+    let sqlCheckUser = `SELECT  * FROM TB_ITUSER WHERE USER_NM = :user_name`;
+    let params = { user_name: { val: userName } };
+    let isExit = await oracelService.checkIsExistUserName(res, sqlCheckUser, params, optionFormatObj);
+    if(isExit[0]) {
+        return res.status(500).send({message: 'User Name has been used!'});
+    } else {
+        var pincode = Math.floor(100000 + Math.random() * 900000);
+        var smtpTransport = nodemailer.createTransport({
+            host: mailHost,
+            port: mailPort,
+            secure: true,
+            auth: {
 
-    mailOptions = {
-        to: req.body.email,
-        subject: config.email.header,
-        html: config.email.body.replace('$userName', userName).replace('$pincode', pincode)
+                user: config.email.user,
+                pass: config.email.password
+            }
+        });
+
+        mailOptions = {
+            from: config.email.user,
+            to: email,
+            subject: config.email.header,
+            html: config.email.body.replace('$userName', userName).replace('$pincode', pincode)
+        };
+        await smtpTransport.sendMail(mailOptions, function (error, response) {
+            if (error) {
+                res.status(500).send({message: error})
+            } else {
+                console.log("Message sent: ");
+                res.status(200).send({message: 'Mail sent to ' + email, PinCode: pincode});
+            }
+        });
     }
-    redisApi.set(redisApi.PINCODE_PREFIX + req.body.email, pincode, function (err, reply) {
-        if (err) {
-            console.log('Store pincode error : ' + err);
-        } else {
-            smtpTransport.sendMail(mailOptions, function (error, response) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log("Message sent: ");
-                    res.status(200).send({ msg: 'ok' });
-                }
-            });
-            console.log('Store pincode : ' + reply);
-        }
-    });
 };
 
 exports.getCodeEmail = function (req, res) {
