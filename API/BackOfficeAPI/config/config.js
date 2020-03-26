@@ -15,7 +15,7 @@ var config = {
 	},
 	redis: {
 		host: 'localhost',
-		port: 9411
+		port: 6379
 	},
 	server: {
 		host: '127.0.0.1',
@@ -23,10 +23,10 @@ var config = {
 	},
 	email: {
 		service: 'Gmail',
-		user: 'cuong8888q@gmail.com',
-		password: 'vanthe010',
+		user: 'hoangdt@infoplusvn.com',
+		password: 'Choangccbenhim12329619922002',
 		header: '[InfoCity] RESET PIN CODE',
-		body: '<p>Hello Mr/Ms. <b>$userName</b>,</p> <p>Your PIN Code has already been reset.</p><p>Your new PIN code is <b>$pincode</b>.</p><p>If there is any request, please contact us by HOTLINE <b>19006198</b> to be supported.</p><p>Regards,</p><p>InfoCity Management.</p>'
+		body: '<p>Hello Mr/Ms. <b>$userName</b>,</p> <p>Your PIN Code has already for active account.</p><p>PIN code is <b>$pincode</b>.</p><p>If there is any request, please contact us by HOTLINE <b>19006198</b> to be supported.</p><p>Regards,</p><p>InfoCity Management.</p>'
 	},
 	log: {
 		orgLog: '../../logs/BackOffice'

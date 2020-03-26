@@ -53,3 +53,27 @@ exports.queryGetTotalRow = async function (res, sql, param, option) {
     }
 }
 
+
+exports.checkIsExistUserName = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        console.log(result);
+        if (!(result.rows === undefined)) {
+            return result.rows;
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
