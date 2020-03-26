@@ -59,30 +59,20 @@ exports.register = async function (req, res) {
     var custCd = req.body.custCd;
     var password = req.body.password;
     var typeUser = req.body.typeUser;
-    var startDate = req.body.startDate;
-    var endDate = req.body.endDate;
-    var mobileUser = req.body.mobileUser;
     var email = req.body.email;
-    var addressUser = req.body.addressUser;
     var systemDate = req.body.systemDate;
-    var workId = req.body.workId;
-    
+
     let params = {
         user_id: { val: null },
         user_name: { val: username },
         custCd: { val: custCd },
         password: { val: bcrypt.hashSync(password, saltRounds) },
         typeUser: { val: typeUser },
-        startDate: { val: startDate },
-        endDate: { val: endDate },
-        mobileUser: { val: mobileUser },
         email: { val: email },
-        addressUser: { val: addressUser },
         systemDate: { val: systemDate },
-        workId: { val: workId }
     };
-    let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :startDate, :endDate, :mobileUser, :addressUser,:email , :systemDate, :workId)`;
-    oracelService.queryOracel(res, sql, params, optionAutoCommit);
+    let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW  , EMAIL, SYS_DTIM) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :email , :systemDate)`;
+    await oracelService.queryOracel(res, sql, params, optionAutoCommit);
 };
 
 
