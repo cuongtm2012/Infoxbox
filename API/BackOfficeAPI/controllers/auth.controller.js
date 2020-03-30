@@ -61,7 +61,6 @@ exports.register = async function (req, res) {
     var typeUser = req.body.typeUser;
     var email = req.body.email;
     var systemDate = req.body.systemDate;
-
     let params = {
         user_id: { val: null },
         user_name: { val: username },
@@ -71,8 +70,15 @@ exports.register = async function (req, res) {
         email: { val: email },
         systemDate: { val: systemDate },
     };
+    let sqlCheckUser = `SELECT  * FROM TB_ITUSER WHERE USER_NM = :user_name`;
+    let paramsCheckUserName = { user_name: { val: username } };
+    let isExit = await oracelService.checkIsExistUserName(res, sqlCheckUser, paramsCheckUserName, optionFormatObj);
+    if(isExit[0]) {
+        return res.status(500).send({message: "User Name [" +  username + "] has been used!"});
+    } else {
     let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW  , EMAIL, SYS_DTIM) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :email , :systemDate)`;
     await oracelService.queryOracel(res, sql, params, optionAutoCommit);
+    }
 };
 
 
@@ -83,7 +89,7 @@ exports.sendEmail = async function (req, res) {
     let params = { user_name: { val: userName } };
     let isExit = await oracelService.checkIsExistUserName(res, sqlCheckUser, params, optionFormatObj);
     if(isExit[0]) {
-        return res.status(500).send({message: 'User Name has been used!'});
+        return res.status(500).send({message: 'User Name ' +  userName + 'has been used!'});
     } else {
         var pincode = Math.floor(100000 + Math.random() * 900000);
         var smtpTransport = nodemailer.createTransport({
