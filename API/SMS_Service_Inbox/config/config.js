@@ -5,7 +5,7 @@ var config = {
     TemSMS: {
         APPLE_LINK : ' https://apple.co/2WToDDG ',
         ANDROID_LINK : ' https://bit.ly/39vFgrI ',
-        MOBILE_LINK: ' https://192.168.22.179:4200/banks?phone='
+        MOBILE_LINK: ' https://103.112.124.129:4200/banks?phone='
     },
     FinalSMS_1 : `Cam on quy khach su dung dich vu InfoBox. Quy khach vui long tai app tai IOS:`,
     FinalSMS_2 : `hoac Android:`,
