@@ -23,7 +23,7 @@ var RESCODEEXT = {
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     InvalidTaskCode: { value: 20, name: "Invalid task code", code: "F020" },
-    NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
+    NOTEXIST: { value: 21, name: "No result for input NICE session key and FI code", code: "F021" },
     InvalidNiceProductCode: { value: 22, name: "Invalid NICE product code(no contract for this product)", code: "F022" },
     CICReportInqReqFaliure: { value: 25, name: "CIC report inquiry request failure(timeout)", code: "F025" },
     NINAME: { value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
@@ -74,7 +74,12 @@ const ScrappingResponseCodeLoginFailure = {
     LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
     LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
     LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
-    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 }
+    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
+    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
+};
+
+const ScrappingResponseCodeCicMobilerror = {
+    CicIdINQError999: { code: 'A0001-999', errMsg: '[A0001-999] Exception message', value: 999 }
 };
 
 const ScrappingResponseCodeCicINQError = {
@@ -124,6 +129,7 @@ const ScrapingStatusCode = {
     CicIdInqError: { code: '21' },
     CicReportInqError: { code: '22' },
     CicReportResultInqError: { code: '23' },
+    CicReportResultNotExist: { code: '24' },
     OtherError: { code: '29' }
 };
 
@@ -168,3 +174,4 @@ module.exports.InfoProvConcent = InfoProvConcent;
 module.exports.NiceProductCode = NiceProductCode;
 module.exports.StatusCodeBatchProcess = StatusCodeBatchProcess;
 module.exports.OracleError = OracleError;
+module.exports.ScrappingResponseCodeCicMobilerror = ScrappingResponseCodeCicMobilerror;

@@ -80,7 +80,7 @@ exports.cics37Rqst = function (req, res) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cics37RQSTRes(req.body, preResponse);
-               
+
                 return res.status(500).json(responseData);
             }
             //End check params request
@@ -243,6 +243,22 @@ exports.cics37Rqst = function (req, res) {
                                                     });
 
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code));
+                                                }
+                                                else
+                                                    console.log('Update scraping status failure!');
+                                            });
+                                        } else {
+                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                                if (1 <= rslt) {
+                                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.ETCError.code);
+
+                                                    // update INQLOG
+                                                    let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.ETCError.code);
+                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                        console.log('insert INQLOG:', r);
+                                                    });
+
+                                                    return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code));
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
@@ -450,7 +466,7 @@ exports.cics37RSLT = function (req, res) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cics37RQSTRes(req.body, preResponse);
-               
+
                 return res.status(500).json(responseData);
             }
             //End check params request
