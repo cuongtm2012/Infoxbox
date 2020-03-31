@@ -23,8 +23,8 @@ var config = {
 	},
 	email: {
 		service: 'Gmail',
-		user: 'hoangdt@infoplusvn.com',
-		password: 'Choangccbenhim12329619922002',
+		user: 'cuong8888q@gmail.com',
+		password: 'vanthe010',
 		header: '[InfoCity] RESET PIN CODE',
 		body: '<p>Hello Mr/Ms. <b>$userName</b>,</p> <p>Your PIN Code has already for active account.</p><p>PIN code is <b>$pincode</b>.</p><p>If there is any request, please contact us by HOTLINE <b>19006198</b> to be supported.</p><p>Regards,</p><p>InfoCity Management.</p>'
 	},
