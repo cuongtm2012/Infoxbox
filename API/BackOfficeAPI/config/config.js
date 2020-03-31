@@ -13,10 +13,6 @@ var config = {
 			idle: 10000
 		  }
 	},
-	redis: {
-		host: 'localhost',
-		port: 9411
-	},
 	server: {
 		host: '127.0.0.1',
 		port: '3400'

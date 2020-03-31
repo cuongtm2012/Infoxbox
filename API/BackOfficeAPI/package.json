@@ -32,8 +32,6 @@
     "node-uuid": "^1.4.8",
     "nodemailer": "^6.4.2",
     "oracledb": "^4.1.0",
-    "redis": "^2.8.0",
-    "redis-cli": "^1.4.0",
     "winston": "^2.4.3"
   }
 }

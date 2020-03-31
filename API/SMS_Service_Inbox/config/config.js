@@ -3,7 +3,7 @@ var config = {
     URL_REQUEST_LIVE: 'http://app.sms.fpt.net',
     URL_REQUEST_SANBOX: 'http://sandbox.sms.fpt.net',
     TemSMS: {
-        MOBILE_WEB_LINK : ' https://bit.ly/39uEnQ0'
+        MOBILE_WEB_LINK: ' https://bit.ly/3ap6LEy'
     },
     database: {
         host: '1.55.215.214',
@@ -21,10 +21,6 @@ var config = {
     },
     log: {
         orgLog: '../../logs'
-    },
-    redis: {
-        host: 'localhost',
-        port: 9411
     },
     server: {
         host: '127.0.0.1',
