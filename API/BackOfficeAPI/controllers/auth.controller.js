@@ -10,7 +10,6 @@ var salt = bcrypt.genSaltSync(saltRounds);
 const config = require('../config/config')
 var emailExistence = require('email-existence');
 var nodemailer = require('nodemailer');
-var redisApi = require('./../redis/redisApi');
 const optionFormatObj = {
     outFormat: oracledb.OUT_FORMAT_OBJECT
 };
@@ -118,21 +117,5 @@ exports.sendEmail = async function (req, res) {
             }
         });
     }
-};
-
-exports.getCodeEmail = function (req, res) {
-    var email = req.body.email;
-    redisApi.get(redisApi.PINCODE_PREFIX + email, function (err, reply) {
-        console.log(reply);
-        if (err) {
-            res.status(404).send(err);
-            return;
-        }
-        if (validation.isEmptyStr(reply)) {
-            res.status(404).send('');
-        } else {
-            res.status(200).send(reply);
-        }
-    });
 };
 
