@@ -15,11 +15,11 @@ otpFunction = async function () {
             // await checkTableExist();
             const getData = await DataController.getPhoneNumber();
             if (getData.length > 0) {
+                await DataController.updateTryCountAfterGetPhoneNumber(getData[0].NICE_SSIN_ID,getData[0].TRY_COUNT);
                 const getValidPhone = await validatePhone.isPhoneNumber(getData);
                 for (const phone of getValidPhone) {
-                    console.log(phone);
                     // if (phone.TYPE_SMS === 0) {
-                        await updateAfterSend(phone);
+                    await updateAfterSend(getData[0]);
                     // } else {
                     //     await updateAfterSendCampaign(phone);
                     // }
@@ -47,13 +47,13 @@ otpFunction = async function () {
 //     }
 // };
 
-let updateAfterSend = async function (phone) {
+let updateAfterSend = async function (data) {
     try {
-        const result = await sendOTP(phone);
+        const result = await sendOTP(data);
         console.log(result);
         if (result) {
             console.log("---------------------------insert+update+delete-------------------------------");
-            await DataController.updateSCRP_MOD_CD(phone.PHONE);
+            await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE);
         } else {
             console.log("---------------------------insert+update+delete-------------------------------");
         }
@@ -83,7 +83,7 @@ let sendOTP = async function (phone) {
     try {
         console.log("========================= get auth for sending otp ==================");
         const getAuth = await OtpController.getAuth();
-        let otp = new otpDomain(getAuth.access_token, 'abcd', 'FTI', phone.PHONE, phone.PHONE);
+        let otp = new otpDomain(getAuth.access_token, 'abcd', 'FTI', phone.TEL_NO_MOBILE, phone);
         console.log(otp);
         const sendSMS = await OtpController.sendBrandNameOTP(otp);
         return sendSMS;

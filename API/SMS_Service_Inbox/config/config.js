@@ -2,6 +2,9 @@ require('dotenv').config();
 var config = {
     URL_REQUEST_LIVE: 'http://app.sms.fpt.net',
     URL_REQUEST_SANBOX: 'http://sandbox.sms.fpt.net',
+    TemSMS: {
+        MOBILE_WEB_LINK : ' https://bit.ly/3ap6LEy'
+    },
     database: {
         host: '1.55.215.214',
         user: 'root',
