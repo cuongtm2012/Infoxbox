@@ -10,11 +10,25 @@ const moment = require('moment-timezone');
 let timeOutput = moment().tz("Asia/Bangkok").format();
 
 exports.getPhoneNumber = async function () {
-    let SELECT = 'SELECT TEL_NO_MOBILE AS PHONE FROM TB_SCRPLOG ';
-    let WHERE = ` WHERE GDS_CD = 'S1003' AND SCRP_MOD_CD = '00' AND SCRP_STAT_CD = '01' AND AGR_FG = 'Y' AND LOGIN_PW is null FETCH NEXT 1 ROWS ONLY `;
+    let SELECT = 'SELECT * FROM TB_SCRPLOG ';
+    let WHERE = ` WHERE GDS_CD = 'S1003' AND TRY_COUNT <= 3 OR TRY_COUNT IS NULL AND SCRP_MOD_CD = '00' AND SCRP_STAT_CD = '01' AND AGR_FG = 'Y' AND LOGIN_PW is null FETCH NEXT 1 ROWS ONLY `;
     let sql = SELECT + WHERE;
     return await queryOracle(sql, params, optionSelect);
 
+};
+
+exports.updateTryCountAfterGetPhoneNumber = async function (niceSSKey,tryCount) {
+    let SQL = `UPDATE TB_SCRPLOG SET TRY_COUNT = :tryCount WHERE NICE_SSIN_ID = :niceSSKey`;
+    if(!tryCount) {
+        tryCount = 1;
+    } else {
+        tryCount++ ;
+    }
+    let paramUpdate = {
+        niceSSKey,
+        tryCount
+    };
+    return await queryOracle(SQL, paramUpdate, optionCommit);
 };
 
 exports.updateRegisteredMSG = async function (RSLT, STATUS_SMS, phone) {
@@ -74,7 +88,7 @@ exports.deleteMSG = async function (phone) {
 exports.createTable = async function () {
     const dateCreate = dateService.formatDateForTable(timeOutput);
     let sql = "CREATE TABLE " + "MSG_TABLE_" + dateCreate
-    + " (MSGKEY INT NOT NULL PRIMARY KEY, COMPKEY VARCHAR(20) NOT NULL, PHONE VARCHAR(12) NOT NULL, STATUS_SMS INT NOT NULL, INPUT_DATE TIMESTAMP NULL, SEND_DATE TIMESTAMP NULL, RSLT_DATE TIMESTAMP NULL, RSLT INT NULL, MSG VARCHAR(500) NULL, TYPE_SMS INT NOT NULL)";
+        + " (MSGKEY INT NOT NULL PRIMARY KEY, COMPKEY VARCHAR(20) NOT NULL, PHONE VARCHAR(12) NOT NULL, STATUS_SMS INT NOT NULL, INPUT_DATE TIMESTAMP NULL, SEND_DATE TIMESTAMP NULL, RSLT_DATE TIMESTAMP NULL, RSLT INT NULL, MSG VARCHAR(500) NULL, TYPE_SMS INT NOT NULL)";
     return queryOracle(sql, params, optionCommit);
 };
 

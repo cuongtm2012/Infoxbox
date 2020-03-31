@@ -85,6 +85,13 @@ exports.internalCIC = function (req, res, next) {
                                 else
                                     console.log('Update scraping status failure!');
                             });
+                        } else {
+                            cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                if (1 <= rslt)
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.ETCError.code);
+                                else
+                                    console.log('Update scraping status failure!');
+                            });
                         }
                     }
                     // CIC ID inquiry error
@@ -646,6 +653,13 @@ exports.internalCICB0003 = function (req, res, next) {
                             cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
                                 if (1 <= rslt)
                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.S37ReportScreenAccsError.code);
+                                else
+                                    console.log('Update scraping status failure!');
+                            });
+                        } else {
+                            cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                if (1 <= rslt)
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.ETCError.code);
                                 else
                                     console.log('Update scraping status failure!');
                             });
