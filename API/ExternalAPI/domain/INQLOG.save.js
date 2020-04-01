@@ -14,10 +14,12 @@ module.exports = function DataInqLogSave(params, respCd) {
         oldNatId,
         passportNumber,
         cicId,
-        infoProvConcent
+        infoProvConcent,
+        mobilePhoneNumber
     } = params;
 
     let _niceSessionKey;
+    let _oldNatId = oldNatId ? oldNatId : mobilePhoneNumber;
 
     if (!_.isEmpty(niceSessionKey) && (_.isEqual(responseCode.TaskCode.CIC_S11A_RQST.code, taskCode) || _.isEqual(responseCode.TaskCode.CIC_S37_RQST.code, taskCode) || _.isEqual(responseCode.TaskCode.CIC_MACR_RQST.code, taskCode)))
         _niceSessionKey = niceSessionKey;
@@ -31,7 +33,7 @@ module.exports = function DataInqLogSave(params, respCd) {
     this.taskCode = taskCode ? taskCode.substring(0, 100) : null;
     this.natId = natId ? natId : null;
     this.taxCode = taxCode ? taxCode : null;
-    this.oldNatId = oldNatId ? oldNatId : null;
+    this.oldNatId = _oldNatId ? _oldNatId : null;
     this.passportNumber = passportNumber ? passportNumber : null;
     this.cicId = cicId ? cicId : null;
     this.inquiryDate = inquiryDate ? inquiryDate : null;

@@ -30,7 +30,7 @@ var RESCODEEXT = {
     NIMOBILEPHONENUMBER: { value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027" },
     ErrorDecryptError: { value: 33, name: "Login password decrypt error", code: "F033" },
     DuplicateAppOfCICReportADay: { value: 34, name: "Duplicated application of CIC report in a day", code: "F034" },
-    InvalidMobileNumber: { value: 44, name: "Invalid mobile number", code: "F044" },
+    InvalidMobileNumber: { value: 41, name: "Mobile phone number error", code: "F041" },
     TimeoutError: { value: 42, name: "Timeout error", code: "F042" },
     UNKNOW: { value: 400, name: "UNKNOW (No result query)", code: "400" },
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" },
