@@ -10,7 +10,6 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     } = response;
 
     const {
-        S_REQ_STATUS,
         SCRP_STAT_CD,
         INQ_DTIM,
         SYS_DTIM,
@@ -47,7 +46,6 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : '';
     this.cicReportRequestDate = INQ_DTIM;
     this.cicReportResponseDate = SYS_DTIM ? SYS_DTIM.substring(0, 8) : SYS_DTIM;
-    this.cicReportInquiryUserId = S_REQ_STATUS;
     this.name = PSN_NM;
     this.dateOfBirth = util.convertDateType(BIRTH_YMD);
     this.cicId = CIC_ID;
