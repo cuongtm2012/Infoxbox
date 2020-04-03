@@ -23,7 +23,7 @@ exports.getCustInfo = async function (req, res) {
      ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
     var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITCUST ';
-    var SQL_ORDER_BY = 'ORDER BY CUST_NM ';
+    var SQL_ORDER_BY = 'ORDER BY CUST_NM_ENG ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)) {
@@ -46,7 +46,7 @@ exports.getCustInfo = async function (req, res) {
     if ((custClassicfication) && (cusCd) && (custNm)) {
         let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
                                 'AND CUST_CD LIKE :cusCd ' +
-                                'AND CUST_NM LIKE :custNm ';
+                                'AND CUST_NM_ENG LIKE :custNm ';
         sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
@@ -107,7 +107,7 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm)) {
-        let SQL_WHERE_SEARCH = 'WHERE CUST_NM LIKE :custNm ';
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM_ENG LIKE :custNm ';
         sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
@@ -147,7 +147,7 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if ((custClassicfication) && _.isEmpty(cusCd) && (custNm)) {
-        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND CUST_NM LIKE :custNm ';
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND CUST_NM_ENG LIKE :custNm ';
         sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
@@ -168,7 +168,7 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && (custNm)) {
-        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd AND CUST_NM LIKE :custNm ';
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd AND CUST_NM_ENG LIKE :custNm ';
         sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
