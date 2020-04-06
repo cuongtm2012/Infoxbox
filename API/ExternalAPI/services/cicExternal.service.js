@@ -71,11 +71,19 @@ async function insertINQLOG(req) {
 
     try {
         let sql, result;
+        let _OTR_ID;
 
         let sysDim = convertTime.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
         connection = await oracledb.getConnection(dbconfig);
+
+        if (_.isEmpty(req.oldNatId))
+            _OTR_ID = req.passportNumber;
+        else if (_.isEmpty(req.passportNumber))
+            _OTR_ID = req.oldNatId;
+        else
+            _OTR_ID = req.oldNatId + "," + req.passportNumber;
 
         sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID) 
         VALUES (:INQ_LOG_ID, :CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID)`;
@@ -89,7 +97,7 @@ async function insertINQLOG(req) {
                 TX_GB_CD: { val: req.taskCode },
                 NATL_ID: { val: req.natId },
                 TAX_ID: { val: req.taxCode },
-                OTR_ID: { val: req.oldNatId + "," + req.passportNumber },
+                OTR_ID: { val: _OTR_ID },
                 CIC_ID: { val: req.cicId },
                 INQ_DTIM: { val: req.inquiryDate },
                 AGR_FG: { val: req.infoProvConcent },

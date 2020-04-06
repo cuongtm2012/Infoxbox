@@ -34,7 +34,7 @@ module.exports = {
     },
 
     replaceSpacialCharacter: function (string) {
-        const regex = /[`~!@#$%^&*()_|+\=?;:'",.<>br\{\}\[\]\\\/]/gi;
+        const regex = /[`~!@#$%^&*()_|\=?;:'",.\{\}\[\]\\]/gi;
         if (!validation.isEmptyStr(string))
             return string.replace(regex, '');
         else
@@ -44,5 +44,12 @@ module.exports = {
     getOracleCode: function (msg) {
         let _result = msg.toString();
         return '[' + _result.split(':')[1].split(':')[0].trim() + ']';
+    },
+
+    convertDateType: function (date) {
+        if (!validation.isEmptyStr(date) && date.length == 8)
+            return date.substring(4, 8) + date.substring(2, 4) + date.substring(0, 2);
+        else
+            return date;
     }
 }
