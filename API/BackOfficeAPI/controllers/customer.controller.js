@@ -387,7 +387,7 @@ exports.addCust = async function (req, res) {
     var addr = req.body.addr;
     var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
     var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var operationDate = req.body.operationDate.replace(/[^0-9 ]/g, "");;
+    var operationDate = req.body.operationDate.replace(/[^0-9 ]/g, "");
     var userID = req.body.userID;
     var status = 1;
     let param = {
@@ -425,6 +425,7 @@ exports.editCust = async function (req, res) {
     var prtOrganizationCD = req.body.prtOrganizationCD;
     var addr = req.body.addr;
     var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
     var status = req.body.status;
 
     var param = {
@@ -440,9 +441,10 @@ exports.editCust = async function (req, res) {
         prtOrganizationCD: { val: prtOrganizationCD },
         addr: { val: addr },
         validEndDT: { val: validEndDT },
+        validStartDT: { val: validStartDT },
         status: {val: status}
     };
-    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_END_DT = :validEndDT , STATUS = :status WHERE CUST_GB = :classFication AND CUST_CD = :custCD `;
+    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_END_DT = :validEndDT , STATUS = :status WHERE CUST_GB = :classFication AND CUST_CD = :custCD AND VALID_START_DT = :validStartDT `;
     await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 
