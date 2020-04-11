@@ -8,7 +8,7 @@ module.exports.start = function () {
         internalCICB0002.cron((current, max) => {
             if (current == max) { // prevent process is running in array
                 // finish
-                console.log("call internall batch B0002~~~");
+                // console.log("call internall batch B0002~~~");
 
                 this.start();
             }

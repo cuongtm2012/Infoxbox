@@ -22,7 +22,7 @@ module.exports = class internalJob {
 
         cicService.startProcessB0003().then(resdata => {
             if (_.isEmpty(resdata)) {
-                console.log('No request!');
+                // console.log('No request!');
                 oncomplete(0, 0);
             } else {
                 // convert data follow login_id
