@@ -38,7 +38,7 @@ async function select01() {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
 
-        console.log("rows::", result.rows);
+        // console.log("rows::", result.rows);
 
         return result.rows;
 
@@ -478,7 +478,7 @@ async function startProcessB0003() {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
 
-        console.log("rows::", result.rows);
+        // console.log("rows::", result.rows);
 
         return result.rows;
         // return res.status(200).json(result.rows);
@@ -659,7 +659,7 @@ async function selectExcuteA0001() {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
 
-        console.log("rows::", result.rows);
+        // console.log("rows::", result.rows);
 
         return result.rows;
 

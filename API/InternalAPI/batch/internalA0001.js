@@ -22,7 +22,7 @@ module.exports = class internalJob {
         cicService.selectExcuteA0001().then(data => {
             // Get each object in array data
             if (_.isEmpty(data)) {
-                console.log('No request!');
+                // console.log('No request!');
                 oncomplete(0, 0);
             } else {
 
