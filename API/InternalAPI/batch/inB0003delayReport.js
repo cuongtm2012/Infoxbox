@@ -23,7 +23,7 @@ module.exports = class internalJob {
 
         cicDeplayReportService.selectDeplayReport().then(resdata => {
             if (_.isEmpty(resdata)) {
-                console.log('No request!');
+                // console.log('No request!');
                 oncomplete(0, 0);
             } else {
                 // convert data follow login_id
