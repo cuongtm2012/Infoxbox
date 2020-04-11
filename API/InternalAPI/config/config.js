@@ -15,7 +15,7 @@ var config = {
 	},
 	server: {
 		host: '127.0.0.1',
-		port: '3301'
+		port: '3300'
 	},
 	log: {
 		orgLog: '../../logs/Internal'
@@ -24,7 +24,7 @@ var config = {
 		TIME_OUT: 1 * 60 * 1000, //B0002 jov
 		TIME_OUT1: 3 * 60 * 1000, //B0003
 		TIME_OUT2: 30 * 60 * 1000, //Job no exist
-		TIME_OUT3: 20 * 1000, // Mobile A0001
+		TIME_OUT3: 5 * 1000, // Mobile A0001 5s
 		TIME_OUT_DELAY: 60 * 60 * 1000 // DelayReport 1h
 
 	},
