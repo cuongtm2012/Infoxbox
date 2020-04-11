@@ -34,7 +34,7 @@ module.exports = {
     },
 
     replaceSpacialCharacter: function (string) {
-        const regex = /[`~!@#$%^&*()_|\=?;:'",.\{\}\[\]\\]/gi;
+        const regex = /[`~!@#$%^&*()_|+\=?;:'",.<>br\{\}\[\]\\\/]/gi;
         if (!validation.isEmptyStr(string))
             return string.replace(regex, '');
         else
