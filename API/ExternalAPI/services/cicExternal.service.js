@@ -158,7 +158,7 @@ async function selectCICS11aRSLT(req) {
                                 where a.NICE_SSIN_ID = :niceSessionKey
                                 AND a.S_SVC_CD = 'B0003'
                                 AND b.CUST_CD = :fiCode
-                                AND b.CUST_SSID_ID like :fiSessionKey
+                                AND (b.CUST_SSID_ID like :fiSessionKey or b.CUST_SSID_ID is null)
                                 AND b.INQ_DTIM like :inquiryDate`;
 
         resultScrpTranlog = await connection.execute(
