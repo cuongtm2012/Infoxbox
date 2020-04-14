@@ -18,7 +18,8 @@ async function selectFiCode(fiCode, goodCode) {
                             where T.CUST_CD =:CUST_CD
                             and T.gds_cd like :gds_cd
                             and T.valid_start_dt <= :currentDate
-                            and T.valid_end_dt > :currentDate`;
+                            and T.valid_end_dt > :currentDate
+                            and T.STATUS = 1`;
 
         let result = await connection.execute(
             // The statement to execute
