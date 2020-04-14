@@ -35,14 +35,18 @@ exports.login = function (req, res) {
                     expiresIn: config.jwtExpiresIn
                 });
 
-                var resdata = reslt[0];
+                let resdata = reslt[0];
+                if (resdata.ACTIVE === 1) {
                 console.log("OK password");
-                var userData = new IUser(resdata, true, token);
+                let userData = new IUser(resdata, true, token);
 
                 return res.status(200).json(userData);
+                } else {
+                    return res.status(403).send({message: 'Your account not active by Admin. Please contact Admin to solve problems!'});
+                }
 
             } else {
-                var userData = new IUser({});
+                let userData = new IUser({});
                 return res.status(400).json(userData);
             }
         });
