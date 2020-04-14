@@ -13,10 +13,13 @@ exports.getUserInfo = async function (req, res) {
     var userID = req.query.userID ? '%' + req.query.userID + '%' : '';
     var userName = req.query.userName ? '%' + req.query.userName + '%' : '';
     var orgCode = req.query.orgCode ? '%' + req.query.orgCode + '%' : '';
+    var active = req.query.active ? req.query.active : '';
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
 
     var SQL_SELECT = `SELECT
+    TB_ROLE.ROLE as ROLE,
+    TB_ROLE.ROLE_ID as ROLE_ID,
     TB_ITCUST.CUST_NM as CUST_NM,
     TB_ITUSER.USER_ID as USER_ID,
     TB_ITUSER.USER_NM as USER_NM,
@@ -32,10 +35,10 @@ exports.getUserInfo = async function (req, res) {
     TB_ITUSER.WORK_ID as WORK_ID `;
     var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_ITUSER ';
-    var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD ';
-    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD INNER JOIN TB_ROLE ON TB_ITUSER.ROLE_ID = TB_ROLE.ROLE_ID ';
+    var SQL_LIMIT = ' OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
-    if (_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+    if (_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_LIMIT;
         let param = {
             currentLocation,
@@ -50,17 +53,18 @@ exports.getUserInfo = async function (req, res) {
         rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
-    if ((userClass) && (userID) && (userName) && (orgCode)) {
+    if ((userClass) && (userID) && (userName) && (orgCode) && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ' +
             'AND TB_ITUSER.USER_ID LIKE :userID ' +
             'AND TB_ITUSER.USER_NM LIKE :userName ' +
-            'AND TB_ITUSER.CUST_CD LIKE :orgCode ';
+            'AND TB_ITUSER.CUST_CD LIKE :orgCode AND TB_ITUSER.ACTIVE LIKE :active ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
             userClass,
             userID,
             orgCode,
             userName,
+            active,
             currentLocation,
             limitRow
         };
@@ -70,6 +74,7 @@ exports.getUserInfo = async function (req, res) {
             userID,
             orgCode,
             userName,
+            active,
         };
         let totalRow;
         let rowRs;
@@ -79,7 +84,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -99,7 +104,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -119,7 +124,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)) {
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -139,7 +144,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)) {
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -159,7 +164,27 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)) {
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)  && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.USER_ID LIKE :userID  ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -180,7 +205,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)) {
+    if((userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.USER_NM LIKE :userName  ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -202,7 +227,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)) {
+    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -224,7 +249,30 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode)) {
+
+    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.USER_NM LIKE :userName  ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -246,7 +294,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode)) {
+    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -268,7 +316,31 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode)) {
+
+
+    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
         let param = {
@@ -290,7 +362,53 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && (userID) && (userName) && _.isEmpty(orgCode)) {
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName AND TB_ITUSER.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userName,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userName,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode AND TB_ITUSER.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((userClass) && (userID) && (userName) && _.isEmpty(orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
                                 ' AND TB_ITUSER.USER_ID LIKE :userID ' +
                                 ' AND TB_ITUSER.USER_NM LIKE :userName ';
@@ -316,7 +434,7 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && (userID) && _.isEmpty(userName) && (orgCode)) {
+    if((userClass) && (userID) && _.isEmpty(userName) && (orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
                                 ' AND TB_ITUSER.USER_ID LIKE :userID ' +
                                 ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
@@ -342,7 +460,33 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((userClass) && _.isEmpty(userID) && (userName) && (orgCode)) {
+    if((userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode)  && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
+            ' AND TB_ITUSER.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userID,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userID,
+            active
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((userClass) && _.isEmpty(userID) && (userName) && (orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
                                 ' AND TB_ITUSER.USER_NM LIKE :userName ' +
                                 ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
@@ -368,7 +512,60 @@ exports.getUserInfo = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode)) {
+    if((userClass) && _.isEmpty(userID) && (userName) &&  _.isEmpty(orgCode)  && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
+            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            userName,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            userName,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+
+    if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) &&  (orgCode)  && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
+            ' AND TB_ITUSER.CUST_CD LIKE :orgCode ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userClass,
+            orgCode,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userClass,
+            orgCode,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
                                 ' AND TB_ITUSER.USER_NM LIKE :userName ' +
                                 ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
@@ -393,13 +590,236 @@ exports.getUserInfo = async function (req, res) {
         rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
+
+    if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
+                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+                                ' AND TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            userName,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            userName,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER.CUST_CD LIKE :orgCode ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userID,
+            orgCode,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userID,
+            orgCode,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
+                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+                                ' AND TB_ITUSER.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            userName,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+            userName,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+
+    if((userClass) && (userID) && (userName) && (orgCode) && _.isEmpty(active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
+            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+            ' AND TB_ITUSER.INOUT_GB LIKE :userClass ' +
+            ' AND TB_ITUSER.USER_ID LIKE :userID ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            userName,
+            userID,
+            userClass,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+            userName,
+            userID,
+            userClass,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
+            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER.USER_ID LIKE :userID ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            userName,
+            userID,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+            userName,
+            userID,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((userClass) && _.isEmpty(userID) && (userName) && (orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
+            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            userName,
+            userClass,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+            userName,
+            userClass,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((userClass) && (userID) && _.isEmpty(userName) && (orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
+            ' AND TB_ITUSER.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            orgCode,
+            userID,
+            userClass,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            orgCode,
+            userID,
+            userClass,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((userClass) && (userID) && (userName) && _.isEmpty(orgCode) && (active)) {
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName  ' +
+            ' AND TB_ITUSER.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let param = {
+            userName,
+            userID,
+            userClass,
+            active,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let paramSearch = {
+            userName,
+            userID,
+            userClass,
+            active,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
 };
 
 exports.createUser = async function (req, res) {
     var userName = req.body.userName;
     var custCd = req.body.orgCode;
     // var password = req.body.password;
-    var password = "nice1234";
     var userClass = req.body.userClass;
     var email = req.body.email;
     var finalOperaDate = req.body.finalOperaDate.replace(/[^0-9 ]/g, "");
@@ -414,7 +834,7 @@ exports.createUser = async function (req, res) {
         user_id: {val: null},
         user_name: {val: userName},
         custCd: {val: custCd},
-        password: {val: bcrypt.hashSync(password, saltRounds)},
+        password: {val: bcrypt.hashSync(defaultPW, saltRounds)},
         typeUser: {val: userClass},
         email: {val: email},
         systemDate: {val: finalOperaDate},
@@ -423,7 +843,8 @@ exports.createUser = async function (req, res) {
         phone: {val: phone},
         address: {val: address},
         workID: {val: workID},
-        active: {val: active}
+        active: {val: active},
+        role: {val: role}
     };
     let sqlCheckUser = `SELECT  * FROM TB_ITUSER WHERE USER_NM = :user_name`;
     let paramsCheckUserName = {user_name: {val: userName}};
@@ -431,77 +852,20 @@ exports.createUser = async function (req, res) {
     if (isExit[0]) {
         return res.status(500).send({message: "User Name [" + userName + "] has been used!"});
     } else {
-        let sql_insert = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW , VALID_START_DT , VALID_END_DT, TEL_NO_MOBILE , ADDR , WORK_ID  , EMAIL, SYS_DTIM , ACTIVE)
-         VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :validStartDT, :validEndDT , :phone, :address , :workID , :email , :systemDate ,:active)`;
+        let sql_insert = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW , VALID_START_DT , VALID_END_DT, TEL_NO_MOBILE , ADDR , WORK_ID  , EMAIL, SYS_DTIM , ACTIVE , ROLE_ID)
+         VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :validStartDT, :validEndDT , :phone, :address , :workID , :email , :systemDate ,:active , :role)`;
         let createAffect = await oracelService.createUser(res, sql_insert, params, optionAutoCommit);
         console.log(createAffect);
         if (createAffect.rowsAffected === 1) {
-            let sql_select = `SELECT USER_ID FROM TB_ITUSER WHERE USER_NM = :username `;
-            let paramSelect = {
-                username: userName
-            };
-            let userId = await oracelService.getUserByUserName(res, sql_select, paramSelect, optionFormatObj);
-            console.log(userId[0].USER_ID);
-            if (userId[0].USER_ID) {
-                let sql_setRole = `INSERT INTO TB_ADMIN (USER_ID , ROLE_ID) VALUES (:user_id , :roleId) `;
-                let paramSetRole = {
-                    user_id: userId[0].USER_ID,
-                    roleId: role
-                };
-                await oracelService.setRole(res, sql_setRole , paramSetRole , optionAutoCommit);
-            } else {
-                return res.status(500).send({message: "Error when set Role!"});
-            }
+            return res.status(200).send({message: 'Create User Successful'})
         } else {
             return res.status(500).send({message: "Error when save user!"});
         }
     }
 };
 
-exports.ssss = async function (req, res) {
-    try {
-    var userClass = req.body.userClass;
-    var userName = req.body.userName;
-    var orgCode = req.body.orgCode;
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var phone = req.body.phone;
-    var address = req.body.address;
-    var email = req.body.email;
-    var finalOperaDate = req.body.finalOperaDate.replace(/[^0-9 ]/g, "");;
-    var workID = req.body.workID;
-    var userPW = bcrypt.hashSync(defaultPW, saltRounds);
-
-
-    if(_.isEmpty(userName) || _.isEmpty(orgCode) ||
-        _.isEmpty(finalOperaDate) || _.isEmpty(userClass)) {
-        res.status(500).send({message: 'User Classification, User Name, Final Operation Date, Organization Code require not blank'});
-    } else {
-            var param = {
-                userName,
-                orgCode,
-                userClass,
-                userPW,
-                validStartDT,
-                validEndDT,
-                phone,
-                address,
-                email,
-                finalOperaDate,
-                workID
-            };
-            let SQL = 'INSERT INTO ADMIN.TB_ITUSER (USER_NM, CUST_CD, INOUT_GB, USER_PW, VALID_START_DT, VALID_END_DT, TEL_NO_MOBILE, ADDR, EMAIL, SYS_DTIM, WORK_ID) ' +
-                'VALUES(:userName, :orgCode, :userClass, :userPW, :validStartDT, :validEndDT, :phone, :address, :email, :finalOperaDate, :workID)';
-
-            await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
-        }
-    } catch (e) {
-        throw e;
-    }
-};
 exports.updateUser = async function (req, res) {
     var userClass = req.body.userClass;
-    var userName = req.body.userName;
     var orgCode = req.body.orgCode;
     var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
     var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
@@ -509,13 +873,10 @@ exports.updateUser = async function (req, res) {
     var address = req.body.address;
     var email = req.body.email;
     var userID = req.body.userID;
+    var role = req.body.role;
+    var active = req.body.active;
 
-    if(_.isEmpty(userName) || _.isEmpty(orgCode) ||
-         _.isEmpty(userClass)) {
-        res.status(500).send({message: 'User Classification, User Name, Organization Code require not blank'});
-    } else {
         var param = {
-            userName,
             userClass,
             orgCode,
             validStartDT,
@@ -524,13 +885,14 @@ exports.updateUser = async function (req, res) {
             address,
             email,
             userID,
+            active,
+            role
         };
 
         let SQL = 'UPDATE ADMIN.TB_ITUSER SET' +
-            ' USER_NM=:userName, CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email' +
+            '  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active , ROLE_ID=:role ' +
             ' WHERE USER_ID=:userID ';
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
-    }
 };
 
 exports.resetPassword = async function (req, res) {
