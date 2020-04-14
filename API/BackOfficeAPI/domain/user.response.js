@@ -1,14 +1,12 @@
 module.exports = function user_response(user) {
     const {
         USER_ID,
-        USER_NAME,
-        FULL_NAME,
+        USER_NM,
         EMAIL
 
     } = user;
 
-    this.username = USER_NAME;
-    this.fullname = FULL_NAME;
+    this.username = USER_NM;
     this.email = EMAIL;
     this.userid = USER_ID;
 }
