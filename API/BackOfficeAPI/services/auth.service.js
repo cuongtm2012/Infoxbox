@@ -17,7 +17,7 @@ async function getUser(req) {
 
         sql = `SELECT  * 
                 FROM TB_ITUSER
-                where USER_NM = :user_name`;
+                where USER_NM = :user_name AND ACTIVE = '1' `;
 
         result = await connection.execute(
             // The statement to execute

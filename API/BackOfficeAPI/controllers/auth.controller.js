@@ -1,4 +1,3 @@
-
 const oracledb = require('oracledb');
 const authService = require('../services/auth.service');
 const oracelService = require('../services/oracelQuery.service');
@@ -13,8 +12,8 @@ var nodemailer = require('nodemailer');
 const optionFormatObj = {
     outFormat: oracledb.OUT_FORMAT_OBJECT
 };
-const optionAutoCommit = { 
-    autoCommit: true 
+const optionAutoCommit = {
+    autoCommit: true
 };
 const mailHost = 'smtp.gmail.com';
 const mailPort = 465;
@@ -26,7 +25,6 @@ exports.login = function (req, res) {
 
         var payload = {
             userid: userid,
-            user_pwd: user_pwd
         };
 
         authService.getUser(req, res).then(reslt => {
@@ -50,72 +48,6 @@ exports.login = function (req, res) {
         });
     } catch (error) {
         console.log(error);
-    }
-};
-
-exports.register = async function (req, res) {
-    var username = req.body.username;
-    var custCd = req.body.custCd;
-    var password = req.body.password;
-    var typeUser = req.body.typeUser;
-    var email = req.body.email;
-    var systemDate = req.body.systemDate;
-    let params = {
-        user_id: { val: null },
-        user_name: { val: username },
-        custCd: { val: custCd },
-        password: { val: bcrypt.hashSync(password, saltRounds) },
-        typeUser: { val: typeUser },
-        email: { val: email },
-        systemDate: { val: systemDate },
-    };
-    let sqlCheckUser = `SELECT  * FROM TB_ITUSER WHERE USER_NM = :user_name`;
-    let paramsCheckUserName = { user_name: { val: username } };
-    let isExit = await oracelService.checkIsExistUserName(res, sqlCheckUser, paramsCheckUserName, optionFormatObj);
-    if(isExit[0]) {
-        return res.status(500).send({message: "User Name [" +  username + "] has been used!"});
-    } else {
-    let sql = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW  , EMAIL, SYS_DTIM) VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :email , :systemDate)`;
-    await oracelService.queryOracel(res, sql, params, optionAutoCommit);
-    }
-};
-
-
-exports.sendEmail = async function (req, res) {
-    var userName = req.body.username;
-    var email = req.body.email;
-    let sqlCheckUser = `SELECT  * FROM TB_ITUSER WHERE USER_NM = :user_name`;
-    let params = { user_name: { val: userName } };
-    let isExit = await oracelService.checkIsExistUserName(res, sqlCheckUser, params, optionFormatObj);
-    if(isExit[0]) {
-        return res.status(500).send({message: 'User Name ' +  userName + 'has been used!'});
-    } else {
-        var pincode = Math.floor(100000 + Math.random() * 900000);
-        var smtpTransport = nodemailer.createTransport({
-            host: mailHost,
-            port: mailPort,
-            secure: true,
-            auth: {
-
-                user: config.email.user,
-                pass: config.email.password
-            }
-        });
-
-        mailOptions = {
-            from: config.email.user,
-            to: email,
-            subject: config.email.header,
-            html: config.email.body.replace('$userName', userName).replace('$pincode', pincode)
-        };
-        await smtpTransport.sendMail(mailOptions, function (error, response) {
-            if (error) {
-                res.status(500).send({message: error})
-            } else {
-                console.log("Message sent: ");
-                res.status(200).send({message: 'Mail sent to ' + email, PinCode: pincode});
-            }
-        });
     }
 };
 

@@ -75,5 +75,76 @@ exports.checkIsExistUserName = async function (res, sql, param, option) {
             }
         }
     }
-}
+};
+
+
+exports.createUser = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        console.log(result);
+        if (!(result === undefined)) {
+            return result;
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
+
+exports.getUserByUserName = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        console.log(result);
+        if (!(result.rows === undefined)) {
+            return result.rows;
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
+
+exports.setRole = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        if (result) {
+            res.status(200).send({message: 'Create User Successful'})
+        } else {
+            res.status(200).send({message: 'Error when create User'});
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
 
