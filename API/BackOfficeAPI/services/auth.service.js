@@ -15,8 +15,11 @@ async function getUser(req) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `SELECT  * 
-                FROM TB_ITUSER
+        sql = `SELECT ACTIVE, ROLE_ID, USER_PW , USER_ID, USER_NM, CUST_CD, INOUT_GB, ADDR,
+         EMAIL,TEL_NO_MOBILE, SYS_DTIM,
+         to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, 
+         to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM ,
+          WORK_ID FROM TB_ITUSER
                 where USER_NM = :user_name AND ACTIVE = '1' `;
 
         result = await connection.execute(
