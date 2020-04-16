@@ -58,7 +58,7 @@ exports.mobileCicController = function (req, res, next) {
                             else {
                                 console.log('insert failure A0001');
                                 cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey).then(() => {
-                                    console.log("A0001 update SCRP_MOD_CD = 00 ");
+                                    console.log("A0001 update SCRP_MOD_CD = 06 ");
                                     return next();
                                 });
                             }
