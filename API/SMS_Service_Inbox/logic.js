@@ -53,8 +53,9 @@ let updateAfterSend = async function (data) {
         console.log(result);
         if (result) {
             console.log("---------------------------insert+update+delete-------------------------------");
-            await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE);
+            await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE,data.NICE_SSIN_ID);
         } else {
+            //If SRCAP_MOD_CD != 05 && TRY_COUNT == 3 => Fail to send Sms!
             console.log("---------------------------insert+update+delete-------------------------------");
         }
     } catch (err) {
