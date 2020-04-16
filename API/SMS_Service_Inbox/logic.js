@@ -86,7 +86,7 @@ let sendOTP = async function (data) {
         console.log("========================= get auth for sending otp ==================");
         const getAuth = await OtpController.getAuth();
         if (getAuth) {
-            let otp = new otpDomain(getAuth.access_token, 'abcd', config.BRAND_NAME_TEST, data.TEL_NO_MOBILE, data);
+            let otp = new otpDomain(getAuth.access_token, 'abcd', config.BRAND_NAME_PROD, data.TEL_NO_MOBILE, data);
             console.log(otp);
             const sendSMS = await OtpController.sendBrandNameOTP(otp);
             return sendSMS;
