@@ -7,6 +7,7 @@ const otpDomain = require('./domain/OTP.class');
 const campaignDomain = require('./domain/Campaign.class');
 const BrandNameAds = require('./domain/BrandNameAds.class');
 const logger = require('./config/logger');
+const config = require('./config/config');
 
 otpFunction = async function () {
     return new Promise(async function (resolve, reject) {
@@ -80,12 +81,12 @@ let updateAfterSend = async function (data) {
 //     }
 // };
 
-let sendOTP = async function (phone) {
+let sendOTP = async function (data) {
     try {
         console.log("========================= get auth for sending otp ==================");
         const getAuth = await OtpController.getAuth();
         if (getAuth) {
-            let otp = new otpDomain(getAuth.access_token, 'abcd', 'FTI', phone.TEL_NO_MOBILE, phone);
+            let otp = new otpDomain(getAuth.access_token, 'abcd', config.BRAND_NAME_TEST, data.TEL_NO_MOBILE, data);
             console.log(otp);
             const sendSMS = await OtpController.sendBrandNameOTP(otp);
             return sendSMS;

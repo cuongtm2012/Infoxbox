@@ -1,5 +1,7 @@
 require('dotenv').config();
 var config = {
+    BRAND_NAME_PROD:'NICE INFO',
+    BRAND_NAME_TEST:'FTI',
     URL_REQUEST_LIVE: 'http://app.sms.fpt.net',
     URL_REQUEST_SANBOX: 'http://sandbox.sms.fpt.net',
     TemSMS: {
