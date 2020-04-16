@@ -44,9 +44,17 @@ var config = {
                 client_id: '4DACb1d822778BbF5cc064f8e69fa676e47e4bd3',
                 client_secret: 'b23f54AdF69cd53d321548E8d96086f2540561ba9fBc76eEca5212904135d5c01A35cf8b',
             },
+            sandboxProd: {
+                client_id: '6E1bcfB097eadd412fdb130511b9dc00ff372090',
+                client_secret: '67A19dd0613986419be07af388adC372c1A755b01EfD574b54443841e5d87029865dcf60',
+            },
             live: {
                 client_id: '10cdD871329F62c0528D2cb10AFf7c5c361aa6d2',
                 client_secret: 'eFd9ae9327dd2c690e84a04acc846d0efc623e88c4183c3cf817ae6C52775084c03fFAdc',
+            },
+            prod: {
+                client_id: 'b75a613f6D4e3b1aA5fe5Ef50db6c29eff40dAd1',
+                client_secret: '4c9C1da8207dd63da81c65d9b890130b64e96211Ecbc15cd115Eddc2a57184f633A7E15c',
             }
         }
     }

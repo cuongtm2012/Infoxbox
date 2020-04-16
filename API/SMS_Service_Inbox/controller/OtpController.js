@@ -29,7 +29,9 @@ exports.getAuth = function () {
                     console.log(body);
                     console.log(count);
                     logger.error(body);
-                    reject('fail to get authority for sending otp sms');
+                    console.log('fail to get authority for sending otp sms');
+                    // reject('fail to get authority for sending otp sms');
+                    resolve(false);
                 }
             }
         );
@@ -50,21 +52,21 @@ exports.sendBrandNameOTP = async function (OTP_input) {
                 }
             },
             function (error, response, body) {
-                        if (error) throw error;
-                        if (!error && response.statusCode === 200) {
-                            console.log(body);
-                            console.log("============================= count =============================");
-                            count++;
-                            console.log(count);
-                            console.log('success to send otp');
-                            resolve(true);
-                        } else {
-                            console.log('fail to send otp');
-                            console.log(response.statusCode);
-                            console.log(response.statusMessage);
-                            console.log(body);
-                            logger.error(body);
-                            resolve(false);
+                if (error) throw error;
+                if (!error && response.statusCode === 200) {
+                    console.log(body);
+                    console.log("============================= count =============================");
+                    count++;
+                    console.log(count);
+                    console.log('success to send otp');
+                    resolve(true);
+                } else {
+                    console.log('fail to send otp');
+                    console.log(response.statusCode);
+                    console.log(response.statusMessage);
+                    console.log(body);
+                    logger.error(body);
+                    resolve(false);
                 }
             }
         )
