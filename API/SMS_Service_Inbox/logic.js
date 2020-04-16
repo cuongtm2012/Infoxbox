@@ -15,7 +15,7 @@ otpFunction = async function () {
             // await checkTableExist();
             const getData = await DataController.getPhoneNumber();
             if (getData.length > 0) {
-                await DataController.updateTryCountAfterGetPhoneNumber(getData[0].NICE_SSIN_ID,getData[0].TRY_COUNT);
+                await DataController.updateTryCountAfterGetPhoneNumber(getData[0].NICE_SSIN_ID, getData[0].TRY_COUNT);
                 const getValidPhone = await validatePhone.isPhoneNumber(getData);
                 for (const phone of getValidPhone) {
                     // if (phone.TYPE_SMS === 0) {
@@ -53,14 +53,15 @@ let updateAfterSend = async function (data) {
         console.log(result);
         if (result) {
             console.log("---------------------------insert+update+delete-------------------------------");
-            await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE);
+            await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
         } else {
+            //If SRCAP_MOD_CD != 05 && TRY_COUNT == 3 => Fail to send Sms!
             console.log("---------------------------insert+update+delete-------------------------------");
         }
     } catch (err) {
         logger.error(err);
     } finally {
-        console.log('send otp');
+        console.log('finish send process');
     }
 };
 
@@ -83,10 +84,15 @@ let sendOTP = async function (phone) {
     try {
         console.log("========================= get auth for sending otp ==================");
         const getAuth = await OtpController.getAuth();
-        let otp = new otpDomain(getAuth.access_token, 'abcd', 'FTI', phone.TEL_NO_MOBILE, phone);
-        console.log(otp);
-        const sendSMS = await OtpController.sendBrandNameOTP(otp);
-        return sendSMS;
+        if (getAuth) {
+            let otp = new otpDomain(getAuth.access_token, 'abcd', 'FTI', phone.TEL_NO_MOBILE, phone);
+            console.log(otp);
+            const sendSMS = await OtpController.sendBrandNameOTP(otp);
+            return sendSMS;
+        } else {
+            console.log('get getAuth error!', getAuth);
+            return false;
+        }
     } catch (err) {
         logger.error(err);
     }

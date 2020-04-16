@@ -40,10 +40,11 @@ exports.updateRegisteredMSG = async function (RSLT, STATUS_SMS, phone) {
     return await queryOracle(sql, params, optionCommit);
 };
 
-exports.updateSCRP_MOD_CD = async function(phone) {
-    let sql = ` UPDATE TB_SCRPLOG SET SCRP_MOD_CD = '05' WHERE TEL_NO_MOBILE = :phone `;
+exports.updateSCRP_MOD_CD = async function(phone , niceSSkey) {
+    let sql = ` UPDATE TB_SCRPLOG SET SCRP_MOD_CD = '05' WHERE TEL_NO_MOBILE = :phone AND NICE_SSIN_ID = :niceSSkey `;
     let params = {
-        phone
+        phone,
+        niceSSkey
     };
     return await queryOracle(sql, params, optionCommit);
 };

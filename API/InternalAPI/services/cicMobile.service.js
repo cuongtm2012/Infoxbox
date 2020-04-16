@@ -95,4 +95,50 @@ async function insertMobileReportA0001(req) {
     }
 }
 
+/*
+ ** update SCRP_MOD_CD = 06 to countinute process mobile
+*/
+async function updateScrpModCdTryCntHasNoResponseFromScraping06(req) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET SCRP_MOD_CD  = '06'
+                WHERE NICE_SSIN_ID =:NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: { val: req }
+            },
+            { autoCommit: true },
+        );
+
+        console.log("updateScrpModCdHasNoResponseFromScraping trycount updated::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertMobileReportA0001 = insertMobileReportA0001;
+module.exports.updateScrpModCdTryCntHasNoResponseFromScraping06 = updateScrpModCdTryCntHasNoResponseFromScraping06;

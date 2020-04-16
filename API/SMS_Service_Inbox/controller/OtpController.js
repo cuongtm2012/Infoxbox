@@ -29,7 +29,9 @@ exports.getAuth = function () {
                     console.log(body);
                     console.log(count);
                     logger.error(body);
-                    reject('fail to get authority for sending otp sms');
+                    console.log('fail to get authority for sending otp sms');
+                    // reject('fail to get authority for sending otp sms');
+                    resolve(false);
                 }
             }
         );

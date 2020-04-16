@@ -102,7 +102,7 @@ exports.getContract = async function (req, res) {
     let currentLocation = req.query.currentLocation;
     let limitRow = req.query.limitRow;
     let SQL_SELECT = `SELECT 
-    TB_ITCTRT.CUST_GB as CLASS, 
+    TB_ITCTRT.CUST_GB as CUST_GB, 
     TB_ITCTRT.CUST_CD as CUST_CODE, 
     TB_ITCTRT.GDS_CD as PRODUCT_CODE, 
     TB_ITCTRT.STATUS as STATUS, 
