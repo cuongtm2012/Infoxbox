@@ -57,8 +57,8 @@ exports.mobileCicController = function (req, res, next) {
                             }
                             else {
                                 console.log('insert failure A0001');
-                                cicService.updateScrpModCdHasNoResponseFromScraping(req.body.niceSessionKey).then(() => {
-                                    console.log("B0003 update SCRP_MOD_CD = 00 ");
+                                cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey).then(() => {
+                                    console.log("A0001 update SCRP_MOD_CD = 00 ");
                                     return next();
                                 });
                             }
@@ -116,8 +116,8 @@ exports.mobileCicController = function (req, res, next) {
             }).catch((error) => {
                 console.log("error scraping service A0001~~", error);
                 //Update ScrpModCd 00
-                cicService.updateScrpModCdTryCntHasNoResponseFromScraping(req.body.niceSessionKey, res).then(() => {
-                    console.log("update SCRP_MOD_CD = 00 ");
+                cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey, res).then(() => {
+                    console.log("update SCRP_MOD_CD = 06 ");
                     return next();
                 });
             });

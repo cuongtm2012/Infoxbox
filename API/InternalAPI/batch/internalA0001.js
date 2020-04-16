@@ -7,6 +7,7 @@ const axios = require('axios');
 const runRestartPm2 = require('../util/runShellScript');
 const util = require('../../shared/util/util');
 const convertBase64 = require('../../shared/util/convertBase64ToText');
+const cicMobileService = require('../services/cicMobile.service');
 
 module.exports = class internalJob {
     //Cron request internal scraping
@@ -62,8 +63,8 @@ module.exports = class internalJob {
 
                             }).catch((error) => {
                                 console.log("error call to internal_cic url A0001!", error);
-                                cicService.updateScrpModCdHasNoResponseFromScraping(element.NICE_SSIN_ID).then(() => {
-                                    console.log("update SCRP_MOD_CD = 00 ");
+                                cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(element.NICE_SSIN_ID).then(() => {
+                                    console.log("update SCRP_MOD_CD = 06 ");
                                     // Restart internal
                                     runRestartPm2.restartInternal();
                                 });
