@@ -45,9 +45,11 @@ async function verifyAdmin(req, res, next) {
         if(result[0]) {
             if (result[0].ROLE_ID == 2 && result[0].ACTIVE == 1) {
                 next();
+            } else {
+                return res.status(403).send({message: 'Fail'});
             }
         } else {
-            return res.status(403).send({message: 'Fail'})
+            return res.status(403).send({message: 'Fail'});
         }
     }
 }
