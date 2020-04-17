@@ -112,25 +112,13 @@ httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
 
-
-// let server = app.listen(9000);
 let server = https.createServer(credentials, app);
 //socket.io instantiation
-// const io = require("socket.io")(server);
 let socketIO = require('socket.io');
 let io = socketIO.listen(server, { log: false, origins: '*:*' });
-// console.log('socket running port', server);
 //listen on every connection
 io.on('connection', (socket) => {
 	console.log('New user connected')
-
-	//default username
-	socket.username = "Anonymous"
-
-	//listen on change_username
-	socket.on('change_username', (data) => {
-		socket.username = data.username
-	})
 
 	//listen on new_message
 	socket.on('new_message', (data) => {
