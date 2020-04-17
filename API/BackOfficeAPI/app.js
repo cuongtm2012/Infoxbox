@@ -112,6 +112,9 @@ httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
 
+/*
+**Socket
+**********Start****************
 let server = https.createServer(credentials, app);
 //socket.io instantiation
 let socketIO = require('socket.io');
@@ -136,3 +139,5 @@ io.on('connection', (socket) => {
 server.listen(config.server.socket, () => {
 	console.log(`started on port: ${config.server.socket}`);
 });
+************end**************
+*/
