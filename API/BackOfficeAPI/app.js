@@ -65,12 +65,12 @@ app.use(flash());
 app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
-		try {
-			return fs.mkdirSync(dirpath)
-		} catch (err) {
-			if (err.code !== 'EEXIST') throw err
-		}
-	};
+	try {
+		return fs.mkdirSync(dirpath)
+	} catch (err) {
+		if (err.code !== 'EEXIST') throw err
+	}
+};
 
 // LOGS
 var uuid = require('node-uuid');
@@ -80,11 +80,11 @@ var myRequest = createNamespace('my request');
 createFolder(config.log.orgLog);
 
 // Run the context for each request. Assign a unique identifier to each request
-app.use(function(req, res, next) {
-		myRequest.run(function() {
-			myRequest.set('reqId', uuid.v1());
-			next();
-		});
+app.use(function (req, res, next) {
+	myRequest.run(function () {
+		myRequest.set('reqId', uuid.v1());
+		next();
+	});
 });
 
 app.use('/auth', auth);
@@ -92,9 +92,9 @@ app.use('/customer', customer);
 app.use('/contract', contract);
 app.use('/code', code);
 app.use('/cicreport', cicreport);
-app.use('/user' , user);
-app.use('/captcha' , captcha);
-app.use('/manualCaptcha' , manualCaptcha);
+app.use('/user', user);
+app.use('/captcha', captcha);
+app.use('/manualCaptcha', manualCaptcha);
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
@@ -111,3 +111,33 @@ app.use(function (err, req, res, next) {
 httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
+
+/*
+**Socket
+**********Start****************
+let server = https.createServer(credentials, app);
+//socket.io instantiation
+let socketIO = require('socket.io');
+let io = socketIO.listen(server, { log: false, origins: '*:*' });
+//listen on every connection
+io.on('connection', (socket) => {
+	console.log('New user connected')
+
+	//listen on new_message
+	socket.on('new_message', (data) => {
+		//broadcast the new message
+		io.sockets.emit('new_message', {username: data.username, message: data.message  });
+		// io.sockets.emit('new_message', { message: massage });
+	})
+
+	//listen on typing
+	socket.on('typing', (data) => {
+		socket.broadcast.emit('typing', { username: socket.username })
+	})
+});
+
+server.listen(config.server.socket, () => {
+	console.log(`started on port: ${config.server.socket}`);
+});
+************end**************
+*/
