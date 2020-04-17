@@ -15,7 +15,8 @@ var config = {
 	},
 	server: {
 		host: '127.0.0.1',
-		port: '3400'
+		port: '3400',
+		socket:'9000'
 	},
 	email: {
 		service: 'Gmail',
