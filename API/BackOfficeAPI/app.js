@@ -115,10 +115,11 @@ httpsServer.listen(config.server.port, function () {
 /*
 **Socket
 **********Start****************
-let server = https.createServer(credentials, app);
+*/
+// let server = https.createServer(credentials, app);
 //socket.io instantiation
 let socketIO = require('socket.io');
-let io = socketIO.listen(server, { log: false, origins: '*:*' });
+let io = socketIO.listen(httpsServer, { log: false, origins: '*:*' });
 //listen on every connection
 io.on('connection', (socket) => {
 	console.log('New user connected')
@@ -136,8 +137,10 @@ io.on('connection', (socket) => {
 	})
 });
 
-server.listen(config.server.socket, () => {
-	console.log(`started on port: ${config.server.socket}`);
-});
+// server.listen(config.server.socket, () => {
+// 	console.log(`started on port: ${config.server.socket}`);
+// });
+
+/*
 ************end**************
 */
