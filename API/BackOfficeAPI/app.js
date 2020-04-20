@@ -122,18 +122,27 @@ let socketIO = require('socket.io');
 let io = socketIO.listen(httpsServer, { log: false, origins: '*:*' });
 //listen on every connection
 io.on('connection', (socket) => {
-	console.log('New user connected')
+	console.log('socket connected')
 
 	//listen on new_message
 	socket.on('new_message', (data) => {
 		//broadcast the new message
-		io.sockets.emit('new_message', {username: data.username, message: data.message  });
+		io.sockets.emit('new_message', { username: data.username, message: data.message });
 		// io.sockets.emit('new_message', { message: massage });
 	})
 
 	//listen on typing
 	socket.on('typing', (data) => {
 		socket.broadcast.emit('typing', { username: socket.username })
+	})
+
+	//listen on MACR_RQST
+	socket.on('MACR_RQST', (data) => {
+		io.sockets.emit('MACR_RQST', data);
+	})
+	//listen on CIC_S11A_RQST
+	socket.on('CIC_S11A_RQST', (data) => {
+		io.sockets.emit('CIC_S11A_RQST', data);
 	})
 });
 
