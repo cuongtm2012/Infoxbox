@@ -11,14 +11,14 @@ let timeOutput = moment().tz("Asia/Bangkok").format();
 
 exports.getPhoneNumber = async function () {
     let SELECT = 'SELECT * FROM TB_SCRPLOG ';
-    let WHERE = ` WHERE GDS_CD = 'S1003' AND (TRY_COUNT <= 3 OR TRY_COUNT IS NULL) AND SCRP_MOD_CD = '00' AND SCRP_STAT_CD = '01' AND AGR_FG = 'Y' AND LOGIN_PW is null FETCH NEXT 1 ROWS ONLY `;
+    let WHERE = ` WHERE GDS_CD = 'S1003' AND (TRY_COUNT <= 3 OR TRY_COUNT IS NULL) AND SCRP_MOD_CD = '00' AND SCRP_STAT_CD = '01' AND AGR_FG = 'Y' AND LOGIN_PW is null ORDER BY CASE WHEN SYS_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, SYS_DTIM DESC FETCH NEXT 1 ROWS ONLY `;
     let sql = SELECT + WHERE;
     return await queryOracle(sql, params, optionSelect);
 
 };
 
 exports.updateTryCountAfterGetPhoneNumber = async function (niceSSKey,tryCount) {
-    let SQL = `UPDATE TB_SCRPLOG SET TRY_COUNT = :tryCount WHERE NICE_SSIN_ID = :niceSSKey`;
+    let SQL = `UPDATE TB_SCRPLOG SET TRY_COUNT = :tryCount, SCRP_MOD_CD = '01' WHERE NICE_SSIN_ID = :niceSSKey`;
     if(!tryCount) {
         tryCount = 1;
     } else {
@@ -42,6 +42,15 @@ exports.updateRegisteredMSG = async function (RSLT, STATUS_SMS, phone) {
 
 exports.updateSCRP_MOD_CD = async function(phone , niceSSkey) {
     let sql = ` UPDATE TB_SCRPLOG SET SCRP_MOD_CD = '05' WHERE TEL_NO_MOBILE = :phone AND NICE_SSIN_ID = :niceSSkey `;
+    let params = {
+        phone,
+        niceSSkey
+    };
+    return await queryOracle(sql, params, optionCommit);
+};
+
+exports.updateSCRP_MOD_CDWhenFailSendSMS = async function(phone , niceSSkey) {
+    let sql = ` UPDATE TB_SCRPLOG SET SCRP_MOD_CD = '00' WHERE TEL_NO_MOBILE = :phone AND NICE_SSIN_ID = :niceSSkey `;
     let params = {
         phone,
         niceSSkey
