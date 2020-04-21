@@ -21,9 +21,14 @@ const utilFunction = require('../../shared/util/util');
 const validS11AService = require('../services/validS11A.service');
 const PreResponse = require('../domain/preResponse.response');
 const DataInqLogSave = require('../domain/INQLOG.save');
+const io = require('socket.io-client');
+const URI = require('../../shared/URI');
 
 exports.cics11aRQST = function (req, res, next) {
 	try {
+		//conneciton socket
+		const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
 		let niceSessionKey;
@@ -61,7 +66,7 @@ exports.cics11aRQST = function (req, res, next) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
 				responseData = new cics11aRQSTRes(req.body, preResponse);
-				
+
 				return res.status(500).json(responseData);
 			}
 			//End check params request
@@ -80,9 +85,15 @@ exports.cics11aRQST = function (req, res, next) {
 					if (!_.isEmpty(niceSessionK)) {
 						let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseSuccess);
+
+						// emit socket
+						socket.emit('CIC_S11A_RQST', responseSuccess);
 					} else {
 						let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
+
+						// emit socket
+						socket.emit('CIC_S11A_RQST', responseUnknow);
 					}
 					//TODO
 					// call directly to scrapping service
@@ -163,7 +174,7 @@ exports.cics11aRSLT = function (req, res) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
 				responseData = new cics11aRQSTRes(req.body, preResponse);
-				
+
 				return res.status(500).json(responseData);
 			}
 			//End check params request
