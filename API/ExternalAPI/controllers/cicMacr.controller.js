@@ -22,10 +22,15 @@ const dateutil = require('../util/dateutil');
 const DataInqLogSave = require('../domain/INQLOG.save');
 const cicExternalService = require('../services/cicExternal.service');
 const utilFunction = require('../../shared/util/util');
+const io = require('socket.io-client');
+const URI = require('../../shared/URI');
 
 exports.cicMACRRQST = function (req, res, next) {
 
     try {
+        //conneciton socket
+        const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
         let niceSessionKey;
         let preResponse, responseData, dataInqLogSave;
 
@@ -62,7 +67,7 @@ exports.cicMACRRQST = function (req, res, next) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cicMacrRQSTRes(req.body, preResponse);
-               
+
                 return res.status(500).json(responseData);
             }
             //End check params request
@@ -84,9 +89,15 @@ exports.cicMACRRQST = function (req, res, next) {
                     if (!_.isEmpty(niceSessionK) && niceSessionK.length <= 25) {
                         let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseSuccess);
+
+                        // emit socket
+                        socket.emit('MACR_RQST', responseSuccess);
                     } else {
                         let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseUnknow);
+
+                        // emit socket
+                        socket.emit('MACR_RQST', responseUnknow);
                     }
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
@@ -145,7 +156,7 @@ exports.cicMACRRSLT = function (req, res) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cicMacrRSLTRes(req.body, preResponse, '');
-                
+
                 return res.status(500).json(responseData);
             }
             // end check params reqest
