@@ -8,7 +8,11 @@ const optionAutoCommit = { autoCommit: true };
 exports.viewHistoryCICReport = async function (req, res) {
     var orgCode = req.query.orgCode ? '%' + req.query.orgCode + '%' : '';
     var productCode = req.query.productCode ? '%' + req.query.productCode + '%' : '';
-    var CICNumber = req.query.CICNumber ? '%' + req.query.CICNumber + '%' : '';
+    var taxCode = req.query.taxCode ? '%' + req.query.taxCode + '%' : '';
+    var nationalID = req.query.nationalID ? '%' + req.query.nationalID + '%' : '';
+    var oldNationalID = req.query.oldNationalID ? '%' + req.query.oldNationalID + '%' : '';
+    var passportNO = req.query.passportNO ? '%' + req.query.passportNO + '%' : '';
+    var phoneNumber = req.query.phoneNumber ? '%' + req.query.phoneNumber + '%' : '';
     var inqDateFrom = (_.isEmpty(req.query.inqDateFrom)) ? '': req.query.inqDateFrom.replace(/[^0-9 ]/g, "");
     var inqDateTo = (_.isEmpty(req.query.inqDateTo)) ? '': req.query.inqDateTo.replace(/[^0-9 ]/g, "");
     var currentLocation = req.query.currentLocation;
@@ -54,7 +58,7 @@ exports.viewHistoryCICReport = async function (req, res) {
     var SQL_ORDER_BY = `ORDER BY CASE WHEN TB_SCRPLOG.INQ_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, TB_SCRPLOG.INQ_DTIM DESC `;
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
-    if (_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+    if (_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_ORDER_BY  + SQL_LIMIT;
         let param = {
             currentLocation,
@@ -69,8 +73,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
-    if(orgCode && _.isEmpty(productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode ';
+
+    if((orgCode) && (productCode) && (taxCode) && (nationalID) && (oldNationalID) && (passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =
+            ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
@@ -89,17 +102,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.GDS_CD LIKE :productCode ';
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            productCode,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            productCode,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -109,17 +122,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.CIC_ID LIKE :CICNumber ';
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            CICNumber,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            CICNumber,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -129,19 +142,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -151,19 +162,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((orgCode) && (productCode) && _.isEmpty(CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND TB_SCRPLOG.GDS_CD LIKE :productCode ';
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            productCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            productCode,
         };
         let totalRow;
         let rowRs;
@@ -173,19 +182,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((orgCode) && _.isEmpty(productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND TB_SCRPLOG.CIC_ID LIKE :CICNumber ';
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            CICNumber,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            CICNumber,
         };
         let totalRow;
         let rowRs;
@@ -195,21 +202,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE TB_SCRPLOG.PSPT_NO LIKE :passportNO ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            inqDateFrom,
-            inqDateTo,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            inqDateFrom,
-            inqDateTo,
         };
         let totalRow;
         let rowRs;
@@ -219,19 +222,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && (productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = 'WHERE TB_SCRPLOG.GDS_CD LIKE :productCode AND TB_SCRPLOG.CIC_ID LIKE :CICNumber ';
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE = ' WHERE TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ';
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            productCode,
-            CICNumber,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            productCode,
-            CICNumber,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -241,22 +242,17 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.GDS_CD LIKE :productCode AND 
-         to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =  ` WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            productCode,
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            productCode,
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -266,22 +262,18 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.CIC_ID LIKE :CICNumber :orgCode AND 
-         to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `;
+    if((orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) ' ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -291,23 +283,19 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((orgCode) && (productCode) && (CICNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND 
-                               TB_SCRPLOG.GDS_CD LIKE :productCode AND 
-                               TB_SCRPLOG.CIC_ID LIKE :CICNumber  `;
+
+    if((orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) ' ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            productCode,
-            CICNumber,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            productCode,
-            CICNumber,
         };
         let totalRow;
         let rowRs;
@@ -317,25 +305,18 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((orgCode) && (productCode) && _.isEmpty(CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND 
-                               TB_SCRPLOG.GDS_CD LIKE :productCode AND 
-                               to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID ' ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            productCode,
-            inqDateFrom,
-            inqDateTo,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            productCode,
-            inqDateFrom,
-            inqDateTo,
         };
         let totalRow;
         let rowRs;
@@ -345,25 +326,18 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if((orgCode) && _.isEmpty(productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND 
-                               TB_SCRPLOG.CIC_ID LIKE :CICNumber AND 
-                               to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            CICNumber,
-            inqDateFrom,
-            inqDateTo
         };
         let totalRow;
         let rowRs;
@@ -373,25 +347,18 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_.isEmpty(orgCode) && (productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.GDS_CD LIKE :productCode AND 
-                               TB_SCRPLOG.CIC_ID LIKE :CICNumber AND 
-                               to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
-            productCode,
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
-            productCode,
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
+            orgCode,
         };
         let totalRow;
         let rowRs;
@@ -401,28 +368,18 @@ exports.viewHistoryCICReport = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 
-    if(_(orgCode) && (productCode) && (CICNumber) && (inqDateFrom) && (inqDateTo)) {
-        let SQL_WHERE = `WHERE TB_SCRPLOG.CUST_CD LIKE :orgCode AND
-                               TB_SCRPLOG.GDS_CD LIKE :productCode AND 
-                               TB_SCRPLOG.CIC_ID LIKE :CICNumber AND 
-                               to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD')  `;
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
         let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             orgCode,
-            productCode,
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
         let paramSearch = {
             orgCode,
-            productCode,
-            CICNumber,
-            inqDateFrom,
-            inqDateTo,
         };
         let totalRow;
         let rowRs;
@@ -431,8 +388,1990 @@ exports.viewHistoryCICReport = async function (req, res) {
         rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
+
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && (productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` TB_SCRPLOG.NATL_ID LIKE :nationalID ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` TB_SCRPLOG.PSPT_NO LIKE :passportNO ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE  LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE  LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((orgCode) && (productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((orgCode) && (productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
+    if((orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && (taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && (productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && (taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO '  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber '  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+    if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber '  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') `  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber '  ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && (productCode) &&(taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && (productCode) &&(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && (productCode) &&(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && (productCode) &&(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && (productCode) &&(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && (taxCode) && (nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && (phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && (oldNationalID) && (passportNO) && _.isEmpty(phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if((orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && (passportNO) && (phoneNumber) && (inqDateFrom) && (inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+            ' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+            ' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+            ` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+   if(_.isEmpty(orgCode) && (productCode) && (taxCode) && (nationalID) && (oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo)) {
+        let SQL_WHERE =   ' WHERE LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+            ' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+            ' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+            ' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID ' ;
+        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE + SQL_ORDER_BY + SQL_LIMIT;
+        let param = {
+            orgCode,
+            currentLocation,
+            limitRow
+        };
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+        let paramSearch = {
+            orgCode,
+        };
+        let totalRow;
+        let rowRs;
+
+        totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
+        rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
+        return res.status(200).send({count: totalRow, rowRs: rowRs});
+    }
+
 };
-
+' WHERE LOWER(TB_SCRPLOG.CUST_CD) LIKE LOWER(:orgCode) AND ' +
+' LOWER(TB_SCRPLOG.GDS_CD) LIKE LOWER(:productCode) AND ' +
+' LOWER(TB_SCRPLOG.TAX_ID) LIKE LOWER(:taxCode) AND ' +
+' TB_SCRPLOG.NATL_ID LIKE :nationalID AND ' +
+' TB_SCRPLOG.OLD_NATL_ID LIKE :oldNationalID AND ' +
+' TB_SCRPLOG.PSPT_NO LIKE :passportNO AND ' +
+' TB_SCRPLOG.TEL_NO_MOBILE LIKE :phoneNumber AND ' +
+` to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:inqDateFrom, 'YYYY/MM/DD') AND to_date(:inqDateTo, 'YYYY/MM/DD') ` ;
 
 exports.handledViewReportCIC = async function (req, res) {
     var niceSsID = req.query.niceSsID;
