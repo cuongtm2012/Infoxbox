@@ -23,13 +23,8 @@ module.exports = class internalJob {
             }, timeout: 60 * 3 * 1000
         }
 
-        //conneciton socket
-        const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
-
         cicDeplayReportService.selectDeplayReport2().then(resdata => {
             if (_.isEmpty(resdata)) {
-                // close connection socket
-                socket.close();
                 console.log('No request!');
                 oncomplete(0, 0);
             } else {
@@ -92,8 +87,13 @@ module.exports = class internalJob {
                                 }).catch((error) => {
                                     console.log("error call to internal_cic url delay 2 B0003!", error);
 
+                                    //conneciton socket
+                                    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
                                     // emit socket
                                     socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: (listNiceSessionkey[0] + '...'), responseMessage: 'Delay report 2 Error Internal' });
+                                    // close socket
+                                    socket.emit('end');
 
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
                                         console.log("B0003 update delay 2 SCRP_MOD_CD = 00 ");

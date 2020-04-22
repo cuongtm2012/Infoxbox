@@ -20,14 +20,10 @@ module.exports = class internalJob {
                 'Content-Type': 'application/json'
             }, timeout: 60 * 3 * 1000
         }
-        
-        //conneciton socket
-        const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
 
         cicService.startProcessB0003().then(resdata => {
             if (_.isEmpty(resdata)) {
-                // close connection socket
-                socket.close();
                 // console.log('No request!');
                 oncomplete(0, 0);
             } else {
@@ -90,8 +86,13 @@ module.exports = class internalJob {
                                 }).catch((error) => {
                                     console.log("error call to internal_cic url B0003~~", error);
 
+                                    //conneciton socket
+                                    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
                                     // emit socket
                                     socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: (listNiceSessionkey[0] + '...'), responseMessage: 'B0003 Error Internal Batch' });
+                                    // close connection socket
+                                    socket.emit('end');
 
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
                                         console.log("B0003 update SCRP_MOD_CD = 00 ");

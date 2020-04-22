@@ -38,8 +38,8 @@ const cics37RSLTRes = require('../domain/CIC_S37_RSLT.response');
 const io = require('socket.io-client');
 
 exports.cics37Rqst = function (req, res) {
-    //conneciton socket
-    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+    let socket;
+
     try {
         const config = {
             headers: {
@@ -386,9 +386,17 @@ exports.cics37Rqst = function (req, res) {
 
     } catch (err) {
         console.log(err);
+
+        //conneciton socket
+        socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
         // emit socket
         socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_S37_RQST' });
+
         return res.status(500).json({ error: err.toString() });
+    } finally {
+        // Close socket
+        socket.emit('end');
     }
 };
 

@@ -144,6 +144,11 @@ io.on('connection', (socket) => {
 	socket.on('Internal_message', (data) => {
 		io.sockets.emit('Internal_message', data);
 	})
+
+	// colse socket
+	socket.on('end', function () {
+		socket.disconnect(0);
+	});
 });
 
 // server.listen(config.server.socket, () => {

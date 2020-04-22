@@ -23,14 +23,9 @@ module.exports = class internalJob {
             , timeout: 60 * 2 * 1000
         }
 
-        //conneciton socket
-        const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
-
         cicService.select01().then(data => {
             // Get each object in array data
             if (_.isEmpty(data)) {
-                // close connection socket
-                socket.close();
                 // console.log('No request!');
                 oncomplete(0, 0);
             } else {
@@ -73,8 +68,13 @@ module.exports = class internalJob {
                             }).catch((error) => {
                                 console.log("error call to internal_cic url B0002~~", error);
 
+                                //conneciton socket
+                                const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
                                 // emit socket
                                 socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: element.NICE_SSIN_ID, responseMessage: 'B0002 Error Internal Batch' });
+                                // close connection socket
+                                socket.emit('end');
 
                                 cicService.updateScrpModCdTryCntHasNoResponseFromScraping(element.NICE_SSIN_ID).then(() => {
                                     console.log("update SCRP_MOD_CD = 00 ");

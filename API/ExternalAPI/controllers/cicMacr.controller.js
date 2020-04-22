@@ -26,8 +26,8 @@ const io = require('socket.io-client');
 const URI = require('../../shared/URI');
 
 exports.cicMACRRQST = function (req, res, next) {
-    //conneciton socket
-    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+    let socket;
+
     try {
         let niceSessionKey;
         let preResponse, responseData, dataInqLogSave;
@@ -103,9 +103,16 @@ exports.cicMACRRQST = function (req, res, next) {
         });
 
     } catch (err) {
+        //conneciton socket
+        socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false, multiplex: true });
+
         // emit socket
         socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_MACR_RQST' });
+
         return res.status(500).json({ error: err.toString() });
+    } finally {
+        // Close socket
+        socket.emit('end');
     }
 };
 

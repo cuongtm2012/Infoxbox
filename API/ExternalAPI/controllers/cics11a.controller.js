@@ -25,8 +25,8 @@ const io = require('socket.io-client');
 const URI = require('../../shared/URI');
 
 exports.cics11aRQST = function (req, res, next) {
-	//conneciton socket
-	const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+	let socket;
+
 	try {
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
@@ -102,10 +102,17 @@ exports.cics11aRQST = function (req, res, next) {
 			});
 		});
 	} catch (err) {
+		//conneciton socket
+		socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
 		// emit socket
 		socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_S11A_RQST' });
+
 		console.log(err);
 		return res.status(500).json({ error: err.toString() });
+	} finally {
+		// Close socket
+		socket.emit('end');
 	}
 };
 
