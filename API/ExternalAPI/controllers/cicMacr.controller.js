@@ -26,11 +26,9 @@ const io = require('socket.io-client');
 const URI = require('../../shared/URI');
 
 exports.cicMACRRQST = function (req, res, next) {
-
+    //conneciton socket
+    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
     try {
-        //conneciton socket
-        const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
-
         let niceSessionKey;
         let preResponse, responseData, dataInqLogSave;
 
@@ -89,15 +87,9 @@ exports.cicMACRRQST = function (req, res, next) {
                     if (!_.isEmpty(niceSessionK) && niceSessionK.length <= 25) {
                         let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseSuccess);
-
-                        // emit socket
-                        socket.emit('MACR_RQST', responseSuccess);
                     } else {
                         let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseUnknow);
-
-                        // emit socket
-                        socket.emit('MACR_RQST', responseUnknow);
                     }
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
@@ -111,6 +103,8 @@ exports.cicMACRRQST = function (req, res, next) {
         });
 
     } catch (err) {
+        // emit socket
+        socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_MACR_RQST' });
         return res.status(500).json({ error: err.toString() });
     }
 };

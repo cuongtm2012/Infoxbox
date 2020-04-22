@@ -57,6 +57,15 @@ module.exports = {
             }
             return response;
         }
+        // maximum maxnumrows <= 100
+        if (!_.isEmpty(getdataReq.maxnumrows) && 100 < getdataReq.maxnumrows) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.OverMaxnumrows.name,
+                responseCode: responcodeEXT.RESCODEEXT.OverMaxnumrows.code
+            }
+            return response;
+        }
+
         else
             response = {};
 

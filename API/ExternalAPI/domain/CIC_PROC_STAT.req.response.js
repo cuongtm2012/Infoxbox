@@ -6,6 +6,7 @@ module.exports = function CicProcStatus(params) {
         taskCode,
         searchDateFrom,
         searchDateTo,
+        scrapingStatusCode,
         offset,
         maxnumrows
 
@@ -21,6 +22,7 @@ module.exports = function CicProcStatus(params) {
     this.taskCode = taskCode;
     this.searchDateFrom = searchDateFrom;
     this.searchDateTo = searchDateTo;
+    this.scrapingStatusCode = scrapingStatusCode ? scrapingStatusCode : null;
     this.offset = offset ? offset : _offset;
     this.maxnumrows = maxnumrows ? maxnumrows : _maxnumrows;
 }

@@ -40,6 +40,7 @@ var RESCODEEXT = {
     CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" },
     FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
     TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
+    OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
     ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" }
 };
 
