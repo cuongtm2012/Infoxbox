@@ -108,11 +108,10 @@ exports.cicMACRRQST = function (req, res, next) {
 
         // emit socket
         socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_MACR_RQST' });
-
-        return res.status(500).json({ error: err.toString() });
-    } finally {
         // Close socket
         socket.emit('end');
+
+        return res.status(500).json({ error: err.toString() });
     }
 };
 

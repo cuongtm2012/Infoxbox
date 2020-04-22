@@ -107,12 +107,11 @@ exports.cics11aRQST = function (req, res, next) {
 
 		// emit socket
 		socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_S11A_RQST' });
+		// Close socket
+		socket.emit('end');
 
 		console.log(err);
 		return res.status(500).json({ error: err.toString() });
-	} finally {
-		// Close socket
-		socket.emit('end');
 	}
 };
 

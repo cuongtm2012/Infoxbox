@@ -392,11 +392,10 @@ exports.cics37Rqst = function (req, res) {
 
         // emit socket
         socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_S37_RQST' });
-
-        return res.status(500).json({ error: err.toString() });
-    } finally {
         // Close socket
         socket.emit('end');
+
+        return res.status(500).json({ error: err.toString() });
     }
 };
 
