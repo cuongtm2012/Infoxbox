@@ -11,6 +11,7 @@ const cicB0002Req = require('../domain/cicB0002.request');
 const axios = require('axios');
 const runRestartPm2 = require('../util/runShellScript');
 
+const io = require('socket.io-client');
 module.exports = class internalJob {
     //Cron request internal scraping
     cron(oncomplete) {
@@ -66,6 +67,15 @@ module.exports = class internalJob {
 
                             }).catch((error) => {
                                 console.log("error call to internal_cic url B0002~~", error);
+
+                                //conneciton socket
+                                const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
+                                // emit socket
+                                socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: element.NICE_SSIN_ID, responseMessage: 'B0002 Error Internal Batch' });
+                                // close connection socket
+                                socket.emit('end');
+
                                 cicService.updateScrpModCdTryCntHasNoResponseFromScraping(element.NICE_SSIN_ID).then(() => {
                                     console.log("update SCRP_MOD_CD = 00 ");
                                     // Restart internal

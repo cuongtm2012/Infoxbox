@@ -7,7 +7,8 @@ module.exports = function PreProStatusResponse(params) {
         CUST_CD,
         GDS_CD,
         INQ_DTIM,
-        SCRP_STAT_CD
+        SCRP_STAT_CD,
+        RSP_CD
     } = params;
 
     this.niceSessionKey = NICE_SSIN_ID;
@@ -17,5 +18,6 @@ module.exports = function PreProStatusResponse(params) {
     this.cicGoodCode = GDS_CD;
     this.inquiryDate = INQ_DTIM;
     this.scrapingStatusCode = SCRP_STAT_CD;
+    this.responseCode = RSP_CD;
 };
 

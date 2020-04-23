@@ -136,14 +136,19 @@ io.on('connection', (socket) => {
 		socket.broadcast.emit('typing', { username: socket.username })
 	})
 
-	//listen on MACR_RQST
-	socket.on('MACR_RQST', (data) => {
-		io.sockets.emit('MACR_RQST', data);
+	//listen on External
+	socket.on('External_message', (data) => {
+		io.sockets.emit('External_message', data);
 	})
-	//listen on CIC_S11A_RQST
-	socket.on('CIC_S11A_RQST', (data) => {
-		io.sockets.emit('CIC_S11A_RQST', data);
+	//listen on Internal batch process
+	socket.on('Internal_message', (data) => {
+		io.sockets.emit('Internal_message', data);
 	})
+
+	// colse socket
+	socket.on('end', function () {
+		socket.disconnect(0);
+	});
 });
 
 // server.listen(config.server.socket, () => {

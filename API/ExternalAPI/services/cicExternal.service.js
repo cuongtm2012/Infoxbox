@@ -569,9 +569,16 @@ async function selectProcStatus(req) {
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
 
-        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD FROM TB_SCRPLOG T
+        let _scrapingStatusCode;
+        if (_.isEmpty(req.scrapingStatusCode))
+            _scrapingStatusCode = '%%';
+        else
+            _scrapingStatusCode = req.scrapingStatusCode;
+
+        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
                     where to_date(T.INQ_DTIM , 'yyyymmdd') between to_date(:inqDtimFrom, 'yyyymmdd') and to_date (:inqDtimTo, 'yyyymmdd')
                         and T.CUST_CD =: fiCode
+                        and (T.SCRP_STAT_CD like :scrapingStatusCode or T.SCRP_STAT_CD is null)
                         order by T.INQ_DTIM
                         OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY`;
 
@@ -583,6 +590,7 @@ async function selectProcStatus(req) {
                 inqDtimTo: { val: req.searchDateTo },
                 fiCode: { val: req.fiCode },
                 offset: { val: req.offset },
+                scrapingStatusCode: { val: _scrapingStatusCode },
                 maxnumrows: { val: req.maxnumrows }
             },
             {

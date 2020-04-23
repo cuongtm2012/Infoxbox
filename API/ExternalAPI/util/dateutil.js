@@ -21,6 +21,10 @@ module.exports = {
         return timeStamp;
     },
 
+    getTimeHours: function () {
+        return dateFormat(new Date(), "HH:MM:ss");
+    },
+
     timeStamp2: function () {
         var timeStamp = dateFormat(new Date(), "yyyymmddHHMMl");
 

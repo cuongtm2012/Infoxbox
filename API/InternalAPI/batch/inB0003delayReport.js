@@ -10,6 +10,8 @@ const axios = require('axios');
 
 const runRestartPm2 = require('../util/runShellScript');
 const cicDeplayReportService = require('../services/cicDelayReport.service');
+const io = require('socket.io-client');
+const dateutil = require('../util/dateutil');
 
 module.exports = class internalJob {
     //Cron request internal scraping
@@ -84,6 +86,15 @@ module.exports = class internalJob {
 
                                 }).catch((error) => {
                                     console.log("error call to internal_cic url delay 1 B0003~~", error);
+
+                                    //conneciton socket
+                                    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
+                                    // emit socket
+                                    socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: (listNiceSessionkey[0] + '...'), responseMessage: 'Delay report 1 Error Internal' });
+                                    //close socket
+                                    socket.emit('end');
+
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
                                         console.log("B0003 update delay 1 SCRP_MOD_CD = 00 ");
                                         // Restart internal

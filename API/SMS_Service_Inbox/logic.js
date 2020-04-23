@@ -53,11 +53,14 @@ let updateAfterSend = async function (data) {
         const result = await sendOTP(data);
         console.log(result);
         if (result) {
-            console.log("---------------------------insert+update+delete-------------------------------");
+            console.log("updating when send sms success");
             await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
         } else {
             //If SRCAP_MOD_CD != 05 && TRY_COUNT == 3 => Fail to send Sms!
-            console.log("---------------------------insert+update+delete-------------------------------");
+            if (data.SRCAP_MOD_CD !== '05' && data.TRY_COUNT < 3) {
+            await DataController.updateSCRP_MOD_CDWhenFailSendSMS(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
+            }
+            console.log("updating when send sms fail");
         }
     } catch (err) {
         logger.error(err);
