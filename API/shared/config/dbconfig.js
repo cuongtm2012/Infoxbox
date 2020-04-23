@@ -7,14 +7,14 @@ module.exports = {
     // string (not recommended), or it could be prompted for.
     // Alternatively use External Authentication so that no password is
     // needed.
-    // password      : "admin200%scrp",
-    password      : "infoplus",
+    password      : "admin200%scrp",
+    // password      : "infoplus",
   
     // For information on connection strings see:
     // https://oracle.github.io/node-oracledb/doc/api.html#connectionstrings
     // connectString : "localhost/infobox",
-    // connectString : "10.84.243.126:1522/VNDEV",
-    connectString : "192.168.100.19/xe",
+    connectString : "10.84.243.126:1522/VNDEV",
+    // connectString : "192.168.100.19/xe",
   
     // Setting externalAuth is optional.  It defaults to false.  See:
     // https://oracle.github.io/node-oracledb/doc/api.html#extauth
