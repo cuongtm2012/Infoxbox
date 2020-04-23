@@ -8,7 +8,8 @@ const runRestartPm2 = require('../util/runShellScript');
 const util = require('../../shared/util/util');
 const convertBase64 = require('../../shared/util/convertBase64ToText');
 const cicMobileService = require('../services/cicMobile.service');
-
+const io = require('socket.io-client');
+const dateutil = require('../util/dateutil');
 module.exports = class internalJob {
     //Cron request internal scraping
     cron(oncomplete) {
@@ -63,6 +64,14 @@ module.exports = class internalJob {
 
                             }).catch((error) => {
                                 console.log("error call to internal_cic url A0001!", error);
+
+                                //conneciton socket
+                                const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+                                // emit socket
+                                socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: element.NICE_SSIN_ID, responseMessage: 'A0001 Error Internal Batch' });
+                                // close connection socket
+                                socket.emit('end');
+                               
                                 cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(element.NICE_SSIN_ID).then(() => {
                                     console.log("update SCRP_MOD_CD = 06 ");
                                     // Restart internal

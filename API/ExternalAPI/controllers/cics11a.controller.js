@@ -25,10 +25,9 @@ const io = require('socket.io-client');
 const URI = require('../../shared/URI');
 
 exports.cics11aRQST = function (req, res, next) {
-	try {
-		//conneciton socket
-		const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+	let socket;
 
+	try {
 		// encrypt password
 		let password = encryptPassword.encrypt(req.body.loginPw);
 		let niceSessionKey;
@@ -85,15 +84,9 @@ exports.cics11aRQST = function (req, res, next) {
 					if (!_.isEmpty(niceSessionK)) {
 						let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseSuccess);
-
-						// emit socket
-						socket.emit('CIC_S11A_RQST', responseSuccess);
 					} else {
 						let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
-
-						// emit socket
-						socket.emit('CIC_S11A_RQST', responseUnknow);
 					}
 					//TODO
 					// call directly to scrapping service
@@ -109,6 +102,14 @@ exports.cics11aRQST = function (req, res, next) {
 			});
 		});
 	} catch (err) {
+		//conneciton socket
+		socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
+		// emit socket
+		socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_S11A_RQST' });
+		// Close socket
+		socket.emit('end');
+
 		console.log(err);
 		return res.status(500).json({ error: err.toString() });
 	}
