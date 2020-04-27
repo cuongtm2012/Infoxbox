@@ -7,7 +7,8 @@ var URI = {
     internal_cicB0003: 'https://localhost:3300/internal/cicB0003',
     internal_cicMobile: 'https://localhost:3300/internal/mobile',
 
-    socket_url: 'https://localhost:3400'
+    socket_url: 'https://localhost:3400',
+    socket_mobile_url: 'https://localhost:3200'
 };
 
 module.exports = URI;
