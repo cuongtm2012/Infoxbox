@@ -17,7 +17,7 @@ exports.getUserInfo = async function (req, res) {
     var currentLocation = req.query.currentLocation;
     var limitRow = req.query.limitRow;
 
-    var SQL_SELECT = `SELECT
+    var SQL_SELECT_USER = ` SELECT
     TB_ROLE.ROLE as ROLE,
     TB_ROLE.ROLE_ID as ROLE_ID,
     TB_ITCUST.CUST_NM as CUST_NM,
@@ -33,18 +33,37 @@ exports.getUserInfo = async function (req, res) {
     to_char(to_date(TB_ITUSER.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
     to_char(to_date(TB_ITUSER.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
     TB_ITUSER.WORK_ID as WORK_ID `;
-    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
-    var SQL_FROM = 'FROM TB_ITUSER ';
-    var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD INNER JOIN TB_ROLE ON TB_ITUSER.ROLE_ID = TB_ROLE.ROLE_ID ';
+    var SQL_SELECT_USER_HIST = ` SELECT
+    TB_ROLE.ROLE as ROLE,
+    TB_ROLE.ROLE_ID as ROLE_ID,
+    TB_ITCUST.CUST_NM as CUST_NM,
+    TB_ITUSER_HIST.USER_ID as USER_ID,
+    TB_ITUSER_HIST.USER_NM as USER_NM,
+    TB_ITUSER_HIST.CUST_CD as CUST_CD,
+    TB_ITUSER_HIST.INOUT_GB as INOUT_GB,
+    TB_ITUSER_HIST. ADDR as ADDR,
+    TB_ITUSER_HIST.EMAIL as EMAIL,
+    TB_ITUSER_HIST.TEL_NO_MOBILE as TEL_NO_MOBILE,
+    TB_ITUSER_HIST.ACTIVE as ACTIVE,
+    to_char(to_date(TB_ITUSER_HIST.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') as SYS_DTIM,
+    to_char(to_date(TB_ITUSER_HIST.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
+    to_char(to_date(TB_ITUSER_HIST.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
+    TB_ITUSER_HIST.WORK_ID as WORK_ID `;
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total FROM `;
+    var UNION_ALL = ' UNION ALL ';
+    var SQL_FROM_USER = ' FROM TB_ITUSER ';
+    var SQL_FROM_USER_HIST = ' FROM TB_ITUSER_HIST ';
+    var SQL_JOIN_USER = ' LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD INNER JOIN TB_ROLE ON TB_ITUSER.ROLE_ID = TB_ROLE.ROLE_ID ';
+    var SQL_JOIN_USER_HIST = ' LEFT JOIN TB_ITCUST ON TB_ITUSER_HIST.CUST_CD = TB_ITCUST.CUST_CD INNER JOIN TB_ROLE ON TB_ITUSER_HIST.ROLE_ID = TB_ROLE.ROLE_ID ';
     var SQL_LIMIT = ' OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_LIMIT;
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_LIMIT;
         let param = {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + ')';
         let paramSearch = {};
         let totalRow;
         let rowRs;
@@ -56,9 +75,13 @@ exports.getUserInfo = async function (req, res) {
     if ((userClass) && (userID) && (userName) && (orgCode) && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ' +
             'AND TB_ITUSER.USER_ID LIKE :userID ' +
-            'AND TB_ITUSER.USER_NM LIKE :userName ' +
-            'AND TB_ITUSER.CUST_CD LIKE :orgCode AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+            'AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
+            'AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) AND TB_ITUSER.ACTIVE LIKE :active ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass ' +
+            'AND TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+            'AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+            'AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userID,
@@ -68,7 +91,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userID,
@@ -86,13 +109,14 @@ exports.getUserInfo = async function (req, res) {
 
     if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
         };
@@ -106,13 +130,14 @@ exports.getUserInfo = async function (req, res) {
 
     if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
         };
@@ -125,14 +150,15 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode)  && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
         };
@@ -145,14 +171,15 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode)  && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userName,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userName,
         };
@@ -166,13 +193,14 @@ exports.getUserInfo = async function (req, res) {
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode)  && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             active,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             active,
         };
@@ -186,14 +214,15 @@ exports.getUserInfo = async function (req, res) {
 
     if((userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.USER_ID LIKE :userID  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass AND TB_ITUSER_HIST.USER_ID LIKE :userID  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userID,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
         };
@@ -206,15 +235,16 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if((userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.USER_NM LIKE :userName  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName)  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName)  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userName,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userName,
@@ -228,15 +258,16 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode) && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             orgCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             orgCode,
@@ -252,14 +283,15 @@ exports.getUserInfo = async function (req, res) {
 
     if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass AND TB_ITUSER.ACTIVE LIKE :active  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass AND TB_ITUSER_HIST.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             active,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             active,
@@ -273,15 +305,16 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.USER_NM LIKE :userName  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName)  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName)  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             userName,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
             userName,
@@ -295,15 +328,16 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode) && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             orgCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
             orgCode,
@@ -320,14 +354,15 @@ exports.getUserInfo = async function (req, res) {
 
     if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID AND TB_ITUSER.ACTIVE LIKE :active  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID AND TB_ITUSER_HIST.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             active,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
             active,
@@ -341,15 +376,16 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode) && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName AND TB_ITUSER.CUST_CD LIKE :orgCode  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userName,
             orgCode,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userName,
             orgCode,
@@ -364,15 +400,16 @@ exports.getUserInfo = async function (req, res) {
 
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && _.isEmpty(orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName AND TB_ITUSER.ACTIVE LIKE :active  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) AND TB_ITUSER.ACTIVE LIKE :active  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) AND TB_ITUSER_HIST.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userName,
             active,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userName,
             active,
@@ -387,15 +424,16 @@ exports.getUserInfo = async function (req, res) {
 
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && (orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode AND TB_ITUSER.ACTIVE LIKE :active  ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) AND TB_ITUSER.ACTIVE LIKE :active  ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) AND TB_ITUSER_HIST.ACTIVE LIKE :active  ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             active,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
             active,
@@ -411,8 +449,11 @@ exports.getUserInfo = async function (req, res) {
     if((userClass) && (userID) && (userName) && _.isEmpty(orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
                                 ' AND TB_ITUSER.USER_ID LIKE :userID ' +
-                                ' AND TB_ITUSER.USER_NM LIKE :userName ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+                                ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass' +
+                                ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+                                ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userID,
@@ -420,7 +461,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userID,
@@ -437,8 +478,11 @@ exports.getUserInfo = async function (req, res) {
     if((userClass) && (userID) && _.isEmpty(userName) && (orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
                                 ' AND TB_ITUSER.USER_ID LIKE :userID ' +
-                                ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+                                ' AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass' +
+                                ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+                                ' AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userID,
@@ -446,7 +490,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userID,
@@ -464,7 +508,10 @@ exports.getUserInfo = async function (req, res) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
             ' AND TB_ITUSER.USER_ID LIKE :userID ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass' +
+            ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userID,
@@ -472,7 +519,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userID,
@@ -488,9 +535,12 @@ exports.getUserInfo = async function (req, res) {
 
     if((userClass) && _.isEmpty(userID) && (userName) && (orgCode)  && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
-                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
-                                ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+                                ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
+                                ' AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass' +
+                                ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+                                ' AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userName,
@@ -498,7 +548,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userName,
@@ -514,9 +564,12 @@ exports.getUserInfo = async function (req, res) {
 
     if((userClass) && _.isEmpty(userID) && (userName) &&  _.isEmpty(orgCode)  && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
-            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+            ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass' +
+            ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             userName,
@@ -524,7 +577,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             userName,
@@ -541,9 +594,12 @@ exports.getUserInfo = async function (req, res) {
 
     if((userClass) && _.isEmpty(userID) && _.isEmpty(userName) &&  (orgCode)  && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.INOUT_GB LIKE :userClass' +
-            ' AND TB_ITUSER.CUST_CD LIKE :orgCode ' +
+            ' AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.INOUT_GB LIKE :userClass' +
+            ' AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userClass,
             orgCode,
@@ -551,7 +607,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userClass,
             orgCode,
@@ -567,9 +623,12 @@ exports.getUserInfo = async function (req, res) {
 
     if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode) && _.isEmpty(active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
-                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
-                                ' AND TB_ITUSER.CUST_CD LIKE :orgCode ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+                                ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
+                                ' AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) ';
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+                                ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+                                ' AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             userName,
@@ -577,7 +636,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
             userName,
@@ -593,9 +652,12 @@ exports.getUserInfo = async function (req, res) {
 
     if(_.isEmpty(userClass) && (userID) && (userName) && _.isEmpty(orgCode) && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
-                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+                                ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
                                 ' AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+                                ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+                                ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             userName,
@@ -603,7 +665,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
             userName,
@@ -619,9 +681,12 @@ exports.getUserInfo = async function (req, res) {
 
     if(_.isEmpty(userClass) && (userID) && _.isEmpty(userName) && (orgCode) && (active)) {
         let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_ID LIKE :userID ' +
-            ' AND TB_ITUSER.CUST_CD LIKE :orgCode ' +
+            ' AND LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode) ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+            ' AND LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode) ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userID,
             orgCode,
@@ -629,7 +694,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userID,
             orgCode,
@@ -644,10 +709,13 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && _.isEmpty(userID) && (userName) && (orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
-                                ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ' +
+                                ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
                                 ' AND TB_ITUSER.ACTIVE LIKE :active ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ' +
+                                ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+                                ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             userName,
@@ -655,7 +723,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
             userName,
@@ -671,11 +739,15 @@ exports.getUserInfo = async function (req, res) {
 
 
     if((userClass) && (userID) && (userName) && (orgCode) && _.isEmpty(active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
-            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
             ' AND TB_ITUSER.INOUT_GB LIKE :userClass ' +
             ' AND TB_ITUSER.USER_ID LIKE :userID ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+            ' AND TB_ITUSER_HIST.INOUT_GB LIKE :userClass ' +
+            ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             userName,
@@ -684,7 +756,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
             userName,
@@ -700,11 +772,15 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if(_.isEmpty(userClass) && (userID) && (userName) && (orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
-            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ' +
             ' AND TB_ITUSER.USER_ID LIKE :userID ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             userName,
@@ -713,7 +789,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
             userName,
@@ -729,11 +805,15 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if((userClass) && _.isEmpty(userID) && (userName) && (orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
-            ' AND TB_ITUSER.USER_NM LIKE :userName ' +
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName) ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ' +
             ' AND TB_ITUSER.INOUT_GB LIKE :userClass ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName) ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER_HIST.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             userName,
@@ -742,7 +822,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
             userName,
@@ -758,11 +838,15 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if((userClass) && (userID) && _.isEmpty(userName) && (orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.CUST_CD LIKE :orgCode  ' +
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.CUST_CD) LIKE LOWER(:orgCode)  ' +
             ' AND TB_ITUSER.USER_ID LIKE :userID ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ' +
             ' AND TB_ITUSER.INOUT_GB LIKE :userClass ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.CUST_CD) LIKE LOWER(:orgCode)  ' +
+            ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER_HIST.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             orgCode,
             userID,
@@ -771,7 +855,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             orgCode,
             userID,
@@ -787,11 +871,15 @@ exports.getUserInfo = async function (req, res) {
     }
 
     if((userClass) && (userID) && (userName) && _.isEmpty(orgCode) && (active)) {
-        let SQL_WHERE_SEARCH = 'WHERE TB_ITUSER.USER_NM LIKE :userName  ' +
+        let SQL_WHERE_SEARCH = 'WHERE LOWER(TB_ITUSER.USER_NM) LIKE LOWER(:userName)  ' +
             ' AND TB_ITUSER.USER_ID LIKE :userID ' +
             ' AND TB_ITUSER.ACTIVE LIKE :active ' +
             ' AND TB_ITUSER.INOUT_GB LIKE :userClass ';
-        let sql = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH + SQL_LIMIT;
+        let SQL_WHERE_SEARCH_HIST = 'WHERE LOWER(TB_ITUSER_HIST.USER_NM) LIKE LOWER(:userName)  ' +
+            ' AND TB_ITUSER_HIST.USER_ID LIKE :userID ' +
+            ' AND TB_ITUSER_HIST.ACTIVE LIKE :active ' +
+            ' AND TB_ITUSER_HIST.INOUT_GB LIKE :userClass ';
+        let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST + SQL_LIMIT;
         let param = {
             userName,
             userID,
@@ -800,7 +888,7 @@ exports.getUserInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_JOIN + SQL_WHERE_SEARCH;
+        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_WHERE_SEARCH_HIST  + ')';
         let paramSearch = {
             userName,
             userID,
