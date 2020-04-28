@@ -9,8 +9,6 @@ var jwt = require('jsonwebtoken');
 var config = require('../config/config');
 
 async function verifyAdmin(req, res, next) {
-    var userId = req.headers['userid'];
-    var userName = req.headers['username'];
     var token = req.headers['token'];
     if (!token) {
         return res.status(403).send({
@@ -23,25 +21,30 @@ async function verifyAdmin(req, res, next) {
         }
     }
     jwt.verify(token, config.secret, function (err, decoded) {
-        if (err)
+        if (err) {
             return res.status(500).send({
                 auth: false,
                 message: 'Failed to authenticate token.'
             });
-
+        } else {
+            checkIsAdmin(decoded,res ,next);
+        }
     });
-    if (!userId && !userName) {
+}
+
+async function checkIsAdmin(decoded, res ,next) {
+    let userID = decoded.userID;
+    if (!decoded.userID) {
         return res.status(403).send({
             auth: false,
-            message: 'No UserId and User Name provided'
+            message: 'Token error!'
         });
     } else {
-        let sqlGetAccount = `SELECT * FROM TB_ITUSER WHERE USER_ID=:userId AND USER_NM=:userName`;
+        let sqlGetAccount = `SELECT * FROM TB_ITUSER WHERE USER_ID=:userID `;
         let paramGetAccount = {
-            userName,
-            userId
+            userID
         };
-        let result = await oracelService.getUserByUserNameAndUserID(res, sqlGetAccount, paramGetAccount, optionFormatObj);
+        let result = await oracelService.getUserByUserID(res, sqlGetAccount, paramGetAccount, optionFormatObj);
         if(result[0]) {
             if (result[0].ROLE_ID == 2 && result[0].ACTIVE == 1) {
                 next();

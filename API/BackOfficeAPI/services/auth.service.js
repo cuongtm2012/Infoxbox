@@ -20,9 +20,9 @@ async function getUser(req) {
          to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, 
          to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM ,
           WORK_ID FROM TB_ITUSER
-                where USER_NM = :user_name `;
+                where LOWER(USER_ID) = LOWER(:userID) `;
 
-        result = await connection.execute(sql, {user_name: { val: req.body.username }}, {outFormat: oracledb.OUT_FORMAT_OBJECT});
+        result = await connection.execute(sql, {userID: { val: req.body.userID }}, {outFormat: oracledb.OUT_FORMAT_OBJECT});
             console.log(bcrypt.hashSync(user_pwd, salt));
             
         if (bcrypt.compareSync(user_pwd, result.rows[0].USER_PW)) {
