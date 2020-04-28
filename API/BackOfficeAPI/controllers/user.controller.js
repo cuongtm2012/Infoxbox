@@ -1002,3 +1002,20 @@ exports.resetPassword = async function (req, res) {
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
     }
 };
+
+exports.changePassword = async function (req, res) {
+    var userID = req.body.userID;
+    var userPW = bcrypt.hashSync(req.body.password, saltRounds);
+
+    if(_.isEmpty(userID)) {
+        res.status(500).send({message: 'User ID provide blank!'})
+    } else {
+        var param = {
+            userID,
+            userPW
+        };
+
+        let SQL = 'UPDATE ADMIN.TB_ITUSER SET USER_PW=:userPW WHERE USER_ID=:userID ';
+        await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
+    }
+};

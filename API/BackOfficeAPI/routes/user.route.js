@@ -8,5 +8,6 @@ router.get('/getUserInfo',  verifyAdmin , user_router.getUserInfo);
 router.post('/createUser', verifyAdmin ,  user_router.createUser);
 router.put('/updateUser',  verifyAdmin ,user_router.updateUser);
 router.put('/resetPassword', verifyAdmin , user_router.resetPassword);
+router.put('/changePassword', verifyToken, user_router.changePassword);
 
 module.exports = router;

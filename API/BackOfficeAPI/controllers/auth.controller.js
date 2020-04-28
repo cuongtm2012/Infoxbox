@@ -37,10 +37,12 @@ exports.login = function (req, res) {
 
                 let resdata = reslt[0];
                 if (resdata.ACTIVE === 1) {
-                console.log("OK password");
-                let userData = new IUser(resdata, true, token);
-
-                return res.status(200).json(userData);
+                    if (user_pwd == 'nice1234') {
+                        return res.status(202).json({status: 202 , token: token});
+                    } else {
+                        let userData = new IUser(resdata, true, token);
+                        return res.status(200).json(userData);
+                    }
                 } else {
                     return res.status(403).send({message: 'Your account not active by Admin. Please contact Admin to solve problems!'});
                 }
