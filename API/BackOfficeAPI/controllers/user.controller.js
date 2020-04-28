@@ -905,6 +905,7 @@ exports.getUserInfo = async function (req, res) {
 };
 
 exports.createUser = async function (req, res) {
+    var userID = req.body.userID;
     var userName = req.body.userName;
     var custCd = req.body.orgCode;
     // var password = req.body.password;
@@ -919,7 +920,7 @@ exports.createUser = async function (req, res) {
     var role = req.body.role;
     var active = req.body.active;
     let params = {
-        user_id: {val: null},
+        userID: {val: userID},
         user_name: {val: userName},
         custCd: {val: custCd},
         password: {val: bcrypt.hashSync(defaultPW, saltRounds)},
@@ -934,14 +935,14 @@ exports.createUser = async function (req, res) {
         active: {val: active},
         role: {val: role}
     };
-    let sqlCheckUser = `SELECT  * FROM TB_ITUSER WHERE USER_NM = :user_name`;
-    let paramsCheckUserName = {user_name: {val: userName}};
-    let isExit = await oracelService.checkIsExistUserName(res, sqlCheckUser, paramsCheckUserName, optionFormatObj);
-    if (isExit[0]) {
-        return res.status(500).send({message: "User Name [" + userName + "] has been used!"});
+    let sqlCheckUserID = `SELECT  * FROM TB_ITUSER WHERE LOWER(USER_ID) = LOWER(:userID) `;
+    let paramsCheckUserID = {userID: {val: userID}};
+    let isExist = await oracelService.checkIsExistUserID(res, sqlCheckUserID, paramsCheckUserID, optionFormatObj);
+    if (isExist[0]) {
+        return res.status(500).send({message: "User ID [" + userID + "] has been used!"});
     } else {
         let sql_insert = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW , VALID_START_DT , VALID_END_DT, TEL_NO_MOBILE , ADDR , WORK_ID  , EMAIL, SYS_DTIM , ACTIVE , ROLE_ID)
-         VALUES (:user_id, :user_name, :custCd, :typeUser, :password, :validStartDT, :validEndDT , :phone, :address , :workID , :email , :systemDate ,:active , :role)`;
+         VALUES (:userID, :user_name, :custCd, :typeUser, :password, :validStartDT, :validEndDT , :phone, :address , :workID , :email , :systemDate ,:active , :role)`;
         let createAffect = await oracelService.createUser(res, sql_insert, params, optionAutoCommit);
         console.log(createAffect);
         if (createAffect.rowsAffected === 1) {
@@ -953,6 +954,7 @@ exports.createUser = async function (req, res) {
 };
 
 exports.updateUser = async function (req, res) {
+    var userName = req.body.userName;
     var userClass = req.body.userClass;
     var orgCode = req.body.orgCode;
     var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
@@ -965,6 +967,7 @@ exports.updateUser = async function (req, res) {
     var active = req.body.active;
 
         var param = {
+            userName,
             userClass,
             orgCode,
             validStartDT,
@@ -978,7 +981,7 @@ exports.updateUser = async function (req, res) {
         };
 
         let SQL = 'UPDATE ADMIN.TB_ITUSER SET' +
-            '  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active , ROLE_ID=:role ' +
+            ' USER_NM=:userName ,  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active , ROLE_ID=:role ' +
             ' WHERE USER_ID=:userID ';
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
