@@ -20,11 +20,11 @@ const mailPort = 465;
 exports.login = function (req, res) {
     try {
         var jwt = require('jsonwebtoken');
-        var userid = req.body.username;
+        var userID = req.body.userID;
         var user_pwd = req.body.password;
 
         var payload = {
-            userid: userid,
+            userID: userID,
         };
 
         authService.getUser(req, res).then(reslt => {
