@@ -15,15 +15,17 @@ async function getUser(req) {
 
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `SELECT ACTIVE, ROLE_ID, USER_PW , USER_ID, USER_NM, CUST_CD, INOUT_GB, ADDR,
-         EMAIL,TEL_NO_MOBILE, SYS_DTIM,
-         to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, 
-         to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM ,
-          WORK_ID FROM TB_ITUSER
-                where LOWER(USER_ID) = LOWER(:userID) `;
+        sql = `SELECT TB_ITUSER.ACTIVE, TB_ITUSER.USER_PW , TB_ITUSER.USER_ID, TB_ITUSER.USER_NM, TB_ITUSER.CUST_CD, TB_ITUSER.INOUT_GB, TB_ITUSER.ADDR,
+         TB_ITUSER.EMAIL, TB_ITUSER.TEL_NO_MOBILE,
+         to_char(to_date(TB_ITUSER.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(TB_ITUSER.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, 
+         to_char(to_date(TB_ITUSER.SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM ,
+          TB_ITUSER.WORK_ID , TB_ROLE_USER.ROLE_ID FROM TB_ITUSER 
+          INNER JOIN TB_ROLE_USER ON TB_ROLE_USER.USER_ID = TB_ITUSER.USER_ID
+                where LOWER(TB_ITUSER.USER_ID) = LOWER(:userID) `;
 
-        result = await connection.execute(sql, {userID: { val: req.body.userID }}, {outFormat: oracledb.OUT_FORMAT_OBJECT});
-            console.log(bcrypt.hashSync(user_pwd, salt));
+        result = await connection.execute(sql, {userID: {val: req.body.userID}}, {outFormat: oracledb.OUT_FORMAT_OBJECT});
+        console.log(bcrypt.hashSync(user_pwd, salt));
+        console.log(result[0]);
             
         if (bcrypt.compareSync(user_pwd, result.rows[0].USER_PW)) {
             console.log("OK password");
