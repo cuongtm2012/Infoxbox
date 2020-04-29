@@ -15,8 +15,7 @@ const optionFormatObj = {
 const optionAutoCommit = {
     autoCommit: true
 };
-const mailHost = 'smtp.gmail.com';
-const mailPort = 465;
+const defaultPW = 'nice1234';
 exports.login = function (req, res) {
     try {
         var jwt = require('jsonwebtoken');
@@ -37,10 +36,14 @@ exports.login = function (req, res) {
 
                 let resdata = reslt[0];
                 if (resdata.ACTIVE === 1) {
-                    if (user_pwd == 'nice1234') {
+                    if (user_pwd == defaultPW) {
                         return res.status(202).json({status: 202 , token: token});
                     } else {
-                        let userData = new IUser(resdata, true, token);
+                        let role = [];
+                        for (let i = 0; i < reslt.length ; i++) {
+                            role.push(reslt[i].ROLE_ID)
+                        }
+                        let userData = new IUser(resdata, true, token , role);
                         return res.status(200).json(userData);
                     }
                 } else {
