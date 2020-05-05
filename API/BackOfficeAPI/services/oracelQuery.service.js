@@ -66,7 +66,6 @@ exports.checkIsExistUserID = async function (res, sql, param, option) {
     } catch (err) {
         return err;
     } finally {
-
         if (this.connection) {
             try {
                 await this.connection.close();
