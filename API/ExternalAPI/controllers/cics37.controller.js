@@ -184,6 +184,10 @@ exports.cics37Rqst = function (req, res) {
                                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                                 console.log('insert INQLOG:', r);
                                             });
+                                            //Logging response
+                                            logger.debug('Logging response S37');
+                                            logger.info(responseData);
+
                                             return res.status(200).json(responseData);
                                         } else {
                                             let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
@@ -194,6 +198,9 @@ exports.cics37Rqst = function (req, res) {
                                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                                 console.log('insert INQLOG:', r);
                                             });
+                                            //Logging response
+                                            logger.debug('Logging response S37');
+                                            logger.info(responseData);
 
                                             return res.status(200).json(responseData);
                                         }
