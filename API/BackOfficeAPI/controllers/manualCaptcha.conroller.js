@@ -17,7 +17,7 @@ exports.getListB003 = async function (req, res) {
     TB_SCRP_TRLOG.S_CIC_NO as S_CIC_NO, 
     TB_SCRP_TRLOG.S_USER_ID as S_USER_ID, 
     TB_SCRP_TRLOG.S_USER_PW as S_USER_PW, 
-    to_char(to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD'),'mm/dd/yyyy') as INQ_DTIM `;
+    TB_SCRP_TRLOG.INQ_DTIM as INQ_DTIM `;
     var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = 'FROM TB_SCRP_TRLOG ';
     var SQL_JOIN = 'INNER JOIN TB_SCRPLOG ON TB_SCRPLOG.NICE_SSIN_ID = TB_SCRP_TRLOG.NICE_SSIN_ID ';
