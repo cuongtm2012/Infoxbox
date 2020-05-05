@@ -1065,7 +1065,7 @@ exports.changePassword = async function (req, res) {
             userPW
         };
 
-        let SQL = 'UPDATE ADMIN.TB_ITUSER SET USER_PW=:userPW WHERE USER_ID=:userID ';
+        let SQL = 'UPDATE TB_ITUSER SET USER_PW=:userPW WHERE USER_ID=:userID ';
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
     }
 };
