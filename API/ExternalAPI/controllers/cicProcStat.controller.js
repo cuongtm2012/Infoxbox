@@ -64,12 +64,13 @@ exports.cicProcStat = function (req, res) {
                 var cicReportStatus = [];
                 if (!_.isEmpty(reslt)) {
                     let responseSuccess = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
-                    _.forEach(reslt, res => {
+                    _.forEach(reslt.outputResult, res => {
                         let responseData = new preProStatRes(res);
                         cicReportStatus.push(responseData);
                     });
-                    let countResult = reslt.length;
-                    responseData = new CICProcStatRes(getdataReq, responseSuccess, countResult, cicReportStatus);
+                    let countResult = reslt.outputResult.length;
+                    let totalCount = reslt.totalCount[0].TOTAL;
+                    responseData = new CICProcStatRes(getdataReq, responseSuccess, countResult, cicReportStatus, totalCount);
 
                 } else {
                     let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);

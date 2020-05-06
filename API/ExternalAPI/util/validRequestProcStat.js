@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const dateUtil = require('../util/dateutil');
+const util = require('../../shared/util/util');
 
 module.exports = {
     checkParamRequestForResponse: function (getdataReq) {
@@ -50,10 +51,31 @@ module.exports = {
             return response;
         }
         // valid inquiryDate less than today
+        if (!util.validNumber(getdataReq.searchDateFrom)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateFrom.name,
+                responseCode: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateFrom.code
+            }
+            return response;
+        }
+        if (!util.validNumber(getdataReq.searchDateTo)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateTo.name,
+                responseCode: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateTo.code
+            }
+            return response;
+        }
         if (!dateUtil.validDateAndCurrentDate(getdataReq.searchDateFrom, getdataReq.searchDateTo)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.INQDateInvalid.name,
                 responseCode: responcodeEXT.RESCODEEXT.INQDateInvalid.code
+            }
+            return response;
+        }
+        if (!dateUtil.validFromDateEarlier93Days(getdataReq.searchDateFrom)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.SearchDateFromEarlier93Days.name,
+                responseCode: responcodeEXT.RESCODEEXT.SearchDateFromEarlier93Days.code
             }
             return response;
         }
