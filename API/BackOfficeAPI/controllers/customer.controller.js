@@ -23,20 +23,18 @@ exports.getCustInfo = async function (req, res) {
     BIZ_CG_CD as BIZ_CG_CD, PRT_CUST_GB as PRT_CUST_GB,
      PRT_CUST_CD as PRT_CUST_CD, 
      ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
-    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total FROM `;
-    var UNION_ALL = 'UNION ALL ';
-    var SQL_FROM_ACTIVE = 'FROM TB_ITCUST ';
-    var SQL_FROM_HISTORY = 'FROM TB_ITCUST_HIST ';
+    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
+    var SQL_FROM = 'FROM TB_ITCUST ';
     var SQL_ORDER_BY = 'ORDER BY CUST_NM_ENG ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm) && _.isEmpty(status)) {
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_ORDER_BY + SQL_LIMIT;
+        let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM;
         let paramSearch = {};
         let totalRow;
         let rowRs;
@@ -44,14 +42,13 @@ exports.getCustInfo = async function (req, res) {
         totalRow = await oracelService.queryGetTotalRow(res, sqlSearch, paramSearch, optionFormatObj);
         rowRs = await oracelService.queryGetTotalRow(res, sql, param, optionFormatObj);
         return res.status(200).send({count: totalRow, rowRs: rowRs});
-
     }
 
     if ((custClassicfication) && (cusCd) && (custNm) && (status)) {
         let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
-                                'AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ' +
-                                'AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS = :status ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+            'AND CUST_CD LIKE :cusCd ' +
+            'AND CUST_NM_ENG LIKE :custNm AND STATUS = :status ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
             cusCd,
@@ -60,7 +57,7 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custClassicfication,
             cusCd,
@@ -76,13 +73,13 @@ exports.getCustInfo = async function (req, res) {
 
     if ((custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm) && _.isEmpty(status)) {
         let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custClassicfication,
         };
@@ -94,14 +91,14 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && _.isEmpty(custNm) && _.isEmpty(status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             cusCd,
         };
@@ -113,14 +110,14 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm) && _.isEmpty(status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM_ENG LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custNm,
         };
@@ -135,13 +132,13 @@ exports.getCustInfo = async function (req, res) {
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm) && (status)) {
         let SQL_WHERE_SEARCH = 'WHERE STATUS LIKE :status ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             status,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             status,
         };
@@ -153,15 +150,15 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if ((custClassicfication) && (cusCd) && _.isEmpty(custNm) && _.isEmpty(status)) {
-        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND CUST_CD LIKE :cusCd ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
             cusCd,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custClassicfication,
             cusCd,
@@ -174,15 +171,15 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if ((custClassicfication) && _.isEmpty(cusCd) && (custNm)  && _.isEmpty(status)) {
-        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND CUST_NM_ENG LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
             custNm,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custClassicfication,
             custNm,
@@ -196,14 +193,14 @@ exports.getCustInfo = async function (req, res) {
 
     if ((custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)  && (status)) {
         let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication AND STATUS LIKE :status ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
             status,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custClassicfication,
             status,
@@ -216,15 +213,15 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && (custNm) && _.isEmpty(status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd AND CUST_NM_ENG LIKE :custNm ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
             custNm,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             cusCd,
             custNm,
@@ -237,15 +234,15 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && _.isEmpty(custNm) && (status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS LIKE :status ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd AND STATUS LIKE :status ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
             status,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             cusCd,
             status,
@@ -258,15 +255,15 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS LIKE :status ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM_ENG LIKE :custNm AND STATUS LIKE :status ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
             status,
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custNm,
             status,
@@ -280,8 +277,8 @@ exports.getCustInfo = async function (req, res) {
 
 
     if ((custClassicfication) && (cusCd) && (custNm) && _.isEmpty(status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND CUST_GB LIKE :custClassicfication AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM_ENG LIKE :custNm AND CUST_GB LIKE :custClassicfication AND CUST_CD LIKE :cusCd ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
             cusCd,
@@ -289,7 +286,7 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custNm,
             cusCd,
@@ -304,8 +301,8 @@ exports.getCustInfo = async function (req, res) {
 
 
     if (_.isEmpty(custClassicfication) && (cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS LIKE :status  AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM_ENG LIKE :custNm AND STATUS LIKE :status  AND CUST_CD LIKE :cusCd ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
             cusCd,
@@ -313,7 +310,7 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custNm,
             cusCd,
@@ -328,8 +325,8 @@ exports.getCustInfo = async function (req, res) {
 
 
     if ((custClassicfication) && _.isEmpty(cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS LIKE :status  AND CUST_GB LIKE :custClassicfication ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_NM_ENG LIKE :custNm AND STATUS LIKE :status  AND CUST_GB LIKE :custClassicfication ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
             custClassicfication,
@@ -337,7 +334,7 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             custNm,
             custClassicfication,
@@ -352,8 +349,8 @@ exports.getCustInfo = async function (req, res) {
 
 
     if ((custClassicfication) && (cusCd) && _.isEmpty(custNm) && (status)) {
-        let SQL_WHERE_SEARCH = 'WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS LIKE :status  AND CUST_GB LIKE :custClassicfication ';
-        let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
+        let SQL_WHERE_SEARCH = 'WHERE CUST_CD LIKE :cusCd AND STATUS LIKE :status  AND CUST_GB LIKE :custClassicfication ';
+        sql = SQL_SELECT + SQL_FROM + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
             custClassicfication,
@@ -361,7 +358,7 @@ exports.getCustInfo = async function (req, res) {
             currentLocation,
             limitRow
         };
-        let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + ')';
+        let sqlSearch = SQL_SELECT_COUNT + SQL_FROM + SQL_WHERE_SEARCH;
         let paramSearch = {
             cusCd,
             custClassicfication,
