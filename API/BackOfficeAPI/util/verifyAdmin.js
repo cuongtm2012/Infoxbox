@@ -40,11 +40,13 @@ async function checkIsAdmin(decoded, res ,next) {
             message: 'Token error!'
         });
     } else {
-        let sqlGetAccount = `SELECT * FROM TB_ITUSER WHERE USER_ID=:userID `;
+        let sql = `SELECT TB_ITUSER.ACTIVE, TB_ROLE_USER.ROLE_ID FROM TB_ITUSER 
+          INNER JOIN TB_ROLE_USER ON TB_ROLE_USER.USER_ID = TB_ITUSER.USER_ID
+                where LOWER(TB_ITUSER.USER_ID) = LOWER(:userID)  `;
         let paramGetAccount = {
             userID
         };
-        let result = await oracelService.getUserByUserID(res, sqlGetAccount, paramGetAccount, optionFormatObj);
+        let result = await oracelService.getUserByUserID(res, sql, paramGetAccount, optionFormatObj);
         if(result[0]) {
             if (result[0].ROLE_ID == 2 && result[0].ACTIVE == 1) {
                 next();

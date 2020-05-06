@@ -1,25 +1,23 @@
-const oracledb = require('oracledb');
-var bcrypt = require('bcrypt');
+let oracledb = require('oracledb');
+let dbconfig = require('../../shared/config/dbconfig');
+let bcrypt = require('bcrypt');
 const oracelService = require('../services/oracelQuery.service');
-var _ = require('lodash');
+let _ = require('lodash');
 const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 const saltRounds = 10;
 const defaultPW = 'nice1234';
 
-
 exports.getUserInfo = async function (req, res) {
-    var userClass = req.query.userClass ? '%' + req.query.userClass + '%' : '';
-    var userID = req.query.userID ? '%' + req.query.userID + '%' : '';
-    var userName = req.query.userName ? '%' + req.query.userName + '%' : '';
-    var orgCode = req.query.orgCode ? '%' + req.query.orgCode + '%' : '';
-    var active = req.query.active ? req.query.active : '';
-    var currentLocation = req.query.currentLocation;
-    var limitRow = req.query.limitRow;
+    let userClass = req.query.userClass ? '%' + req.query.userClass + '%' : '';
+    let userID = req.query.userID ? '%' + req.query.userID + '%' : '';
+    let userName = req.query.userName ? '%' + req.query.userName + '%' : '';
+    let orgCode = req.query.orgCode ? '%' + req.query.orgCode + '%' : '';
+    let active = req.query.active ? req.query.active : '';
+    let currentLocation = req.query.currentLocation;
+    let limitRow = req.query.limitRow;
 
-    var SQL_SELECT_USER = ` SELECT
-    TB_ROLE.ROLE as ROLE,
-    TB_ROLE.ROLE_ID as ROLE_ID,
+    let SQL_SELECT_USER = ` SELECT
     TB_ITCUST.CUST_NM as CUST_NM,
     TB_ITUSER.USER_ID as USER_ID,
     TB_ITUSER.USER_NM as USER_NM,
@@ -33,9 +31,7 @@ exports.getUserInfo = async function (req, res) {
     to_char(to_date(TB_ITUSER.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
     to_char(to_date(TB_ITUSER.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
     TB_ITUSER.WORK_ID as WORK_ID `;
-    var SQL_SELECT_USER_HIST = ` SELECT
-    TB_ROLE.ROLE as ROLE,
-    TB_ROLE.ROLE_ID as ROLE_ID,
+    let SQL_SELECT_USER_HIST = ` SELECT
     TB_ITCUST.CUST_NM as CUST_NM,
     TB_ITUSER_HIST.USER_ID as USER_ID,
     TB_ITUSER_HIST.USER_NM as USER_NM,
@@ -49,13 +45,13 @@ exports.getUserInfo = async function (req, res) {
     to_char(to_date(TB_ITUSER_HIST.VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_START_DT,
     to_char(to_date(TB_ITUSER_HIST.VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') as VALID_END_DT,
     TB_ITUSER_HIST.WORK_ID as WORK_ID `;
-    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total FROM `;
-    var UNION_ALL = ' UNION ALL ';
-    var SQL_FROM_USER = ' FROM TB_ITUSER ';
-    var SQL_FROM_USER_HIST = ' FROM TB_ITUSER_HIST ';
-    var SQL_JOIN_USER = ' LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD INNER JOIN TB_ROLE ON TB_ITUSER.ROLE_ID = TB_ROLE.ROLE_ID ';
-    var SQL_JOIN_USER_HIST = ' LEFT JOIN TB_ITCUST ON TB_ITUSER_HIST.CUST_CD = TB_ITCUST.CUST_CD INNER JOIN TB_ROLE ON TB_ITUSER_HIST.ROLE_ID = TB_ROLE.ROLE_ID ';
-    var SQL_LIMIT = ' OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    let SQL_SELECT_COUNT = `SELECT COUNT(*) AS total FROM `;
+    let UNION_ALL = ' UNION ALL ';
+    let SQL_FROM_USER = ' FROM TB_ITUSER ';
+    let SQL_FROM_USER_HIST = ' FROM TB_ITUSER_HIST ';
+    let SQL_JOIN_USER = ' LEFT JOIN TB_ITCUST ON TB_ITUSER.CUST_CD = TB_ITCUST.CUST_CD  ';
+    let SQL_JOIN_USER_HIST = ' LEFT JOIN TB_ITCUST ON TB_ITUSER_HIST.CUST_CD = TB_ITCUST.CUST_CD ';
+    let SQL_LIMIT = ' OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(userClass) && _.isEmpty(userID) && _.isEmpty(userName) && _.isEmpty(orgCode) && _.isEmpty(active)) {
         let sql = SQL_SELECT_USER + SQL_FROM_USER + SQL_JOIN_USER + UNION_ALL + SQL_SELECT_USER_HIST + SQL_FROM_USER_HIST + SQL_JOIN_USER_HIST + SQL_LIMIT;
@@ -905,20 +901,25 @@ exports.getUserInfo = async function (req, res) {
 };
 
 exports.createUser = async function (req, res) {
-    var userID = req.body.userID;
-    var userName = req.body.userName;
-    var custCd = req.body.orgCode;
-    // var password = req.body.password;
-    var userClass = req.body.userClass;
-    var email = req.body.email;
-    var finalOperaDate = req.body.finalOperaDate.replace(/[^0-9 ]/g, "");
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var phone = req.body.phone ? req.body.phone : '';
-    var address = req.body.address ? req.body.address : '';
-    var workID = req.body.workID ? req.body.workID : '';
-    var role = req.body.role;
-    var active = req.body.active;
+    let userID = req.body.userID;
+    let userName = req.body.userName;
+    let custCd = req.body.orgCode;
+    // let password = req.body.password;
+    let userClass = req.body.userClass;
+    let email = req.body.email;
+    let finalOperaDate = req.body.finalOperaDate.replace(/[^0-9 ]/g, "");
+    let validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
+    let validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    let phone = req.body.phone ? req.body.phone : '';
+    let address = req.body.address ? req.body.address : '';
+    let workID = req.body.workID ? req.body.workID : '';
+    let roles = req.body.role;
+    let active = req.body.active;
+    let paramInsertRole = [];
+    let sqlCheckUserID = `SELECT  * FROM TB_ITUSER WHERE LOWER(USER_ID) = LOWER(:userID) `;
+    let sql_insert = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW , VALID_START_DT , VALID_END_DT, TEL_NO_MOBILE , ADDR , WORK_ID  , EMAIL, SYS_DTIM , ACTIVE)
+             VALUES (:userID, :user_name, :custCd, :typeUser, :password, :validStartDT, :validEndDT , :phone, :address , :workID , :email , :systemDate ,:active)`;
+    let paramsCheckUserID = {userID: {val: userID}};
     let params = {
         userID: {val: userID},
         user_name: {val: userName},
@@ -933,67 +934,116 @@ exports.createUser = async function (req, res) {
         address: {val: address},
         workID: {val: workID},
         active: {val: active},
-        role: {val: role}
     };
-    let sqlCheckUserID = `SELECT  * FROM TB_ITUSER WHERE LOWER(USER_ID) = LOWER(:userID) `;
-    let paramsCheckUserID = {userID: {val: userID}};
+    let sqlInsertRoleUser = ` INSERT INTO TB_ROLE_USER( ROLE_ID , USER_ID) VALUES (:1 , :2) `;
+    if (roles[0]) {
+        for (let roleID of roles) {
+            let param = [roleID , userID];
+            paramInsertRole.push(param);
+        };
+    }
     let isExist = await oracelService.checkIsExistUserID(res, sqlCheckUserID, paramsCheckUserID, optionFormatObj);
     if (isExist[0]) {
         return res.status(500).send({message: "User ID [" + userID + "] has been used!"});
     } else {
-        let sql_insert = `INSERT INTO TB_ITUSER (USER_ID , USER_NM, CUST_CD, INOUT_GB,  USER_PW , VALID_START_DT , VALID_END_DT, TEL_NO_MOBILE , ADDR , WORK_ID  , EMAIL, SYS_DTIM , ACTIVE , ROLE_ID)
-         VALUES (:userID, :user_name, :custCd, :typeUser, :password, :validStartDT, :validEndDT , :phone, :address , :workID , :email , :systemDate ,:active , :role)`;
-        let createAffect = await oracelService.createUser(res, sql_insert, params, optionAutoCommit);
-        console.log(createAffect);
-        if (createAffect.rowsAffected === 1) {
-            return res.status(200).send({message: 'Create User Successful'})
-        } else {
-            return res.status(500).send({message: "Error when save user!"});
+        let connection;
+        try {
+            connection = await oracledb.getConnection(dbconfig);
+            let resultInsertUser = await connection.execute(sql_insert, params, {autoCommit: true});
+            if (resultInsertUser.rowsAffected == 1) {
+                let resultSetRole = await connection.executeMany(sqlInsertRoleUser, paramInsertRole, {autoCommit: true});
+                if (resultSetRole.rowsAffected >= 1) {
+                    res.status(201).send({message: 'Created account successfully'});
+                } else {
+                    res.status(500).send({message: 'Error when set Role for account'});
+                }
+            } else {
+                res.status(500).send({message: 'Error when save information account'});
+            }
+        } catch (err) {
+            return err;
+        } finally {
+            if (connection) {
+                try {
+                    await connection.close();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
         }
     }
 };
 
 exports.updateUser = async function (req, res) {
-    var userName = req.body.userName;
-    var userClass = req.body.userClass;
-    var orgCode = req.body.orgCode;
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var phone = req.body.phone;
-    var address = req.body.address;
-    var email = req.body.email;
-    var userID = req.body.userID;
-    var role = req.body.role;
-    var active = req.body.active;
+    let userName = req.body.userName;
+    let userClass = req.body.userClass;
+    let orgCode = req.body.orgCode;
+    let validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
+    let validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    let phone = req.body.phone;
+    let address = req.body.address;
+    let email = req.body.email;
+    let userID = req.body.userID;
+    let roles = req.body.role;
+    let active = req.body.active;
+    let paramInsertRole = [];
+    let param = {
+        userName,
+        userClass,
+        orgCode,
+        validStartDT,
+        validEndDT,
+        phone,
+        address,
+        email,
+        userID,
+        active,
+    };
 
-        var param = {
-            userName,
-            userClass,
-            orgCode,
-            validStartDT,
-            validEndDT,
-            phone,
-            address,
-            email,
-            userID,
-            active,
-            role
+    let SQL = 'UPDATE ADMIN.TB_ITUSER SET' +
+        ' USER_NM=:userName ,  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active   ' +
+        ' WHERE USER_ID=:userID ';
+    if (roles[0]) {
+        for (let roleID of roles) {
+            let param = [roleID , userID];
+            paramInsertRole.push(param);
         };
-
-        let SQL = 'UPDATE ADMIN.TB_ITUSER SET' +
-            ' USER_NM=:userName ,  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active , ROLE_ID=:role ' +
-            ' WHERE USER_ID=:userID ';
+        let sqlInsertRoleUser = ` INSERT INTO TB_ROLE_USER( ROLE_ID , USER_ID) VALUES (:1 , :2) `;
+        let sqlDeleteRole = `DELETE FROM TB_ROLE_USER WHERE USER_ID = :userID `;
+        let paramDeleteRole = {
+            userID
+        };
+        let connection;
+        try {
+            connection = await oracledb.getConnection(dbconfig);
+            let resultDeleteRole = await connection.execute(sqlDeleteRole, paramDeleteRole, {autoCommit: false});
+            let resultInsertRoleUser = await connection.executeMany(sqlInsertRoleUser, paramInsertRole, {autoCommit: false});
+            let resultUpdateUser = await connection.execute(SQL, param, {autoCommit: true});
+            res.status(200).send(resultUpdateUser);
+        } catch (err) {
+            return res.status(500).send(err)
+        } finally {
+            if (connection) {
+                try {
+                    await connection.close();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }
+    } else {
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
+    }
 };
 
 exports.resetPassword = async function (req, res) {
-    var userID = req.body.userID;
-    var userPW = bcrypt.hashSync(defaultPW, saltRounds);
+    let userID = req.body.userID;
+    let userPW = bcrypt.hashSync(defaultPW, saltRounds);
 
-    if(_.isEmpty(userID)) {
+    if(!userID) {
         res.status(500).send({message: 'User ID provide blank!'})
     } else {
-        var param = {
+        let param = {
             userID,
             userPW
         };
@@ -1004,18 +1054,32 @@ exports.resetPassword = async function (req, res) {
 };
 
 exports.changePassword = async function (req, res) {
-    var userID = req.body.userID;
-    var userPW = bcrypt.hashSync(req.body.password, saltRounds);
+    let userID = req.body.userID;
+    let userPW = bcrypt.hashSync(req.body.password, saltRounds);
 
     if(_.isEmpty(userID)) {
         res.status(500).send({message: 'User ID provide blank!'})
     } else {
-        var param = {
+        let param = {
             userID,
             userPW
         };
 
-        let SQL = 'UPDATE ADMIN.TB_ITUSER SET USER_PW=:userPW WHERE USER_ID=:userID ';
+        let SQL = 'UPDATE TB_ITUSER SET USER_PW=:userPW WHERE USER_ID=:userID ';
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
+    }
+};
+
+exports.getRoleAccount = async function (req, res) {
+    let userID = req.query.userID;
+    if(_.isEmpty(userID)) {
+        res.status(500).send({message: 'User ID provide blank!'})
+    } else {
+        let param = {
+            userID
+        };
+
+        let SQL = 'SELECT ROLE_ID FROM TB_ROLE_USER WHERE USER_ID = :userID ';
+        await oracelService.queryOracel(res, SQL, param, optionFormatObj);
     }
 };

@@ -340,6 +340,10 @@ exports.cics11aRSLT = function (req, res) {
 					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 						console.log('insert INQLOG:', r);
 					});
+					//Logging response
+					logger.debug('Logging result response S11A');
+					logger.info(responseData);
+
 					return res.status(200).json(responseData);
 				} else {
 					// select in SCRPLOG check SCRP_STAT_CD
@@ -417,6 +421,9 @@ exports.cics11aRSLT = function (req, res) {
 							cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 								console.log('insert INQLOG:', r);
 							});
+							//Logging response
+							logger.debug('Logging result response S11A');
+							logger.info(responseSrapingStatus);
 
 							return res.status(200).json(responseSrapingStatus);
 						}
