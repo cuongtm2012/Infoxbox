@@ -576,7 +576,7 @@ async function selectProcStatus(req) {
         else
             _scrapingStatusCode = req.scrapingStatusCode;
 
-        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
+        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD, T.RSP_CD, T.CIC_GDS_CD FROM TB_SCRPLOG T
                     where to_date(T.INQ_DTIM , 'yyyymmdd') between to_date(:inqDtimFrom, 'yyyymmdd') and to_date (:inqDtimTo, 'yyyymmdd')
                         and T.CUST_CD =: fiCode
                         and (T.SCRP_STAT_CD like :scrapingStatusCode or T.SCRP_STAT_CD is null)
