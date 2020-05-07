@@ -6,7 +6,7 @@ var verifyAdmin = require('../util/verifyAdmin');
 
 var customer_router = require('../controllers/customer.controller');
 
-router.get('/getCustInfo',  verifyToken , customer_router.getCustInfo);
+router.post('/getCustInfo',  verifyToken , customer_router.getCustInfo);
 router.post('/addCust',  verifyAdmin ,customer_router.addCust);
 router.put('/editCust', verifyAdmin, customer_router.editCust);
 module.exports = router;
