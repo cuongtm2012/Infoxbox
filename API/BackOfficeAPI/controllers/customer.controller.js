@@ -1,17 +1,17 @@
-
+const dateFormat = require('dateformat');
 const oracledb = require('oracledb');
 const oracelService = require('../services/oracelQuery.service');
-var _ = require('lodash');
+let _ = require('lodash');
 const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
 const optionAutoCommit = { autoCommit: true };
 exports.getCustInfo = async function (req, res) {
-    var custClassicfication = req.query.custClassicfication ? '%' + req.query.custClassicfication + '%' : '';
-    var cusCd = req.body.cusCd ? '%' + req.body.cusCd + '%' : '';
-    var custNm = req.body.custNm ? '%' + req.body.custNm + '%' : '';
-    var status = req.body.status ? req.body.status : '';
-    var currentLocation = req.body.currentLocation;
-    var limitRow = req.body.limitRow;
-    var SQL_SELECT = `SELECT 
+    let custClassicfication = req.body.custClassicfication ? '%' + req.body.custClassicfication + '%' : '';
+    let cusCd = req.body.cusCd ? '%' + req.body.cusCd + '%' : '';
+    let custNm = req.body.custNm ? '%' + req.body.custNm + '%' : '';
+    let status = req.body.status ? req.body.status : '';
+    let currentLocation = req.body.currentLocation;
+    let limitRow = req.body.limitRow;
+    let SQL_SELECT = `SELECT 
     CUST_GB as CUST_GB, 
     CUST_CD as CUST_CD, 
     CUST_NM as CUST_NM, 
@@ -23,12 +23,12 @@ exports.getCustInfo = async function (req, res) {
     BIZ_CG_CD as BIZ_CG_CD, PRT_CUST_GB as PRT_CUST_GB,
      PRT_CUST_CD as PRT_CUST_CD, 
      ADDR as ADDR,to_char(to_date(VALID_START_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_START_DT,to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT, to_char(to_date(SYS_DTIM, 'YYYY/MM/DD HH24:MI:SS'),'yyyy/mm/dd hh24:mi:ss') AS SYS_DTIM, WORK_ID as WORK_ID `;
-    var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total FROM `;
-    var UNION_ALL = 'UNION ALL ';
-    var SQL_FROM_ACTIVE = 'FROM TB_ITCUST ';
-    var SQL_FROM_HISTORY = 'FROM TB_ITCUST_HIST ';
-    var SQL_ORDER_BY = 'ORDER BY CUST_NM_ENG ';
-    var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
+    let SQL_SELECT_COUNT = `SELECT COUNT(*) AS total FROM `;
+    let UNION_ALL = 'UNION ALL ';
+    let SQL_FROM_ACTIVE = 'FROM TB_ITCUST ';
+    let SQL_FROM_HISTORY = 'FROM TB_ITCUST_HIST ';
+    let SQL_ORDER_BY = 'ORDER BY CUST_NM_ENG ';
+    let SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm) && _.isEmpty(status)) {
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_ORDER_BY + SQL_LIMIT;
@@ -48,9 +48,16 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if ((custClassicfication) && (cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
-            'AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ' +
-            `AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        let SQL_WHERE_SEARCH;
+        if (status[0] == 0) {
+             SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
+                'AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ' +
+                `AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) OR STATUS IS NULL AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        } else {
+             SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
+                'AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ' +
+                `AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
@@ -132,7 +139,12 @@ exports.getCustInfo = async function (req, res) {
 
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm) && (status)) {
-        let SQL_WHERE_SEARCH = ` WHERE STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = ` WHERE STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+        } else {
+            SQL_WHERE_SEARCH = ` WHERE STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             currentLocation,
@@ -191,7 +203,12 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if ((custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)  && (status)) {
-        let SQL_WHERE_SEARCH = ` WHERE CUST_GB LIKE :custClassicfication AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = ` WHERE CUST_GB LIKE :custClassicfication AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+        } else {
+            SQL_WHERE_SEARCH = ` WHERE CUST_GB LIKE :custClassicfication AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custClassicfication,
@@ -231,7 +248,12 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && (cusCd) && _.isEmpty(custNm) && (status)) {
-        let SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+        } else {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
@@ -250,7 +272,12 @@ exports.getCustInfo = async function (req, res) {
     }
 
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+        } else {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
@@ -294,7 +321,12 @@ exports.getCustInfo = async function (req, res) {
 
 
     if (_.isEmpty(custClassicfication) && (cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND LOWER(CUST_CD) LIKE LOWER(:cusCd) `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL AND LOWER(CUST_CD) LIKE LOWER(:cusCd) `;
+        } else {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND LOWER(CUST_CD) LIKE LOWER(:cusCd) `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
@@ -316,7 +348,12 @@ exports.getCustInfo = async function (req, res) {
 
 
     if ((custClassicfication) && _.isEmpty(cusCd) && (custNm) && (status)) {
-        let SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND CUST_GB LIKE :custClassicfication `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL AND CUST_GB LIKE :custClassicfication `;
+        } else {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND CUST_GB LIKE :custClassicfication `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             custNm,
@@ -338,7 +375,12 @@ exports.getCustInfo = async function (req, res) {
 
 
     if ((custClassicfication) && (cusCd) && _.isEmpty(custNm) && (status)) {
-        let SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND CUST_GB LIKE :custClassicfication `;
+        let SQL_WHERE_SEARCH ;
+        if (status[0] == 0) {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL AND CUST_GB LIKE :custClassicfication `;
+        } else {
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND CUST_GB LIKE :custClassicfication `;
+        }
         let sql = SQL_SELECT + SQL_FROM_ACTIVE + SQL_WHERE_SEARCH + UNION_ALL + SQL_SELECT + SQL_FROM_HISTORY + SQL_WHERE_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             cusCd,
@@ -360,22 +402,22 @@ exports.getCustInfo = async function (req, res) {
 };
 
 exports.addCust = async function (req, res) {
-    var classFication = req.body.classFication;
-    var custCD = req.body.custCD;
-    var custNM = req.body.custNM;
-    var custNMENG = req.body.custNMENG;
-    var custBranchNM = req.body.custBranchNM;
-    var custBranchNM_EN = req.body.custBranchNM_EN;
-    var coRgstNo = req.body.coRgstNo;
-    var industryCD = req.body.industryCD;
-    var prtOrganizationClass = req.body.prtOrganizationClass;
-    var prtOrganizationCD = req.body.prtOrganizationCD;
-    var addr = req.body.addr;
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var operationDate = req.body.operationDate.replace(/[^0-9 ]/g, "");
-    var userID = req.body.userID;
-    var status = 1;
+    let classFication = req.body.classFication;
+    let custCD = req.body.custCD;
+    let custNM = req.body.custNM;
+    let custNMENG = req.body.custNMENG;
+    let custBranchNM = req.body.custBranchNM;
+    let custBranchNM_EN = req.body.custBranchNM_EN;
+    let coRgstNo = req.body.coRgstNo;
+    let industryCD = req.body.industryCD;
+    let prtOrganizationClass = req.body.prtOrganizationClass;
+    let prtOrganizationCD = req.body.prtOrganizationCD;
+    let addr = req.body.addr;
+    let validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
+    let validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    let operationDate = dateFormat(new Date(), "yyyymmddHHMMss");
+    let userID = req.body.userID;
+    let status = 1;
     let param = {
         classFication: { val: classFication },
         custCD: { val: custCD },
@@ -394,27 +436,41 @@ exports.addCust = async function (req, res) {
         userID: { val: userID },
         status: {val: status}
     };
-    var SQL = `INSERT INTO TB_ITCUST(CUST_GB, CUST_CD ,CUST_NM, CUST_NM_ENG, BRANCH_NM, BRANCH_NM_ENG, CO_RGST_NO, BIZ_CG_CD, PRT_CUST_GB, PRT_CUST_CD, ADDR, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID, STATUS) VALUES (:classFication, :custCD, :custNM, :custNMENG, :custBranchNM, :custBranchNM_EN, :coRgstNo, :industryCD, :prtOrganizationClass, :prtOrganizationCD, :addr, :validStartDT, :validEndDT, :operationDate, :userID, :status)`;
-    await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
+    let paramCheckCustomer = {
+        classFication: { val: classFication },
+        custCD: { val: custCD },
+    }
+    let SQL_CHECK_CUST = 'SELECT * FROM TB_ITCUST WHERE CUST_GB = :classFication AND CUST_CD = :custCD '
+    let SQL = `INSERT INTO TB_ITCUST(CUST_GB, CUST_CD ,CUST_NM, CUST_NM_ENG, BRANCH_NM, BRANCH_NM_ENG, CO_RGST_NO, BIZ_CG_CD, PRT_CUST_GB, PRT_CUST_CD, ADDR, VALID_START_DT, VALID_END_DT, SYS_DTIM, WORK_ID, STATUS) VALUES (:classFication, :custCD, :custNM, :custNMENG, :custBranchNM, :custBranchNM_EN, :coRgstNo, :industryCD, :prtOrganizationClass, :prtOrganizationCD, :addr, :validStartDT, :validEndDT, :operationDate, :userID, :status)`;
+    let resultCheckExistCustomer = await oracelService.getCustomerByID(res, SQL_CHECK_CUST , paramCheckCustomer ,optionFormatObj);
+    if (resultCheckExistCustomer[0]) {
+        res.status(500).send({message: 'Customer already exist!'});
+    } else {
+        await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
+    }
 };
 
 exports.editCust = async function (req, res) {
-    var classFication = req.body.classFication;
-    var custCD = req.body.custCD;
-    var custNM = req.body.custNM;
-    var custNMENG = req.body.custNMENG;
-    var custBranchNM = req.body.custBranchNM;
-    var custBranchNM_EN = req.body.custBranchNM_EN;
-    var coRgstNo = req.body.coRgstNo;
-    var industryCD = req.body.industryCD;
-    var prtOrganizationClass = req.body.prtOrganizationClass;
-    var prtOrganizationCD = req.body.prtOrganizationCD;
-    var addr = req.body.addr;
-    var validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
-    var validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
-    var status = req.body.status;
+    let classFication = req.body.classFication;
+    let custCD = req.body.custCD;
+    let custNM = req.body.custNM;
+    let custNMENG = req.body.custNMENG;
+    let custBranchNM = req.body.custBranchNM;
+    let custBranchNM_EN = req.body.custBranchNM_EN;
+    let coRgstNo = req.body.coRgstNo;
+    let industryCD = req.body.industryCD;
+    let prtOrganizationClass = req.body.prtOrganizationClass;
+    let prtOrganizationCD = req.body.prtOrganizationCD;
+    let addr = req.body.addr;
+    let validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
+    let validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
+    let status = req.body.status;
+    let operationDate = dateFormat(new Date(), "yyyymmddHHMMss");
+    if (status == 2) {
+        status = null;
+    }
 
-    var param = {
+    let param = {
         classFication: { val: classFication },
         custCD: { val: custCD },
         custNM: { val: custNM },
@@ -427,10 +483,10 @@ exports.editCust = async function (req, res) {
         prtOrganizationCD: { val: prtOrganizationCD },
         addr: { val: addr },
         validEndDT: { val: validEndDT },
-        validStartDT: { val: validStartDT },
-        status: {val: status}
+        status: {val: status},
+        operationDate: {val: operationDate},
     };
-    var SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_END_DT = :validEndDT , STATUS = :status WHERE CUST_GB = :classFication AND CUST_CD = :custCD AND VALID_START_DT = :validStartDT `;
+    let SQL = `UPDATE TB_ITCUST SET CUST_NM = :custNM , CUST_NM_ENG = :custNMENG, BRANCH_NM = :custBranchNM, BRANCH_NM_ENG = :custBranchNM_EN, CO_RGST_NO = :coRgstNo, BIZ_CG_CD = :industryCD , PRT_CUST_GB = :prtOrganizationClass, PRT_CUST_CD = :prtOrganizationCD, ADDR = :addr, VALID_END_DT = :validEndDT, SYS_DTIM = :operationDate , STATUS = :status WHERE CUST_GB = :classFication AND CUST_CD = :custCD  `;
     await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
 };
 
