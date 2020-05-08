@@ -52,7 +52,7 @@ exports.getCustInfo = async function (req, res) {
         if (status[0] == 0) {
              SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
                 'AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ' +
-                `AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) OR STATUS IS NULL AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+                `AND LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  OR STATUS IS NULL) `;
         } else {
              SQL_WHERE_SEARCH = 'WHERE CUST_GB LIKE :custClassicfication ' +
                 'AND LOWER(CUST_CD) LIKE LOWER(:cusCd) ' +
@@ -205,7 +205,7 @@ exports.getCustInfo = async function (req, res) {
     if ((custClassicfication) && _.isEmpty(cusCd) && _.isEmpty(custNm)  && (status)) {
         let SQL_WHERE_SEARCH ;
         if (status[0] == 0) {
-            SQL_WHERE_SEARCH = ` WHERE CUST_GB LIKE :custClassicfication AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+            SQL_WHERE_SEARCH = ` WHERE CUST_GB LIKE :custClassicfication AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL) `;
         } else {
             SQL_WHERE_SEARCH = ` WHERE CUST_GB LIKE :custClassicfication AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
         }
@@ -250,7 +250,7 @@ exports.getCustInfo = async function (req, res) {
     if (_.isEmpty(custClassicfication) && (cusCd) && _.isEmpty(custNm) && (status)) {
         let SQL_WHERE_SEARCH ;
         if (status[0] == 0) {
-            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL) `;
         } else {
             SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
         }
@@ -274,7 +274,7 @@ exports.getCustInfo = async function (req, res) {
     if (_.isEmpty(custClassicfication) && _.isEmpty(cusCd) && (custNm) && (status)) {
         let SQL_WHERE_SEARCH ;
         if (status[0] == 0) {
-            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL `;
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL) `;
         } else {
             SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
         }
@@ -323,7 +323,7 @@ exports.getCustInfo = async function (req, res) {
     if (_.isEmpty(custClassicfication) && (cusCd) && (custNm) && (status)) {
         let SQL_WHERE_SEARCH ;
         if (status[0] == 0) {
-            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL AND LOWER(CUST_CD) LIKE LOWER(:cusCd) `;
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL) AND LOWER(CUST_CD) LIKE LOWER(:cusCd) `;
         } else {
             SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND LOWER(CUST_CD) LIKE LOWER(:cusCd) `;
         }
@@ -350,7 +350,7 @@ exports.getCustInfo = async function (req, res) {
     if ((custClassicfication) && _.isEmpty(cusCd) && (custNm) && (status)) {
         let SQL_WHERE_SEARCH ;
         if (status[0] == 0) {
-            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL AND CUST_GB LIKE :custClassicfication `;
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL) AND CUST_GB LIKE :custClassicfication `;
         } else {
             SQL_WHERE_SEARCH = `WHERE LOWER(CUST_NM_ENG) LIKE LOWER(:custNm) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND CUST_GB LIKE :custClassicfication `;
         }
@@ -377,7 +377,7 @@ exports.getCustInfo = async function (req, res) {
     if ((custClassicfication) && (cusCd) && _.isEmpty(custNm) && (status)) {
         let SQL_WHERE_SEARCH ;
         if (status[0] == 0) {
-            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL AND CUST_GB LIKE :custClassicfication `;
+            SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND (STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR STATUS IS NULL) AND CUST_GB LIKE :custClassicfication `;
         } else {
             SQL_WHERE_SEARCH = `WHERE LOWER(CUST_CD) LIKE LOWER(:cusCd) AND STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND CUST_GB LIKE :custClassicfication `;
         }
