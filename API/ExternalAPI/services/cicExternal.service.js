@@ -568,6 +568,7 @@ async function selectProcStatus(req) {
     try {
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
+        let outputResult, totalCount;
 
         let _scrapingStatusCode;
         if (_.isEmpty(req.scrapingStatusCode))
@@ -575,13 +576,18 @@ async function selectProcStatus(req) {
         else
             _scrapingStatusCode = req.scrapingStatusCode;
 
-        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
+        let sql = `SELECT T.NICE_SSIN_ID, T.CUST_SSID_ID, T.CUST_CD, T.GDS_CD, T.INQ_DTIM, T.SCRP_STAT_CD, T.RSP_CD, T.CIC_GDS_CD FROM TB_SCRPLOG T
                     where to_date(T.INQ_DTIM , 'yyyymmdd') between to_date(:inqDtimFrom, 'yyyymmdd') and to_date (:inqDtimTo, 'yyyymmdd')
                         and T.CUST_CD =: fiCode
                         and (T.SCRP_STAT_CD like :scrapingStatusCode or T.SCRP_STAT_CD is null)
                         order by T.INQ_DTIM
                         OFFSET :offset ROWS FETCH NEXT :maxnumrows ROWS ONLY`;
 
+        let sqlCount = `SELECT count(*) as TOTAL FROM TB_SCRPLOG T
+                    where to_date(T.INQ_DTIM , 'yyyymmdd') between to_date(:inqDtimFrom, 'yyyymmdd') and to_date (:inqDtimTo, 'yyyymmdd')
+                        and T.CUST_CD =: fiCode
+                        and (T.SCRP_STAT_CD like :scrapingStatusCode or T.SCRP_STAT_CD is null)`;
+        // execute qeury
         let result = await connection.execute(
             // The statement to execute
             sql,
@@ -597,8 +603,25 @@ async function selectProcStatus(req) {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
             });
         console.log("selectProcStatus rows:", result.rows);
+        outputResult = result.rows;
 
-        return result.rows;
+        // Execute count total records
+        let resultCount = await connection.execute(
+            // The statement to execute
+            sqlCount,
+            {
+                inqDtimFrom: { val: req.searchDateFrom },
+                inqDtimTo: { val: req.searchDateTo },
+                fiCode: { val: req.fiCode },
+                scrapingStatusCode: { val: _scrapingStatusCode }
+            },
+            {
+                outFormat: oracledb.OUT_FORMAT_OBJECT
+            });
+        totalCount = resultCount.rows;
+
+
+        return { outputResult, totalCount };
     } catch (err) {
         console.log(err);
         // return res.status(400);

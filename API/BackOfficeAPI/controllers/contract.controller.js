@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const dateFormat = require('dateformat');
 const oracelService = require('../services/oracelQuery.service');
 let _ = require('lodash');
 const optionFormatObj = { outFormat: oracledb.OUT_FORMAT_OBJECT };
@@ -94,12 +95,12 @@ exports.getProduct = async function (req, res) {
 };
 
 exports.getContract = async function (req, res) {
-    let organClassifi = req.query.organClassifi ? '%' + req.query.organClassifi + '%' : '';
-    let organCd = req.query.organCd ? '%' + req.query.organCd + '%' : '';
-    let productCode =req.query.productCode ? '%' + req.query.productCode + '%' : '';
-    let status = req.query.status ? req.query.status : '';
-    let currentLocation = req.query.currentLocation;
-    let limitRow = req.query.limitRow;
+    let organClassifi = req.body.organClassifi ? '%' + req.body.organClassifi + '%' : '';
+    let organCd = req.body.organCd ? '%' + req.body.organCd + '%' : '';
+    let productCode =req.body.productCode ? '%' + req.body.productCode + '%' : '';
+    let status = req.body.status ? req.body.status : '';
+    let currentLocation = req.body.currentLocation;
+    let limitRow = req.body.limitRow;
     let SQL_SELECT_ITCTRT = `SELECT 
     TB_ITCTRT.CUST_GB as CUST_GB, 
     TB_ITCTRT.CUST_CD as CUST_CODE, 
@@ -148,14 +149,20 @@ exports.getContract = async function (req, res) {
     }
 
     if ((organClassifi) && (organCd) && (productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.STATUS LIKE :status AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) ';
-        let SQL_SEARCH_HIST = 'WHERE TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi AND TB_ITCTRT_HIST.STATUS LIKE :status AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+            SQL_SEARCH = `WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL) AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi AND (TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL) AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) `;
+        } else {
+            SQL_SEARCH = `WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi AND TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
             organClassifi,
             organCd,
             productCode,
-            status,
             currentLocation,
             limitRow
         };
@@ -164,7 +171,6 @@ exports.getContract = async function (req, res) {
             organClassifi,
             organCd,
             productCode,
-            status,
         };
         let totalRow;
         let rowRs;
@@ -234,17 +240,22 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if (_.isEmpty(organClassifi) && _.isEmpty(organCd) && _.isEmpty(productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE TB_ITCTRT.STATUS LIKE :status ';
-        let SQL_SEARCH_HIST = 'WHERE TB_ITCTRT_HIST.STATUS LIKE :status ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+            SQL_SEARCH = `WHERE TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL `;
+        } else {
+            SQL_SEARCH = `WHERE TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
-            status,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
-            status,
         };
         let totalRow;
         let rowRs;
@@ -298,19 +309,24 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ((organClassifi) && _.isEmpty(organCd) && _.isEmpty(productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.STATUS LIKE :status ';
-        let SQL_SEARCH_HIST = 'WHERE TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi AND TB_ITCTRT_HIST.STATUS LIKE :status ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+             SQL_SEARCH = `WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL) `;
+             SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi AND (TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL ) `;
+        } else {
+            SQL_SEARCH = `WHERE TB_ITCTRT.CUST_GB LIKE :organClassifi AND TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi AND TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
             organClassifi,
-            status,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
             organClassifi,
-            status,
         };
         let totalRow;
         let rowRs;
@@ -342,19 +358,24 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ( _.isEmpty(organClassifi) && (organCd) && _.isEmpty(productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND TB_ITCTRT.STATUS LIKE :status ';
-        let SQL_SEARCH_HIST = 'WHERE LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND TB_ITCTRT_HIST.STATUS LIKE :status ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+             SQL_SEARCH = `WHERE LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL ) `;
+             SQL_SEARCH_HIST = `WHERE LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND (TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL ) `;
+        } else {
+            SQL_SEARCH = `WHERE LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+            SQL_SEARCH_HIST = `WHERE LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
             organCd,
-            status,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
             organCd,
-            status,
         };
         let totalRow;
         let rowRs;
@@ -364,19 +385,24 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ( _.isEmpty(organClassifi) && _.isEmpty(organCd) && (productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode)  AND TB_ITCTRT.STATUS LIKE :status ';
-        let SQL_SEARCH_HIST = 'WHERE LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode)  AND TB_ITCTRT_HIST.STATUS LIKE :status ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+             SQL_SEARCH = `WHERE LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode)  AND (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL) `;
+             SQL_SEARCH_HIST = `WHERE LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode)  AND (TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL ) `;
+        } else {
+            SQL_SEARCH = `WHERE LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode)  AND TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+            SQL_SEARCH_HIST = `WHERE LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode)  AND TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
             productCode,
-            status,
             currentLocation,
             limitRow
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
             productCode,
-            status,
         };
         let totalRow;
         let rowRs;
@@ -410,11 +436,17 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ( _.isEmpty(organClassifi) && (organCd) && (productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE TB_ITCTRT.STATUS LIKE :status  AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) ';
-        let SQL_SEARCH_HIST = 'WHERE TB_ITCTRT_HIST.STATUS LIKE :status AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+             SQL_SEARCH = `WHERE (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL ) AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) `;
+             SQL_SEARCH_HIST = `WHERE (TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL ) AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) `;
+        } else {
+            SQL_SEARCH = `WHERE TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd)  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
-            status,
             organCd,
             productCode,
             currentLocation,
@@ -422,7 +454,6 @@ exports.getContract = async function (req, res) {
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
-            status,
             organCd,
             productCode,
         };
@@ -434,11 +465,17 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ( (organClassifi) && _.isEmpty(organCd) && (productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE TB_ITCTRT.STATUS LIKE :status  AND TB_ITCTRT.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) ';
-        let SQL_SEARCH_HIST = 'WHERE TB_ITCTRT_HIST.STATUS LIKE :status AND TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+             SQL_SEARCH = `WHERE (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL ) AND TB_ITCTRT.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) `;
+             SQL_SEARCH_HIST = `WHERE ( TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL ) AND TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) `;
+        } else {
+            SQL_SEARCH = `WHERE TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND TB_ITCTRT.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT.GDS_CD) LIKE LOWER(:productCode) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) AND TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT_HIST.GDS_CD) LIKE LOWER(:productCode) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
-            status,
             organClassifi,
             productCode,
             currentLocation,
@@ -446,7 +483,6 @@ exports.getContract = async function (req, res) {
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
-            status,
             organClassifi,
             productCode,
         };
@@ -458,11 +494,17 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
     if ( (organClassifi) && (organCd) && _.isEmpty(productCode) && (status)) {
-        let SQL_SEARCH = 'WHERE TB_ITCTRT.STATUS LIKE :status  AND TB_ITCTRT.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd) ';
-        let SQL_SEARCH_HIST = 'WHERE TB_ITCTRT_HIST.STATUS LIKE :status AND TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd) ';
+        let SQL_SEARCH;
+        let SQL_SEARCH_HIST;
+        if (status[0] == 0) {
+             SQL_SEARCH = `WHERE (TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT.STATUS IS NULL ) AND TB_ITCTRT.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd) `;
+             SQL_SEARCH_HIST = `WHERE (TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) OR TB_ITCTRT_HIST.STATUS IS NULL ) AND TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd) `;
+        } else {
+            SQL_SEARCH = `WHERE TB_ITCTRT.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")})  AND TB_ITCTRT.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT.CUST_CD) LIKE LOWER(:organCd) `;
+            SQL_SEARCH_HIST = `WHERE TB_ITCTRT_HIST.STATUS IN (${status.map((name, index) => `'${name}'`).join(", ")}) AND TB_ITCTRT_HIST.CUST_GB LIKE :organClassifi  AND LOWER(TB_ITCTRT_HIST.CUST_CD) LIKE LOWER(:organCd) `;
+        }
         let sql = SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT + SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + SQL_LIMIT;
         let param = {
-            status,
             organClassifi,
             organCd,
             currentLocation,
@@ -470,7 +512,6 @@ exports.getContract = async function (req, res) {
         };
         let sqlSearch = SQL_SELECT_COUNT + '(' + SQL_SELECT_ITCTRT + SQL_FROM_TB_ITCTRT +  SQL_INNER_JOIN_IT_CTRT + SQL_SEARCH + UNION_ALL + SQL_SELECT_ITCTRT_HIST + SQL_FROM_TB_ITCTRT_HIST + SQL_INNER_JOIN_IT_CTRT_HIST + SQL_SEARCH_HIST + ')';
         let paramSearch = {
-            status,
             organClassifi,
             organCd,
         };
@@ -488,7 +529,7 @@ exports.insertContract = async function (req, res) {
     let gdsCD = req.body.gdsCD;
     let validStartDt = (_.isEmpty(req.body.validStartDt) ? null : req.body.validStartDt.replace(/[^0-9 ]/g, ""));
     let validEndDt = (_.isEmpty(req.body.validEndDt) ? null : req.body.validEndDt.replace(/[^0-9 ]/g, ""));
-    let sysDTim = req.body.sysDTim.replace(/[^0-9 ]/g, "");
+    let sysDTim = dateFormat(new Date(), "yyyymmddHHMMss");
     let workID = req.body.workID;
     let status = 1;
 
@@ -512,8 +553,12 @@ exports.updateContract = async function (req, res) {
     let gdsCD = req.body.gdsCD;
     let validStartDt = (_.isEmpty(req.body.validStartDt) ? null : req.body.validStartDt.replace(/[^0-9 ]/g, ""));
     let validEndDt = (_.isEmpty(req.body.validEndDt) ? null : req.body.validEndDt.replace(/[^0-9 ]/g, ""));
+    let sysDTim = dateFormat(new Date(), "yyyymmddHHMMss");
     let status = req.body.status;
-    let SQL = 'UPDATE TB_ITCTRT SET  VALID_END_DT = :validEndDt, STATUS = :status WHERE GDS_CD = :gdsCD AND CUST_GB = :cusGB AND CUST_CD =:custCD AND VALID_START_DT =:validStartDt ' ;
+    if (status == 2) {
+        status = null;
+    }
+    let SQL = 'UPDATE TB_ITCTRT SET  VALID_END_DT = :validEndDt, STATUS = :status , SYS_DTIM = :sysDTim WHERE GDS_CD = :gdsCD AND CUST_GB = :cusGB AND CUST_CD =:custCD AND VALID_START_DT =:validStartDt ' ;
 
     let params = {
         gdsCD: { val: gdsCD },
@@ -521,6 +566,7 @@ exports.updateContract = async function (req, res) {
         custCD: { val: custCD },
         validStartDt: { val: validStartDt },
         validEndDt: { val: validEndDt },
+        sysDTim: { val: sysDTim },
         status: {val: status}
     };
     await oracelService.queryOracel(res, SQL, params, optionAutoCommit)

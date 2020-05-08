@@ -46,6 +46,13 @@ module.exports = {
             return parseFloat(startDate.substring(0, 8)) <= parseFloat(endDate.substring(0, 8));
         else
             return true;
+    },
+
+    validFromDateEarlier93Days: function (searchDateFrom) {
+        let today = new Date(this.getCurrentInquiryDate().substring(0, 4), this.getCurrentInquiryDate().substring(5, 6), this.getCurrentInquiryDate().substring(6, 8));
+        let _searchDateFrom = new Date(searchDateFrom.substring(0, 4), searchDateFrom.substring(5, 6), searchDateFrom.substring(6, 8));
+
+        return Math.round((today - _searchDateFrom) / (1000 * 60 * 60 * 24)) < 93;
     }
 
 };

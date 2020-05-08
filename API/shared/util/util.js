@@ -51,5 +51,15 @@ module.exports = {
             return date.substring(4, 8) + date.substring(2, 4) + date.substring(0, 2);
         else
             return date;
-    }
+    },
+
+    validNumber: function (phoneNum) {
+        const regex = /^\d+$/;
+
+        if (phoneNum.match(regex)) {
+            return true;
+        } else {
+            return false;
+        }
+    },
 }

@@ -16,8 +16,11 @@ exports.queryOracel = async function (res, sql, param, option) {
             res.status(200).send(result);
         }
     } catch (err) {
-        console.log(err);
-        res.send({ error: 1 });
+        if (err.errorNum == 2292) {
+            res.status(501).send(err);
+        } else {
+            res.status(500).send(err);
+        }
     } finally {
         if (connection) {
             try {
@@ -101,6 +104,29 @@ exports.createUser = async function (res, sql, param, option) {
 };
 
 exports.getUserByUserID = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        console.log(result);
+        if (!(result.rows === undefined)) {
+            return result.rows;
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
+
+exports.getCustomerByID = async function (res, sql, param, option) {
     try {
         this.connection = await oracledb.getConnection(dbconfig);
         let result = await this.connection.execute(
