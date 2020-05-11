@@ -51,17 +51,10 @@ module.exports = {
             return response;
         }
         // valid inquiryDate less than today
-        if (!util.validNumber(getdataReq.searchDateFrom)) {
+        if (!(util.validNumber(getdataReq.searchDateFrom)) || !(util.validNumber(getdataReq.searchDateTo))) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateFrom.name,
-                responseCode: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateFrom.code
-            }
-            return response;
-        }
-        if (!util.validNumber(getdataReq.searchDateTo)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateTo.name,
-                responseCode: responcodeEXT.RESCODEEXT.TypeNumberErrorSearchDateTo.code
+                responseMessage: responcodeEXT.RESCODEEXT.DateFieldTypeError.name,
+                responseCode: responcodeEXT.RESCODEEXT.DateFieldTypeError.code
             }
             return response;
         }
