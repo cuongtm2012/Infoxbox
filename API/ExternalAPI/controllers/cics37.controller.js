@@ -425,6 +425,7 @@ function selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, scrapingStatusCo
         fiSessionKey: getdataReqFullNiceKey.fiSessionKey,
         fiCode: getdataReqFullNiceKey.fiCode,
         taskCode: getdataReqFullNiceKey.taskCode,
+        loginId : getdataReqFullNiceKey.loginId,
         taxCode: getdataReqFullNiceKey.taxCode ? getdataReqFullNiceKey.taxCode : '',
         natId: getdataReqFullNiceKey.natId ? getdataReqFullNiceKey.natId : '',
         oldNatId: getdataReqFullNiceKey.oldNatId ? getdataReqFullNiceKey.oldNatId : '',

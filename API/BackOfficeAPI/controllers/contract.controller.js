@@ -523,6 +523,36 @@ exports.getContract = async function (req, res) {
         return res.status(200).send({count: totalRow, rowRs: rowRs});
     }
 };
+exports.checkExistContract = async function(req, res) {
+    let cusGB = req.body.cusGB;
+    let custCD = req.body.custCD;
+    let gdsCD = req.body.gdsCD;
+    let validStartDt = (_.isEmpty(req.body.validStartDt) ? null : req.body.validStartDt.replace(/[^0-9 ]/g, ""));
+    let sqlCheckErrorContractExist = `SELECT * FROM TB_ITCTRT WHERE CUST_GB =:cusGB AND CUST_CD =:custCD AND GDS_CD =:gdsCD AND VALID_START_DT =:validStartDt AND STATUS = 1 `;
+    let sqlCheckExistContract = `SELECT * FROM TB_ITCTRT WHERE CUST_GB =:cusGB AND CUST_CD =:custCD AND GDS_CD =:gdsCD AND STATUS = 1 `;
+    let paramCheckExistContract = {
+        cusGB,
+        custCD,
+        gdsCD
+    }
+    let paramCheckErrorContractExist = {
+        cusGB,
+        custCD,
+        gdsCD,
+        validStartDt
+    }
+    let resultCheckErrorContractExist = await oracelService.checkExistContract(res,sqlCheckErrorContractExist,paramCheckErrorContractExist,optionFormatObj);
+    if (resultCheckErrorContractExist[0]) {
+        return res.status(500).send({message: 'Contract already exist.Please check and try again later'});
+    }
+    let resultCheckExistContract = await oracelService.checkExistContract(res, sqlCheckExistContract , paramCheckExistContract ,optionFormatObj);
+    if (resultCheckExistContract[0]) {
+        return res.status(200).send({message: 'The contract already exist'});
+    } else {
+        return res.status(200).send({saveContract: 'Saving contract'});
+    }
+}
+
 exports.insertContract = async function (req, res) {
     let cusGB = req.body.cusGB;
     let custCD = req.body.custCD;
