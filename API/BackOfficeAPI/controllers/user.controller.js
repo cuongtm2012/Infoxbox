@@ -1,4 +1,5 @@
 let oracledb = require('oracledb');
+const dateFormat = require('dateformat');
 let dbconfig = require('../../shared/config/dbconfig');
 let bcrypt = require('bcrypt');
 const oracelService = require('../services/oracelQuery.service');
@@ -877,7 +878,7 @@ exports.createUser = async function (req, res) {
     // let password = req.body.password;
     let userClass = req.body.userClass;
     let email = req.body.email;
-    let finalOperaDate = req.body.finalOperaDate.replace(/[^0-9 ]/g, "");
+    let finalOperaDate = dateFormat(new Date(), "yyyymmddHHMMss");
     let validStartDT = (_.isEmpty(req.body.validStartDT)) ? null: req.body.validStartDT.replace(/[^0-9 ]/g, "");
     let validEndDT = (_.isEmpty(req.body.validEndDT)) ? null: req.body.validEndDT.replace(/[^0-9 ]/g, "");
     let phone = req.body.phone ? req.body.phone : '';
@@ -956,6 +957,7 @@ exports.updateUser = async function (req, res) {
     let userID = req.body.userID;
     let roles = req.body.role;
     let active = req.body.active;
+    let finalOperaDate = dateFormat(new Date(), "yyyymmddHHMMss");
     let paramInsertRole = [];
     let param = {
         userName,
@@ -968,10 +970,11 @@ exports.updateUser = async function (req, res) {
         email,
         userID,
         active,
+        finalOperaDate
     };
 
-    let SQL = 'UPDATE ADMIN.TB_ITUSER SET' +
-        ' USER_NM=:userName ,  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active   ' +
+    let SQL = 'UPDATE TB_ITUSER SET' +
+        ' USER_NM=:userName ,  CUST_CD=:orgCode, INOUT_GB=:userClass, VALID_START_DT=:validStartDT, VALID_END_DT=:validEndDT, TEL_NO_MOBILE=:phone, ADDR=:address, EMAIL=:email, ACTIVE=:active , SYS_DTIM =:finalOperaDate   ' +
         ' WHERE USER_ID=:userID ';
     if (roles[0]) {
         for (let roleID of roles) {
@@ -1009,16 +1012,18 @@ exports.updateUser = async function (req, res) {
 exports.resetPassword = async function (req, res) {
     let userID = req.body.userID;
     let userPW = bcrypt.hashSync(defaultPW, saltRounds);
+    let finalOperaDate = dateFormat(new Date(), "yyyymmddHHMMss");
 
     if(!userID) {
         res.status(500).send({message: 'User ID provide blank!'})
     } else {
         let param = {
             userID,
-            userPW
+            userPW,
+            finalOperaDate
         };
 
-        let SQL = 'UPDATE ADMIN.TB_ITUSER SET USER_PW=:userPW WHERE USER_ID=:userID ';
+        let SQL = 'UPDATE ADMIN.TB_ITUSER SET USER_PW=:userPW, SYS_DTIM =:finalOperaDate WHERE USER_ID=:userID ';
         await oracelService.queryOracel(res, SQL, param, optionAutoCommit);
     }
 };
