@@ -279,7 +279,7 @@ exports.cics37Rqst = function (req, res) {
                                         }
                                     }
                                     // CIC report result inquiry error S37
-                                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.outB1003.errMsg)) {
+                                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.outB1003.errMsg) || utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.errMsg)) {
                                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError1.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError2.code
                                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError102.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError103.code
                                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError104.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError105.code
