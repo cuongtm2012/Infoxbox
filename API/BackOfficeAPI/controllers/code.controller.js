@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const dateFormat = require('dateformat');
 const oracelService = require('../services/oracelQuery.service');
 var _ = require('lodash');
 
@@ -283,7 +284,7 @@ exports.insertCode = async function (req, res) {
     var codeNmEn = _.isEmpty(req.body.codeNmEn) ? '' : req.body.codeNmEn;
     var prtCdClass = _.isEmpty(req.body.prtCdClass) ? '' : req.body.prtCdClass;
     var prtCd = _.isEmpty(req.body.prtCd) ? '' : req.body.prtCd;
-    var sysDt = req.body.sysDt.replace(/[^0-9 ]/g, "");
+    var sysDt = dateFormat(new Date(), "yyyymmddHHMMss");
     var workID = _.isEmpty(req.body.workID) ? '' : req.body.workID;
 
     var SQL = 'INSERT INTO TB_ITCODE (CODE, CD_CLASS, VALID_START_DT, VALID_END_DT, CODE_NM, CODE_NM_EN, PRT_CD_CLASS, PRT_CODE, SYS_DTIM, WORK_ID) VALUES (:code, :codeClass, :validStartDt, :validEndDt, :codeNm, :codeNmEn, :prtCdClass, :prtCd, :sysDt, :workID)';
@@ -299,7 +300,7 @@ exports.insertCode = async function (req, res) {
         sysDt: { val: sysDt },
         workID: { val: workID }
     };
-    oracelService.queryOracel(res, SQL, params, optionAutoCommit)
+    await oracelService.queryOracel(res, SQL, params, optionAutoCommit)
 };
 
 
@@ -312,8 +313,9 @@ exports.editCode = async function (req, res) {
     var codeNmEn = req.body.codeNmEn;
     var prtCdClass = req.body.prtCdClass;
     var prtCd = req.body.prtCd;
+    var sysDt = dateFormat(new Date(), "yyyymmddHHMMss");
 
-    var SQL = 'UPDATE TB_ITCODE SET  CODE_NM = :codeNm, CODE_NM_EN = :codeNmEn, PRT_CD_CLASS = :prtCdClass, PRT_CODE = :prtCd WHERE CODE = :code AND CD_CLASS = :codeClass AND VALID_START_DT = :validStartDt AND VALID_END_DT = :validEndDt ';
+    var SQL = 'UPDATE TB_ITCODE SET  CODE_NM = :codeNm, SYS_DTIM =:sysDt , CODE_NM_EN = :codeNmEn, PRT_CD_CLASS = :prtCdClass, PRT_CODE = :prtCd WHERE CODE = :code AND CD_CLASS = :codeClass AND VALID_START_DT = :validStartDt AND VALID_END_DT = :validEndDt ';
     let params = {
         code: { val: code },
         codeClass: { val: codeClass },
@@ -323,6 +325,7 @@ exports.editCode = async function (req, res) {
         codeNmEn: { val: codeNmEn },
         prtCdClass: { val: prtCdClass },
         prtCd: { val: prtCd },
+        sysDt: { val: sysDt },
     };
-    oracelService.queryOracel(res, SQL, params, optionAutoCommit)
+    await oracelService.queryOracel(res, SQL, params, optionAutoCommit)
 };
