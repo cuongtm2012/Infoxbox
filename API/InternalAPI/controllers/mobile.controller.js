@@ -9,6 +9,7 @@ const CicA0001Save = require('../domain/cicA0001.save');
 const utilFunction = require('../../shared/util/util');
 const responCode = require('../../shared/constant/responseCodeExternal');
 const io = require('socket.io-client');
+const logger = require('../config/logger');
 
 exports.mobileCicController = function (req, res, next) {
     try {
@@ -21,10 +22,17 @@ exports.mobileCicController = function (req, res, next) {
             },
             timeout: 1 * 60 * 1000
         }
+        //Logging request
+        logger.debug('Log request parameters send from internal Mobile');
+        logger.info(req.body);
 
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
                 let _dataReport, dataReportSave;
+
+                //Logging response
+                logger.debug('Log response parameters from scrapping service B0002');
+                logger.info(body.data);
 
                 if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;

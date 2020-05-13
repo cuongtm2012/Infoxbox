@@ -19,9 +19,18 @@ exports.internalCIC = function (req, res, next) {
             // timeout: 6000
         }
         console.log(" req.body:::", req.body);
+
+        //Logging request
+        logger.debug('Log request parameters send from internal B0002');
+        logger.info(req.body);
+
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
                 let niceSessionKey = req.body.niceSessionKey;
+
+                //Logging response
+                logger.debug('Log response parameters from scrapping service B0002');
+                logger.info(body.data);
 
                 if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
@@ -261,7 +270,7 @@ exports.internalCICB0003 = function (req, res, next) {
 
         console.log(" req.body:::", req.body);
         //Logging request
-        logger.debug('Log request parameters send from internal');
+        logger.debug('Log request parameters send from internal B0003');
         logger.info(req.body);
 
         axios.post(URI.cicInternalJson, req.body, config)
@@ -272,9 +281,9 @@ exports.internalCICB0003 = function (req, res, next) {
                 const workID = getIdGetway.getIPGateWay();
 
                 console.log("outJson.outB0003~~~~~", body.data.outJson.outB0003);
-                //Logging request
-                logger.debug('Log response parameters from scrapping service');
-                logger.info(body.data.outJson.outB0003);
+                //Logging response
+                logger.debug('Log response parameters from scrapping service B0003');
+                logger.info(body.data);
 
                 // get nice session key to update scrapping fail status
                 let niceSessionKeyUpdateStatus = req.body.niceSessionKey;

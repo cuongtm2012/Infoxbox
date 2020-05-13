@@ -98,7 +98,7 @@ exports.cics37Rqst = function (req, res) {
                 console.log("getdataReq=====", getdataReq);
 
                 //Logging request
-                logger.debug('Log request parameters from routes after manage request');
+                logger.debug('Log request parameters from routes after manage request S37');
                 logger.info(getdataReq);
 
                 cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
@@ -133,6 +133,11 @@ exports.cics37Rqst = function (req, res) {
                         axios.post(URI.cicInternalJson, fnData, config)
                             .then((body) => {
                                 console.log('body:', body.data);
+
+                                //Logging response
+                                logger.debug('Logging response S37');
+                                logger.info(body.data);
+
                                 // Manual Captcha
                                 if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                                     let dataStep = body.data.outJson.step_data;
@@ -184,9 +189,6 @@ exports.cics37Rqst = function (req, res) {
                                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                                 console.log('insert INQLOG:', r);
                                             });
-                                            //Logging response
-                                            logger.debug('Logging response S37');
-                                            logger.info(responseData);
 
                                             return res.status(200).json(responseData);
                                         } else {
@@ -425,7 +427,7 @@ function selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, scrapingStatusCo
         fiSessionKey: getdataReqFullNiceKey.fiSessionKey,
         fiCode: getdataReqFullNiceKey.fiCode,
         taskCode: getdataReqFullNiceKey.taskCode,
-        loginId : getdataReqFullNiceKey.loginId,
+        loginId: getdataReqFullNiceKey.loginId,
         taxCode: getdataReqFullNiceKey.taxCode ? getdataReqFullNiceKey.taxCode : '',
         natId: getdataReqFullNiceKey.natId ? getdataReqFullNiceKey.natId : '',
         oldNatId: getdataReqFullNiceKey.oldNatId ? getdataReqFullNiceKey.oldNatId : '',
