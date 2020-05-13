@@ -104,7 +104,7 @@ exports.internalCIC = function (req, res, next) {
                         }
                     }
                     // CIC ID inquiry error
-                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicINQError, body.data.outJson.outB0001.errMsg)) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicINQError, body.data.outJson.outB0001.errMsg) || utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicINQError, body.data.outJson.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicINQError.CicIdINQError1.code, responCode.ScrappingResponseCodeCicINQError.CicIdINQError2.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0001.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
                                 if (1 <= rslt)
@@ -137,7 +137,7 @@ exports.internalCIC = function (req, res, next) {
                         }
                     }
                     // CIC report inquiry error
-                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportINQError, body.data.outJson.outB0002.errMsg)) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportINQError, body.data.outJson.outB0002.errMsg) || utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportINQError, body.data.outJson.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError1.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError2.code
                             , responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError102.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError103.code
                             , responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError104.code, responCode.ScrappingResponseCodeCicReportINQError.CicReportINQError105.code
@@ -676,7 +676,7 @@ exports.internalCICB0003 = function (req, res, next) {
 
                     }
                     // CIC report result inquiry error S11
-                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQError, body.data.outJson.outB0003.errMsg)) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQError, body.data.outJson.outB0003.errMsg) || utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQError, body.data.outJson.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError1.code, responCode.ScrappingResponseCodeCicReportResultINQError.CicReportResultINQError2.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB0003.errMsg))) {
                             cicService.updateListScrpStatCdErrorResponseCodeScraping(niceSessionKeyUpdateStatus, responCode.ScrapingStatusCode.CicReportResultInqError.code, responCode.RESCODEEXT.CICReportInqFailure.code).then(rslt => {
                                 if (1 <= rslt)
@@ -687,7 +687,7 @@ exports.internalCICB0003 = function (req, res, next) {
                         }
                     }
                     // CIC report result inquiry error S37
-                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.outB1003.errMsg)) {
+                    else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.outB1003.errMsg) || utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicReportResultINQS37Error, body.data.outJson.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError1.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError2.code
                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError102.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError103.code
                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError104.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError105.code
