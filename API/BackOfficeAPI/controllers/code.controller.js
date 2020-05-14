@@ -106,7 +106,7 @@ exports.getCode = async function (req, res) {
     to_char(to_date(VALID_END_DT, 'yyyymmdd'),'yyyy/mm/dd') AS VALID_END_DT `;
     var SQL_SELECT_COUNT = `SELECT COUNT(*) AS total `;
     var SQL_FROM = `FROM TB_ITCODE `;
-    var SQL_ORDER_BY = 'ORDER BY CODE_NM ';
+    var SQL_ORDER_BY = 'ORDER BY CD_CLASS , CODE ';
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
     if (_.isEmpty(code) && _.isEmpty(codeClass) && _.isEmpty(codeNm)) {
         let sql = SQL_SELECT + SQL_FROM + SQL_ORDER_BY + SQL_LIMIT;
@@ -125,7 +125,7 @@ exports.getCode = async function (req, res) {
     }
 
     if ((code) && (codeClass) && (codeNm)) {
-        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CD_CLASS) LIKE LOWER(:codeClass) AND LOWER(TB_ITCODE.CODE_NM) LIKE LOWER(:codeNm) AND LOWER(TB_ITCODE.CODE) LIKE LOWER(:code) `;
+        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CD_CLASS) LIKE LOWER(:codeClass) AND LOWER(TB_ITCODE.CODE_NM_EN) LIKE LOWER(:codeNm) AND LOWER(TB_ITCODE.CODE) LIKE LOWER(:code) `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             code,
@@ -189,7 +189,7 @@ exports.getCode = async function (req, res) {
     }
 
     if (_.isEmpty(code) && _.isEmpty(codeClass) && (codeNm)) {
-        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CODE_NM) LIKE LOWER(:codeNm)  `;
+        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CODE_NM_EN) LIKE LOWER(:codeNm)  `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             codeNm,
@@ -231,7 +231,7 @@ exports.getCode = async function (req, res) {
     }
 
     if (_.isEmpty(code) && (codeClass) && (codeNm)) {
-        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CD_CLASS) LIKE LOWER(:codeClass) AND LOWER(TB_ITCODE.CODE_NM) LIKE LOWER(:codeNm) `;
+        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CD_CLASS) LIKE LOWER(:codeClass) AND LOWER(TB_ITCODE.CODE_NM_EN) LIKE LOWER(:codeNm) `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             codeClass,
@@ -253,7 +253,7 @@ exports.getCode = async function (req, res) {
     }
 
     if ((code) && _.isEmpty(codeClass) && (codeNm)) {
-        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CODE) LIKE LOWER(:code) AND LOWER(TB_ITCODE.CODE_NM) LIKE LOWER(:codeNm) `;
+        var SQL_SEARCH = `WHERE LOWER(TB_ITCODE.CODE) LIKE LOWER(:code) AND LOWER(TB_ITCODE.CODE_NM_EN) LIKE LOWER(:codeNm) `;
         let sql = SQL_SELECT + SQL_FROM + SQL_SEARCH + SQL_ORDER_BY + SQL_LIMIT;
         let param = {
             code,

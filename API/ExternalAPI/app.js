@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 
 //Timeout
 var timeout = require('connect-timeout');
-app.use(timeout(70 * 1000));
+app.use(timeout(100 * 1000));
 app.use(haltOnTimedout);
 
 var cicExternalRoute = require('./routes/cicExternal.route');
