@@ -128,6 +128,7 @@ const financialContract = require('../domain/loan/financialContract');
 const cusLookup = require('../domain/loan/customerLookupInfo');
 
 const convertMilionUnit = require('../../shared/util/convertUnit');
+const cics11aRSLTResLength = require('../domain/CIC_S11A_RSLT.responseLegnth');
 
 exports.cics11aRSLT = function (req, res) {
 	try {
@@ -334,6 +335,23 @@ exports.cics11aRSLT = function (req, res) {
 						, arrFinancialContract, cmtFinancialContract
 						, arrCusLookup
 						, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year);
+
+					// add length response mesaage
+					let lenghResMessage = JSON.stringify({
+						responseData
+					}).length;
+
+					responseData = new cics11aRSLTResLength(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+						, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
+						, arrVamcLoanInfo, cmtVmacDisposalLoan
+						, arrLoan12MInfo, cmtLoan12MInfo
+						, arrNPL5YLoan, cmtNPL5YearLoan
+						, arrLoan12MonCat, cmtLoan12MCat
+						, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
+						, arrFinancialContract, cmtFinancialContract
+						, arrCusLookup
+						, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year
+						, lenghResMessage, responseData.tnlv000001, responseData.tclv000001, responseData.tflv000001, responseData.tdlv000001, responseData.telv000001, responseData.tlv0000001, responseData.tblv000001);
 
 					// update INQLOG
 					dataInqLogSave = new DataInqLogSave(getdataReq, response.responseCode);
