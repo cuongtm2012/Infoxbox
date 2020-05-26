@@ -4674,15 +4674,26 @@ exports.viewHistoryCICReport = async function (req, res) {
     }
 
 };
-exports.handledViewReportCIC = async function (req, res) {
-    var niceSsID = req.query.niceSsID;
-    var SQL_SELECT = ` SELECT * `;
-    var SQL_FROM = `FROM TB_SCRPLOG `;
-    var WHERE = 'WHERE NICE_SSIN_ID = :niceSsID ';
-
-    let sql = SQL_SELECT + SQL_FROM + WHERE;
-    let params = {
+exports.checkRecordToExecuteManual = async function (req, res) {
+    let niceSsID = req.query.niceSsID;
+    let SQL_SELECT = `SELECT
+    TB_SCRPLOG.NICE_SSIN_ID as NICE_SSIN_ID, 
+    TB_SCRPLOG.NATL_ID as NATL_ID,
+    TB_SCRPLOG.OLD_NATL_ID as OLD_NATL_ID,
+    TB_SCRPLOG.PSPT_NO as PSPT_NO,
+    TB_SCRP_TRLOG.S_CIC_NO as S_CIC_NO, 
+    TB_SCRP_TRLOG.S_USER_ID as S_USER_ID, 
+    TB_SCRP_TRLOG.S_USER_PW as S_USER_PW, 
+    TB_SCRPLOG.INQ_DTIM as INQ_DTIM,
+    TB_SCRPLOG.LOGIN_ID as LOGIN_ID,
+     TB_SCRPLOG.LOGIN_PW as LOGIN_PW,
+      TB_SCRPLOG.SYS_DTIM as SYS_DTIM `
+    let SQL_FROM = ' FROM TB_SCRP_TRLOG ';
+    let SQL_JOIN = ' INNER JOIN TB_SCRPLOG ON TB_SCRPLOG.NICE_SSIN_ID = TB_SCRP_TRLOG.NICE_SSIN_ID ';
+    let SQL_WHERE = ` WHERE TB_SCRP_TRLOG.S_SVC_CD = 'B0002' AND TB_SCRPLOG.SCRP_STAT_CD IN(20,21,22,23,24,29) AND TB_SCRPLOG.NICE_SSIN_ID = :niceSsId `;
+    let param = {
         niceSsID
-    };
-    await oracelService.queryOracel(res, sql, params, optionFormatObj)
+    }
+    let SQL_CHECK = SQL_SELECT + SQL_FROM + SQL_JOIN + SQL_WHERE;
+    await oracelService.queryOracel(res, SQL_CHECK , param , optionFormatObj);
 };
