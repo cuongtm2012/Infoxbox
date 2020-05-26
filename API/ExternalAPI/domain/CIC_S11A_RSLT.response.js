@@ -48,7 +48,8 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         OTR_IDEN_EVD,
         PSN_ADDR,
         PSN_NM,
-        RPT_SEND_DTIM
+        RPT_SEND_DTIM,
+        LOAN_CMT
     } = outputCicrptMain;
 
     this.fiSessionKey = fiSessionKey;
@@ -75,6 +76,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.address = PSN_ADDR;
     this.nationalId = NATL_ID;
     this.docIdEvidance = OTR_IDEN_EVD;
+    this.commentOnLoanInfo = LOAN_CMT;
     if (_.isEmpty(cmtLoanDetaiInfo)) {
         this.loanDetailNode = outputLoanDetailinfo;
         this.totalFiLoanVND = totalFiLoanVND;

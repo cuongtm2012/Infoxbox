@@ -49,7 +49,8 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         OTR_IDEN_EVD,
         PSN_ADDR,
         PSN_NM,
-        RPT_SEND_DTIM
+        RPT_SEND_DTIM,
+        LOAN_CMT
     } = outputCicrptMain;
 
     this.fiSessionKey = fiSessionKey;
@@ -64,6 +65,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.cicReportRequestDate = INQ_DTIM_SCRPLOG;
     this.cicReportResponseDate = SYS_DTIM.substring(0, 8);
     this.cicReportInquiryUserId = S_REQ_STATUS;
+    this.lengthOfResponse = lenghResMessage;
     this.cicInquiryFiName = INQ_OGZ_NM;
     this.cicInquiryFiAddress = INQ_OGZ_ADDR;
     this.cicUserName = INQ_USER_NM;
@@ -76,11 +78,8 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.address = PSN_ADDR;
     this.nationalId = NATL_ID;
     this.docIdEvidance = OTR_IDEN_EVD;
-    this.lengthOfResponse = lenghResMessage;
+    this.commentOnLoanInfo = LOAN_CMT;
     if (_.isEmpty(cmtLoanDetaiInfo)) {
-        this.loanDetailNode = outputLoanDetailinfo;
-        this.totalFiLoanVND = totalFiLoanVND;
-        this.totalFiLoanUSD = totalFiLoanUSD;
         //add 8 fields 21/05/2020
         this.tlv0000001 = tlv0000001;
         this.tnlv000001 = tnlv000001;
@@ -89,9 +88,21 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         this.tdlv000001 = tdlv000001;
         this.telv000001 = telv000001;
         this.tblv000001 = tblv000001;
+        this.loanDetailNode = outputLoanDetailinfo;
+        this.totalFiLoanVND = totalFiLoanVND;
+        this.totalFiLoanUSD = totalFiLoanUSD;
     }
-    if (_.isEmpty(outputLoanDetailinfo))
+    if (_.isEmpty(outputLoanDetailinfo)) {
+        //add 8 fields 21/05/2020
+        this.tlv0000001 = null;
+        this.tnlv000001 = null;
+        this.tclv000001 = null;
+        this.tflv000001 = null;
+        this.tdlv000001 = null;
+        this.telv000001 = null;
+        this.tblv000001 = null;
         this.commentOnLoanDetail = cmtLoanDetaiInfo ? cmtLoanDetaiInfo : '';
+    }
     if (_.isEmpty(cmtCreditCard)) {
         this.creditCardTotalLimit = creditCardTotalLimit;
         this.creditCardTotalBalance = creditCardTotalBalance;
