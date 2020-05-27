@@ -6,6 +6,6 @@ var verifyToken = require('../util/verifyToken');
 var cicReportController = require('../controllers/cic-report.controller');
 
 router.get('/viewHistoryCICReport',  verifyToken ,cicReportController.viewHistoryCICReport);
-router.get('/handledViewReportCIC', verifyToken , cicReportController.handledViewReportCIC);
+router.get('/checkRecordToExecuteManual', verifyToken , cicReportController.checkRecordToExecuteManual);
 
 module.exports = router;
