@@ -635,7 +635,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 }
                 // End B1003
 
-                else if (_.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list)) {
+                else if (_.isEmpty(body.data.outJson.outB0003.list) || (_.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list))) {
                     //Update ScrpModCd 00
                     cicService.updateCICReportInquiryReadyToRequestScraping(req.body.niceSessionKey).then(() => {
                         console.log(" B0003 rowCount = 0 update SCRP_MOD_CD = 00 ");
