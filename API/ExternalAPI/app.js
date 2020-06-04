@@ -29,9 +29,9 @@ app.use(bodyParser.json());
 
 
 //Timeout
-var timeout = require('connect-timeout');
-app.use(timeout(100 * 1000));
-app.use(haltOnTimedout);
+// var timeout = require('connect-timeout');
+// app.use(timeout(100 * 1000));
+// app.use(haltOnTimedout);
 
 var cicExternalRoute = require('./routes/cicExternal.route');
 
@@ -100,13 +100,13 @@ app.use(function (req, res, next) {
 app.use('/external', cicExternalRoute);
 
 //Timeout
-function haltOnTimedout(req, res, next) {
-	if (!req.timedout) next();
-	else {
-		console.log('Error server response time out');
-		return res.status(503).json('Timeout error');
-	}
-}
+// function haltOnTimedout(req, res, next) {
+// 	if (!req.timedout) next();
+// 	else {
+// 		console.log('Error server response time out');
+// 		return res.status(503).json('Timeout error');
+// 	}
+// }
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
