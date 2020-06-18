@@ -176,23 +176,8 @@ exports.getDataYear = async function (req, res) {
   let uniqueYear = arrYear.filter(function(elem, index, self) {
     return index === self.indexOf(elem);
   })
-  //  get all year have request
-  let arrYearHaveRs = [];
-  let SQL_SELECT = `SELECT DISTINCT TB_SCRPLOG.INQ_DTIM AS INQ_DTIM `;
-  let SQL_FROM = 'FROM TB_SCRPLOG ';
-  let SQL_Where = `  WHERE TB_SCRPLOG.INQ_DTIM LIKE :year ORDER BY TB_SCRPLOG.INQ_DTIM ASC`
-  let SQL = SQL_SELECT + SQL_FROM + SQL_Where;
-  for (const e of uniqueYear) {
-    let param = {
-      year: '%' + e + '%',
-    }
-    let isYearHaveResult = await oracelService.queryAndReturnData(res, SQL, param, optionFormatObj)
-    if (isYearHaveResult[0]) {
-      await arrYearHaveRs.push(e);
-    }
-  }
   //checking
-  if (arrYearHaveRs[0]) {
+  if (uniqueYear[0]) {
     let SQL_10 = `SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS COMPLETED FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '10'`
     let SQL_00 = `SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS SMS FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '00'`
     let SQL_01 = `SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS RP_IQ_RQ_OK FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '01'`
@@ -205,7 +190,7 @@ exports.getDataYear = async function (req, res) {
     let SQL_23 = `SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS CIC_RQ_RS_IQ_ERROR FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '23'`
     let SQL_24 = `SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS SCRAP_TG_RP_NOT_EXIST FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '24'`
     let SQL_29 = `SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS OTHER_ERROR FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29'`
-    for (const e of arrYearHaveRs) {
+    for (const e of uniqueYear) {
       let param = {
         INQ_DTIM: '%' + e + '%',
       }
