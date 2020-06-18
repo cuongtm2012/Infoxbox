@@ -27,6 +27,7 @@ const credentials = { key: privateKey, cert: certificate };
 const httpsServer = https.createServer(credentials, app);
 
 var auth = require('./routes/auth.route');
+var chart = require('./routes/chart.route');
 var customer = require('./routes/customer.route');
 var contract = require('./routes/contract.route');
 var code = require('./routes/code.route');
@@ -95,6 +96,7 @@ app.use('/cicreport', cicreport);
 app.use('/user', user);
 app.use('/captcha', captcha);
 app.use('/manualCaptcha', manualCaptcha);
+app.use('/chart', chart)
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
