@@ -7,4 +7,5 @@ var chartController = require('../controllers/chart.controller');
 
 router.get('/getDataFromDayToDayChartBar',  chartController.getDataFromDayToDayChartBar);
 router.get('/getDataMonthFromMonth',  chartController.getDataMonthFromMonth);
+router.get('/getDataYear',  chartController.getDataYear);
 module.exports = router;
