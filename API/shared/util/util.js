@@ -12,8 +12,11 @@ module.exports = {
         return result;
     },
 
-    getStatusScrappingCode: function (msg) {
-        return msg.split(']')[0].split('[')[1];
+    getStatusScrappingCode: function (msg1, msg2) {
+        if (!validation.isEmptyStr(msg1))
+            return msg1.split(']')[0].split('[')[1];
+        else
+            return msg2.split(']')[0].split('[')[1];
     },
 
     validPhoneNumber: function (phoneNum) {
