@@ -234,3 +234,73 @@ exports.getDataYear = async function (req, res) {
     return res.status(204).send([]);
   }
 }
+
+exports.getDataWeek = async function (req,res) {
+  let fromDate = req.query.fromDate;
+  let toDate = req.query.toDate;
+  let result = [];
+
+  Date.prototype.getWeek = function() {
+    let onejan = new Date(this.getFullYear(),0,1);
+    return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
+  }
+
+  let date = new Date(fromDate);
+  let weekNumber = date.getWeek();
+  let startDateOfWeek = moment(date).startOf('week');
+  let endDateOfWeek = moment(date).endOf('week');
+  let firstDayOfWeek = moment(startDateOfWeek).format('YYYYMMDD');
+  let lastDayOfWeek =moment(endDateOfWeek).format('YYYYMMDD');
+  console.log(weekNumber,firstDayOfWeek,lastDayOfWeek); // Returns the week number as an integer
+
+  if(firstDayOfWeek && lastDayOfWeek) {
+    let SQL =
+        `(SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS COUNT FROM TB_SCRPLOG WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD') AND TB_SCRPLOG.SCRP_STAT_CD = '10')  
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD') AND TB_SCRPLOG.SCRP_STAT_CD = '00')
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '01') 
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD') AND TB_SCRPLOG.SCRP_STAT_CD = '02')  
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '03')
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '04')  
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '20')
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '21') 
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '22')
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD') AND TB_SCRPLOG.SCRP_STAT_CD = '23') 
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '24')
+          UNION ALL
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '29')`
+      let param = {
+        firstDayOfWeek,
+        lastDayOfWeek
+      }
+      let count = await oracelService.queryAndReturnData(res, SQL, param, optionFormatObj);
+      let object = {
+        COMPLETED: count[0].COUNT,
+        SMS: count[1].COUNT,
+        RP_IQ_RQ_OK: count[2].COUNT,
+        CIC_LOGIN_OK: count[3].COUNT,
+        CIC_ID_IQ_OK: count[4].COUNT,
+        CIC_RP_IQ_OK: count[5].COUNT,
+        LOGIN_ERROR: count[6].COUNT,
+        CIC_ID_IQ_ERROR: count[7].COUNT,
+        CIC_RP_IQ_ERROR: count[8].COUNT,
+        CIC_RQ_RS_IQ_ERROR: count[9].COUNT,
+        SCRAP_TG_RP_NOT_EXIST: count[10].COUNT,
+        OTHER_ERROR: count[11].COUNT,
+        DATE: weekNumber
+      }
+      await result.push(object);
+    return res.status(200).send(result);
+  } else {
+    return res.status(204).send([]);
+  }
+}
