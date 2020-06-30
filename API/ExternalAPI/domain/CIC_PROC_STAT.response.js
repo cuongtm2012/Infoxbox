@@ -23,12 +23,12 @@ module.exports = function CIC_PROC_StatusResponse(cicsProcStatRequest, response,
     this.scrapingStatusCode = scrapingStatusCode;
     this.offset = offset;
     this.maximumrows = maxnumrows;
-    this.responseTime = responseTime ? responseTime : "";
-    this.responseCode = responseCode ? responseCode : "";
-    this.responseMessage = responseMessage ? responseMessage : "";
+    this.responseTime = responseTime ? responseTime : null;
+    this.responseCode = responseCode ? responseCode : null;
+    this.responseMessage = responseMessage ? responseMessage : null;
     this.responseCount = responseCount ? responseCount : null;
-    this.totalCount = totalCount;
-    this.cicReportStatus = dataRes ? dataRes : '';
+    this.totalCount = totalCount ? totalCount : null;
+    this.cicReportStatus = dataRes ? dataRes : null;
 
 
 };
