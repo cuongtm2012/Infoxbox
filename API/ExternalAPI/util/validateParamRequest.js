@@ -11,6 +11,15 @@ module.exports = {
     checkParamRequest: function (getdataReq) {
         var response;
 
+        //fiSessionKey
+        if (20 < getdataReq.fiSessionKey.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
+            }
+            return response;
+        }
+
         // fiCode
         if (_.isEmpty(getdataReq.fiCode)) {
             response = {
