@@ -43,6 +43,7 @@ var RESCODEEXT = {
     FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
     TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
     OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
+    FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
     ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" }
 };
 
