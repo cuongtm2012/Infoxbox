@@ -85,7 +85,7 @@ exports.cics11aRQST = function (req, res, next) {
 						let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseSuccess);
 					} else {
-						let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
+						let responseUnknow = new PreResponse(responCode.RESCODEEXT.OtherInternalDBError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.OtherInternalDBError.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
 					}
 					//TODO

@@ -32,7 +32,8 @@ var RESCODEEXT = {
     DuplicateAppOfCICReportADay: { value: 34, name: "Duplicated application of CIC report in a day", code: "F034" },
     InvalidMobileNumber: { value: 41, name: "Mobile phone number error", code: "F041" },
     TimeoutError: { value: 42, name: "Timeout error", code: "F042" },
-    UNKNOW: { value: 400, name: "UNKNOW (No result query)", code: "400" },
+    UNKNOWOtherError: { value: 400, name: "Other error", code: "F099" },
+    OtherInternalDBError: { value: 401, name: "Other Internal DB error", code: "F099" },
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" },
     CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028" },
     CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029" },
@@ -43,6 +44,7 @@ var RESCODEEXT = {
     FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
     TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
     OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
+    FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
     ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" }
 };
 
