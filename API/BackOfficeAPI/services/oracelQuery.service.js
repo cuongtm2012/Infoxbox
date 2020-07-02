@@ -196,3 +196,27 @@ exports.setRole = async function (res, sql, param, option) {
     }
 };
 
+exports.queryAndReturnData = async function (res, sql, param, option) {
+    try {
+        this.connection = await oracledb.getConnection(dbconfig);
+        let result = await this.connection.execute(
+            sql, param, option);
+        if (result.rows) {
+            return result.rows;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        return err;
+    } finally {
+
+        if (this.connection) {
+            try {
+                await this.connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+};
+
