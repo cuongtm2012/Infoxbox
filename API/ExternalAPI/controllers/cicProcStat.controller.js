@@ -73,7 +73,7 @@ exports.cicProcStat = function (req, res) {
                     responseData = new CICProcStatRes(getdataReq, responseSuccess, countResult, cicReportStatus, totalCount);
 
                 } else {
-                    let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.UNKNOW.code);
+                    let responseUnknow = new PreResponse(responcodeEXT.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.NORMAL.code);
                     responseData = new CICProcStatRes(getdataReq, responseUnknow);
                 }
 

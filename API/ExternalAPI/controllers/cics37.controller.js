@@ -192,7 +192,7 @@ exports.cics37Rqst = function (req, res) {
 
                                             return res.status(200).json(responseData);
                                         } else {
-                                            let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
+                                            let responseUnknow = new PreResponse(responCode.RESCODEEXT.OtherInternalDBError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.OtherInternalDBError.code);
                                             responseData = new cics37RQSTRes(getdataReq, responseUnknow);
 
                                             // update INQLOG
@@ -402,7 +402,7 @@ exports.cics37Rqst = function (req, res) {
                                 });
                             });
                     } else {
-                        let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOW.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOW.code);
+                        let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOWOtherError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOWOtherError.code);
                         responseData = new cics37RQSTRes(getdataReq, responseUnknow);
 
                         return res.status(200).json(responseData);
