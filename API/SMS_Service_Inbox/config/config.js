@@ -11,7 +11,7 @@ var config = {
     },
     FinalSMS_1 : `Cam on quy khach su dung dich vu InfoBox. Quy khach vui long tai app tai IOS:`,
     FinalSMS_2 : `hoac Android:`,
-    FinalSMS_3 : `de dang ky thanh vien, tra cuu bao cao tin dung ca nhan. Truy cap`,
+    FinalSMS_3 : `de dang ky thanh vien, tra cuu bao cao tin dung ca nhan. Tra cuu`,
     FinalSMS_4: `, chon TCTD, dong y cung cap thong tin va Gui.`,
     database: {
         host: '1.55.215.214',
