@@ -23,11 +23,11 @@ exports.getDataFromDayToDayChartBar = async function (req, res) {
     currentDate = moment(currentDate).add(1, 'days');
   }
   if (arrAllDay.length > 32) {
-   return res.status(501).send({notify:'Maximum number of displayed days no more than 31 days'});
+    return res.status(501).send({notify:'Maximum number of displayed days no more than 31 days'});
   }
   //checking
   if (arrAllDay[0]) {
-   let SQL =  `(SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS COUNT FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '10')  
+    let SQL =  `(SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) AS COUNT FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '10')  
           UNION ALL
           (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '00')
           UNION ALL
@@ -49,7 +49,9 @@ exports.getDataFromDayToDayChartBar = async function (req, res) {
           UNION ALL
           (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '24')
           UNION ALL
-          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29')`
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29')
+          UNION ALL
+          (SELECT COUNT (*)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM )`
     for (const e of arrAllDay) {
       let param = {
         INQ_DTIM: e
@@ -68,6 +70,7 @@ exports.getDataFromDayToDayChartBar = async function (req, res) {
         CIC_RQ_RS_IQ_ERROR: count[9].COUNT,
         SCRAP_TG_RP_NOT_EXIST: count[10].COUNT,
         OTHER_ERROR: count[11].COUNT,
+        TOTAL: count[12].COUNT,
         DATE: e
       }
       await result.push(object);
@@ -125,7 +128,9 @@ exports.getDataMonthFromMonth = async function (req, res) {
           UNION ALL
           (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '24')
           UNION ALL
-          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29')`
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29')
+          UNION ALL
+          (SELECT COUNT (*)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM )`
     for (const e of arrAllMonth) {
       let param = {
         INQ_DTIM: e + '%',
@@ -144,6 +149,7 @@ exports.getDataMonthFromMonth = async function (req, res) {
         CIC_RQ_RS_IQ_ERROR: count[9].COUNT,
         SCRAP_TG_RP_NOT_EXIST: count[10].COUNT,
         OTHER_ERROR: count[11].COUNT,
+        TOTAL: count[12].COUNT,
         DATE: e
       }
       await result.push(object);
@@ -206,7 +212,9 @@ exports.getDataYear = async function (req, res) {
           UNION ALL
           (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '24')
           UNION ALL
-          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29')`
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM AND TB_SCRPLOG.SCRP_STAT_CD = '29')
+          UNION ALL
+          (SELECT COUNT (*)  FROM TB_SCRPLOG WHERE TB_SCRPLOG.INQ_DTIM LIKE :INQ_DTIM )`
     for (const e of uniqueYear) {
       let param = {
         INQ_DTIM:  e + '%',
@@ -225,6 +233,7 @@ exports.getDataYear = async function (req, res) {
         CIC_RQ_RS_IQ_ERROR: count[9].COUNT,
         SCRAP_TG_RP_NOT_EXIST: count[10].COUNT,
         OTHER_ERROR: count[11].COUNT,
+        TOTAL: count[12].COUNT,
         DATE: e
       }
       await result.push(object);
@@ -277,28 +286,31 @@ exports.getDataWeek = async function (req,res) {
           UNION ALL
           (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD) FROM TB_SCRPLOG WHERE  to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '24')
           UNION ALL
-          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '29')`
-      let param = {
-        firstDayOfWeek,
-        lastDayOfWeek
-      }
-      let count = await oracelService.queryAndReturnData(res, SQL, param, optionFormatObj);
-      let object = {
-        COMPLETED: count[0].COUNT,
-        SMS: count[1].COUNT,
-        RP_IQ_RQ_OK: count[2].COUNT,
-        CIC_LOGIN_OK: count[3].COUNT,
-        CIC_ID_IQ_OK: count[4].COUNT,
-        CIC_RP_IQ_OK: count[5].COUNT,
-        LOGIN_ERROR: count[6].COUNT,
-        CIC_ID_IQ_ERROR: count[7].COUNT,
-        CIC_RP_IQ_ERROR: count[8].COUNT,
-        CIC_RQ_RS_IQ_ERROR: count[9].COUNT,
-        SCRAP_TG_RP_NOT_EXIST: count[10].COUNT,
-        OTHER_ERROR: count[11].COUNT,
-        DATE: weekNumber
-      }
-      await result.push(object);
+          (SELECT COUNT (TB_SCRPLOG.SCRP_STAT_CD)  FROM TB_SCRPLOG WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD')  AND TB_SCRPLOG.SCRP_STAT_CD = '29')
+          UNION ALL
+          (SELECT COUNT (*)  FROM TB_SCRPLOG WHERE to_date(TB_SCRPLOG.INQ_DTIM, 'YYYY/MM/DD') BETWEEN to_date(:firstDayOfWeek, 'YYYY/MM/DD') AND to_date(:lastDayOfWeek, 'YYYY/MM/DD'))`
+    let param = {
+      firstDayOfWeek,
+      lastDayOfWeek
+    }
+    let count = await oracelService.queryAndReturnData(res, SQL, param, optionFormatObj);
+    let object = {
+      COMPLETED: count[0].COUNT,
+      SMS: count[1].COUNT,
+      RP_IQ_RQ_OK: count[2].COUNT,
+      CIC_LOGIN_OK: count[3].COUNT,
+      CIC_ID_IQ_OK: count[4].COUNT,
+      CIC_RP_IQ_OK: count[5].COUNT,
+      LOGIN_ERROR: count[6].COUNT,
+      CIC_ID_IQ_ERROR: count[7].COUNT,
+      CIC_RP_IQ_ERROR: count[8].COUNT,
+      CIC_RQ_RS_IQ_ERROR: count[9].COUNT,
+      SCRAP_TG_RP_NOT_EXIST: count[10].COUNT,
+      OTHER_ERROR: count[11].COUNT,
+      TOTAL: count[12].COUNT,
+      DATE: weekNumber
+    }
+    await result.push(object);
     return res.status(200).send(result);
   } else {
     return res.status(204).send([]);
