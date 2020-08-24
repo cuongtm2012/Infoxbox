@@ -56,7 +56,7 @@ exports.viewHistoryCICReport = async function (req, res) {
     var SQL_FROM = 'FROM TB_SCRPLOG ';
     var SQL_JOIN = 'LEFT JOIN TB_ITCUST ON TB_SCRPLOG.CUST_CD = TB_ITCUST.CUST_CD ' +
                          'LEFT JOIN TB_ITCODE ON TB_SCRPLOG.GDS_CD = TB_ITCODE.CODE ';
-    var SQL_ORDER_BY = `ORDER BY CASE WHEN TB_SCRPLOG.INQ_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, TB_SCRPLOG.INQ_DTIM DESC `;
+    var SQL_ORDER_BY = `ORDER BY CASE WHEN TB_SCRPLOG.SYS_DTIM IS NOT NULL THEN 1 ELSE 0 END DESC, TB_SCRPLOG.SYS_DTIM DESC `;
     var SQL_LIMIT = 'OFFSET :currentLocation ROWS FETCH NEXT :limitRow ROWS ONLY ';
 
     if (_.isEmpty(orgCode) && _.isEmpty(productCode) && _.isEmpty(taxCode) && _.isEmpty(nationalID) && _.isEmpty(oldNationalID) && _.isEmpty(passportNO) && _.isEmpty(phoneNumber) && _.isEmpty(inqDateFrom) && _.isEmpty(inqDateTo) && _.isEmpty(scrapStatus)) {
