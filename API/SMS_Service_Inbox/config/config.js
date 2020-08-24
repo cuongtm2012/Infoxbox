@@ -5,8 +5,8 @@ var config = {
     URL_REQUEST_LIVE: 'http://app.sms.fpt.net',
     URL_REQUEST_SANBOX: 'http://sandbox.sms.fpt.net',
     TemSMS: {
-        APPLE_LINK : ' https://play.google.com/store/apps/details?id=vn.cicb.customer ',
-        ANDROID_LINK : ' https://apps.apple.com/vn/app/icic/id1467621816 ',
+        APPLE_LINK : ' https://apps.apple.com/vn/app/icic/id1467621816 ',
+        ANDROID_LINK : ' https://play.google.com/store/apps/details?id=vn.cicb.customer ',
         MOBILE_LINK: ' https://103.112.124.129:4200/banks?phone='
     },
     FinalSMS_1 : `Cam on quy khach su dung dich vu InfoBox. Quy khach vui long tai app tai IOS:`,
