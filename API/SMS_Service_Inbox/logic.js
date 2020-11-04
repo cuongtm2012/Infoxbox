@@ -57,10 +57,13 @@ let updateAfterSend = async function (data) {
             await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
         } else {
             //If SRCAP_MOD_CD != 05 && TRY_COUNT == 3 => Fail to send Sms!
-            if (data.SRCAP_MOD_CD !== '05' && data.TRY_COUNT < 3) {
-            await DataController.updateSCRP_MOD_CDWhenFailSendSMS(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
+            if (data.SCRP_MOD_CD !== '05' && data.TRY_COUNT < 3) {
+                console.log("updating when send sms fail < 3 time");
+                await DataController.updateSCRP_MOD_CDWhenFailSendSMS(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
+            } else {
+                console.log("updating when send sms failed and over 3 time sent");
+                await DataController.updateSCRP_MOD_CD(data.TEL_NO_MOBILE, data.NICE_SSIN_ID);
             }
-            console.log("updating when send sms fail");
         }
     } catch (err) {
         logger.error(err);
