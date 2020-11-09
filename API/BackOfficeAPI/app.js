@@ -35,6 +35,7 @@ var cicreport = require('./routes/cicreport.route');
 var user = require('./routes/user.route');
 var captcha = require('./routes/captcha.route');
 var manualCaptcha = require('./routes/manualCT.route');
+var countTransactions = require('./routes/countTransaction.route')
 // Config DB
 var config = require('./config/config');
 
@@ -97,6 +98,7 @@ app.use('/user', user);
 app.use('/captcha', captcha);
 app.use('/manualCaptcha', manualCaptcha);
 app.use('/chart', chart)
+app.use('/countTransactions', countTransactions)
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
