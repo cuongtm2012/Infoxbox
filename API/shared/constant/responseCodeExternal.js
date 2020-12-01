@@ -45,7 +45,9 @@ var RESCODEEXT = {
     TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
     OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
     FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
-    ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" }
+    ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" },
+    NIMOBILEPHONENUMBER: {value: 46, name: 'Need to input mandatory item(Mobile phone number)', code: "F046"},
+    NISCOREPRODUCT: {value: 47, name: 'Need to input mandatory item(Score Product)', code: "F047"}
 };
 
 const OracleError = {
@@ -145,7 +147,8 @@ const TaskCode = {
     CIC_S37_RSLT: { code: 'CIC_S37_RSLT' },
     CIC_MACR_RQST: { code: 'CIC_MACR_RQST' },
     CIC_MACR_RSLT: { code: 'CIC_MACR_RSLT' },
-    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' }
+    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
+    ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' }
 };
 
 const ProductCode = ['06'];
@@ -155,7 +158,8 @@ const InfoProvConcent = ['Y'];
 const NiceProductCode = {
     S11A: { code: 'S1001' },
     S37: { code: 'S1002' },
-    Mobile: { code: 'S1003' }
+    Mobile: { code: 'S1003' },
+    ZALO: { code: 'S2001' }
 };
 
 const StatusCodeBatchProcess = {
