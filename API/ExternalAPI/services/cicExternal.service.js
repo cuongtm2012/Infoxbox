@@ -636,8 +636,144 @@ async function selectProcStatus(req) {
     }
 }
 
+async function insertDataZaloINQLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        let sysDim = convertTime.timeStamp();
+        let gateway = ipGateWay.getIPGateWay(req);
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, NICE_SSIN_ID ,CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID, TEL_NO_MOBILE) 
+        VALUES (:INQ_LOG_ID, :NICE_SSIN_ID ,:CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID, :TEL_NO_MOBILE)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                INQ_LOG_ID: { val: req.inqLogId },
+                NICE_SSIN_ID: { val: req.niceSessionKey},
+                CUST_CD: { val: req.fiCode },
+                TX_GB_CD: { val: req.taskCode },
+                NATL_ID: { val: req.natId },
+                TAX_ID: { val: req.taxCode },
+                OTR_ID: { val: req.otrId },
+                CIC_ID: { val: req.cicId },
+                INQ_DTIM: { val: req.inquiryDate },
+                AGR_FG: { val: req.infoProvConcent },
+                RSP_CD: { val: req.respCd },
+                SYS_DTIM: { val: sysDim },
+                WORK_ID: { val: gateway },
+                TEL_NO_MOBILE: { val: req.mobilePhoneNumber }
+            },
+            { autoCommit: true }
+        );
+
+        console.log("row insert INQLOG::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function insertDataZaloToSCRPLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey ,
+                CUST_SSID_ID: req.fiSessionKey ,
+                CUST_CD: req.custCd ,
+                GDS_CD: req.gdsCD,
+                TEL_NO_MOBILE: req.mobilePhoneNumber,
+                INQ_DTIM: req.inqDt,
+                AGR_FG: req.agrFG,
+                SYS_DTIM: req.sysDt,
+                WORK_ID: req.workID
+            },
+            { autoCommit: true }
+        );
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function updateRspCdScrapLogWhenGetResultFromZalo(niceSessionKey, RspCd) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET RSP_CD = :RSP_CD
+                WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: { val: niceSessionKey },
+                RSP_CD: { val: RspCd }
+            },
+            { autoCommit: true },
+        );
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
 module.exports.selectScrapingStatusCodeSCRPLOG = selectScrapingStatusCodeSCRPLOG;
 module.exports.selectProcStatus = selectProcStatus;
+module.exports.insertDataZaloINQLOG = insertDataZaloINQLOG;
+module.exports.insertDataZaloToSCRPLOG = insertDataZaloToSCRPLOG;
+module.exports.updateRspCdScrapLogWhenGetResultFromZalo = updateRspCdScrapLogWhenGetResultFromZalo;

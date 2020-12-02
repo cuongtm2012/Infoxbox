@@ -46,8 +46,10 @@ var RESCODEEXT = {
     OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
     FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
     ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" },
-    NIMOBILEPHONENUMBER: {value: 46, name: 'Need to input mandatory item(Mobile phone number)', code: "F046"},
-    NISCOREPRODUCT: {value: 47, name: 'Need to input mandatory item(Score Product)', code: "F047"}
+    // NIMOBILEPHONENUMBER: {value: 46, name: 'Need to input mandatory item(Mobile phone number)', code: "F046"},
+    NISCOREPRODUCT: {value: 47, name: 'Need to input mandatory item(Score Product)', code: "F047"},
+    EXTITFERR: {value: 48, name: 'External interface error', code: "F048"},
+    EXTITFTIMEOUTERR: {value: 49, name: 'External interface timeout error', code: "F049"},
 };
 
 const OracleError = {

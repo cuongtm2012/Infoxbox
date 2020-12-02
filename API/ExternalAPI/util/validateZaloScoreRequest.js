@@ -1,16 +1,29 @@
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
-
+const checkContains = require('../../shared/util/checkcontains');
 module.exports = {
     checkParamRequest: function (getDataReq) {
         var response;
         //fiSessionKey
-
+        if (20 < getDataReq.fiSessionKey.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
+            }
+            return response;
+        }
         // fiCode
         if (_.isEmpty(getDataReq.fiCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFICODE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIFICODE.code
+            }
+            return response;
+        }
+        if (10 < getDataReq.fiCode.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FiCodeOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FiCodeOverLength.code
             }
             return response;
         }
@@ -29,20 +42,49 @@ module.exports = {
             }
             return response;
         }
-    //    phone number
+        if (30 < getDataReq.taskCode.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.TaskCodeOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.TaskCodeOverLength.code
+            }
+            return response;
+        }
+        //    phone number
         if (_.isEmpty(getDataReq.mobilePhoneNumber)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
             }
-            return  response;
+            return response;
         }
-    //    score product
+        if (200 < getDataReq.mobilePhoneNumber.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
+                responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
+            }
+            return response;
+        }
+        //    score product
         if (_.isEmpty(getDataReq.scoreProduct)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NISCOREPRODUCT.name,
                 responseCode: responcodeEXT.RESCODEEXT.NISCOREPRODUCT.code
             }
+        }
+        // infoProvConcent
+        if (_.isEmpty(getDataReq.infoProvConcent)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
+        }
+        if (!checkContains.contains.call(responcodeEXT.InfoProvConcent, getDataReq.infoProvConcent.toUpperCase())) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
+                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
+            }
+            return response;
         }
 
         else
