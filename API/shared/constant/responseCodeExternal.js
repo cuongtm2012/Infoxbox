@@ -171,6 +171,13 @@ const StatusCodeBatchProcess = {
     CICReportInquiryDelay3: '03'
 };
 
+const ScoreCode = {
+    zalo: 'NZ0100_001'
+}
+const CUST_GB = {
+    zalo: '22'
+}
+
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
 module.exports.ScrappingResponseCodeLoginFailure = ScrappingResponseCodeLoginFailure;
@@ -186,3 +193,5 @@ module.exports.NiceProductCode = NiceProductCode;
 module.exports.StatusCodeBatchProcess = StatusCodeBatchProcess;
 module.exports.OracleError = OracleError;
 module.exports.ScrappingResponseCodeCicMobilerror = ScrappingResponseCodeCicMobilerror;
+module.exports.ScoreCode = ScoreCode;
+module.exports.CUST_GB = CUST_GB;

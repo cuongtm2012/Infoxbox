@@ -769,6 +769,45 @@ async function updateRspCdScrapLogWhenGetResultFromZalo(niceSessionKey, RspCd) {
     }
 }
 
+async function insertDataZaloToExtScore(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_EXT_SCORE(NICE_SSIN_ID, TEL_NO_MOBILE, SCORE_CD, SCORE_EXT, CUST_GB, EXT_REQ_ID,SYSTEM_DTIM) 
+        VALUES (:NICE_SSIN_ID, :TEL_NO_MOBILE, :SCORE_CD, :SCORE_EXT, :CUST_GB, :EXT_REQ_ID, :SYSTEM_DTIM)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey ,
+                TEL_NO_MOBILE: req.mobilePhoneNumber ,
+                SCORE_CD: req.scoreCode ,
+                SCORE_EXT: req.scoreEx,
+                CUST_GB: req.custGb,
+                EXT_REQ_ID: req.requestId,
+                SYSTEM_DTIM: req.sysDt,
+            },
+            { autoCommit: true }
+        );
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -777,3 +816,4 @@ module.exports.selectProcStatus = selectProcStatus;
 module.exports.insertDataZaloINQLOG = insertDataZaloINQLOG;
 module.exports.insertDataZaloToSCRPLOG = insertDataZaloToSCRPLOG;
 module.exports.updateRspCdScrapLogWhenGetResultFromZalo = updateRspCdScrapLogWhenGetResultFromZalo;
+module.exports.insertDataZaloToExtScore = insertDataZaloToExtScore;

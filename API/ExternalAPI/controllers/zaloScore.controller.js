@@ -9,6 +9,7 @@ const ResponseWithoutScore = require('../domain/ZaloScore_Res_Without_Score.resp
 const ResponseWithScore = require('../domain/ZaloScore_Res_With_Score.response');
 const DataZaloSaveToInqlog = require('../domain/data_Zalo_Save_To_Inqlog.save');
 const DataZaloSaveToScrapLog = require('../domain/data_Zalo_Save_ScrapLog.save');
+const DataZaloSaveToExtScore = require('../domain/dataZalo_Save_To_ExtScore.save');
 const common_service = require('../services/common.service');
 const responCode = require('../../shared/constant/responseCodeExternal');
 const cicExternalService = require('../services/cicExternal.service');
@@ -27,7 +28,7 @@ exports.zaloScore = function (req, res) {
         }
         //checking parameter
         let rsCheck = validRequest.checkParamRequest(req.body);
-        let preResponse, responseData, dataInqLogSave;
+        let preResponse, responseData, dataInqLogSave, dataScoreEx;
         console.log(rsCheck);
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
@@ -68,7 +69,6 @@ exports.zaloScore = function (req, res) {
                     result => {
                         axios.get(URI.URL_GET_AUTH_DEV, config).then(
                             resultTokenAuth => {
-                                console.log(resultTokenAuth.data);
                                 if (resultTokenAuth.data.code === 0) {
                                     //    do API get score
                                     let auth_token = resultTokenAuth.data.data.auth_token;
@@ -78,9 +78,14 @@ exports.zaloScore = function (req, res) {
                                     axios.get(fullUrlGetScore, config).then(
                                         resultGetScore => {
                                             if (resultGetScore.data.code === 0) {
-                                                console.log(resultGetScore);
+                                                // update when have success result P000
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new ResponseWithScore(req.body, preResponse, resultGetScore.data.data.score, resultGetScore.data.data.request_id)
+                                                dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
+                                                dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey,resultGetScore.data.data.score,resultGetScore.data.data.request_id);
+                                                cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
+                                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
+                                                cicExternalService.updateRspCdScrapLogWhenGetResultFromZalo(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
@@ -104,7 +109,7 @@ exports.zaloScore = function (req, res) {
                                         }
                                     );
                                 } else {
-                                    //    update scraplog & response F049
+                                    //    update scraplog & response F048
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new ResponseWithoutScore(req.body, preResponse);
                                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
@@ -115,7 +120,7 @@ exports.zaloScore = function (req, res) {
                             }
                         ).catch(
                             errorGetAuth => {
-                                //    update scraplog & response F048
+                                //    update scraplog & response F049
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);

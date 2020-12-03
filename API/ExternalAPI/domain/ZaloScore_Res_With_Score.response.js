@@ -1,3 +1,4 @@
+const responCode = require('../../shared/constant/responseCodeExternal');
 module.exports = function zaloScoreResponseWithScore(zaloScoreRequest, preResponse, score , zaloRequestId) {
     const {
         responseMessage,
@@ -27,7 +28,7 @@ module.exports = function zaloScoreResponseWithScore(zaloScoreRequest, preRespon
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
-    this.scoreCode = 'NZ0100_001';
+    this.scoreCode = responCode.ScoreCode.zalo;
     this.score = score;
     this.zaloRequestId = zaloRequestId;
 }
