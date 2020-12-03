@@ -46,10 +46,12 @@ var RESCODEEXT = {
     OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
     FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
     ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" },
-    // NIMOBILEPHONENUMBER: {value: 46, name: 'Need to input mandatory item(Mobile phone number)', code: "F046"},
+    NINATIONALID: {value: 46, name: 'Need to input mandatory item(National ID)', code: "F046"},
     NISCOREPRODUCT: {value: 47, name: 'Need to input mandatory item(Score Product)', code: "F047"},
     EXTITFERR: {value: 48, name: 'External interface error', code: "F048"},
     EXTITFTIMEOUTERR: {value: 49, name: 'External interface timeout error', code: "F049"},
+    NIBASEMONTH: {value: 53, name: 'Need to input mandatory item(Base Month)', code: "F053"},
+    NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
 };
 
 const OracleError = {
@@ -150,7 +152,8 @@ const TaskCode = {
     CIC_MACR_RQST: { code: 'CIC_MACR_RQST' },
     CIC_MACR_RSLT: { code: 'CIC_MACR_RSLT' },
     CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
-    ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' }
+    ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' },
+    TCO_RK1_RQST: { code: 'TCO_RK1_RQST' }
 };
 
 const ProductCode = ['06'];
@@ -161,7 +164,8 @@ const NiceProductCode = {
     S11A: { code: 'S1001' },
     S37: { code: 'S1002' },
     Mobile: { code: 'S1003' },
-    ZALO: { code: 'S2001' }
+    ZALO: { code: 'S2001' },
+    VMG_RISK_SCORE: { code: 'S2007'}
 };
 
 const StatusCodeBatchProcess = {

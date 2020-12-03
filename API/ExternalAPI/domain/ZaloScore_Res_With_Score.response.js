@@ -8,7 +8,7 @@ module.exports = function zaloScoreResponseWithScore(zaloScoreRequest, preRespon
     } = preResponse;
 
     const {
-        fiSeesionKey,
+        fiSessionKey,
         fiCode,
         taskCode,
         mobilePhoneNumber,
@@ -17,7 +17,7 @@ module.exports = function zaloScoreResponseWithScore(zaloScoreRequest, preRespon
         infoProvConcent
     } = zaloScoreRequest;
 
-    this.fiSessionKey = fiSeesionKey ? fiSeesionKey : "";
+    this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
     this.fiCode = fiCode ? fiCode : "";
     this.taskCode = taskCode ? taskCode : "";
     this.mobilePhoneNumber = mobilePhoneNumber ? mobilePhoneNumber : "";
