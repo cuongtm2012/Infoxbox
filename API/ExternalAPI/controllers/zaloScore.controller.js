@@ -48,13 +48,8 @@ exports.zaloScore = function (req, res) {
                     responseData = new ResponseWithoutScore(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, responseData);
-                    cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then(
-                        result => {
-                            return res.status(200).json(responseData);
-                        }
-                    ).catch(error => {
-                        return res.status(200).json(responseData);
-                    })
+                    cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
+                    return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
@@ -67,14 +62,14 @@ exports.zaloScore = function (req, res) {
                 let dataInsertScrapLog = new DataZaloSaveToScrapLog(req.body, fullNiceKey);
                 cicExternalService.insertDataZaloToSCRPLOG(dataInsertScrapLog).then(
                     result => {
-                        axios.get(URI.URL_GET_AUTH_DEV, config).then(
+                        axios.get(URI.URL_ZALO_GET_AUTH_DEV, config).then(
                             resultTokenAuth => {
                                 if (resultTokenAuth.data.code === 0) {
                                     //    do API get score
                                     let auth_token = resultTokenAuth.data.data.auth_token;
                                     let mobileNumberHmac = crypto.createHmac('sha256', SECRET).update(req.body.mobilePhoneNumber).digest('hex');
                                     let paramUrl = `auth_token=${auth_token}&customer_phone=${mobileNumberHmac}`;
-                                    let fullUrlGetScore = URI.URL_GET_SCORE_DEV + paramUrl;
+                                    let fullUrlGetScore = URI.URL_ZALO_GET_SCORE_DEV + paramUrl;
                                     axios.get(fullUrlGetScore, config).then(
                                         resultGetScore => {
                                             if (resultGetScore.data.code === 0) {
@@ -85,7 +80,7 @@ exports.zaloScore = function (req, res) {
                                                 dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey,resultGetScore.data.data.score,resultGetScore.data.data.request_id);
                                                 cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogWhenGetResultFromZalo(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
@@ -93,7 +88,7 @@ exports.zaloScore = function (req, res) {
                                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogWhenGetResultFromZalo(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                 return res.status(200).json(responseData);
                                             }
                                         }
@@ -104,7 +99,7 @@ exports.zaloScore = function (req, res) {
                                             responseData = new ResponseWithoutScore(req.body, preResponse);
                                             dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                             cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogWhenGetResultFromZalo(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                             return res.status(200).json(responseData);
                                         }
                                     );
@@ -114,7 +109,7 @@ exports.zaloScore = function (req, res) {
                                     responseData = new ResponseWithoutScore(req.body, preResponse);
                                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                     cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogWhenGetResultFromZalo(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                     return res.status(200).json(responseData);
                                 }
                             }
@@ -125,7 +120,7 @@ exports.zaloScore = function (req, res) {
                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogWhenGetResultFromZalo(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                 return res.status(200).json(responseData);
                             }
                         );

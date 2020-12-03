@@ -9,7 +9,7 @@ module.exports = function dataZaloSaveToInqlog(requestParams, preResponse) {
     } = preResponse;
 
     const {
-        fiSeesionKey,
+        fiSessionKey,
         fiCode,
         taskCode,
         mobilePhoneNumber,

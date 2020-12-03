@@ -3,7 +3,7 @@ const responCode = require('../../shared/constant/responseCodeExternal');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 module.exports = function dataZaloSaveToScrapLog(requestParams, niceSessionKey) {
     const {
-        fiSeesionKey,
+        fiSessionKey,
         fiCode,
         taskCode,
         mobilePhoneNumber,
@@ -13,7 +13,7 @@ module.exports = function dataZaloSaveToScrapLog(requestParams, niceSessionKey) 
     } = requestParams;
 
     this.niceSessionKey = niceSessionKey;
-    this.custSsId = fiSeesionKey ? fiSeesionKey : null;
+    this.custSsId = fiSessionKey ? fiSessionKey : null;
     this.custCd = fiCode;
     this.gdsCD = responCode.NiceProductCode.ZALO.code;
     this.mobilePhoneNumber = mobilePhoneNumber;
