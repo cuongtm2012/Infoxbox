@@ -29,7 +29,6 @@ exports.zaloScore = function (req, res) {
         //checking parameter
         let rsCheck = validRequest.checkParamRequest(req.body);
         let preResponse, responseData, dataInqLogSave, dataScoreEx;
-        console.log(rsCheck);
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.ZALO.code + niceSessionKey;

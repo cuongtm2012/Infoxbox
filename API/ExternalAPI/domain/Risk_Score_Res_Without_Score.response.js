@@ -23,8 +23,8 @@ module.exports = function riskScoreResponseWithoutScore(riskScoreRequest, preRes
     this.natId = natId ? natId : "";
     this.month = month ? month : "";
     this.infoProvConcent = infoProvConcent ? infoProvConcent : "";
-    this.responseMessage = responseMessage ? responseMessage : "";
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
+    this.responseMessage = responseMessage ? responseMessage : "";
 }
