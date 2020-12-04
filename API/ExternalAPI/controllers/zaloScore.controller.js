@@ -68,7 +68,7 @@ exports.zaloScore = function (req, res) {
                                     //    do API get score
                                     let auth_token = resultTokenAuth.data.data.auth_token;
                                     let mobileNumberHmac = crypto.createHmac('sha256', SECRET).update(req.body.mobilePhoneNumber).digest('hex');
-                                    let paramUrl = `auth_token=${auth_token}&customer_phone=${mobileNumberHmac}`;
+                                    let paramUrl = `auth_token=${auth_token}&customer_phone=${mobileNumberHmac}&score_version=1`;
                                     let fullUrlGetScore = URI.URL_ZALO_GET_SCORE_DEV + paramUrl;
                                     axios.get(fullUrlGetScore, config).then(
                                         resultGetScore => {
