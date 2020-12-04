@@ -70,6 +70,7 @@ module.exports = {
                 responseMessage: responcodeEXT.RESCODEEXT.NISCOREPRODUCT.name,
                 responseCode: responcodeEXT.RESCODEEXT.NISCOREPRODUCT.code
             }
+            return response;
         }
         // infoProvConcent
         if (_.isEmpty(getDataReq.infoProvConcent)) {
