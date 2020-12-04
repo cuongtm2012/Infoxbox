@@ -1,4 +1,4 @@
-module.exports = function zaloScoreResponseWithoutScore(zaloScoreRequest, preResponse) {
+module.exports = function riskScoreResponseWithoutScore(riskScoreRequest, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
@@ -11,17 +11,17 @@ module.exports = function zaloScoreResponseWithoutScore(zaloScoreRequest, preRes
         fiCode,
         taskCode,
         mobilePhoneNumber,
-        scoreProduct,
-        inquiryPurpose,
+        natId,
+        month,
         infoProvConcent
-    } = zaloScoreRequest;
+    } = riskScoreRequest;
 
     this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
     this.fiCode = fiCode ? fiCode : "";
     this.taskCode = taskCode ? taskCode : "";
     this.mobilePhoneNumber = mobilePhoneNumber ? mobilePhoneNumber : "";
-    this.scoreProduct = scoreProduct ? scoreProduct : "";
-    this.inquiryPurpose = inquiryPurpose ? inquiryPurpose : "";
+    this.natId = natId ? natId : "";
+    this.month = month ? month : "";
     this.infoProvConcent = infoProvConcent ? infoProvConcent : "";
     this.responseMessage = responseMessage ? responseMessage : "";
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";

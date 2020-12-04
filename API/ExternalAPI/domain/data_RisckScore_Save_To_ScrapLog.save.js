@@ -1,25 +1,25 @@
 const dateutil = require('../util/dateutil');
 const responCode = require('../../shared/constant/responseCodeExternal');
 const ipGateWay = require('../../shared/util/getIPGateWay');
-module.exports = function dataZaloSaveToScrapLog(requestParams, niceSessionKey) {
+module.exports = function dataRiskScoreSaveToScrapLog(riskScoreRequest, niceSessionKey) {
     const {
         fiSessionKey,
         fiCode,
         taskCode,
         mobilePhoneNumber,
-        scoreProduct,
-        inquiryPurpose,
+        natId,
+        month,
         infoProvConcent
-    } = requestParams;
+    } = riskScoreRequest;
 
     this.niceSessionKey = niceSessionKey;
     this.custSsId = fiSessionKey ? fiSessionKey : null;
     this.custCd = fiCode;
     this.gdsCD = responCode.NiceProductCode.ZALO.code;
     this.mobilePhoneNumber = mobilePhoneNumber;
+    this.natId = natId;
     this.inqDt = dateutil.getCurrentInquiryDate();
     this.agrFG = infoProvConcent;
     this.sysDt = dateutil.timeStamp();
     this.workID = ipGateWay.getIPGateWay();
-
 }
