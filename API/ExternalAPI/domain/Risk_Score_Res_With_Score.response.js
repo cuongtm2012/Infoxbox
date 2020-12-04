@@ -1,3 +1,4 @@
+const responCode = require('../../shared/constant/responseCodeExternal');
 module.exports = function riskScoreResponseWithScore(riskScoreRequest, preResponse,nice_score ) {
     const {
         responseMessage,
@@ -27,6 +28,7 @@ module.exports = function riskScoreResponseWithScore(riskScoreRequest, preRespon
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
+    this.scoreCode =  responCode.ScoreCode.VmgRiskScore;
     this.Work_YYYYMM = nice_score.Work_YYYYMM;
     this.Mobile_Number = nice_score.Mobile_Number;
     this.National_ID = nice_score.National_ID;

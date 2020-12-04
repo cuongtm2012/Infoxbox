@@ -9,6 +9,7 @@ const ResponseRiskScoreWithScore = require('../domain/Risk_Score_Res_With_Score.
 const _ = require('lodash');
 const DataRiskScoreSaveToInqlog = require('../domain/data_Risk_Score_Save_To_InqLog.save');
 const DataRiskScoreSaveToScrapLog = require('../domain/data_RisckScore_Save_To_ScrapLog.save');
+const DataRiskScoreSaveToExtScore = require('../domain/Data_RiskScore_Save_To_ExtScore.save');
 const BodyPostRiskScore = require('../domain/body_Post_RiskScore.body');
 const cicExternalService = require('../services/cicExternal.service');
 const validS11AService = require('../services/validS11A.service');
@@ -64,6 +65,8 @@ exports.vmgRiskScore = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                     responseData = new ResponseRiskScoreWithScore(req.body, preResponse, resultGetRiskScore.data.result.nice_score);
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
+                                    dataScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score);
+                                    cicExternalService.insertDataRiskScoreToExtScore(dataScoreEx).then();
                                     cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                     return res.status(200).json(responseData);

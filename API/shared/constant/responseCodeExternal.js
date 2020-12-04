@@ -176,10 +176,12 @@ const StatusCodeBatchProcess = {
 };
 
 const ScoreCode = {
-    zalo: 'NZ0100_001'
+    zalo: 'NZ0100_001',
+    VmgRiskScore: 'NV0100_001'
 }
 const CUST_GB = {
-    zalo: '22'
+    zalo: '22',
+    VMG: '21'
 }
 
 module.exports.RESCODEEXT = RESCODEEXT;

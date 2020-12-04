@@ -787,7 +787,7 @@ async function insertDataZaloToExtScore(req) {
                 NICE_SSIN_ID: req.niceSessionKey ,
                 TEL_NO_MOBILE: req.mobilePhoneNumber ,
                 SCORE_CD: req.scoreCode ,
-                SCORE_EXT: req.scoreEx,
+                SCORE_EXT: req.scoreEx.toString(),
                 CUST_GB: req.custGb,
                 EXT_REQ_ID: req.requestId,
                 SYSTEM_DTIM: req.sysDt,
@@ -907,6 +907,52 @@ async function insertDataRiskScoreToSCRPLOG(req) {
     }
 }
 
+async function insertDataRiskScoreToExtScore(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_EXT_SCORE(NICE_SSIN_ID, TEL_NO_MOBILE, SCORE_CD, SCORE_EXT, CUST_GB, EXT_REQ_ID,SYSTEM_DTIM,GRADE,BASE_DATE,RSK_GLM_PROB,RSK_RF_PROB,RSK_GRB_PROB,RSK_ESB_PROB ) 
+        VALUES (:NICE_SSIN_ID, :TEL_NO_MOBILE, :SCORE_CD, :SCORE_EXT, :CUST_GB, :EXT_REQ_ID, :SYSTEM_DTIM, :GRADE, :BASE_DATE, :RSK_GLM_PROB, :RSK_RF_PROB, :RSK_GRB_PROB, :RSK_ESB_PROB)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey ,
+                TEL_NO_MOBILE: req.mobilePhoneNumber ,
+                SCORE_CD: req.scoreCode ,
+                SCORE_EXT: req.scoreEx.toString(),
+                CUST_GB: req.custGb,
+                EXT_REQ_ID: req.requestId,
+                SYSTEM_DTIM: req.sysDt,
+                GRADE: req.grade,
+                BASE_DATE: req.baseDate,
+                RSK_GLM_PROB: req.RSK_GLM_PROB.toString(),
+                RSK_RF_PROB: req.RSK_RF_PROB.toString(),
+                RSK_GRB_PROB: req.RSK_GRB_PROB.toString(),
+                RSK_ESB_PROB: req.RSK_ESB_PROB.toString(),
+            },
+            { autoCommit: true }
+        );
+        console.log('insertDataRiskScoreToExtScore: ',result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -918,3 +964,4 @@ module.exports.updateRspCdScrapLogAfterGetResult = updateRspCdScrapLogAfterGetRe
 module.exports.insertDataZaloToExtScore = insertDataZaloToExtScore;
 module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
 module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
+module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
