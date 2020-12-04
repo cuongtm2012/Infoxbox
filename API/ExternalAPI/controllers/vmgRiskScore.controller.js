@@ -38,7 +38,7 @@ exports.vmgRiskScore = function (req, res) {
                 cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                 return res.status(200).json(responseData);
             }
-            validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.ZALO.code).then(dataFICode => {
+            validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.VMG_RISK_SCORE.code).then(dataFICode => {
                 if (_.isEmpty(dataFICode)) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
                     responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
