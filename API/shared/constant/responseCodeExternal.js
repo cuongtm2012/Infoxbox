@@ -57,6 +57,7 @@ var RESCODEEXT = {
     NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image)', code: "F057"},
     NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image)', code: "F058"},
     NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
+    RQOUTOFSIZE: {value: 63, name: 'Request data size exceeds 10MB', code: "F063"},
 };
 
 const OracleError = {

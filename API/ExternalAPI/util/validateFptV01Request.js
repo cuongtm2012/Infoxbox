@@ -1,6 +1,7 @@
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
 const checkContains = require('../../shared/util/checkcontains');
+const MAX_SIZE = 10000000;
 module.exports = {
     checkParamRequest: function (getDataReq, formData) {
         var response;
@@ -88,7 +89,6 @@ module.exports = {
             return response;
         }
         if (_.isEqual(formData.frontImage[0].mimetype, "image/jpeg") === false && _.isEqual(formData.frontImage[0].mimetype, "image/png") === false && _.isEqual(formData.frontImage[0].mimetype, "image/jpg") === false) {
-            console.log("The Values are Equal : " + !_.isEqual(formData.frontImage[0].mimetype, "image/jpeg"))
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFRONTIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIFRONTIMAGE.code
@@ -107,6 +107,14 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIREARIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIREARIMAGE.code
+            }
+            return response;
+        }
+        // checking size
+        if ((formData.frontImage[0].size + formData.rearImage[0].size) > MAX_SIZE) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
+                responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
             }
             return response;
         }

@@ -6,6 +6,7 @@ const _ = require('lodash');
 const PreResponse = require('../domain/preResponse.response');
 const dateutil = require('../util/dateutil');
 const ResponseFptIdWithoutResult = require('../domain/FptId_Res_Without_Result.response');
+const ResponseFptWithResult = require('../domain/FptId_Rs_With_Result.response');
 const DataFptIdSaveToInqLog = require('../domain/data_FptId_Save_To_InqLog.save');
 const DataFptIdSaveToScapLog = require('../domain/data_FptId_Save_To_ScapLog.save');
 const util = require('../util/dateutil');
@@ -79,7 +80,6 @@ exports.fptFaceMatch = function (req, res) {
                                     let requestId = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
                                     let pathToFrontImage = pathToFile + req.files.frontImage[0].filename;
                                     let pathToRearImage = pathToFile + req.files.rearImage[0].filename;
-                                    console.log('requestId:',requestId);
                                     bodyFormDataV01.append('requestId', requestId);
                                     bodyFormDataV01.append('type', req.body.idType);
                                     bodyFormDataV01.append('frontImage ', fs.createReadStream(pathToFrontImage));
@@ -89,21 +89,47 @@ exports.fptFaceMatch = function (req, res) {
                                         url: URI.URL_FPT_DEV + urlFptV01,
                                         headers: {
                                             'Content-Type': 'multipart/json',
-                                            'Authorization': `Bearer ${resultGetAuth.data.Data.sessionToken}`,...bodyFormDataV01.getHeaders()
+                                            'Authorization': `Bearer ${resultGetAuth.data.Data.sessionToken}`, ...bodyFormDataV01.getHeaders()
                                         },
                                         data: bodyFormDataV01,
-                                        timeout: 60 * 1000,
+                                        timeout: 100 * 1000,
                                     };
+                                    // call to fpt V01
                                     axios(configWithAuth).then(
                                         responseV01 => {
-                                            console.log(responseV01)
+                                            if (responseV01.data.ErrorCode === 0) {
+                                                //    success get data v01 response p000
+                                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                                responseData = new ResponseFptWithResult(req.body, preResponse,responseV01.data.Data.frontImage, responseV01.data.Data.backImage);
+                                                dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                deleteFileApiFptId(req);
+                                                return res.status(200).json(responseData);
+                                            } else {
+                                                //  response F048
+                                                deleteFileApiFptId(req);
+                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
+                                                dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                return res.status(200).json(responseData);
+                                            }
                                         }
                                     ).catch(errV01 => {
+                                        // response F048
                                         deleteFileApiFptId(req);
-                                        return res.status(500).json({error: errV01.toString()});
+                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                        responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
+                                        dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
+                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                        return res.status(200).json(responseData);
                                     })
-
                                 } else {
+                                    // response F048
+                                    deleteFileApiFptId(req);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
                                     dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
@@ -112,8 +138,9 @@ exports.fptFaceMatch = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }
-                            //    get token err
                         ).catch(reason => {
+                            //    get token err response F048
+                            deleteFileApiFptId(req);
                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                             responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
                             dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
@@ -122,15 +149,21 @@ exports.fptFaceMatch = function (req, res) {
                             return res.status(200).json(responseData);
                         })
                     }
-                )
+                ).catch(reason => {
+                    deleteFileApiFptId(req);
+                    return res.status(500).json({error: reason.toString()});
+                })
             }).catch(reason => {
+                deleteFileApiFptId(req);
                 return res.status(500).json({error: reason.toString()});
             });
         }).catch(reason => {
+            deleteFileApiFptId(req);
             return res.status(500).json({error: reason.toString()});
         });
         ;
     } catch (err) {
+        deleteFileApiFptId(req);
         return res.status(500).json({error: err.toString()});
     }
 }
