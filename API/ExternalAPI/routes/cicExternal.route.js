@@ -6,6 +6,7 @@ var multer  = require('multer');
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, 'uploads');
+        console.log('Saved file')
     },
     filename: function (req, file, callback) {
         callback(null,Date.now() + file.originalname);

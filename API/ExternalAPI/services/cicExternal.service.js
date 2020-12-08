@@ -1008,6 +1008,47 @@ async function insertDataToINQLOG(req) {
     }
 }
 
+async function insertDataFptIdToSCRPLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey ,
+                CUST_SSID_ID: req.fiSessionKey ,
+                CUST_CD: req.custCd ,
+                GDS_CD: req.gdsCD,
+                INQ_DTIM: req.inqDt,
+                AGR_FG: req.agrFG,
+                SYS_DTIM: req.sysDt,
+                WORK_ID: req.workID,
+            },
+            { autoCommit: true }
+        );
+        console.log('insertDataFptIdToSCRPLOG: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1021,3 +1062,4 @@ module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
 module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
 module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
 module.exports.insertDataToINQLOG = insertDataToINQLOG;
+module.exports.insertDataFptIdToSCRPLOG = insertDataFptIdToSCRPLOG;

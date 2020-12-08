@@ -28,7 +28,7 @@ async function getSequence() {
 
 
     } catch (err) {
-        console.log(err);
+        console.log(err); throw err;
         // return res.status(400);
     } finally {
         if (connection) {
