@@ -9,6 +9,7 @@ const ResponseFptIdWithoutResult = require('../domain/FptId_Res_Without_Result.r
 const ResponseFptWithResult = require('../domain/FptId_Rs_With_Result.response');
 const DataFptIdSaveToInqLog = require('../domain/data_FptId_Save_To_InqLog.save');
 const DataFptIdSaveToScapLog = require('../domain/data_FptId_Save_To_ScapLog.save');
+const DataFptIdSaveToFptID = require('../domain/data_FptId_Save_To_FptId.save');
 const util = require('../util/dateutil');
 const cicExternalService = require('../services/cicExternal.service');
 const fs = require('fs');
@@ -102,9 +103,15 @@ exports.fptFaceMatch = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new ResponseFptWithResult(req.body, preResponse,responseV01.data.Data.frontImage, responseV01.data.Data.backImage);
                                                 dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
+                                                let dataSaveToFptId = new DataFptIdSaveToFptID(req,fullNiceKey,responseV01.data.Data)
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                deleteFileApiFptId(req);
+
+                                                cicExternalService.insertDataFptIdToFptId(dataSaveToFptId).then(
+                                                    result => {
+                                                        deleteFileApiFptId(req);
+                                                    }
+                                                )
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //  response F048
