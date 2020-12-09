@@ -21,6 +21,9 @@ const urlGetAuth = 'account/unauth/v1/login';
 const urlFptV01 = 'aggregator/api/v1/verification/v01_id';
 const URI = require('../../shared/URI');
 const FormData = require('form-data');
+const path = require('path');
+const __dad = path.join(__dirname, '..')
+const pathToSaveImg = path.join(__dad, 'uploads');
 exports.fptFaceMatch = function (req, res) {
     try {
         const config = {
@@ -80,8 +83,8 @@ exports.fptFaceMatch = function (req, res) {
                                     // Prepare to call V01
                                     let bodyFormDataV01 = new FormData();
                                     let requestId = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
-                                    let pathToFrontImage = pathToFile + req.files.frontImage[0].filename;
-                                    let pathToRearImage = pathToFile + req.files.rearImage[0].filename;
+                                    let pathToFrontImage = path.join(pathToSaveImg,req.files.frontImage[0].filename);
+                                    let pathToRearImage = path.join(pathToSaveImg, req.files.rearImage[0].filename);
                                     bodyFormDataV01.append('requestId', requestId);
                                     bodyFormDataV01.append('type', req.body.idType);
                                     bodyFormDataV01.append('frontImage ', fs.createReadStream(pathToFrontImage));
@@ -204,14 +207,14 @@ function deleteFileApiFptId(req) {
     // delete file
     if (!_.isEmpty(req.files)) {
         if (!_.isEmpty(req.files.frontImage)) {
-            fs.unlink(pathToFile + req.files.frontImage[0].filename, function (err) {
+            fs.unlink(path.join(pathToSaveImg,req.files.frontImage[0].filename), function (err) {
                 if (err) throw err;
                 console.log('deleted frontImage ')
             });
         }
 
         if (!_.isEmpty(req.files.rearImage)) {
-            fs.unlink(pathToFile + req.files.rearImage[0].filename, function (err) {
+            fs.unlink(path.join(pathToSaveImg, req.files.rearImage[0].filename), function (err) {
                 if (err) throw err;
                 console.log('deleted rearImage ')
             });

@@ -5,9 +5,7 @@ var maxSize = 1000 * 1000 * 1000 *1000;
 var multer  = require('multer');
 const path = require('path');
 const __dad = path.join(__dirname, '..')
-console.log(__dad);
 const pathToSaveImg = path.join(__dad, 'uploads');
-console.log(pathToSaveImg);
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, pathToSaveImg);
