@@ -58,6 +58,9 @@ var RESCODEEXT = {
     NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image)', code: "F058"},
     NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
     RQOUTOFSIZE: {value: 63, name: 'Request data size exceeds 10MB', code: "F063"},
+    INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
+    UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
+    FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
 };
 
 const OracleError = {

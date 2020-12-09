@@ -102,9 +102,9 @@ exports.fptFaceMatch = function (req, res) {
                                             if (responseV01.data.ErrorCode === 0) {
                                                 //    success get data v01 response p000
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                responseData = new ResponseFptWithResult(req.body, preResponse,responseV01.data.Data.frontImage, responseV01.data.Data.backImage);
+                                                responseData = new ResponseFptWithResult(req.body, preResponse, responseV01.data.Data.frontImage, responseV01.data.Data.backImage);
                                                 dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
-                                                let dataSaveToFptId = new DataFptIdSaveToFptID(req,fullNiceKey,responseV01.data.Data)
+                                                let dataSaveToFptId = new DataFptIdSaveToFptID(req, fullNiceKey, responseV01.data.Data, responseV01.data.ErrorCode, requestId)
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 cicExternalService.insertDataFptIdToFptId(dataSaveToFptId).then(
@@ -116,9 +116,29 @@ exports.fptFaceMatch = function (req, res) {
                                                     console.log(reason);
                                                 })
                                                 return res.status(200).json(responseData);
+                                            } else if (responseV01.data.ErrorCode === 1451 || responseV01.data.ErrorCode === 1455) {
+                                                // response F064
+                                                console.log('message: ', responseV01.data.Message);
+                                                deleteFileApiFptId(req);
+                                                preResponse = new PreResponse(responCode.RESCODEEXT.INVALIDINPUTIMAGE.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.INVALIDINPUTIMAGE.code);
+                                                responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
+                                                dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.INVALIDINPUTIMAGE.code).then();
+                                                return res.status(200).json(responseData);
+                                            } else if (responseV01.data.ErrorCode === 1453 || responseV01.data.ErrorCode === 1653) {
+                                                // response F065
+                                                console.log('message: ', responseV01.data.Message);
+                                                deleteFileApiFptId(req);
+                                                preResponse = new PreResponse(responCode.RESCODEEXT.UNABLETOVERIFYOCR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.UNABLETOVERIFYOCR.code);
+                                                responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
+                                                dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.UNABLETOVERIFYOCR.code).then();
+                                                return res.status(200).json(responseData);
                                             } else {
                                                 //  response F048
-                                                console.log('message: ',responseV01.data.Message);
+                                                console.log('message: ', responseV01.data.Message);
                                                 deleteFileApiFptId(req);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
@@ -140,6 +160,7 @@ exports.fptFaceMatch = function (req, res) {
                                     })
                                 } else {
                                     // response F048
+                                    console.log('Error when get token FPT v01: ', responseV01.data.Message);
                                     deleteFileApiFptId(req);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
