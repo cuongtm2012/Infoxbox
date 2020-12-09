@@ -953,6 +953,162 @@ async function insertDataRiskScoreToExtScore(req) {
     }
 }
 
+async function insertDataToINQLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        let sysDim = convertTime.timeStamp();
+        let gateway = ipGateWay.getIPGateWay(req);
+
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, NICE_SSIN_ID ,CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID, TEL_NO_MOBILE) 
+        VALUES (:INQ_LOG_ID, :NICE_SSIN_ID ,:CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID, :TEL_NO_MOBILE)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                INQ_LOG_ID: { val: req.inqLogId },
+                NICE_SSIN_ID: { val: req.niceSessionKey},
+                CUST_CD: { val: req.fiCode },
+                TX_GB_CD: { val: req.taskCode },
+                NATL_ID: { val: req.natId },
+                TAX_ID: { val: req.taxCode },
+                OTR_ID: { val: req.otrId },
+                CIC_ID: { val: req.cicId },
+                INQ_DTIM: { val: req.inquiryDate },
+                AGR_FG: { val: req.infoProvConcent },
+                RSP_CD: { val: req.respCd },
+                SYS_DTIM: { val: sysDim },
+                WORK_ID: { val: gateway },
+                TEL_NO_MOBILE: { val: req.mobilePhoneNumber }
+            },
+            { autoCommit: true }
+        );
+
+        console.log("row insert INQLOG::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function insertDataFptIdToSCRPLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey ,
+                CUST_SSID_ID: req.fiSessionKey ,
+                CUST_CD: req.custCd ,
+                GDS_CD: req.gdsCD,
+                INQ_DTIM: req.inqDt,
+                AGR_FG: req.agrFG,
+                SYS_DTIM: req.sysDt,
+                WORK_ID: req.workID,
+            },
+            { autoCommit: true }
+        );
+        console.log('insertDataFptIdToSCRPLOG: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function insertDataFptIdToFptId(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_FPT_ID(NICE_SSIN_ID, FRONT_IMAGE, REAR_IMAGE, ID_NUMBER, NAME, BIRTHDAY, SEX, NATIONALITY, HOME, ADDRESS, ID_TYPE ,PROVINCE, DISTRICT, WARD, STREET, DOE, TYPE_FRONT, ETHINICITY, RELIGION, TYPE_NEW, FEATURES, ISSUE_DATE, ISSUE_LOC, TYPE_REAR, PROVIDER_CODE, REQUEST_ID,RESULT_CODE ) 
+        VALUES (:NICE_SSIN_ID, :FRONT_IMAGE, :REAR_IMAGE, :ID_NUMBER, :NAME, :BIRTHDAY, :SEX, :NATIONALITY, :HOME, :ADDRESS, :ID_TYPE ,:PROVINCE, :DISTRICT, :WARD, :STREET, :DOE, :TYPE_FRONT, :ETHINICITY, :RELIGION, :TYPE_NEW, :FEATURES, :ISSUE_DATE, :ISSUE_LOC, :TYPE_REAR, :PROVIDER_CODE, :REQUEST_ID, :RESULT_CODE)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.NICE_SSIN_ID,
+                FRONT_IMAGE: req.FRONT_IMAGE,
+                REAR_IMAGE: req.REAR_IMAGE,
+                ID_NUMBER: req.ID_NUMBER,
+                NAME: req.NAME,
+                BIRTHDAY: req.BIRTHDAY,
+                SEX: req.SEX,
+                NATIONALITY: req.NATIONALITY,
+                HOME: req.HOME,
+                ADDRESS: req.ADDRESS,
+                ID_TYPE: req.ID_TYPE ,
+                PROVINCE: req.PROVINCE,
+                DISTRICT: req.DISTRICT,
+                WARD: req.WARD,
+                STREET: req.STREET,
+                DOE: req.DOE,
+                TYPE_FRONT: req.TYPE_FRONT,
+                ETHINICITY: req.ETHINICITY,
+                RELIGION : req.RELIGION,
+                TYPE_NEW: req.TYPE_NEW,
+                FEATURES: req.FEATURES,
+                ISSUE_DATE: req.ISSUE_DATE,
+                ISSUE_LOC: req.ISSUE_LOC,
+                TYPE_REAR: req.TYPE_REAR,
+                PROVIDER_CODE: req.PROVIDER_CODE,
+                REQUEST_ID: req.REQUEST_ID,
+                RESULT_CODE: req.RESULT_CODE
+            },
+            { autoCommit: true }
+        );
+        console.log('insertDataFptIdToFptID: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -965,3 +1121,6 @@ module.exports.insertDataZaloToExtScore = insertDataZaloToExtScore;
 module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
 module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
 module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
+module.exports.insertDataToINQLOG = insertDataToINQLOG;
+module.exports.insertDataFptIdToSCRPLOG = insertDataFptIdToSCRPLOG;
+module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;

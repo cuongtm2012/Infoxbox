@@ -53,6 +53,10 @@ module.exports = {
         let _searchDateFrom = new Date(searchDateFrom.substring(0, 4), searchDateFrom.substring(5, 6), searchDateFrom.substring(6, 8));
 
         return Math.round((today - _searchDateFrom) / (1000 * 60 * 60 * 24)) < 93;
-    }
+    },
+
+    getTimeHoursNoDot: function () {
+        return dateFormat(new Date(), "HHMMss");
+    },
 
 };

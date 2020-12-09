@@ -124,7 +124,11 @@ exports.zaloScore = function (req, res) {
                             }
                         );
                     }
-                )
+                ).catch(reason => {
+                    return res.status(500).json({error: reason.toString()});
+                })
+            }).catch(reason => {
+                return res.status(500).json({error: reason.toString()});
             });
         });
     } catch (err) {
