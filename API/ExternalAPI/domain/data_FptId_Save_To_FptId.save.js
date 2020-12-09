@@ -1,13 +1,15 @@
 const fs = require('fs');
-const pathToFile = './uploads/'
+const path = require('path');
 const _ = require('lodash');
+const __dad = path.join(__dirname, '..')
+const pathToSaveImg = path.join(__dad, 'uploads');
 module.exports = function DataFptSaveToFptId(req, niceSessionKey, data, resultCode, requestId) {
     this.NICE_SSIN_ID = niceSessionKey;
     this.REQUEST_ID = requestId;
     this.RESULT_CODE = resultCode;
     //
-    this.FRONT_IMAGE = convertImageToBase64(pathToFile + req.files.frontImage[0].filename);
-    this.REAR_IMAGE = convertImageToBase64(pathToFile + req.files.rearImage[0].filename);
+    this.FRONT_IMAGE = convertImageToBase64(path.join(pathToSaveImg, req.files.frontImage[0].filename));
+    this.REAR_IMAGE = convertImageToBase64(path.join(pathToSaveImg, req.files.rearImage[0].filename));
     // front
     this.ID_NUMBER = data.frontImage.id ? data.frontImage.id : null;
     this.NAME = data.frontImage.name ? data.frontImage.name : null;
