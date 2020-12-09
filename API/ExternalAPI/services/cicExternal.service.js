@@ -1008,7 +1008,7 @@ async function insertDataToINQLOG(req) {
     }
 }
 
-async function insertDataFptIdToSCRPLOG(req) {
+async function insertDataFptRqToSCRPLOG(req) {
     let connection;
 
     try {
@@ -1033,7 +1033,7 @@ async function insertDataFptIdToSCRPLOG(req) {
             },
             { autoCommit: true }
         );
-        console.log('insertDataFptIdToSCRPLOG: ', result.rowsAffected)
+        console.log('insertDataFptRqToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
         console.log(err);
@@ -1122,5 +1122,5 @@ module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
 module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
 module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
 module.exports.insertDataToINQLOG = insertDataToINQLOG;
-module.exports.insertDataFptIdToSCRPLOG = insertDataFptIdToSCRPLOG;
+module.exports.insertDataFptRqToSCRPLOG = insertDataFptRqToSCRPLOG;
 module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;

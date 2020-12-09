@@ -24,7 +24,7 @@ const FormData = require('form-data');
 const path = require('path');
 const __dad = path.join(__dirname, '..')
 const pathToSaveImg = path.join(__dad, 'uploads');
-exports.fptFaceMatch = function (req, res) {
+exports.fptDigitalizeID = function (req, res) {
     try {
         const config = {
             headers: {
@@ -34,7 +34,7 @@ exports.fptFaceMatch = function (req, res) {
         }
         //checking params
         let rsCheck = validRequest.checkParamRequest(req.body, req.files);
-        let preResponse, responseData, dataInqLogSave, dataScoreFptId;
+        let preResponse, responseData, dataInqLogSave;
 
         common_service.getSequence().then(resSeq => {
             let seqRquestId = resSeq[0].SEQ;
@@ -69,7 +69,7 @@ exports.fptFaceMatch = function (req, res) {
                 //    end check parmas
                 let dataInsertToScrapLog = new DataFptIdSaveToScapLog(req.body, fullNiceKey);
                 // insert rq to ScrapLog
-                cicExternalService.insertDataFptIdToSCRPLOG(dataInsertToScrapLog).then(
+                cicExternalService.insertDataFptRqToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         let body = {
                             username: configExternal.AccountFptDev.username,
