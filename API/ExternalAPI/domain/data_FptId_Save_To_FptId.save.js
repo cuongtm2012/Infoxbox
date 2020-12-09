@@ -3,8 +3,8 @@ const pathToFile = './uploads/'
 const _ = require('lodash');
 module.exports = function DataFptSaveToFptId(req, niceSessionKey, data) {
     this.NICE_SSIN_ID = niceSessionKey;
-    this.FRONT_IMAGE = convertImageToBase64(pathToFile + req.files.frontImage[0].filename);
-    this.REAR_IMAGE = convertImageToBase64(pathToFile + req.files.rearImage[0].filename);
+    this.FRONT_IMAGE = fs.readFileSync(pathToFile + req.files.frontImage[0].filename);
+    this.REAR_IMAGE = fs.readFileSync(pathToFile + req.files.rearImage[0].filename);
     // front
     this.ID_NUMBER = data.frontImage.id ? data.frontImage.id : null;
     this.NAME = data.frontImage.name ? data.frontImage.name : null;
@@ -29,9 +29,4 @@ module.exports = function DataFptSaveToFptId(req, niceSessionKey, data) {
     this.ISSUE_LOC = data.backImage.issue_loc ? data.backImage.issue_loc : null;
     this.TYPE_REAR = data.backImage.type ? data.backImage.type : null;
     this.PROVIDER_CODE = data.providerCode;
-}
-
-function convertImageToBase64(pathFile) {
-    const buff = fs.readFileSync(pathFile);
-    return buff.toString("base64");
 }

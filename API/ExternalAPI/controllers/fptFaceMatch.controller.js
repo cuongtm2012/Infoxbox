@@ -77,6 +77,7 @@ exports.fptFaceMatch = function (req, res) {
                             resultGetAuth => {
                                 if (resultGetAuth.data.ErrorCode === 0) {
                                     // success get auth
+                                    // Prepare to call V01
                                     let bodyFormDataV01 = new FormData();
                                     let requestId = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
                                     let pathToFrontImage = pathToFile + req.files.frontImage[0].filename;
@@ -106,15 +107,18 @@ exports.fptFaceMatch = function (req, res) {
                                                 let dataSaveToFptId = new DataFptIdSaveToFptID(req,fullNiceKey,responseV01.data.Data)
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-
                                                 cicExternalService.insertDataFptIdToFptId(dataSaveToFptId).then(
                                                     result => {
                                                         deleteFileApiFptId(req);
                                                     }
-                                                )
+                                                ).catch(reason => {
+                                                    deleteFileApiFptId(req);
+                                                    console.log(reason);
+                                                })
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //  response F048
+                                                console.log('message: ',responseV01.data.Message);
                                                 deleteFileApiFptId(req);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
