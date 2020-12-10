@@ -51,7 +51,7 @@ exports.fptDigitalizeID = function (req, res) {
                 return res.status(200).send(responseData);
             }
             // check FI contract
-            validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.VMG_RISK_SCORE.code).then(dataFICode => {
+            validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.KYC_F01_RQST.code).then(dataFICode => {
                 if (_.isEmpty(dataFICode)) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
                     responseData = new ResponseFptIdWithoutResult(req.body, preResponse);

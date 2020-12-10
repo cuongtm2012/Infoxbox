@@ -179,7 +179,8 @@ const NiceProductCode = {
     Mobile: { code: 'S1003' },
     ZALO: { code: 'S2001' },
     VMG_RISK_SCORE: { code: 'S2007'},
-    KYC_F01_RQST: { code: 'S2008'}
+    KYC_F01_RQST: { code: 'S2008'},
+    KYC_F02_RQST: { code: 'S2009'},
 };
 
 const StatusCodeBatchProcess = {
