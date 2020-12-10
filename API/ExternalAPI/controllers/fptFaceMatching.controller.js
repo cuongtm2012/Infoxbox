@@ -50,7 +50,7 @@ exports.fptFaceMatching = function (req, res) {
                 return res.status(200).send(responseData);
             }
             // check FI contract
-            validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.VMG_RISK_SCORE.code).then(dataFICode => {
+            validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.KYC_F02_RQST.code).then(dataFICode => {
                 if (_.isEmpty(dataFICode)) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
                     responseData = new ResponseFptFaceMatchingWithoutResult(req.body, preResponse);
