@@ -54,8 +54,8 @@ var RESCODEEXT = {
     NIIDTYPE: {value: 54, name: 'Need to input mandatory item(Id type)', code: "F054"},
     NIFRONTIMAGE: {value: 55, name: 'Need to input mandatory item(Front image)', code: "F055"},
     NIREARIMAGE: {value: 56, name: 'Need to input mandatory item(Rear image)', code: "F056"},
-    NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image)', code: "F057"},
-    NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image)', code: "F058"},
+    NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image, Source image)', code: "F057"},
+    NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image, Target Image)', code: "F058"},
     NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
     RQOUTOFSIZE: {value: 63, name: 'Request data size exceeds 10MB', code: "F063"},
     INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
@@ -163,7 +163,8 @@ const TaskCode = {
     CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
     ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' },
     TCO_RK1_RQST: { code: 'TCO_RK1_RQST' },
-    KYC_F01_RQST: { code: 'KYC_F01_RQST'}
+    KYC_F01_RQST: { code: 'KYC_F01_RQST'},
+    KYC_F02_RQST: { code: 'KYC_F02_RQST'}
 };
 
 const ProductCode = ['06'];

@@ -1008,7 +1008,7 @@ async function insertDataToINQLOG(req) {
     }
 }
 
-async function insertDataFptIdToSCRPLOG(req) {
+async function insertDataFptRqToSCRPLOG(req) {
     let connection;
 
     try {
@@ -1033,7 +1033,7 @@ async function insertDataFptIdToSCRPLOG(req) {
             },
             { autoCommit: true }
         );
-        console.log('insertDataFptIdToSCRPLOG: ', result.rowsAffected)
+        console.log('insertDataFptRqToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
         console.log(err);
@@ -1109,6 +1109,52 @@ async function insertDataFptIdToFptId(req) {
     }
 }
 
+async function insertDataToFptFace(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_FPT_FACE(NICE_SSIN_ID, REQUEST_ID, RESULT_CODE, SOURCE_IMAGE, TARGET_IMAGE, SIMILARITY, RESULT, PROVIDER) 
+        VALUES (:NICE_SSIN_ID, :REQUEST_ID, :RESULT_CODE, :SOURCE_IMAGE, :TARGET_IMAGE, :SIMILARITY, :RESULT, :PROVIDER)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.NICE_SSIN_ID,
+                REQUEST_ID: req.REQUEST_ID,
+                RESULT_CODE: req.RESULT_CODE,
+                SOURCE_IMAGE: req.SOURCE_IMAGE,
+                TARGET_IMAGE: req.TARGET_IMAGE,
+                SIMILARITY: req.SIMILARITY,
+                RESULT: req.RESULT,
+                PROVIDER: req.PROVIDER
+            },
+            { autoCommit: true }
+        );
+
+        console.log("insertDataToFptFace:", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1122,5 +1168,6 @@ module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
 module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
 module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
 module.exports.insertDataToINQLOG = insertDataToINQLOG;
-module.exports.insertDataFptIdToSCRPLOG = insertDataFptIdToSCRPLOG;
+module.exports.insertDataFptRqToSCRPLOG = insertDataFptRqToSCRPLOG;
 module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
+module.exports.insertDataToFptFace = insertDataToFptFace;
