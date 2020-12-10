@@ -163,7 +163,7 @@ exports.fptDigitalizeID = function (req, res) {
                                     })
                                 } else {
                                     // response F048
-                                    console.log('Error when get token FPT v01: ', responseV01.data.Message);
+                                    console.log('Error when get token FPT v01: ', resultGetAuth.data.Message);
                                     deleteFileApiFptId(req);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
