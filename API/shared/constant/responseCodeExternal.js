@@ -57,7 +57,7 @@ var RESCODEEXT = {
     NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image, Source image)', code: "F057"},
     NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image, Target Image)', code: "F058"},
     NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
-    RQOUTOFSIZE: {value: 63, name: 'Request data size exceeds 10MB', code: "F063"},
+    RQOUTOFSIZE: {value: 63, name: 'Request file size should be lower than 4mb', code: "F063"},
     INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
     UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
@@ -164,7 +164,8 @@ const TaskCode = {
     ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' },
     TCO_RK1_RQST: { code: 'TCO_RK1_RQST' },
     KYC_F01_RQST: { code: 'KYC_F01_RQST'},
-    KYC_F02_RQST: { code: 'KYC_F02_RQST'}
+    KYC_F02_RQST: { code: 'KYC_F02_RQST'},
+    KYC_FI1_RQST: { code: 'KYC_FI1_RQST'}
 };
 
 const ProductCode = ['06'];
@@ -181,6 +182,7 @@ const NiceProductCode = {
     VMG_RISK_SCORE: { code: 'S2007'},
     KYC_F01_RQST: { code: 'S2008'},
     KYC_F02_RQST: { code: 'S2009'},
+    KYC_FI1_RQST: { code: 'S2010'},
 };
 
 const StatusCodeBatchProcess = {

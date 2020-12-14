@@ -6,7 +6,7 @@ var multer  = require('multer');
 const path = require('path');
 const __dad = path.join(__dirname, '..')
 const pathToSaveImg = path.join(__dad, 'uploads');
-const maxSizeRequest = 10485760;
+const checkRequest = require('../util/checkSizeRequest')
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, pathToSaveImg);
@@ -34,6 +34,7 @@ var zaloScoreController = require('../controllers/zaloScore.controller')
 var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller')
 var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller')
 var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller')
+var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
 
 router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);
 
@@ -51,22 +52,16 @@ router.post('/CIC_MACR_RSLT', cicMacr_Controller.cicMACRRSLT);
 router.post('/PHN_SCO_RQST', zaloScoreController.zaloScore);
 router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);
 
-router.post('/KYC_F01_RQST', checkSizeRequest ,upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }]) , function (req, res, next){
+router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 ,upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }]) , function (req, res, next){
     fptDigitalizeIDController.fptDigitalizeID(req,res);
 });
 
-router.post('/KYC_F02_RQST',checkSizeRequest, upload.fields([{ name: 'sourceImage', maxCount: 1 }, { name: 'targetImage', maxCount: 1 }]) , function (req, res, next){
+router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, upload.fields([{ name: 'sourceImage', maxCount: 1 }, { name: 'targetImage', maxCount: 1 }]) , function (req, res, next){
     fptFaceMatchingController.fptFaceMatching(req,res);
 });
 
-function checkSizeRequest(req, res, next) {
-    let sizeRequest = parseInt(req.headers['content-length']);
-    if (sizeRequest > maxSizeRequest) {
-        console.log('sizeRequest: ', sizeRequest);
-        res.status(413).send('HTTP content length exceeded 10485760 bytes.');
-    } else {
-        next();
-    }
-}
+router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }, {name: 'selfieImage', maxCount: 1}]) , function (req, res, next){
+    fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
+});
 
 module.exports = router;

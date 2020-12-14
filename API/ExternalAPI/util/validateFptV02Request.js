@@ -1,7 +1,7 @@
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
 const checkContains = require('../../shared/util/checkcontains');
-const MAX_SIZE = 10000000;
+const MAX_SIZE = 4194304;
 module.exports = {
     checkParamRequest: function (getDataReq, formData) {
         var response;
@@ -96,14 +96,20 @@ module.exports = {
             return response;
         }
         // checking size
-        if ((formData.sourceImage[0].size + formData.targetImage[0].size) > MAX_SIZE) {
+        if (formData.sourceImage[0].size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
             }
             return response;
         }
-        else
+        if (formData.targetImage[0].size > MAX_SIZE) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
+                responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
+            }
+            return response;
+        } else
             response = {};
 
         return response;

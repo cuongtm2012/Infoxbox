@@ -5,7 +5,7 @@ const MAX_SIZE = 4194304;
 module.exports = {
     checkParamRequest: function (getDataReq, formData) {
         var response;
-        //fiSessionKey
+        //fiSessionKey, Application number
         if (20 < getDataReq.fiSessionKey.length) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
@@ -36,7 +36,7 @@ module.exports = {
             }
             return response;
         }
-        if (!_.isEqual(responcodeEXT.TaskCode.KYC_F01_RQST.code, getDataReq.taskCode)) {
+        if (!_.isEqual(responcodeEXT.TaskCode.KYC_FI1_RQST.code, getDataReq.taskCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code
@@ -110,6 +110,21 @@ module.exports = {
             }
             return response;
         }
+        // Selfie image
+        if (_.isEmpty(formData.selfieImage)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.code
+            }
+            return response;
+        }
+        if (_.isEqual(formData.selfieImage[0].mimetype, 'image/jpeg') === false && _.isEqual(formData.selfieImage[0].mimetype, 'image/png') === false && _.isEqual(formData.selfieImage[0].mimetype, 'image/jpg') === false) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.code
+            }
+            return response;
+        }
         // checking size
         if (formData.frontImage[0].size > MAX_SIZE) {
             response = {
@@ -119,6 +134,13 @@ module.exports = {
             return response;
         }
         if (formData.rearImage[0].size > MAX_SIZE) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
+                responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
+            }
+            return response;
+        }
+        if (formData.selfieImage[0].size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code

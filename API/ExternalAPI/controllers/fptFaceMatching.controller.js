@@ -42,7 +42,7 @@ exports.fptFaceMatching = function (req, res) {
             //is have invalid params
             if (!_.isEmpty(rsCheck)) {
                 preResponse = new PreResponse(rsCheck.responseMessage, fullNiceKey, dateutil.timeStamp(), rsCheck.responseCode);
-                responseData = new ResponseFptFaceMatchingWithoutResult(req, preResponse);
+                responseData = new ResponseFptFaceMatchingWithoutResult(req.body, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();

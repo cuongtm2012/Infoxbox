@@ -1,4 +1,4 @@
-module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Request, preResponse, frontImage, rearImage) {
+module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithoutResult(Request, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
@@ -10,6 +10,8 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
         fiSessionKey,
         fiCode,
         taskCode,
+        customerNumber,
+        productCode,
         idType,
         infoProvConcent
     } = Request;
@@ -17,12 +19,12 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
     this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
     this.fiCode = fiCode ? fiCode : "";
     this.taskCode = taskCode ? taskCode : "";
+    this.customerNumber = customerNumber ? customerNumber : "";
+    this.productCode = productCode ? productCode : "";
     this.idType = idType ? idType : "";
     this.infoProvConcent = infoProvConcent ? infoProvConcent : "";
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.frontImage = frontImage ? frontImage : "";
-    this.rearImage = rearImage ? rearImage : "";
 }
