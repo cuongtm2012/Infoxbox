@@ -57,7 +57,7 @@ var RESCODEEXT = {
     NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image, Source image)', code: "F057"},
     NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image, Target Image)', code: "F058"},
     NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
-    RQOUTOFSIZE: {value: 63, name: 'Request file size should be lower than 4mb', code: "F063"},
+    RQOUTOFSIZE: {value: 63, name: 'Request file size should be lower than 4mb/file', code: "F063"},
     INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
     UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
