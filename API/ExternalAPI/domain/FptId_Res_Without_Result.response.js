@@ -1,4 +1,4 @@
-module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Request, preResponse, frontImage, rearImage) {
+module.exports = function FptDigitalizeIdResponseWithResult(Request, preResponse, frontImage, rearImage) {
     const {
         responseMessage,
         niceSessionKey,
@@ -23,6 +23,4 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.frontImage = frontImage ? frontImage : "";
-    this.rearImage = rearImage ? rearImage : "";
 }
