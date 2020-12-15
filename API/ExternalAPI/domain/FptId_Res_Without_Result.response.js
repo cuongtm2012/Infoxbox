@@ -1,4 +1,4 @@
-module.exports = function FptDigitalizeIdResponseWithResult(Request, preResponse, frontImage, rearImage) {
+module.exports = function FptDigitalIDResponseWithoutResult(Request, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
