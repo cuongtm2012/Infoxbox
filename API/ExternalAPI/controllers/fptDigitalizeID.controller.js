@@ -43,7 +43,7 @@ exports.fptDigitalizeID = function (req, res) {
             //is have invalid params
             if (!_.isEmpty(rsCheck)) {
                 preResponse = new PreResponse(rsCheck.responseMessage, fullNiceKey, dateutil.timeStamp(), rsCheck.responseCode);
-                responseData = new ResponseFptIdWithoutResult(req, preResponse);
+                responseData = new ResponseFptIdWithoutResult(req.body, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataFptIdSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -153,6 +153,7 @@ exports.fptDigitalizeID = function (req, res) {
                                         }
                                     ).catch(errV01 => {
                                         // response F048
+                                        console.log('errV01: ', errV01)
                                         deleteFileApiFptId(req);
                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                         responseData = new ResponseFptIdWithoutResult(req.body, preResponse);

@@ -38,11 +38,11 @@ exports.fptFaceMatching = function (req, res) {
         common_service.getSequence().then(resSeq => {
             let seqRquestId = resSeq[0].SEQ;
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
-            let fullNiceKey = responCode.NiceProductCode.KYC_F01_RQST.code + niceSessionKey;
+            let fullNiceKey = responCode.NiceProductCode.KYC_F02_RQST.code + niceSessionKey;
             //is have invalid params
             if (!_.isEmpty(rsCheck)) {
                 preResponse = new PreResponse(rsCheck.responseMessage, fullNiceKey, dateutil.timeStamp(), rsCheck.responseCode);
-                responseData = new ResponseFptFaceMatchingWithoutResult(req, preResponse);
+                responseData = new ResponseFptFaceMatchingWithoutResult(req.body, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
