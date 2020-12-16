@@ -6,7 +6,7 @@ module.exports = {
     checkParamRequest: function (getDataReq, formData) {
         var response;
         //fiSessionKey, Application number
-        if (20 < getDataReq.fiSessionKey.length) {
+        if (20 < getDataReq.appNumber.length) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
                 responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
