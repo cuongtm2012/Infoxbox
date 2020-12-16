@@ -1023,7 +1023,7 @@ async function insertDataFptRqToSCRPLOG(req) {
             sql,
             {
                 NICE_SSIN_ID: req.niceSessionKey ,
-                CUST_SSID_ID: req.fiSessionKey ,
+                CUST_SSID_ID: req.custSsId ,
                 CUST_CD: req.custCd ,
                 GDS_CD: req.gdsCD,
                 INQ_DTIM: req.inqDt,

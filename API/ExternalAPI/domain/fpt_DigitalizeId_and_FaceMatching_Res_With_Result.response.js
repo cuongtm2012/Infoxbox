@@ -8,7 +8,7 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
     } = preResponse;
 
     const {
-        fiSessionKey,
+        appNumber,
         fiCode,
         taskCode,
         customerNumber,
@@ -17,7 +17,7 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
         infoProvConcent
     } = Request;
 
-    this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
+    this.appNumber = appNumber ? appNumber : "";
     this.fiCode = fiCode ? fiCode : "";
     this.taskCode = taskCode ? taskCode : "";
     this.customerNumber = customerNumber ? customerNumber : "";
