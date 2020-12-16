@@ -165,7 +165,8 @@ const TaskCode = {
     TCO_RK1_RQST: { code: 'TCO_RK1_RQST' },
     KYC_F01_RQST: { code: 'KYC_F01_RQST'},
     KYC_F02_RQST: { code: 'KYC_F02_RQST'},
-    KYC_FI1_RQST: { code: 'KYC_FI1_RQST'}
+    KYC_FI1_RQST: { code: 'KYC_FI1_RQST'},
+    OKF_SCO_RQST: { code: 'OKF_SCO_RQST'}
 };
 
 const ProductCode = ['06'];
@@ -173,6 +174,10 @@ const ProductCode = ['06'];
 const InfoProvConcent = ['Y'];
 
 const FptIdTypeV01 = ['ID','DL'];
+
+const NF_OK_SCORE_PRD = ['NOK100_001'];
+
+const NZ0100_001 = ['NZ0100_001']
 
 const NiceProductCode = {
     S11A: { code: 'S1001' },
@@ -183,6 +188,7 @@ const NiceProductCode = {
     KYC_F01_RQST: { code: 'S2008'},
     KYC_F02_RQST: { code: 'S2009'},
     KYC_FI1_RQST: { code: 'S2010'},
+    OKF_SCO_RQST: { code: 'S2012'},
 };
 
 const StatusCodeBatchProcess = {
@@ -194,7 +200,8 @@ const StatusCodeBatchProcess = {
 
 const ScoreCode = {
     zalo: 'NZ0100_001',
-    VmgRiskScore: 'NV0100_001'
+    VmgRiskScore: 'NV0100_001',
+    NOK100_001: 'NOK100_001'
 }
 const CUST_GB = {
     zalo: '22',
@@ -219,3 +226,5 @@ module.exports.ScrappingResponseCodeCicMobilerror = ScrappingResponseCodeCicMobi
 module.exports.ScoreCode = ScoreCode;
 module.exports.CUST_GB = CUST_GB;
 module.exports.FptIdTypeV01 = FptIdTypeV01;
+module.exports.NF_OK_SCORE_PRD = NF_OK_SCORE_PRD;
+module.exports.NZ0100_001 = NZ0100_001;

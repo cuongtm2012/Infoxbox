@@ -35,6 +35,7 @@ var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller')
 var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller')
 var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller')
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
+var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller')
 
 router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);
 
@@ -63,5 +64,7 @@ router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, upload.fields([{ 
 router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }, {name: 'selfieImage', maxCount: 1}]) , function (req, res, next){
     fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
 });
+
+router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 
 module.exports = router;

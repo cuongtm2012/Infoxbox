@@ -794,6 +794,7 @@ async function insertDataZaloToExtScore(req) {
             },
             { autoCommit: true }
         );
+        console.log("insertDataZaloToExtScore::", result.rowsAffected);
         return result.rowsAffected;
     } catch (err) {
         console.log(err);
@@ -1155,6 +1156,49 @@ async function insertDataToFptFace(req) {
     }
 }
 
+async function insertDataNFScoreOKToSCRPLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD,NATL_ID , TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :NATL_ID, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey ,
+                CUST_SSID_ID: req.custSsId ,
+                CUST_CD: req.custCd ,
+                GDS_CD: req.gdsCD,
+                NATL_ID: req.natId,
+                TEL_NO_MOBILE: req.mobilePhoneNumber,
+                INQ_DTIM: req.inqDt,
+                AGR_FG: req.agrFG,
+                SYS_DTIM: req.sysDt,
+                WORK_ID: req.workID,
+            },
+            { autoCommit: true }
+        );
+        console.log('insertDataNFScoreOKToSCRPLOG: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1171,3 +1215,4 @@ module.exports.insertDataToINQLOG = insertDataToINQLOG;
 module.exports.insertDataFptRqToSCRPLOG = insertDataFptRqToSCRPLOG;
 module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
 module.exports.insertDataToFptFace = insertDataToFptFace;
+module.exports.insertDataNFScoreOKToSCRPLOG = insertDataNFScoreOKToSCRPLOG;

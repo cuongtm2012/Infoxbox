@@ -4,8 +4,8 @@ const checkContains = require('../../shared/util/checkcontains');
 module.exports = {
     checkParamRequest: function (getDataReq) {
         var response;
-        //fiSessionKey
-        if (20 < getDataReq.fiSessionKey.length) {
+        //fiSessionKey, appNumber
+        if (20 < getDataReq.appNumber.length) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
                 responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
@@ -35,7 +35,7 @@ module.exports = {
             }
             return response;
         }
-        if (!_.isEqual(responcodeEXT.TaskCode.ZALO_SCR_RQST.code, getDataReq.taskCode)) {
+        if (!_.isEqual(responcodeEXT.TaskCode.OKF_SCO_RQST.code, getDataReq.taskCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code
@@ -72,10 +72,25 @@ module.exports = {
             }
             return response;
         }
-        if (!checkContains.contains.call(responcodeEXT.NZ0100_001, getDataReq.scoreProduct.toUpperCase())) {
+        if (!checkContains.contains.call(responcodeEXT.NF_OK_SCORE_PRD, getDataReq.scoreProduct.toUpperCase())) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NISCOREPRODUCT.name,
                 responseCode: responcodeEXT.RESCODEEXT.NISCOREPRODUCT.code
+            }
+            return response;
+        }
+        //    national ID
+        if (_.isEmpty(getDataReq.natId)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
+            }
+            return response;
+        }
+        if (50 < getDataReq.natId.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
             }
             return response;
         }

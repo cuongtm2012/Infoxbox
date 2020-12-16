@@ -1,4 +1,5 @@
-const config = require('../config/config')
+const config = require('../config/config');
+const dateutil = require('../util/dateutil');
 module.exports = function bodyPostRiskScore(riskScoreRequest) {
     const {
         fiSessionKey,
@@ -13,7 +14,7 @@ module.exports = function bodyPostRiskScore(riskScoreRequest) {
     this.cmd = "risk_score_nice";
     this.phoneNumber = mobilePhoneNumber;
     this.idCard = natId;
-    this.month = month;
+    this.month = month ? month : dateutil.getCurrentMonth();
     this.serviceCode = 'risk_score_nice';
     this.token = config.VmgToken.Dev_Token;
 }

@@ -1,6 +1,6 @@
 const dateutil = require('../util/dateutil');
 const responCode = require('../../shared/constant/responseCodeExternal');
-module.exports = function dataFptIdSaveToInqLog(fptRq, preResponse) {
+module.exports = function dataSaveToInqLog(fptRq, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
@@ -13,6 +13,13 @@ module.exports = function dataFptIdSaveToInqLog(fptRq, preResponse) {
         fiCode,
         taskCode,
         idType,
+        natId,
+        taxCode,
+        oldNatId,
+        otrId,
+        passportNumber,
+        cicId,
+        month,
         infoProvConcent
     } = fptRq;
 
@@ -20,13 +27,13 @@ module.exports = function dataFptIdSaveToInqLog(fptRq, preResponse) {
     this.inqLogId = responCode.NiceProductCode.ZALO.code + dateutil.timeStamp2();
     this.fiCode = fiCode ? fiCode : null;
     this.taskCode = taskCode ? taskCode : null;
-    this.natId =  null;
-    this.taxCode =  null;
-    this.oldNatId =  null;
-    this.otrId = null;
-    this.passportNumber = null;
-    this.cicId = null;
-    this.month = null;
+    this.natId =  natId ? natId : null;
+    this.taxCode =  taxCode ? taxCode : null;
+    this.oldNatId =  oldNatId ? oldNatId : null;
+    this.otrId = otrId ? otrId : null;
+    this.passportNumber = passportNumber ? passportNumber : null;
+    this.cicId = cicId ? cicId : null;
+    this.month = month ? month : null;
     this.inquiryDate = dateutil.getCurrentInquiryDate();
     this.infoProvConcent = infoProvConcent ? infoProvConcent : null;
     this.respCd = responseCode ? responseCode : null;
