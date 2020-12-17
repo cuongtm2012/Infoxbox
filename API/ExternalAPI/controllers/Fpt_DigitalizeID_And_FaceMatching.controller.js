@@ -264,15 +264,19 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                         })
                     }
                 ).catch(reason => {
+                    deleteFile(req);
                     return res.status(500).json({error: reason.toString()});
                 })
             }).catch(reason => {
+                deleteFile(req);
                 return res.status(500).json({error: reason.toString()});
             })
         }).catch(reason => {
+            deleteFile(req);
             return res.status(500).json({error: reason.toString()});
         })
     } catch (err) {
+        deleteFile(req);
         return res.status(500).json({error: err.toString()});
     }
 }
