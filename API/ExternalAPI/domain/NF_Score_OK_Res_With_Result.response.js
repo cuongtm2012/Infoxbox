@@ -1,4 +1,4 @@
-module.exports = function NFScoreOKResponseWithScore(Request, preResponse) {
+module.exports = function NFScoreOKResponseWithScore(Request, preResponse, riskScore, zaloScore) {
     const {
         responseMessage,
         niceSessionKey,
@@ -26,10 +26,19 @@ module.exports = function NFScoreOKResponseWithScore(Request, preResponse) {
     this.natId = natId ? natId : "";
     this.infoProvConcent = infoProvConcent ? infoProvConcent : "";
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
-    this.responseTime  = responseTime ? responseTime : "";
+    this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.nfGrade = '';
-    this.curoffResult = 'Y/N';
-    this.scoreInquiryResult = '';
+    this.nfGrade = {
+        zaloScore: {score: zaloScore.score},
+        riskScore: {
+            RSK_GLM_PROB: riskScore.RSK_GLM_PROB,
+            RSK_RF_PROB: riskScore.RSK_RF_PROB,
+            RSK_GRB_PROB: riskScore.RSK_GRB_PROB,
+            RSK_ESB_PROB: riskScore.RSK_ESB_PROB,
+            RSK_SCORE: riskScore.RSK_SCORE,
+            RSK_GRADE: riskScore.RSK_GRADE
+        }
+    }
+    this.curoffResult = 'A/G/R';
 }

@@ -89,7 +89,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                         // response P000
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                            responseData = new NFScoreResponseWithResult(req.body, preResponse);
+                                                            responseData = new NFScoreResponseWithResult(req.body, preResponse, resultGetRiskScore.data.result.nice_score, resultGetZaloScore.data.data);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
