@@ -32,7 +32,8 @@ var config = {
 	AccountFptDev: {
 		username: "nice",
 		password: "nice@123"
-	}
+	},
+	SECRET_ZALO_DEV : 'TEST'
 };
 
 module.exports = config;

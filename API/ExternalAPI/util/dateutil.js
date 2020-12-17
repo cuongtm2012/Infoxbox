@@ -59,4 +59,8 @@ module.exports = {
         return dateFormat(new Date(), "HHMMss");
     },
 
+    getCurrentMonth: function () {
+        return dateFormat(new Date(), 'yyyymm');
+    },
+
 };
