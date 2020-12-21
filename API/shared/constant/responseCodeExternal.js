@@ -90,12 +90,12 @@ var SCRAPPINGERRORCODE = {
 const ScrappingResponseCodeLoginFailure = {
     LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-001] login page check fail', value: 1 },
     LoginFail2: { code: 'LOGIN-002', errMsg: '[LOGIN-002] login page check fail', value: 2 },
-    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
-    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
-    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
-    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
-    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
-    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
+    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
+    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
+    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
+    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
+    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
+    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
 };
 
 const ScrappingResponseCodeCicMobilerror = {
