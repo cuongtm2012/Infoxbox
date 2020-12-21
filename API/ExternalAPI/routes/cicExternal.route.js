@@ -35,7 +35,8 @@ var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller')
 var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller')
 var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller')
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
-var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller')
+
+var okFVNController = require('../controllers/okFVN.controller')
 
 router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);
 
@@ -53,6 +54,9 @@ router.post('/CIC_MACR_RSLT', cicMacr_Controller.cicMACRRSLT);
 router.post('/PHN_SCO_RQST', zaloScoreController.zaloScore);
 router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);
 
+router.post('/OKF_SPL_RQST', okFVNController.okf_SPL_RQST);
+router.post('/RCS_OK1_RQST', okFVNController.rcs_OK1_RQST);
+
 router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 ,upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }]) , function (req, res, next){
     fptDigitalizeIDController.fptDigitalizeID(req,res);
 });
@@ -64,7 +68,5 @@ router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, upload.fields([{ 
 router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }, {name: 'selfieImage', maxCount: 1}]) , function (req, res, next){
     fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
 });
-
-router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 
 module.exports = router;
