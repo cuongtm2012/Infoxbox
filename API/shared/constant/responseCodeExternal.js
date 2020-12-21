@@ -144,6 +144,7 @@ const ScrappingResponseCodeCicReportResultINQS37Error = {
     CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] CIC No not found.', value: 201 }
 };
 
+
 const ScrapingStatusCode = {
     LoginInError: { code: '20' },
     CicIdInqError: { code: '21' },
