@@ -77,7 +77,7 @@ var SCRAPPINGERRORCODE = {
     CICLogInSuccess: { value: 2, name: "CIC site log in successful", code: "02" },
     CICIDInqSuccess: { value: 3, name: "CIC ID inquiry successful", code: "03" },
     CICReportInqSuccess: { value: 4, name: "CIC report inquiry successful", code: "04" },
-    CICReportInqDelay: { value: 5, name: "In process â€“ delayed report", code: "05" },
+    CICReportInqDelay: { value: 5, name: "In process – delayed report", code: "05" },
     Complete: { value: 10, name: "Complete", code: "10" },
     LogInError: { value: 20, name: "Log in error", code: "20" },
     CICIDInqError: { value: 21, name: "CIC ID inquiry error", code: "21" },
@@ -90,12 +90,12 @@ var SCRAPPINGERRORCODE = {
 const ScrappingResponseCodeLoginFailure = {
     LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-001] login page check fail', value: 1 },
     LoginFail2: { code: 'LOGIN-002', errMsg: '[LOGIN-002] login page check fail', value: 2 },
-    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003]Â LoginÂ Fail.', value: 3 },
-    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004]Â LoginÂ Fail.', value: 4 },
-    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005]Â LoginÂ Fail.', value: 5 },
-    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006]Â Menu Check Fail - Há»�i tráº£ lá»�i tin khÃ¡ch hÃ ng', value: 6 },
-    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007]Â Menu Check Fail - S37- Cáº£nh bÃ¡o khÃ¡ch hÃ ng vay', value: 7 },
-    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999]Â Exception message', value: 999 }
+    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
+    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
+    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
+    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
+    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
+    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
 };
 
 const ScrappingResponseCodeCicMobilerror = {
@@ -166,9 +166,7 @@ const TaskCode = {
     KYC_F01_RQST: { code: 'KYC_F01_RQST'},
     KYC_F02_RQST: { code: 'KYC_F02_RQST'},
     KYC_FI1_RQST: { code: 'KYC_FI1_RQST'},
-    OKF_SCO_RQST: { code: 'OKF_SCO_RQST'},
-	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
-	RCS_OK1_RQST: { code: 'RCS_OK1_RQST'}
+    OKF_SCO_RQST: { code: 'OKF_SCO_RQST'}
 };
 
 const ProductCode = ['06'];
