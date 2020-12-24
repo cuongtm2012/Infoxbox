@@ -35,6 +35,7 @@ var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller')
 var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller')
 var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller')
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
+var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller')
 
 var okFVNController = require('../controllers/okFVN.controller')
 var pingPongController = require('../controllers/pingPong.controller')
@@ -54,6 +55,7 @@ router.post('/CIC_MACR_RSLT', cicMacr_Controller.cicMACRRSLT);
 
 router.post('/PHN_SCO_RQST', zaloScoreController.zaloScore);
 router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);
+router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 
 router.post('/OKF_SPL_RQST', okFVNController.okf_SPL_RQST);
 router.post('/RCS_OK1_RQST', okFVNController.rcs_OK1_RQST);
