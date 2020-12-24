@@ -37,6 +37,7 @@ var fptFaceMatchingController = require('../controllers/fptFaceMatching.controll
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
 
 var okFVNController = require('../controllers/okFVN.controller')
+var pingPongController = require('../controllers/pingPong.controller')
 
 router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);
 
@@ -68,5 +69,7 @@ router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, upload.fields([{ 
 router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }, {name: 'selfieImage', maxCount: 1}]) , function (req, res, next){
     fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
 });
+
+router.get('/api/ping', pingPongController.pingPong);
 
 module.exports = router;
