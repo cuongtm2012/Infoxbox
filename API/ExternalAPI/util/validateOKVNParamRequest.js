@@ -32,16 +32,8 @@ module.exports = {
             }
             return response;
         }
-        //name
-        if (validation.isEmptyStr(getdataReq.name)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NINAME.name,
-                responseCode: responcodeEXT.RESCODEEXT.NINAME.code
-            }
-            return response;
-        }
+        
         //mobilePhoneNumber
-        //TODO check with list available phone number, data type
         if (validation.isEmptyStr(getdataReq.mobilePhoneNumber)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
@@ -52,6 +44,23 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
+            }
+            return response;
+        }
+		
+		//natId
+		if (!util.validNumber(getdataReq.natId)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidNatId.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidNatId.code
+            }
+            return response;
+        }
+		//salary
+		if (!util.validNumber(getdataReq.salary)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidSalary.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidSalary.code
             }
             return response;
         }
@@ -68,14 +77,6 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
                 responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
-            }
-            return response;
-        }
-        // valid inquiryDate less than today
-        if (!dateUtil.validDateAndCurrentDate(getdataReq.inquiryDate, '')) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.INQDateInvalid.name,
-                responseCode: responcodeEXT.RESCODEEXT.INQDateInvalid.code
             }
             return response;
         }

@@ -19,7 +19,6 @@ module.exports = function OKF_SPL_RQSTResponse(OKF_SPL_RQSTRequest, response) {
 		natId,
 		salary,
 		joinDate,
-        inquiryDate,
         infoProvConcent,
 		simpleLimit
     } = OKF_SPL_RQSTRequest;
@@ -34,7 +33,6 @@ module.exports = function OKF_SPL_RQSTResponse(OKF_SPL_RQSTRequest, response) {
     this.natId = natId;
     this.salary = salary;
     this.joinDate = joinDate;
-    this.inquiryDate = inquiryDate ? inquiryDate : "";
     this.infoProvConcent = infoProvConcent;
     this.simpleLimit = simpleLimit;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";

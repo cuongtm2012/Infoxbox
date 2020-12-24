@@ -1,8 +1,8 @@
 const logger = require('../config/logger');
 
 const OKF_SPL_RQSTReq = require('../domain/OKF_SPL_RQST.request');
-
 const OKF_SPL_RQSTRes = require('../domain/OKF_SPL_RQST.response');
+const okFVNService = require('../services/okFVN.service');
 
 const validation = require('../../shared/util/validation');
 
@@ -15,7 +15,7 @@ const common_service = require('../services/common.service');
 const responCode = require('../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
 
-
+const validS11AService = require('../services/validS11A.service');
 const PreResponse = require('../domain/preResponse.response');
 const dateutil = require('../util/dateutil');
 const DataInqLogSave = require('../domain/INQLOG.save');
@@ -48,8 +48,8 @@ exports.okf_SPL_RQST = function (req, res, next) {
             });
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.Mobile.code).then(dataFICode => {
-	console.log('selectFiCode:');
+        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.OKF_SPL_RQST.code).then(dataFICode => {
+			console.log('selectFiCode:');
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
@@ -81,21 +81,19 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 logger.debug('log request parameters from routes after manage request');
                 logger.info(req.body);
 
-                cicMobileService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
-                    console.log("result OKF_SPL_RQST: ", niceSessionK);
+				//calculated simple limit
+                okFVNService.getSimpleLimit(getdataReq, res).then(data => {
+                    console.log("result OKF_SPL_RQST: ", data);
 
-                    if (!_.isEmpty(niceSessionK) && niceSessionK.length <= 25) {
-                        let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                        responseData = new OKF_SPL_RQSTRes(getdataReq, responseSuccess);
-                    } else {
-                        let responseUnknow = new PreResponse(responCode.RESCODEEXT.OtherInternalDBError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.OtherInternalDBError.code);
-                        responseData = new OKF_SPL_RQSTRes(getdataReq, responseUnknow);
-                    }
+                    let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                    responseData = new OKF_SPL_RQSTRes(getdataReq, responseSuccess);
+					responseData.simpleLimit = data
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                         console.log('insert INQLOG:', r);
                     });
+					//console.log("responseData = ", responseData);
                     return res.status(200).json(responseData);
                 });
 
