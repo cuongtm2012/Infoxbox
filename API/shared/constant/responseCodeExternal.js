@@ -61,6 +61,8 @@ var RESCODEEXT = {
     INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
     UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
+    InvalidNatId: {value: 67, name: 'National ID is invalid', code: "F067"},
+    InvalidSalary: {value: 68, name: 'Salary is invalid', code: "F068"},
 };
 
 const OracleError = {
@@ -192,6 +194,7 @@ const NiceProductCode = {
     KYC_F02_RQST: { code: 'S2009'},
     KYC_FI1_RQST: { code: 'S2010'},
     OKF_SCO_RQST: { code: 'S2012'},
+    OKF_SPL_RQST: { code: 'S2011'},
 };
 
 const StatusCodeBatchProcess = {
