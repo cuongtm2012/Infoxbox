@@ -178,7 +178,7 @@ const ProductCode = ['06'];
 
 const InfoProvConcent = ['Y'];
 
-const FptIdTypeV01 = ['ID','DL'];
+const FptIdTypeV01 = ['ID','DL','PP'];
 
 const NF_OK_SCORE_PRD = ['NOK100_001'];
 
