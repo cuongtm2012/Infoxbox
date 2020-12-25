@@ -7,6 +7,8 @@ const path = require('path');
 const __dad = path.join(__dirname, '..')
 const pathToSaveImg = path.join(__dad, 'uploads');
 const checkRequest = require('../util/checkSizeRequest')
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: pathToSaveImg});
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
         callback(null, pathToSaveImg);
@@ -68,7 +70,7 @@ router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, upload.fields([{ 
     fptFaceMatchingController.fptFaceMatching(req,res);
 });
 
-router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }, {name: 'selfieImage', maxCount: 1}]) , function (req, res, next){
+router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, multipartMiddleware, function (req, res, next){
     fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
 });
 

@@ -81,14 +81,7 @@ module.exports = {
             return response;
         }
         // Front Image
-        if (_.isEmpty(formData.frontImage)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NIFRONTIMAGE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NIFRONTIMAGE.code
-            }
-            return response;
-        }
-        if (_.isEqual(formData.frontImage[0].mimetype, "image/jpeg") === false && _.isEqual(formData.frontImage[0].mimetype, "image/png") === false && _.isEqual(formData.frontImage[0].mimetype, "image/jpg") === false) {
+        if (_.isEmpty(formData.frontImage) && _.isEmpty(getDataReq.frontImage)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIFRONTIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIFRONTIMAGE.code
@@ -96,14 +89,7 @@ module.exports = {
             return response;
         }
         // Rear Image
-        if (_.isEmpty(formData.rearImage)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NIREARIMAGE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NIREARIMAGE.code
-            }
-            return response;
-        }
-        if (_.isEqual(formData.rearImage[0].mimetype, 'image/jpeg') === false && _.isEqual(formData.rearImage[0].mimetype, 'image/png') === false && _.isEqual(formData.rearImage[0].mimetype, 'image/jpg') === false) {
+        if (_.isEmpty(formData.rearImage) && _.isEmpty(getDataReq.rearImage)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIREARIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIREARIMAGE.code
@@ -111,14 +97,7 @@ module.exports = {
             return response;
         }
         // Selfie image
-        if (_.isEmpty(formData.selfieImage)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.code
-            }
-            return response;
-        }
-        if (_.isEqual(formData.selfieImage[0].mimetype, 'image/jpeg') === false && _.isEqual(formData.selfieImage[0].mimetype, 'image/png') === false && _.isEqual(formData.selfieImage[0].mimetype, 'image/jpg') === false) {
+        if (_.isEmpty(formData.selfieImage) && _.isEmpty(getDataReq.selfieImage)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.code
@@ -126,21 +105,21 @@ module.exports = {
             return response;
         }
         // checking size
-        if (formData.frontImage[0].size > MAX_SIZE) {
+        if (!_.isEmpty(formData.frontImage) && formData.frontImage.size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
             }
             return response;
         }
-        if (formData.rearImage[0].size > MAX_SIZE) {
+        if (!_.isEmpty(formData.rearImage) && formData.rearImage.size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
             }
             return response;
         }
-        if (formData.selfieImage[0].size > MAX_SIZE) {
+        if (!_.isEmpty(formData.selfieImage) && formData.selfieImage.size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
