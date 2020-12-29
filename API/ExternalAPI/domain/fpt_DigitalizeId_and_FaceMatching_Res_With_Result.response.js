@@ -31,6 +31,7 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
     this.responseMessage = responseMessage ? responseMessage : "";
     this.frontImage = {
         idNumber: frontImage.id,
+        idCheck: frontImage.id_check,
         name: frontImage.name,
         birthday: date.transform(frontImage.dob, 'DD-MM-YYYY', 'YYYYMMDD'),
         sex: convertSexString(frontImage.sex),
