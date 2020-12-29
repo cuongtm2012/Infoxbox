@@ -44,10 +44,10 @@ module.exports = function NFScoreOKResponseWithScore(Request, preResponse, riskS
     // }
     this.nfGrade = mockupResult;
     if (8 <= mockupResult && mockupResult <= 10) {
-        this.curoffResult = 'A';
+        this.curoffResult = 'R';
     } else if (4 <= mockupResult && mockupResult <= 7) {
         this.curoffResult = 'G';
     } else if (1 <= mockupResult && mockupResult <= 3) {
-        this.curoffResult = 'R';
+        this.curoffResult = 'A';
     }
 }
