@@ -83,12 +83,10 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                     // Prepare to call V01
                                     let bodyFormDataV01 = new FormData();
                                     let requestIdV01 = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
-                                    let pathToFrontImage = path.join(pathToSaveImg, req.files.frontImage[0].filename);
-                                    let pathToRearImage = path.join(pathToSaveImg, req.files.rearImage[0].filename);
                                     bodyFormDataV01.append('requestId', requestIdV01);
                                     bodyFormDataV01.append('type', req.body.idType);
-                                    bodyFormDataV01.append('frontImage ', fs.createReadStream(pathToFrontImage));
-                                    bodyFormDataV01.append('backImage ', fs.createReadStream(pathToRearImage));
+                                    req.body.frontImage ? bodyFormDataV01.append('frontImage', req.body.frontImage) : bodyFormDataV01.append('frontImage', fs.createReadStream(req.files.frontImage.path));
+                                    req.body.rearImage ? bodyFormDataV01.append('backImage', req.body.rearImage) : bodyFormDataV01.append('backImage', fs.createReadStream(req.files.rearImage.path));
                                     let configWithAuth = {
                                         method: 'post',
                                         url: URI.URL_FPT_DEV + urlFptV01,
@@ -110,11 +108,10 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                 //     prepare to call V02
                                                 let bodyFormDataV02 = new FormData();
                                                 let requestIdV02 = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
-                                                let pathToSourceImageImage = path.join(pathToSaveImg, req.files.selfieImage[0].filename);
-                                                let pathToTargetImageImage = path.join(pathToSaveImg, req.files.frontImage[0].filename);
                                                 bodyFormDataV02.append('requestId', requestIdV02);
-                                                bodyFormDataV02.append('sourceImage', fs.createReadStream(pathToSourceImageImage));
-                                                bodyFormDataV02.append('targetImage', fs.createReadStream(pathToTargetImageImage));
+                                                req.body.frontImage ? bodyFormDataV02.append('targetImage', req.body.frontImage) : bodyFormDataV02.append('targetImage', fs.createReadStream(req.files.frontImage.path));
+                                                req.body.selfieImage ? bodyFormDataV02.append('sourceImage', req.body.selfieImage) : bodyFormDataV02.append('sourceImage', fs.createReadStream(req.files.selfieImage.path));
+
                                                 let configWithAuth = {
                                                     method: 'post',
                                                     url: URI.URL_FPT_DEV + urlFptV02,
@@ -286,20 +283,20 @@ function deleteFile(req) {
     // delete file
     if (!_.isEmpty(req.files)) {
         if (!_.isEmpty(req.files.frontImage)) {
-            fs.unlink(path.join(pathToSaveImg, req.files.frontImage[0].filename), function (err) {
+            fs.unlink(req.files.frontImage.path, function (err) {
                 if (err) throw err;
                 console.log('deleted frontImage ')
             });
         }
 
         if (!_.isEmpty(req.files.rearImage)) {
-            fs.unlink(path.join(pathToSaveImg, req.files.rearImage[0].filename), function (err) {
+            fs.unlink(req.files.rearImage.path, function (err) {
                 if (err) throw err;
                 console.log('deleted rearImage ')
             });
         }
         if (!_.isEmpty(req.files.selfieImage)) {
-            fs.unlink(path.join(pathToSaveImg, req.files.selfieImage[0].filename), function (err) {
+            fs.unlink(req.files.selfieImage.path, function (err) {
                 if (err) throw err;
                 console.log('deleted selfieImage ')
             });

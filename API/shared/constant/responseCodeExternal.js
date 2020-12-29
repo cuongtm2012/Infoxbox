@@ -82,7 +82,7 @@ var SCRAPPINGERRORCODE = {
     CICLogInSuccess: { value: 2, name: "CIC site log in successful", code: "02" },
     CICIDInqSuccess: { value: 3, name: "CIC ID inquiry successful", code: "03" },
     CICReportInqSuccess: { value: 4, name: "CIC report inquiry successful", code: "04" },
-    CICReportInqDelay: { value: 5, name: "In process – delayed report", code: "05" },
+    CICReportInqDelay: { value: 5, name: "In process â€“ delayed report", code: "05" },
     Complete: { value: 10, name: "Complete", code: "10" },
     LogInError: { value: 20, name: "Log in error", code: "20" },
     CICIDInqError: { value: 21, name: "CIC ID inquiry error", code: "21" },
@@ -149,6 +149,7 @@ const ScrappingResponseCodeCicReportResultINQS37Error = {
     CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] CIC No not found.', value: 201 }
 };
 
+
 const ScrapingStatusCode = {
     LoginInError: { code: '20' },
     CicIdInqError: { code: '21' },
@@ -180,7 +181,7 @@ const ProductCode = ['06'];
 
 const InfoProvConcent = ['Y'];
 
-const FptIdTypeV01 = ['ID','DL'];
+const FptIdTypeV01 = ['ID','DL','PP'];
 
 const NF_OK_SCORE_PRD = ['NOK100_001'];
 

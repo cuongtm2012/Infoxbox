@@ -8,8 +8,8 @@ module.exports = function DataFptSaveToFptId(req, niceSessionKey, data, resultCo
     this.REQUEST_ID = requestId;
     this.RESULT_CODE = resultCode;
     //
-    this.FRONT_IMAGE = convertImageToBase64(path.join(pathToSaveImg, req.files.frontImage[0].filename));
-    this.REAR_IMAGE = convertImageToBase64(path.join(pathToSaveImg, req.files.rearImage[0].filename));
+    this.FRONT_IMAGE = req.body.frontImage ? req.body.frontImage : convertImageToBase64(req.files.frontImage.path);
+    this.REAR_IMAGE = req.body.rearImage ? req.body.rearImage : convertImageToBase64(req.files.rearImage.path);
     // front
     this.ID_NUMBER = data.frontImage.id ? data.frontImage.id : null;
     this.NAME = data.frontImage.name ? data.frontImage.name : null;
@@ -30,7 +30,7 @@ module.exports = function DataFptSaveToFptId(req, niceSessionKey, data, resultCo
     this.RELIGION = data.backImage.religion ? data.backImage.religion : null;
     this.TYPE_NEW = data.backImage.type_new ? data.backImage.type_new : null;
     this.FEATURES = data.backImage.features ? data.backImage.features : null;
-    this.ISSUE_DATE = data.backImage.issue_date ? data.backImage.issue_date: null;
+    this.ISSUE_DATE = data.backImage.issue_date ? data.backImage.issue_date : null;
     this.ISSUE_LOC = data.backImage.issue_loc ? data.backImage.issue_loc : null;
     this.TYPE_REAR = data.backImage.type ? data.backImage.type : null;
     this.PROVIDER_CODE = data.providerCode;
