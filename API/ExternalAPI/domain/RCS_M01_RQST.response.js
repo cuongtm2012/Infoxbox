@@ -1,4 +1,4 @@
-module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, ReviewResultRes, resultNDay, coordinates) {
+module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, ReviewResultRes, result7Day, result30Day, result90Day, Coordinates) {
 
     const {
         responseMessage,
@@ -29,27 +29,7 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
 		loanLimit,
     } = ReviewResultRes;
 		
-	const {//result7Day
-        homePercent7d,
-		workPercent7d,
-		referPercent7d,
-		timeRange7d
-    } = resultNDay;
-
-	const {//result30Day
-        homePercent30d,
-		workPercent30d,
-		referPercent30d,
-		timeRange30d
-    } = resultNDay;
-
-	const {//result90Day
-        homePercent90d,
-		workPercent90d,
-		referPercent90d,
-		timeRange90d
-    } = resultNDay;
-
+	
 	const {//Coordinates
         homeAddressRv,
 		homeLatitude,
@@ -61,7 +41,7 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
 		referLatitude,
 		referLongtitude,
 		telcoCompany
-    } = coordinates;
+    } = Coordinates;
 
     this.appNumber = appNumber ? appNumber : "";
     this.fiCode = fiCode;
@@ -84,32 +64,21 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
 	this.finalGrade = finalGrade;
 	this.finalLoanApproval = finalLoanApproval;
 	this.loanLimit = loanLimit;
-
-	this.homePercent7d = homePercent7d;
-	this.workPercent7d = workPercent7d;
-	this.referPercent7d = referPercent7d;
-	this.timeRange7d = timeRange7d;
+	this.result7Day = result7Day;
+	this.result30Day = result30Day;
+	this.result90Day = result90Day;
 	
-	this.homePercent30d = homePercent30d;
-	this.workPercent30d = workPercent30d;
-	this.referPercent30d = referPercent30d;
-	this.timeRange30d = timeRange30d;
-	
-	this.homePercent90d = homePercent90d;
-	this.workPercent90d = workPercent90d;
-	this.referPercent90d = referPercent90d;
-	this.timeRange90d = timeRange90d;
-	
-	
-	this.homeAddressRv = homeAddressRv;
-	this.homeLatitude = homeLatitude;
-	this.homeLongtitude = homeLongtitude;
-	this.workAddressRv= workAddressRv;
-	this.workLatitude = workLatitude;
-	this.workLongtitude = workLongtitude;
-	this.referAddressRv = referAddressRv;
-	this.referLatitude = referLatitude;
-	this.referLongtitude = referLongtitude;
-	this.telcoCompany = telcoCompany;
+	this.homeAddressRv = homeAddressRv ? homeAddressRv : "";
+	this.homeLatitude = homeLatitude ? homeLatitude : "";
+	this.homeLongtitude = homeLongtitude ? homeLongtitude : "";
+	this.workAddressRv= workAddressRv ? workAddressRv : "";
+	this.workLatitude = workLatitude ? workLatitude : "";
+	this.workLongtitude = workLongtitude ? workLongtitude : "";
+	this.referAddressRv = referAddressRv ? referAddressRv : "";
+	this.referLatitude = referLatitude ? referLatitude : "";
+	this.referLongtitude = referLongtitude ? referLongtitude : "";
+	this.telcoCompany = telcoCompany ? telcoCompany : "";
 			
 };
+
+
