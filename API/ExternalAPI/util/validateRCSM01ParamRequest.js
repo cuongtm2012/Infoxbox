@@ -9,6 +9,7 @@ module.exports = {
     checkRCSM01ParamRequest: function (getdataReq) {
         var response;
 
+		
         //ficode
         if (validation.isEmptyStr(getdataReq.fiCode)) {
             response = {
@@ -32,7 +33,23 @@ module.exports = {
             }
             return response;
         }
-        
+        //nfGrade
+		if (validation.isEmptyStr(getdataReq.nfGrade)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NFGRADE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NFGRADE.code
+            }
+            return response;
+        }
+		//cicNiceSessionKey	
+		if (validation.isEmptyStr(getdataReq.cicNiceSessionKey)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.code
+            }
+            return response;
+        }
+
         //mobilePhoneNumber
         //TODO check with list available phone number, data type
         if (validation.isEmptyStr(getdataReq.mobilePhoneNumber)) {
@@ -45,6 +62,23 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
+            }
+            return response;
+        }
+
+		//homeAddress
+		if (validation.isEmptyStr(getdataReq.homeAddress)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NFGRADE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NFGRADE.code
+            }
+            return response;
+        }
+		//workAddress
+		if (validation.isEmptyStr(getdataReq.workAddress)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.WORKADDRESS.name,
+                responseCode: responcodeEXT.RESCODEEXT.WORKADDRESS.code
             }
             return response;
         }
@@ -64,14 +98,7 @@ module.exports = {
             }
             return response;
         }
-        // valid inquiryDate less than today
-        if (!dateUtil.validDateAndCurrentDate(getdataReq.inquiryDate, '')) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.INQDateInvalid.name,
-                responseCode: responcodeEXT.RESCODEEXT.INQDateInvalid.code
-            }
-            return response;
-        }
+        
 
         else
             response = {};

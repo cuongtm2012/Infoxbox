@@ -60,7 +60,7 @@ router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);
 router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 
 router.post('/OKF_SPL_RQST', okFVNController.okf_SPL_RQST);
-router.post('/RCS_M01_RQST', okFVNController.rcs_OK1_RQST);
+router.post('/RCS_M01_RQST', okFVNController.rcs_M01_RQST);
 
 router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 ,upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }]) , function (req, res, next){
     fptDigitalizeIDController.fptDigitalizeID(req,res);

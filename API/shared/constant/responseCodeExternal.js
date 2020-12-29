@@ -63,6 +63,9 @@ var RESCODEEXT = {
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
     InvalidNatId: {value: 67, name: 'National ID is invalid', code: "F067"},
     InvalidSalary: {value: 68, name: 'Salary is invalid', code: "F068"},
+	NFGRADE: { value: 69, name: "Need to input mandatory item(nfGrade)", code: "F069" },
+	HOMEADDRESS: { value: 70, name: "Need to input mandatory item(homeAddress)", code: "F070" },
+	WORKADDRESS: { value: 71, name: "Need to input mandatory item(workAddress)", code: "F071" },
 };
 
 const OracleError = {
