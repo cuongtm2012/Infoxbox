@@ -1,6 +1,5 @@
-const matchingNumber = 0.95;
 const date = require('date-and-time');
-module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Request, preResponse, frontImage, rearImage, resultFaceMatching) {
+module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Request, preResponse, frontImage, rearImage, resultFaceMatching, value1) {
     const {
         responseMessage,
         niceSessionKey,
@@ -60,7 +59,7 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
     this.faceMatchingResult = {
         similarity: truncateFloat(resultFaceMatching.similarity),
         sourceResult: resultFaceMatching.result,
-        finalResult: parseFloat(resultFaceMatching.similarity) >= matchingNumber ? 'SAME' : 'DIFFERENT'
+        finalResult: parseFloat(resultFaceMatching.similarity) >= Number(value1) ? 'SAME' : 'DIFFERENT'
     };
 }
 

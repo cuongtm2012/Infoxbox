@@ -1199,6 +1199,39 @@ async function insertDataNFScoreOKToSCRPLOG(req) {
     }
 }
 
+async function selectValue1InFiCriManage(custCd, cri) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT VALUE1 FROM TB_FI_CRI_MANAGE WHERE CUST_CD = :CUST_CD AND CRITERIA1 = :CRITERIA1`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                CUST_CD: custCd,
+                CRITERIA1: cri
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT}
+        );
+        return result.rows[0];
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1216,3 +1249,4 @@ module.exports.insertDataFptRqToSCRPLOG = insertDataFptRqToSCRPLOG;
 module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
 module.exports.insertDataToFptFace = insertDataToFptFace;
 module.exports.insertDataNFScoreOKToSCRPLOG = insertDataNFScoreOKToSCRPLOG;
+module.exports.selectValue1InFiCriManage = selectValue1InFiCriManage;
