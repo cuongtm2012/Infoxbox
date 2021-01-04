@@ -1217,7 +1217,7 @@ async function selectValue1InFiCriManage(custCd, cri) {
             },
             {outFormat: oracledb.OUT_FORMAT_OBJECT}
         );
-        return result.rows[0];
+        return result.rows[0] !== undefined ? result.rows[0] : {};
     } catch (err) {
         console.log(err);
         // return res.status(400);

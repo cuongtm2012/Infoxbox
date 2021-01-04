@@ -25,6 +25,7 @@ const urlFptV01 = 'aggregator/api/v1/verification/v01_id';
 const urlFptV02 = 'aggregator/api/v1/verification/v02_facematching';
 const DataFptIdSaveToFptID = require('../domain/data_FptId_Save_To_FptId.save');
 const DataSaveToFptFace = require('../domain/data_Fpt_Digital_And_FaceMatching_SaveTo_FptFace.save');
+const DEFAULT_VALUE1 = 0.75;
 exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
     try {
         const config = {
@@ -70,7 +71,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                 // get value1
                 cicExternalService.selectValue1InFiCriManage(req.body.fiCode, 300).then(
                     resultValue1 => {
-                        let value1 = resultValue1.VALUE1 ? resultValue1.VALUE1 : 0.95;
+                        let value1 = resultValue1.VALUE1 ? resultValue1.VALUE1 : DEFAULT_VALUE1;
                         //
                         let dataInsertToScrapLog = new DataFptIdAndFaceMatchingSaveToScapLog(req.body, fullNiceKey);
                         // insert rq to ScrapLog
@@ -133,7 +134,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                 if (resultV02.data.ErrorCode === 0) {
                                                                     //    success get data v02 response p000
                                                                     preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                    responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithResult(req.body, preResponse, responseV01.data.Data.frontImage, responseV01.data.Data.backImage, resultV02.data.Data,value1);
+                                                                    responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithResult(req.body, preResponse, responseV01.data.Data.frontImage, responseV01.data.Data.backImage, resultV02.data.Data, value1);
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     let dataFptFaceSave = new DataSaveToFptFace(req, fullNiceKey, requestIdV02, resultV02.data);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -146,7 +147,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                         deleteFile(req);
                                                                     });
                                                                     return res.status(200).json(responseData);
-                                                                }  else if (resultV02.data.ErrorCode === 1451 || resultV02.data.ErrorCode === 1455) {
+                                                                } else if (resultV02.data.ErrorCode === 1451 || resultV02.data.ErrorCode === 1455) {
                                                                     // response F064
                                                                     console.log('message: ', resultV02.data.Message);
                                                                     deleteFile(req);
@@ -166,7 +167,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.UNABLETOVERIFYOCR.code).then();
                                                                     return res.status(200).json(responseData);
-                                                                }  else if (resultV02.data.ErrorCode === 1456 || resultV02.data.ErrorCode === 1551) {
+                                                                } else if (resultV02.data.ErrorCode === 1456 || resultV02.data.ErrorCode === 1551) {
                                                                     // response F066
                                                                     console.log('message: ', resultV02.data.Message);
                                                                     deleteFile(req);
@@ -271,7 +272,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                         })
                     }
                 ).catch(reason => {
-                    eleteFile(req);
+                    deleteFile(req);
                     return res.status(500).json({error: reason.toString()});
                 });
             }).catch(reason => {
