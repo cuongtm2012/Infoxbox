@@ -4,6 +4,9 @@ const checkContains = require('../../shared/util/checkcontains');
 const MAX_SIZE = 4194304;
 module.exports = {
     checkParamRequest: function (getDataReq, formData) {
+        if (formData === undefined) {
+            formData = {};
+        }
         var response;
         //fiSessionKey, Application number
         if (20 < getDataReq.appNumber.length) {

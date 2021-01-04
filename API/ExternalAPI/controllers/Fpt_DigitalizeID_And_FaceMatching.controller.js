@@ -25,6 +25,7 @@ const urlFptV01 = 'aggregator/api/v1/verification/v01_id';
 const urlFptV02 = 'aggregator/api/v1/verification/v02_facematching';
 const DataFptIdSaveToFptID = require('../domain/data_FptId_Save_To_FptId.save');
 const DataSaveToFptFace = require('../domain/data_Fpt_Digital_And_FaceMatching_SaveTo_FptFace.save');
+const DEFAULT_VALUE1 = 0.75;
 exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
     try {
         const config = {
@@ -70,7 +71,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                 // get value1
                 cicExternalService.selectValue1InFiCriManage(req.body.fiCode, 300).then(
                     resultValue1 => {
-                        let value1 = resultValue1.VALUE1 ? resultValue1.VALUE1 : 0.95;
+                        let value1 = resultValue1.VALUE1 ? resultValue1.VALUE1 : DEFAULT_VALUE1;
                         //
                         let dataInsertToScrapLog = new DataFptIdAndFaceMatchingSaveToScapLog(req.body, fullNiceKey);
                         // insert rq to ScrapLog
@@ -128,7 +129,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                             timeout: 100 * 1000,
                                                         };
                                                         // call to fpt V02
-                                                        axios(configWithAuth).then(
+                                                                     axios(configWithAuth).then(
                                                             resultV02 => {
                                                                 if (resultV02.data.ErrorCode === 0) {
                                                                     //    success get data v02 response p000
@@ -271,7 +272,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                         })
                     }
                 ).catch(reason => {
-                    eleteFile(req);
+                    deleteFile(req);
                     return res.status(500).json({error: reason.toString()});
                 });
             }).catch(reason => {
