@@ -15,6 +15,7 @@ module.exports = function dataSaveToInqLog(fptRq, preResponse) {
         idType,
         natId,
         taxCode,
+        mobilePhoneNumber,
         oldNatId,
         otrId,
         passportNumber,
@@ -37,5 +38,5 @@ module.exports = function dataSaveToInqLog(fptRq, preResponse) {
     this.inquiryDate = dateutil.getCurrentInquiryDate();
     this.infoProvConcent = infoProvConcent ? infoProvConcent : null;
     this.respCd = responseCode ? responseCode : null;
-    this.mobilePhoneNumber = null;
+    this.mobilePhoneNumber = mobilePhoneNumber ? mobilePhoneNumber : null;
 }
