@@ -13,7 +13,6 @@ module.exports = function RCS_M01_RQSTRequest(parameters, niceSessionKey) {
 		homeAddress,
 		workAddress,
 		referAddress,
-        inquiryDate,
         infoProvConcent
     } = parameters;
 
@@ -30,7 +29,6 @@ module.exports = function RCS_M01_RQSTRequest(parameters, niceSessionKey) {
     this.homeAddress = homeAddress;
     this.workAddress = workAddress;
     this.referAddress = referAddress;
-    this.inquiryDate = inquiryDate ? inquiryDate : dateutil.getCurrentInquiryDate();
     this.infoProvConcent = infoProvConcent;
 	this.niceSessionKey = niceSessionKey;
 };
