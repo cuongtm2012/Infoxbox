@@ -173,7 +173,7 @@ const TaskCode = {
     KYC_FI1_RQST: { code: 'KYC_FI1_RQST'},
     OKF_SCO_RQST: { code: 'OKF_SCO_RQST'},
 	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
-	RCS_OK1_RQST: { code: 'RCS_OK1_RQST'}
+	RCS_M01_RQST: { code: 'RCS_M01_RQST'}
 };
 
 const ProductCode = ['06'];
