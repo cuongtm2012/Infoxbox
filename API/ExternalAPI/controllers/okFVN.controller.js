@@ -121,7 +121,7 @@ exports.rcs_M01_RQST = function (req, res) {
 
     try {
         const getdataReq = new RCS_M01_RQSTReq(req.body);
-
+		let niceSessionKey;
         // check parameters request
         // request data
         let rsCheck = validRCS_M01_RQST.checkRCSM01ParamRequest(getdataReq);

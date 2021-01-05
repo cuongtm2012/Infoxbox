@@ -34,9 +34,9 @@ module.exports = function OKF_SPL_RQSTResponse(OKF_SPL_RQSTRequest, response) {
     this.salary = salary;
     this.joinYearMonth = joinYearMonth;
     this.infoProvConcent = infoProvConcent;
-    this.maxSimpleLimit = maxSimpleLimit;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
+    this.maxSimpleLimit = maxSimpleLimit;
 };
