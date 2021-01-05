@@ -18,9 +18,9 @@ module.exports = function OKF_SPL_RQSTResponse(OKF_SPL_RQSTRequest, response) {
         mobilePhoneNumber,
 		natId,
 		salary,
-		joinDate,
+		joinYearMonth,
         infoProvConcent,
-		simpleLimit
+		maxSimpleLimit
     } = OKF_SPL_RQSTRequest;
 
     this.fiSessionKey = fiSessionKey ? fiSessionKey : "";
@@ -32,9 +32,9 @@ module.exports = function OKF_SPL_RQSTResponse(OKF_SPL_RQSTRequest, response) {
     this.mobilePhoneNumber = mobilePhoneNumber;
     this.natId = natId;
     this.salary = salary;
-    this.joinDate = joinDate;
+    this.joinYearMonth = joinYearMonth;
     this.infoProvConcent = infoProvConcent;
-    this.simpleLimit = simpleLimit;
+    this.maxSimpleLimit = maxSimpleLimit;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";

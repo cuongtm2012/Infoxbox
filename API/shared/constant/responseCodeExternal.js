@@ -56,16 +56,15 @@ var RESCODEEXT = {
     NIREARIMAGE: {value: 56, name: 'Need to input mandatory item(Rear image)', code: "F056"},
     NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image, Source image)', code: "F057"},
     NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image, Target Image)', code: "F058"},
+	HOMEADDRESS: { value: 59, name: "Need to input mandatory item(homeAddress)", code: "F059" },
+	WORKADDRESS: { value: 60, name: "Need to input mandatory item(workAddress)", code: "F060" },
     NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
+    INVALIDSALARY: {value: 62, name: 'Salary is invalid', code: "F062"},
     RQOUTOFSIZE: {value: 63, name: 'Request file size should be lower than 4mb/file', code: "F063"},
     INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
     UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
-    InvalidNatId: {value: 67, name: 'National ID is invalid', code: "F067"},
-    InvalidSalary: {value: 68, name: 'Salary is invalid', code: "F068"},
-	NFGRADE: { value: 69, name: "Need to input mandatory item(nfGrade)", code: "F069" },
-	HOMEADDRESS: { value: 70, name: "Need to input mandatory item(homeAddress)", code: "F070" },
-	WORKADDRESS: { value: 71, name: "Need to input mandatory item(workAddress)", code: "F071" },
+	NFGRADE: { value: 67, name: "Need to input mandatory item(nfGrade)", code: "F067" },
 };
 
 const OracleError = {
@@ -198,6 +197,7 @@ const NiceProductCode = {
     KYC_FI1_RQST: { code: 'S2010'},
     OKF_SCO_RQST: { code: 'S2012'},
     OKF_SPL_RQST: { code: 'S2011'},
+    RCS_M01_RQST: { code: 'S2013'},
 };
 
 const StatusCodeBatchProcess = {
