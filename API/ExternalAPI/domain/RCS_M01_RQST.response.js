@@ -19,7 +19,6 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
 		homeAddress,
 		workAddress,
 		referAddress,
-        inquiryDate,
         infoProvConcent
     } = RCS_M01_RQSTRequest;
 
@@ -40,7 +39,8 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
 		referAddressRv,
 		referLatitude,
 		referLongtitude,
-		telcoCompany
+		telcoCompany,
+		addressCheckResult
     } = Coordinates;
 
     this.appNumber = appNumber ? appNumber : "";
@@ -54,7 +54,6 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
     this.homeAddress = homeAddress;
     this.workAddress = workAddress;
     this.referAddress = referAddress;
-    this.inquiryDate = inquiryDate ? inquiryDate : "";
     this.infoProvConcent = infoProvConcent;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
@@ -78,6 +77,7 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
 	this.referLatitude = referLatitude ? referLatitude : "";
 	this.referLongtitude = referLongtitude ? referLongtitude : "";
 	this.telcoCompany = telcoCompany ? telcoCompany : "";
+	this.addressCheckResult = addressCheckResult ? addressCheckResult : "";
 			
 };
 
