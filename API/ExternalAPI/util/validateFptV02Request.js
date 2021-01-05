@@ -9,7 +9,7 @@ module.exports = {
         }
         var response;
         //fiSessionKey
-        if (20 < getDataReq.fiSessionKey.length) {
+        if (!_.isEmpty(getDataReq.fiSessionKey) && 20 < getDataReq.fiSessionKey.length) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
                 responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
