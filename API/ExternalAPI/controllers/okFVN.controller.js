@@ -85,9 +85,9 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 okFVNService.getSimpleLimit(getdataReq, res).then(data => {
                     console.log("result OKF_SPL_RQST: ", data);
 
-                    let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                    let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                     responseData = new OKF_SPL_RQSTRes(getdataReq, responseSuccess);
-					responseData.simpleLimit = data
+					responseData.maxSimpleLimit = data
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
@@ -139,7 +139,7 @@ exports.rcs_M01_RQST = function (req, res) {
             return res.status(200).json(responseData);
         }
 		//TODO RCS_OK1_RQST not yet define NiceProductCode
-        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.OKF_SPL_RQST.code).then(dataFICode => {
+        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.RCS_M01_RQST.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
@@ -284,7 +284,7 @@ exports.rcs_M01_RQST = function (req, res) {
 				result90DayArrayTest.push(result90Day3);
 				result90DayArrayTest.push(result90Day4);
 				
-				console.log('result7DayArrayTest:', result7DayArrayTest);
+				//console.log('result7DayArrayTest:', result7DayArrayTest);
 				
 				let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                 responseData = new RCS_M01_RQSTRes(req.body, responseSuccess, reviewResult, result7DayArrayTest, result30DayArrayTest, result90DayArrayTest, coordinates);

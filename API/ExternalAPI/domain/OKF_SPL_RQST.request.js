@@ -11,7 +11,7 @@ module.exports = function OKF_SPL_RQSTRequest(parameters, niceSessionKey) {
         mobilePhoneNumber,
 		natId,
 		salary,
-		joinDate,
+		joinYearMonth,
         infoProvConcent
     } = parameters;
 
@@ -24,7 +24,7 @@ module.exports = function OKF_SPL_RQSTRequest(parameters, niceSessionKey) {
     this.mobilePhoneNumber = mobilePhoneNumber;
     this.natId = natId;
     this.salary = salary;
-    this.joinDate = joinDate;
+    this.joinYearMonth = joinYearMonth;
     this.infoProvConcent = infoProvConcent;
     this.niceSessionKey = niceSessionKey;
 };

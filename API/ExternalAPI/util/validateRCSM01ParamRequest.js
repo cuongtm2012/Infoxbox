@@ -69,8 +69,8 @@ module.exports = {
 		//homeAddress
 		if (validation.isEmptyStr(getdataReq.homeAddress)) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NFGRADE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NFGRADE.code
+                responseMessage: responcodeEXT.RESCODEEXT.HOMEADDRESS.name,
+                responseCode: responcodeEXT.RESCODEEXT.HOMEADDRESS.code
             }
             return response;
         }

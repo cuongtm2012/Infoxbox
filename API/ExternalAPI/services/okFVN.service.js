@@ -31,17 +31,17 @@ async function getSimpleLimit(req) {
 		
 		if(adjMonIncome >= 15000000) {
 			simpleLimit = 20000000
-		}else if(adjMonIncome >= 12000000 && 15000000 < adjMonIncome ) {
+		}else if(adjMonIncome > 12000000 && adjMonIncome  < 15000000 ) {
 			simpleLimit = 17000000
-		}else if(adjMonIncome >= 10000000 && 12000000 < adjMonIncome ) {
+		}else if(adjMonIncome > 10000000 && adjMonIncome < 12000000) {
 			simpleLimit = 15000000
-		}else if(adjMonIncome >= 7000000  && 10000000 < adjMonIncome) {
+		}else if(adjMonIncome > 7000000  && adjMonIncome < 10000000) {
 			simpleLimit = 12000000
-		}else if(adjMonIncome >= 5000000 && 7000000 < adjMonIncome) {
+		}else if(adjMonIncome > 5000000 && adjMonIncome < 7000000) {
 			simpleLimit = 10000000
-		}else if(adjMonIncome >= 3000000 && 5000000 < adjMonIncome) {
+		}else if(adjMonIncome > 3000000 && adjMonIncome < 5000000) {
 			simpleLimit = 7000000
-		}else if(adjMonIncome >= 1000000 && 3000000 < adjMonIncome) {
+		}else if(adjMonIncome > 1000000 && adjMonIncome < 3000000) {
 			simpleLimit = 5000000
 		}else if(adjMonIncome > 1000000) {
 			simpleLimit = 1000000

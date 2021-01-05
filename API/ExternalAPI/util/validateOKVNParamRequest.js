@@ -51,16 +51,16 @@ module.exports = {
 		//natId
 		if (!util.validNumber(getdataReq.natId)) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.InvalidNatId.name,
-                responseCode: responcodeEXT.RESCODEEXT.InvalidNatId.code
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
             }
             return response;
         }
 		//salary
 		if (!util.validNumber(getdataReq.salary)) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.InvalidSalary.name,
-                responseCode: responcodeEXT.RESCODEEXT.InvalidSalary.code
+                responseMessage: responcodeEXT.RESCODEEXT.INVALIDSALARY.name,
+                responseCode: responcodeEXT.RESCODEEXT.INVALIDSALARY.code
             }
             return response;
         }
