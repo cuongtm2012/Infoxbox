@@ -1,31 +1,12 @@
 var express = require('express');
 var router = express.Router();
 const _ = require('lodash');
-var maxSize = 1000 * 1000 * 1000 *1000;
-var multer  = require('multer');
 const path = require('path');
 const __dad = path.join(__dirname, '..')
 const pathToSaveImg = path.join(__dad, 'uploads');
 const checkRequest = require('../util/checkSizeRequest')
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: pathToSaveImg});
-var storage = multer.diskStorage({
-    destination: function (req, file, callback) {
-        callback(null, pathToSaveImg);
-    },
-    filename: function (req, file, callback) {
-        callback(null,Date.now() + file.originalname);
-    },
-    onFileUploadStart: function(file, req, res){
-        if(req.files.file.length > maxSize) {
-            return false;
-        }
-    }
-
-});
-
-var upload = multer({storage: storage, limits: { fileSize: maxSize }});
-// var verifyToken = require('../shared/auth/verifyToken');
 
 
 var cics11a_controller = require('../controllers/cics11a.controller');
@@ -62,11 +43,11 @@ router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 router.post('/OKF_SPL_RQST', okFVNController.okf_SPL_RQST);
 router.post('/RCS_M01_RQST', okFVNController.rcs_M01_RQST);
 
-router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 ,upload.fields([{ name: 'frontImage', maxCount: 1 }, { name: 'rearImage', maxCount: 1 }]) , function (req, res, next){
+router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 , multipartMiddleware, function (req, res, next){
     fptDigitalizeIDController.fptDigitalizeID(req,res);
 });
 
-router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, upload.fields([{ name: 'sourceImage', maxCount: 1 }, { name: 'targetImage', maxCount: 1 }]) , function (req, res, next){
+router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, multipartMiddleware, function (req, res, next){
     fptFaceMatchingController.fptFaceMatching(req,res);
 });
 
