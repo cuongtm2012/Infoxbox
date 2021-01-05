@@ -81,11 +81,9 @@ exports.fptFaceMatching = function (req, res) {
                                     // Prepare to call V02
                                     let bodyFormDataV02 = new FormData();
                                     let requestId = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
-                                    let pathToSourceImageImage = path.join(pathToSaveImg, req.files.sourceImage[0].filename);
-                                    let pathToTargetImageImage = path.join(pathToSaveImg, req.files.targetImage[0].filename);
                                     bodyFormDataV02.append('requestId', requestId);
-                                    bodyFormDataV02.append('sourceImage', fs.createReadStream(pathToSourceImageImage));
-                                    bodyFormDataV02.append('targetImage', fs.createReadStream(pathToTargetImageImage));
+                                    req.body.sourceImage ? bodyFormDataV02.append('sourceImage', req.body.sourceImage) : bodyFormDataV02.append('sourceImage', fs.createReadStream(req.files.sourceImage.path));
+                                    req.body.targetImage ? bodyFormDataV02.append('targetImage', req.body.targetImage) : bodyFormDataV02.append('targetImage', fs.createReadStream(req.files.targetImage.path));
                                     let configWithAuth = {
                                         method: 'post',
                                         url: URI.URL_FPT_DEV + urlFptV02,
@@ -212,14 +210,14 @@ function deleteFile(req) {
     // delete file
     if (!_.isEmpty(req.files)) {
         if (!_.isEmpty(req.files.sourceImage)) {
-            fs.unlink(path.join(pathToSaveImg, req.files.sourceImage[0].filename), function (err) {
+            fs.unlink(req.files.sourceImage.path, function (err) {
                 if (err) throw err;
                 console.log('deleted sourceImage ')
             });
         }
 
         if (!_.isEmpty(req.files.targetImage)) {
-            fs.unlink(path.join(pathToSaveImg, req.files.targetImage[0].filename), function (err) {
+            fs.unlink(req.files.targetImage.path, function (err) {
                 if (err) throw err;
                 console.log('deleted targetImage ')
             });
