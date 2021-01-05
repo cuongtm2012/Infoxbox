@@ -4,6 +4,9 @@ const checkContains = require('../../shared/util/checkcontains');
 const MAX_SIZE = 4194304;
 module.exports = {
     checkParamRequest: function (getDataReq, formData) {
+        if (formData === undefined) {
+            formData = {};
+        }
         var response;
         //fiSessionKey
         if (20 < getDataReq.fiSessionKey.length) {
@@ -66,14 +69,7 @@ module.exports = {
             return response;
         }
         // Source Image
-        if (_.isEmpty(formData.sourceImage)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.code
-            }
-            return response;
-        }
-        if (_.isEqual(formData.sourceImage[0].mimetype, "image/jpeg") === false && _.isEqual(formData.sourceImage[0].mimetype, "image/png") === false && _.isEqual(formData.sourceImage[0].mimetype, "image/jpg") === false) {
+        if (_.isEmpty(formData.sourceImage) && _.isEmpty(getDataReq.sourceImage)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NISELFIEIMAGE.code
@@ -81,14 +77,7 @@ module.exports = {
             return response;
         }
         // Target Image
-        if (_.isEmpty(formData.targetImage)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NIIDIMAGE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NIIDIMAGE.code
-            }
-            return response;
-        }
-        if (_.isEqual(formData.targetImage[0].mimetype, 'image/jpeg') === false && _.isEqual(formData.targetImage[0].mimetype, 'image/png') === false && _.isEqual(formData.targetImage[0].mimetype, 'image/jpg') === false) {
+        if (_.isEmpty(formData.targetImage) && _.isEmpty(getDataReq.targetImage)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIIDIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIIDIMAGE.code
@@ -96,14 +85,14 @@ module.exports = {
             return response;
         }
         // checking size
-        if (formData.sourceImage[0].size > MAX_SIZE) {
+        if (!_.isEmpty(formData.sourceImage) && formData.sourceImage.size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
             }
             return response;
         }
-        if (formData.targetImage[0].size > MAX_SIZE) {
+        if (!_.isEmpty(formData.targetImage) && formData.targetImage.size > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
