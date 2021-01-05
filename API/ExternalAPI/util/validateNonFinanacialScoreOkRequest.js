@@ -5,7 +5,7 @@ module.exports = {
     checkParamRequest: function (getDataReq) {
         var response;
         //fiSessionKey, appNumber
-        if (20 < getDataReq.appNumber.length) {
+        if (!_.isEmpty(getDataReq.appNumber) && 20 < getDataReq.appNumber.length) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
                 responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
