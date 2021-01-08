@@ -1,11 +1,11 @@
-module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, ReviewResultRes, result7Day, result30Day, result90Day, Coordinates) {
+module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, preResponse) {
 
     const {
         responseMessage,
         niceSessionKey,
         responseTime,
         responseCode
-    } = response;
+    } = preResponse;
 
     const {
         appNumber,
@@ -22,26 +22,26 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
         infoProvConcent
     } = RCS_M01_RQSTRequest;
 
-	const {//Review result
-        finalGrade,
-		finalLoanApproval,	
-		loanLimit,
-    } = ReviewResultRes;
-		
-	
-	const {//Coordinates
-        homeAddressRv,
-		homeLatitude,
-		homeLongtitude,
-		workAddressRv,
-		workLatitude,
-		workLongtitude,
-		referAddressRv,
-		referLatitude,
-		referLongtitude,
-		telcoCompany,
-		addressCheckResult
-    } = Coordinates;
+	// const {//Review result
+    //     finalGrade,
+	// 	finalLoanApproval,
+	// 	loanLimit,
+    // } = ReviewResultRes;
+	//
+	//
+	// const {//Coordinates
+    //     homeAddressRv,
+	// 	homeLatitude,
+	// 	homeLongtitude,
+	// 	workAddressRv,
+	// 	workLatitude,
+	// 	workLongtitude,
+	// 	referAddressRv,
+	// 	referLatitude,
+	// 	referLongtitude,
+	// 	telcoCompany,
+	// 	addressCheckResult
+    // } = Coordinates;
 
     this.appNumber = appNumber ? appNumber : "";
     this.fiCode = fiCode;
@@ -60,24 +60,24 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, response, Re
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
 
-	this.finalGrade = finalGrade;
-	this.finalLoanApproval = finalLoanApproval;
-	this.loanLimit = loanLimit;
-	this.result7Day = result7Day;
-	this.result30Day = result30Day;
-	this.result90Day = result90Day;
-	
-	this.homeAddressRv = homeAddressRv ? homeAddressRv : "";
-	this.homeLatitude = homeLatitude ? homeLatitude : "";
-	this.homeLongtitude = homeLongtitude ? homeLongtitude : "";
-	this.workAddressRv= workAddressRv ? workAddressRv : "";
-	this.workLatitude = workLatitude ? workLatitude : "";
-	this.workLongtitude = workLongtitude ? workLongtitude : "";
-	this.referAddressRv = referAddressRv ? referAddressRv : "";
-	this.referLatitude = referLatitude ? referLatitude : "";
-	this.referLongtitude = referLongtitude ? referLongtitude : "";
-	this.telcoCompany = telcoCompany ? telcoCompany : "";
-	this.addressCheckResult = addressCheckResult ? addressCheckResult : "";
+	// this.finalGrade = finalGrade;
+	// this.finalLoanApproval = finalLoanApproval;
+	// this.loanLimit = loanLimit;
+	// this.result7Day = result7Day;
+	// this.result30Day = result30Day;
+	// this.result90Day = result90Day;
+	//
+	// this.homeAddressRv = homeAddressRv ? homeAddressRv : "";
+	// this.homeLatitude = homeLatitude ? homeLatitude : "";
+	// this.homeLongtitude = homeLongtitude ? homeLongtitude : "";
+	// this.workAddressRv= workAddressRv ? workAddressRv : "";
+	// this.workLatitude = workLatitude ? workLatitude : "";
+	// this.workLongtitude = workLongtitude ? workLongtitude : "";
+	// this.referAddressRv = referAddressRv ? referAddressRv : "";
+	// this.referLatitude = referLatitude ? referLatitude : "";
+	// this.referLongtitude = referLongtitude ? referLongtitude : "";
+	// this.telcoCompany = telcoCompany ? telcoCompany : "";
+	// this.addressCheckResult = addressCheckResult ? addressCheckResult : "";
 			
 };
 

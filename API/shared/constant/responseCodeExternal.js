@@ -198,6 +198,7 @@ const NiceProductCode = {
     OKF_SCO_RQST: { code: 'S2012'},
     OKF_SPL_RQST: { code: 'S2011'},
     RCS_M01_RQST: { code: 'S2013'},
+    NICE_CODE_INQLOG: {code: '1010'}
 };
 
 const StatusCodeBatchProcess = {

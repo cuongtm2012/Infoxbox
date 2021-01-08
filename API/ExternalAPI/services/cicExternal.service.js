@@ -25,25 +25,25 @@ async function insertSCRPLOG(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: { val: producCode + niceSessionKey },
-                CUST_SSID_ID: { val: req.fiSessionKey },
-                CUST_CD: { val: req.fiCode },
-                GDS_CD: { val: producCode },
-                CIC_GDS_CD: { val: req.cicGoodCode },
-                LOGIN_ID: { val: req.loginId },
-                LOGIN_PW: { val: req.loginPw },
-                TAX_ID: { val: req.taxCode },
-                NATL_ID: { val: req.natId },
-                OLD_NATL_ID: { val: req.oldNatId },
-                PSPT_NO: { val: req.passportNumber },
-                CIC_ID: { val: req.cicId },
-                SCRP_STAT_CD: { val: '01' },
-                AGR_FG: { val: req.infoProvConcent },
-                INQ_DTIM: { val: req.inquiryDate },
-                SCRP_REQ_DTIM: { val: sysDim },
-                SYS_DTIM: { val: sysDim }
+                NICE_SSIN_ID: {val: producCode + niceSessionKey},
+                CUST_SSID_ID: {val: req.fiSessionKey},
+                CUST_CD: {val: req.fiCode},
+                GDS_CD: {val: producCode},
+                CIC_GDS_CD: {val: req.cicGoodCode},
+                LOGIN_ID: {val: req.loginId},
+                LOGIN_PW: {val: req.loginPw},
+                TAX_ID: {val: req.taxCode},
+                NATL_ID: {val: req.natId},
+                OLD_NATL_ID: {val: req.oldNatId},
+                PSPT_NO: {val: req.passportNumber},
+                CIC_ID: {val: req.cicId},
+                SCRP_STAT_CD: {val: '01'},
+                AGR_FG: {val: req.infoProvConcent},
+                INQ_DTIM: {val: req.inquiryDate},
+                SCRP_REQ_DTIM: {val: sysDim},
+                SYS_DTIM: {val: sysDim}
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
 
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
@@ -92,20 +92,20 @@ async function insertINQLOG(req) {
             // The statement to execute
             sql,
             {
-                INQ_LOG_ID: { val: req.niceSessionKey },
-                CUST_CD: { val: req.fiCode },
-                TX_GB_CD: { val: req.taskCode },
-                NATL_ID: { val: req.natId },
-                TAX_ID: { val: req.taxCode },
-                OTR_ID: { val: _OTR_ID },
-                CIC_ID: { val: req.cicId },
-                INQ_DTIM: { val: req.inquiryDate },
-                AGR_FG: { val: req.infoProvConcent },
-                RSP_CD: { val: req.respCd },
-                SYS_DTIM: { val: sysDim },
-                WORK_ID: { val: gateway }
+                INQ_LOG_ID: {val: req.niceSessionKey},
+                CUST_CD: {val: req.fiCode},
+                TX_GB_CD: {val: req.taskCode},
+                NATL_ID: {val: req.natId},
+                TAX_ID: {val: req.taxCode},
+                OTR_ID: {val: _OTR_ID},
+                CIC_ID: {val: req.cicId},
+                INQ_DTIM: {val: req.inquiryDate},
+                AGR_FG: {val: req.infoProvConcent},
+                RSP_CD: {val: req.respCd},
+                SYS_DTIM: {val: sysDim},
+                WORK_ID: {val: gateway}
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
 
         console.log("row insert INQLOG::", result.rowsAffected);
@@ -132,9 +132,14 @@ async function selectCICS11aRSLT(req) {
     let connection;
 
     try {
-        let resultScrpTranlog, resultCicrptMain, resultLoanDetailInfo, resultCreditCardInfo, resultVamcLoan, resultLoan12MInfo, resultNPL5YLoan, resultLoan12MCat, resultCollateral, resultFinancialContract, resultCusLookup, resultCard3Year;
-        let outputCicrptMain, outputScrpTranlog, outputLoanDetailinfo, outputCreditCardInfo, outputVamcLoan, outputLoan12MInfo, outputNPL5YLoan, outputloan12MCat, outputCollateral, outputFinanCialContract, outputCusLookup, outputCard3year;
-        var cmtLoanDetailInfo, cmtCreditCard, cmtVamcLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract, cmtCard3Year;
+        let resultScrpTranlog, resultCicrptMain, resultLoanDetailInfo, resultCreditCardInfo, resultVamcLoan,
+            resultLoan12MInfo, resultNPL5YLoan, resultLoan12MCat, resultCollateral, resultFinancialContract,
+            resultCusLookup, resultCard3Year;
+        let outputCicrptMain, outputScrpTranlog, outputLoanDetailinfo, outputCreditCardInfo, outputVamcLoan,
+            outputLoan12MInfo, outputNPL5YLoan, outputloan12MCat, outputCollateral, outputFinanCialContract,
+            outputCusLookup, outputCard3year;
+        var cmtLoanDetailInfo, cmtCreditCard, cmtVamcLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat,
+            cmtFinancialContract, cmtCard3Year;
 
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
@@ -165,10 +170,10 @@ async function selectCICS11aRSLT(req) {
             // The statement to execute
             sqlScrpTranlog,
             {
-                niceSessionKey: { val: req.niceSessionKey },
-                fiCode: { val: req.fiCode },
-                fiSessionKey: { val: _fiSessionKey },
-                inquiryDate: { val: _inquiryDate }
+                niceSessionKey: {val: req.niceSessionKey},
+                fiCode: {val: req.fiCode},
+                fiSessionKey: {val: _fiSessionKey},
+                inquiryDate: {val: _inquiryDate}
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -193,7 +198,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlCicrptMain,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -274,7 +279,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlLoanDetailInfo,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -284,8 +289,7 @@ async function selectCICS11aRSLT(req) {
 
             if (_.isEmpty(resultLoanDetailInfo.rows)) {
                 cmtLoanDetailInfo = outputCicrptMain[0].LOAN_CMT_DETAIL;
-            }
-            else
+            } else
                 outputLoanDetailinfo = resultLoanDetailInfo.rows;
 
             /*
@@ -299,7 +303,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlCreditCardInfo,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -308,8 +312,7 @@ async function selectCICS11aRSLT(req) {
             console.log("resultCreditCardInfo rows:", resultCreditCardInfo.rows);
             if (_.isEmpty(resultCreditCardInfo.rows)) {
                 cmtCreditCard = outputCicrptMain[0].CARD_CMT;
-            }
-            else
+            } else
                 outputCreditCardInfo = resultCreditCardInfo.rows;
 
             /*
@@ -322,7 +325,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlVamcLoan,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -331,8 +334,7 @@ async function selectCICS11aRSLT(req) {
             console.log("resultVamcLoan rows:", resultVamcLoan.rows);
             if (_.isEmpty(resultVamcLoan.rows)) {
                 cmtVamcLoan = outputCicrptMain[0].VAMC_CMT;
-            }
-            else
+            } else
                 outputVamcLoan = resultVamcLoan.rows;
 
             /*
@@ -345,7 +347,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlLoan12MInfo,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -354,8 +356,7 @@ async function selectCICS11aRSLT(req) {
             console.log("resultLoan12MInfo rows:", resultLoan12MInfo.rows);
             if (_.isEmpty(resultLoan12MInfo.rows)) {
                 cmtLoan12MInfo = outputCicrptMain[0].LOAN_12MON_CMT;
-            }
-            else
+            } else
                 outputLoan12MInfo = resultLoan12MInfo.rows;
 
             /*
@@ -368,7 +369,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlNPL5YLoan,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -377,8 +378,7 @@ async function selectCICS11aRSLT(req) {
             console.log("resultNPL5YLoan rows:", resultNPL5YLoan.rows);
             if (_.isEmpty(resultNPL5YLoan.rows)) {
                 cmtNPL5YearLoan = outputCicrptMain[0].NPL_5YR_CMT;
-            }
-            else
+            } else
                 outputNPL5YLoan = resultNPL5YLoan.rows;
 
             /*
@@ -391,7 +391,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlCard3Year,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -413,7 +413,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlLoan12MCat,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -422,8 +422,7 @@ async function selectCICS11aRSLT(req) {
             console.log("resultLoan12MCat rows:", resultLoan12MCat.rows);
             if (_.isEmpty(resultLoan12MCat.rows)) {
                 cmtLoan12MCat = outputCicrptMain[0].CAT_LOAN_12MON_CMT;
-            }
-            else
+            } else
                 outputloan12MCat = resultLoan12MCat.rows;
 
             /*
@@ -436,7 +435,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlCollateral,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -455,7 +454,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlFiancialContract,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -464,8 +463,7 @@ async function selectCICS11aRSLT(req) {
             console.log("resultFinancialContract rows:", resultFinancialContract.rows);
             if (_.isEmpty(resultFinancialContract.rows)) {
                 cmtFinancialContract = outputCicrptMain[0].FIN_CTRT_CMT;
-            }
-            else
+            } else
                 outputFinanCialContract = resultFinancialContract.rows;
 
             /*
@@ -478,7 +476,7 @@ async function selectCICS11aRSLT(req) {
                 // The statement to execute
                 sqlCusLookup,
                 {
-                    niceSessionKey: { val: req.niceSessionKey }
+                    niceSessionKey: {val: req.niceSessionKey}
                 },
                 {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -488,7 +486,28 @@ async function selectCICS11aRSLT(req) {
             outputCusLookup = resultCusLookup.rows;
 
 
-            return { outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, outputCreditCardInfo, cmtLoanDetailInfo, cmtCreditCard, outputVamcLoan, cmtVamcLoan, outputLoan12MInfo, cmtLoan12MInfo, outputNPL5YLoan, cmtNPL5YearLoan, outputloan12MCat, cmtLoan12MCat, outputCollateral, outputFinanCialContract, cmtFinancialContract, outputCusLookup, outputCard3year, cmtCard3Year };
+            return {
+                outputScrpTranlog,
+                outputCicrptMain,
+                outputLoanDetailinfo,
+                outputCreditCardInfo,
+                cmtLoanDetailInfo,
+                cmtCreditCard,
+                outputVamcLoan,
+                cmtVamcLoan,
+                outputLoan12MInfo,
+                cmtLoan12MInfo,
+                outputNPL5YLoan,
+                cmtNPL5YearLoan,
+                outputloan12MCat,
+                cmtLoan12MCat,
+                outputCollateral,
+                outputFinanCialContract,
+                cmtFinancialContract,
+                outputCusLookup,
+                outputCard3year,
+                cmtCard3Year
+            };
         }
     } catch (err) {
         console.log(err);
@@ -536,11 +555,11 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
             // The statement to execute
             sqlCusLookup,
             {
-                niceSessionKey: { val: req.niceSessionKey },
-                fiCode: { val: req.fiCode },
-                fiSessionKey: { val: _fiSessionKey },
-                inquiryDate: { val: _inquiryDate },
-                gdscd: { val: gdscd }
+                niceSessionKey: {val: req.niceSessionKey},
+                fiCode: {val: req.fiCode},
+                fiSessionKey: {val: _fiSessionKey},
+                inquiryDate: {val: _inquiryDate},
+                gdscd: {val: gdscd}
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -592,12 +611,12 @@ async function selectProcStatus(req) {
             // The statement to execute
             sql,
             {
-                inqDtimFrom: { val: req.searchDateFrom },
-                inqDtimTo: { val: req.searchDateTo },
-                fiCode: { val: req.fiCode },
-                offset: { val: req.offset },
-                scrapingStatusCode: { val: _scrapingStatusCode },
-                maxnumrows: { val: req.maxnumrows }
+                inqDtimFrom: {val: req.searchDateFrom},
+                inqDtimTo: {val: req.searchDateTo},
+                fiCode: {val: req.fiCode},
+                offset: {val: req.offset},
+                scrapingStatusCode: {val: _scrapingStatusCode},
+                maxnumrows: {val: req.maxnumrows}
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -610,10 +629,10 @@ async function selectProcStatus(req) {
             // The statement to execute
             sqlCount,
             {
-                inqDtimFrom: { val: req.searchDateFrom },
-                inqDtimTo: { val: req.searchDateTo },
-                fiCode: { val: req.fiCode },
-                scrapingStatusCode: { val: _scrapingStatusCode }
+                inqDtimFrom: {val: req.searchDateFrom},
+                inqDtimTo: {val: req.searchDateTo},
+                fiCode: {val: req.fiCode},
+                scrapingStatusCode: {val: _scrapingStatusCode}
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
@@ -621,7 +640,7 @@ async function selectProcStatus(req) {
         totalCount = resultCount.rows;
 
 
-        return { outputResult, totalCount };
+        return {outputResult, totalCount};
     } catch (err) {
         console.log(err);
         // return res.status(400);
@@ -653,22 +672,22 @@ async function insertDataZaloINQLOG(req) {
             // The statement to execute
             sql,
             {
-                INQ_LOG_ID: { val: req.inqLogId },
-                NICE_SSIN_ID: { val: req.niceSessionKey},
-                CUST_CD: { val: req.fiCode },
-                TX_GB_CD: { val: req.taskCode },
-                NATL_ID: { val: req.natId },
-                TAX_ID: { val: req.taxCode },
-                OTR_ID: { val: req.otrId },
-                CIC_ID: { val: req.cicId },
-                INQ_DTIM: { val: req.inquiryDate },
-                AGR_FG: { val: req.infoProvConcent },
-                RSP_CD: { val: req.respCd },
-                SYS_DTIM: { val: sysDim },
-                WORK_ID: { val: gateway },
-                TEL_NO_MOBILE: { val: req.mobilePhoneNumber }
+                INQ_LOG_ID: {val: req.inqLogId},
+                NICE_SSIN_ID: {val: req.niceSessionKey},
+                CUST_CD: {val: req.fiCode},
+                TX_GB_CD: {val: req.taskCode},
+                NATL_ID: {val: req.natId},
+                TAX_ID: {val: req.taxCode},
+                OTR_ID: {val: req.otrId},
+                CIC_ID: {val: req.cicId},
+                INQ_DTIM: {val: req.inquiryDate},
+                AGR_FG: {val: req.infoProvConcent},
+                RSP_CD: {val: req.respCd},
+                SYS_DTIM: {val: sysDim},
+                WORK_ID: {val: gateway},
+                TEL_NO_MOBILE: {val: req.mobilePhoneNumber}
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
 
         console.log("row insert INQLOG::", result.rowsAffected);
@@ -705,9 +724,9 @@ async function insertDataZaloToSCRPLOG(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.niceSessionKey ,
-                CUST_SSID_ID: req.fiSessionKey ,
-                CUST_CD: req.custCd ,
+                NICE_SSIN_ID: req.niceSessionKey,
+                CUST_SSID_ID: req.fiSessionKey,
+                CUST_CD: req.custCd,
                 GDS_CD: req.gdsCD,
                 TEL_NO_MOBILE: req.mobilePhoneNumber,
                 INQ_DTIM: req.inqDt,
@@ -715,7 +734,7 @@ async function insertDataZaloToSCRPLOG(req) {
                 SYS_DTIM: req.sysDt,
                 WORK_ID: req.workID
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
         return result.rowsAffected;
     } catch (err) {
@@ -749,12 +768,12 @@ async function updateRspCdScrapLogAfterGetResult(niceSessionKey, RspCd) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: { val: niceSessionKey },
-                RSP_CD: { val: RspCd }
+                NICE_SSIN_ID: {val: niceSessionKey},
+                RSP_CD: {val: RspCd}
             },
-            { autoCommit: true },
+            {autoCommit: true},
         );
-        console.log('updateRspCdScrapLogAfterGetResult: ',result.rowsAffected)
+        console.log('updateRspCdScrapLogAfterGetResult: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
         console.log(err);
@@ -784,15 +803,15 @@ async function insertDataZaloToExtScore(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.niceSessionKey ,
-                TEL_NO_MOBILE: req.mobilePhoneNumber ,
-                SCORE_CD: req.scoreCode ,
+                NICE_SSIN_ID: req.niceSessionKey,
+                TEL_NO_MOBILE: req.mobilePhoneNumber,
+                SCORE_CD: req.scoreCode,
                 SCORE_EXT: req.scoreEx.toString(),
                 CUST_GB: req.custGb,
                 EXT_REQ_ID: req.requestId,
                 SYSTEM_DTIM: req.sysDt,
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
         console.log("insertDataZaloToExtScore::", result.rowsAffected);
         return result.rowsAffected;
@@ -827,22 +846,22 @@ async function insertDataRiskScoreToINQLOG(req) {
             // The statement to execute
             sql,
             {
-                INQ_LOG_ID: { val: req.inqLogId },
-                NICE_SSIN_ID: { val: req.niceSessionKey},
-                CUST_CD: { val: req.fiCode },
-                TX_GB_CD: { val: req.taskCode },
-                NATL_ID: { val: req.natId },
-                TAX_ID: { val: req.taxCode },
-                OTR_ID: { val: req.otrId },
-                CIC_ID: { val: req.cicId },
-                INQ_DTIM: { val: req.inquiryDate },
-                AGR_FG: { val: req.infoProvConcent },
-                RSP_CD: { val: req.respCd },
-                SYS_DTIM: { val: sysDim },
-                WORK_ID: { val: gateway },
-                TEL_NO_MOBILE: { val: req.mobilePhoneNumber }
+                INQ_LOG_ID: {val: req.inqLogId},
+                NICE_SSIN_ID: {val: req.niceSessionKey},
+                CUST_CD: {val: req.fiCode},
+                TX_GB_CD: {val: req.taskCode},
+                NATL_ID: {val: req.natId},
+                TAX_ID: {val: req.taxCode},
+                OTR_ID: {val: req.otrId},
+                CIC_ID: {val: req.cicId},
+                INQ_DTIM: {val: req.inquiryDate},
+                AGR_FG: {val: req.infoProvConcent},
+                RSP_CD: {val: req.respCd},
+                SYS_DTIM: {val: sysDim},
+                WORK_ID: {val: gateway},
+                TEL_NO_MOBILE: {val: req.mobilePhoneNumber}
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
 
         console.log("row insert INQLOG::", result.rowsAffected);
@@ -879,9 +898,9 @@ async function insertDataRiskScoreToSCRPLOG(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.niceSessionKey ,
-                CUST_SSID_ID: req.fiSessionKey ,
-                CUST_CD: req.custCd ,
+                NICE_SSIN_ID: req.niceSessionKey,
+                CUST_SSID_ID: req.fiSessionKey,
+                CUST_CD: req.custCd,
                 GDS_CD: req.gdsCD,
                 TEL_NO_MOBILE: req.mobilePhoneNumber,
                 INQ_DTIM: req.inqDt,
@@ -890,7 +909,7 @@ async function insertDataRiskScoreToSCRPLOG(req) {
                 WORK_ID: req.workID,
                 NATL_ID: req.natId
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
         console.log('insertDataRiskScoreToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
@@ -922,9 +941,9 @@ async function insertDataRiskScoreToExtScore(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.niceSessionKey ,
-                TEL_NO_MOBILE: req.mobilePhoneNumber ,
-                SCORE_CD: req.scoreCode ,
+                NICE_SSIN_ID: req.niceSessionKey,
+                TEL_NO_MOBILE: req.mobilePhoneNumber,
+                SCORE_CD: req.scoreCode,
                 SCORE_EXT: req.scoreEx.toString(),
                 CUST_GB: req.custGb,
                 EXT_REQ_ID: req.requestId,
@@ -936,9 +955,9 @@ async function insertDataRiskScoreToExtScore(req) {
                 RSK_GRB_PROB: req.RSK_GRB_PROB.toString(),
                 RSK_ESB_PROB: req.RSK_ESB_PROB.toString(),
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
-        console.log('insertDataRiskScoreToExtScore: ',result.rowsAffected)
+        console.log('insertDataRiskScoreToExtScore: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
         console.log(err);
@@ -971,22 +990,22 @@ async function insertDataToINQLOG(req) {
             // The statement to execute
             sql,
             {
-                INQ_LOG_ID: { val: req.inqLogId },
-                NICE_SSIN_ID: { val: req.niceSessionKey},
-                CUST_CD: { val: req.fiCode },
-                TX_GB_CD: { val: req.taskCode },
-                NATL_ID: { val: req.natId },
-                TAX_ID: { val: req.taxCode },
-                OTR_ID: { val: req.otrId },
-                CIC_ID: { val: req.cicId },
-                INQ_DTIM: { val: req.inquiryDate },
-                AGR_FG: { val: req.infoProvConcent },
-                RSP_CD: { val: req.respCd },
-                SYS_DTIM: { val: sysDim },
-                WORK_ID: { val: gateway },
-                TEL_NO_MOBILE: { val: req.mobilePhoneNumber }
+                INQ_LOG_ID: {val: req.inqLogId},
+                NICE_SSIN_ID: {val: req.niceSessionKey},
+                CUST_CD: {val: req.fiCode},
+                TX_GB_CD: {val: req.taskCode},
+                NATL_ID: {val: req.natId},
+                TAX_ID: {val: req.taxCode},
+                OTR_ID: {val: req.otrId},
+                CIC_ID: {val: req.cicId},
+                INQ_DTIM: {val: req.inquiryDate},
+                AGR_FG: {val: req.infoProvConcent},
+                RSP_CD: {val: req.respCd},
+                SYS_DTIM: {val: sysDim},
+                WORK_ID: {val: gateway},
+                TEL_NO_MOBILE: {val: req.mobilePhoneNumber}
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
 
         console.log("row insert INQLOG::", result.rowsAffected);
@@ -1009,7 +1028,7 @@ async function insertDataToINQLOG(req) {
     }
 }
 
-async function insertDataFptRqToSCRPLOG(req) {
+async function insertDataReqToSCRPLOG(req) {
     let connection;
 
     try {
@@ -1023,18 +1042,18 @@ async function insertDataFptRqToSCRPLOG(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.niceSessionKey ,
-                CUST_SSID_ID: req.custSsId ,
-                CUST_CD: req.custCd ,
+                NICE_SSIN_ID: req.niceSessionKey,
+                CUST_SSID_ID: req.custSsId,
+                CUST_CD: req.custCd,
                 GDS_CD: req.gdsCD,
                 INQ_DTIM: req.inqDt,
                 AGR_FG: req.agrFG,
                 SYS_DTIM: req.sysDt,
                 WORK_ID: req.workID,
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
-        console.log('insertDataFptRqToSCRPLOG: ', result.rowsAffected)
+        console.log('insertDataReqToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
         console.log(err);
@@ -1074,7 +1093,7 @@ async function insertDataFptIdToFptId(req) {
                 NATIONALITY: req.NATIONALITY,
                 HOME: req.HOME,
                 ADDRESS: req.ADDRESS,
-                ID_TYPE: req.ID_TYPE ,
+                ID_TYPE: req.ID_TYPE,
                 PROVINCE: req.PROVINCE,
                 DISTRICT: req.DISTRICT,
                 WARD: req.WARD,
@@ -1082,7 +1101,7 @@ async function insertDataFptIdToFptId(req) {
                 DOE: req.DOE,
                 TYPE_FRONT: req.TYPE_FRONT,
                 ETHINICITY: req.ETHINICITY,
-                RELIGION : req.RELIGION,
+                RELIGION: req.RELIGION,
                 TYPE_NEW: req.TYPE_NEW,
                 FEATURES: req.FEATURES,
                 ISSUE_DATE: req.ISSUE_DATE,
@@ -1092,7 +1111,7 @@ async function insertDataFptIdToFptId(req) {
                 REQUEST_ID: req.REQUEST_ID,
                 RESULT_CODE: req.RESULT_CODE
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
         console.log('insertDataFptIdToFptID: ', result.rowsAffected)
         return result.rowsAffected;
@@ -1133,7 +1152,7 @@ async function insertDataToFptFace(req) {
                 RESULT: req.RESULT,
                 PROVIDER: req.PROVIDER
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
 
         console.log("insertDataToFptFace:", result.rowsAffected);
@@ -1170,9 +1189,9 @@ async function insertDataNFScoreOKToSCRPLOG(req) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.niceSessionKey ,
-                CUST_SSID_ID: req.custSsId ,
-                CUST_CD: req.custCd ,
+                NICE_SSIN_ID: req.niceSessionKey,
+                CUST_SSID_ID: req.custSsId,
+                CUST_CD: req.custCd,
                 GDS_CD: req.gdsCD,
                 NATL_ID: req.natId,
                 TEL_NO_MOBILE: req.mobilePhoneNumber,
@@ -1181,7 +1200,7 @@ async function insertDataNFScoreOKToSCRPLOG(req) {
                 SYS_DTIM: req.sysDt,
                 WORK_ID: req.workID,
             },
-            { autoCommit: true }
+            {autoCommit: true}
         );
         console.log('insertDataNFScoreOKToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
@@ -1232,6 +1251,144 @@ async function selectValue1InFiCriManage(custCd, cri) {
     }
 }
 
+async function selectPhoneNumberAndNatIDFromScrapLog(niceSskey, custCd) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT NATL_ID, OLD_NATL_ID, PSPT_NO, TEL_NO_MOBILE FROM TB_SCRPLOG WHERE CUST_CD = :CUST_CD AND NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                CUST_CD: custCd,
+                NICE_SSIN_ID: niceSskey
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT}
+        );
+        if (result.rows[0] !== undefined) {
+            if (!result.rows[0].TEL_NO_MOBILE) {
+                return {};
+            }
+            if (result.rows[0].NATL_ID) {
+                return result.rows[0];
+            } else if (result.rows[0].OLD_NATL_ID) {
+                return {
+                    NATL_ID: result.rows[0].OLD_NATL_ID,
+                    TEL_NO_MOBILE: result.rows[0].TEL_NO_MOBILE
+                }
+            } else if (result.rows[0].PSPT_NO) {
+                return {
+                    NATL_ID: result.rows[0].PSPT_NO,
+                    TEL_NO_MOBILE: result.rows[0].TEL_NO_MOBILE
+                }
+            } else {
+                return {};
+            }
+        } else {
+            return {};
+        }
+    } catch (err) {
+        return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function insertDataToVmgLocPct(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_VMG_LOC_PCT (NICE_SSIN_ID, RESULT_7D, RESULT_30D, RESULT_90D) 
+        VALUES (:NICE_SSIN_ID, :RESULT_7D, :RESULT_30D, :RESULT_90D)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey,
+                RESULT_7D: req.result7Day,
+                RESULT_30D: req.result30Day,
+                RESULT_90D: req.result90Day
+            },
+            {autoCommit: true}
+        );
+        console.log('insertDataToVmgLocPct: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function insertDataToVmgAddress(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_VMG_ADDRESS (NICE_SSIN_ID, ADDR_HOME, PERCENT_HOME, LAT_HOME, LONG_HOME, ADDR_WORK, PERCENT_WORK, LAT_WORK, LONG_WORK, ADDR_REFER, PERCENT_REFER, LAT_REFER, LONG_REFER, MONTH, YEAR) 
+        VALUES (:NICE_SSIN_ID, :ADDR_HOME, :PERCENT_HOME, :LAT_HOME, :LONG_HOME, :ADDR_WORK, :PERCENT_WORK, :LAT_WORK, :LONG_WORK, :ADDR_REFER, :PERCENT_REFER, :LAT_REFER, :LONG_REFER, :MONTH, :YEAR)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.NICE_SSIN_ID,
+                ADDR_HOME: req.ADDR_HOME,
+                PERCENT_HOME: req.PERCENT_HOME,
+                LAT_HOME: req.LAT_HOME,
+                LONG_HOME: req.LONG_HOME,
+                ADDR_WORK: req.ADDR_WORK,
+                PERCENT_WORK: req.PERCENT_WORK,
+                LAT_WORK: req.LAT_WORK,
+                LONG_WORK: req.LONG_WORK,
+                ADDR_REFER: req.ADDR_REFER,
+                PERCENT_REFER: req.PERCENT_REFER,
+                LAT_REFER: req.LAT_REFER,
+                LONG_REFER: req.LONG_REFER,
+                MONTH: req.MONTH,
+                YEAR: req.YEAR
+            },
+            {autoCommit: true}
+        );
+        console.log('insertDataToVmgAddress: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1245,8 +1402,11 @@ module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
 module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
 module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
 module.exports.insertDataToINQLOG = insertDataToINQLOG;
-module.exports.insertDataFptRqToSCRPLOG = insertDataFptRqToSCRPLOG;
+module.exports.insertDataReqToSCRPLOG = insertDataReqToSCRPLOG;
 module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
 module.exports.insertDataToFptFace = insertDataToFptFace;
 module.exports.insertDataNFScoreOKToSCRPLOG = insertDataNFScoreOKToSCRPLOG;
 module.exports.selectValue1InFiCriManage = selectValue1InFiCriManage;
+module.exports.selectPhoneNumberAndNatIDFromScrapLog = selectPhoneNumberAndNatIDFromScrapLog;
+module.exports.insertDataToVmgLocPct = insertDataToVmgLocPct;
+module.exports.insertDataToVmgAddress = insertDataToVmgAddress;
