@@ -75,7 +75,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                         //
                         let dataInsertToScrapLog = new DataFptIdAndFaceMatchingSaveToScapLog(req.body, fullNiceKey);
                         // insert rq to ScrapLog
-                        cicExternalService.insertDataFptRqToSCRPLOG(dataInsertToScrapLog).then(
+                        cicExternalService.insertDataReqToSCRPLOG(dataInsertToScrapLog).then(
                             result => {
                                 let body = {
                                     username: configExternal.AccountFptDev.username,

@@ -68,7 +68,7 @@ exports.fptFaceMatching = function (req, res) {
                 //    end check parmas
                 let dataInsertToScrapLog = new DataFptFaceMatchingSaveToScapLog(req.body, fullNiceKey);
                 // insert rq to ScrapLog
-                cicExternalService.insertDataFptRqToSCRPLOG(dataInsertToScrapLog).then(
+                cicExternalService.insertDataReqToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         let body = {
                             username: configExternal.AccountFptDev.username,

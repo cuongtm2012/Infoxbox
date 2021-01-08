@@ -69,7 +69,7 @@ exports.fptDigitalizeID = function (req, res) {
                 //    end check parmas
                 let dataInsertToScrapLog = new DataFptIdSaveToScapLog(req.body, fullNiceKey);
                 // insert rq to ScrapLog
-                cicExternalService.insertDataFptRqToSCRPLOG(dataInsertToScrapLog).then(
+                cicExternalService.insertDataReqToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         let body = {
                             username: configExternal.AccountFptDev.username,
