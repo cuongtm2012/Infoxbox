@@ -19,6 +19,7 @@ var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controll
 var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller')
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
 var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller')
+var mainScoreController = require('../controllers/MainScore.Controller')
 
 var okFVNController = require('../controllers/okFVN.controller')
 var pingPongController = require('../controllers/pingPong.controller')
@@ -41,7 +42,7 @@ router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);
 router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 
 router.post('/OKF_SPL_RQST', okFVNController.okf_SPL_RQST);
-router.post('/RCS_M01_RQST', okFVNController.rcs_M01_RQST);
+router.post('/RCS_M01_RQST', mainScoreController.rcs_M01_RQST);
 
 router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 , multipartMiddleware, function (req, res, next){
     fptDigitalizeIDController.fptDigitalizeID(req,res);

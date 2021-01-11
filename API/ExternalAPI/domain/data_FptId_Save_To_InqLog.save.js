@@ -25,7 +25,7 @@ module.exports = function dataSaveToInqLog(fptRq, preResponse) {
     } = fptRq;
 
     this.niceSessionKey = niceSessionKey;
-    this.inqLogId = responCode.NiceProductCode.ZALO.code + dateutil.timeStamp2();
+    this.inqLogId = responCode.NiceProductCode.NICE_CODE_INQLOG.code + dateutil.timeStamp2();
     this.fiCode = fiCode ? fiCode : null;
     this.taskCode = taskCode ? taskCode : null;
     this.natId =  natId ? natId : null;

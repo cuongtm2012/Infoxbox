@@ -15,7 +15,9 @@ var URI = {
 
     URL_VMG_DEV: 'https://api2-test.infosky.vn/app/info_sky_v2/api/request',
 
-    URL_FPT_DEV: 'https://api.uat.trandata.io/'
+    URL_FPT_DEV: 'https://api.uat.trandata.io/',
+
+    URL_RCLIPS_DEVELOP: 'http://103.112.124.153:18082/online/rclips/json'
 };
 
 module.exports = URI;
