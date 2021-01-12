@@ -4,12 +4,17 @@ const _ = require('lodash');
 const __dad = path.join(__dirname, '..')
 const pathToSaveImg = path.join(__dad, 'uploads');
 module.exports = function DataFptSaveToFptId(req, niceSessionKey, data, resultCode, requestId) {
+    if (req.body.idType.toUpperCase() !== 'ID') {
+        data.backImage = {};
+        this.REAR_IMAGE = null;
+    } else {
+        this.REAR_IMAGE = req.body.rearImage ? req.body.rearImage : convertImageToBase64(req.files.rearImage.path);
+    }
     this.NICE_SSIN_ID = niceSessionKey;
     this.REQUEST_ID = requestId;
     this.RESULT_CODE = resultCode;
     //
     this.FRONT_IMAGE = req.body.frontImage ? req.body.frontImage : convertImageToBase64(req.files.frontImage.path);
-    this.REAR_IMAGE = req.body.rearImage ? req.body.rearImage : convertImageToBase64(req.files.rearImage.path);
     // front
     this.ID_NUMBER = data.frontImage.id ? data.frontImage.id : null;
     this.NAME = data.frontImage.name ? data.frontImage.name : null;
