@@ -93,5 +93,5 @@ module.exports = function mainScoreResponseWithResult(RCS_M01_RQSTRequest, preRe
     this.referLatitude = resultCAC1.result.resCoordinates.refer_lat;
     this.referLongtitude = resultCAC1.result.resCoordinates.refer_long;
     this.telcoCompany = resultCAC1.telco;
-    this.addressCheckResult = resultCAC1.error_code;
+    this.addressCheckResult = resultCAC1.error_code.toString();
 };
