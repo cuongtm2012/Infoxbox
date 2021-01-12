@@ -92,7 +92,9 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                             bodyFormDataV01.append('requestId', requestIdV01);
                                             bodyFormDataV01.append('type', req.body.idType);
                                             req.body.frontImage ? bodyFormDataV01.append('frontImage', req.body.frontImage) : bodyFormDataV01.append('frontImage', fs.createReadStream(req.files.frontImage.path));
-                                            req.body.rearImage ? bodyFormDataV01.append('backImage', req.body.rearImage) : bodyFormDataV01.append('backImage', fs.createReadStream(req.files.rearImage.path));
+                                            if (req.body.idType.toUpperCase() === 'ID') {
+                                                req.body.rearImage ? bodyFormDataV01.append('backImage', req.body.rearImage) : bodyFormDataV01.append('backImage', fs.createReadStream(req.files.rearImage.path));
+                                            }
                                             let configWithAuth = {
                                                 method: 'post',
                                                 url: URI.URL_FPT_DEV + urlFptV01,

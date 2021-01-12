@@ -92,7 +92,7 @@ module.exports = {
             return response;
         }
         // Rear Image
-        if (_.isEmpty(formData.rearImage) && _.isEmpty(getDataReq.rearImage)) {
+        if ((getDataReq.idType.toUpperCase() === 'ID') && (_.isEmpty(formData.rearImage) && _.isEmpty(getDataReq.rearImage))) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIREARIMAGE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIREARIMAGE.code
