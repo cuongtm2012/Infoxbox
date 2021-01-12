@@ -9,6 +9,14 @@ module.exports = {
     checkOKVNParamRequest: function (getdataReq) {
         var response;
 
+        //fiSessionKey
+        if (!_.isEmpty(getdataReq.fiSessionKey) && 20 < getdataReq.fiSessionKey.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
+            }
+            return response;
+        }
         //ficode
         if (validation.isEmptyStr(getdataReq.fiCode)) {
             response = {
