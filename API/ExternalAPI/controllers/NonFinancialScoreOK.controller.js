@@ -10,6 +10,7 @@ const dateutil = require('../util/dateutil');
 const NFScoreResponseWithoutResult = require('../domain/NF_Score_OK_Res_Without_Result.response');
 const NFScoreResponseWithResult = require('../domain/NF_Score_OK_Res_With_Result.response');
 const dataNFScoreSaveToScrapLog = require('../domain/data_NF_Score_OK_Save_To_ScrapLog.save');
+const bodyPostNfScore = require('../domain/nfScorePost.Body');
 const validS11AService = require('../services/validS11A.service');
 const utilFunction = require('../../shared/util/util');
 const axios = require('axios');
@@ -87,16 +88,42 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                         //    update To EXT_SCORE
                                                             let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score);
                                                             cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
-                                                        // response P000
-                                                            preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                            responseData = new NFScoreResponseWithResult(req.body, preResponse, resultGetRiskScore.data.result.nice_score, resultGetZaloScore.data.data);
-                                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                            return res.status(200).json(responseData);
+                                                        //    Call Rclips
+                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, resultGetRiskScore.data.result.nice_score.RSK_SCORE, resultGetRiskScore.data.result.nice_score.RSK_GRADE, resultGetZaloScore.data.data.score);
+                                                            axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore, config).then(
+                                                                resultRclipsNF => {
+                                                                    if (!_.isEmpty(resultRclipsNF.data.listResult)) {
+                                                                        // response P000
+                                                                        preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                                                        responseData = new NFScoreResponseWithResult(req.body, preResponse, resultRclipsNF.data);
+                                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                                        return res.status(200).json(responseData);
+                                                                    } else {
+                                                                        //    update scraplog & response F048
+                                                                        console.log('errRclips', resultRclipsNF.data);
+                                                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                                        responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                        return res.status(200).json(responseData);
+                                                                    }
+                                                                }
+                                                            ).catch(reason => {
+                                                                //    update scraplog & response F048
+                                                                console.log('errRclips', reason.toString());
+                                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                                responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                return res.status(200).json(responseData);
+                                                            })
                                                         }  else if (resultGetRiskScore.data.error_code === 4) {
                                                             //    update scraplog & response F052
-                                                            console.log('err:',resultGetRiskScore.data.error_msg);
+                                                            console.log('errRiskscore:',resultGetRiskScore.data.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.NODATAEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NODATAEXIST.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -105,7 +132,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             return res.status(200).json(responseData);
                                                         } else if (resultGetRiskScore.data.error_code === 11) {
                                                             //    update scraplog & response F049
-                                                            console.log('err:',resultGetRiskScore.data.error_msg);
+                                                            console.log('errRiskscore:',resultGetRiskScore.data.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -114,7 +141,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             return res.status(200).json(responseData);
                                                         } else {
                                                             //    update scraplog & response F048
-                                                            console.log('err:',resultGetRiskScore.data.error_msg);
+                                                            console.log('errRiskscore:',resultGetRiskScore.data.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -126,7 +153,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 ).catch(
                                                     errGetRiskScore => {
                                                         //    update scraplog & response F048
-                                                        console.log("err:", errGetRiskScore);
+                                                        console.log("errGetRiskScore:", errGetRiskScore);
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                         responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -137,7 +164,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 );
                                             }  else {
                                                 //    update scraplog & response F048
-                                                console.log("err:", resultGetZaloScore.data.message);
+                                                console.log("errZalo:", resultGetZaloScore.data.message);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -148,7 +175,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                         }
                                     ).catch(reason => {
                                         //    update scraplog & response F048
-                                        console.log("err:", reason)
+                                        console.log("errZalo:", reason)
                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                         responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
