@@ -3,6 +3,7 @@ const logger = require('../config/logger');
 const OKF_SPL_RQSTReq = require('../domain/OKF_SPL_RQST.request');
 const OKF_SPL_RQSTRes = require('../domain/OKF_SPL_RQST.response');
 const dataSimpleLimitSaveToScrapLog = require('../domain/dataSimpleLimitSaveToScrapLog.save');
+const simpleLimitPostBody = require('../domain/simpleLimitRclips.body');
 const okFVNService = require('../services/okFVN.service');
 
 const validation = require('../../shared/util/validation');
@@ -24,14 +25,18 @@ const cicExternalService = require('../services/cicExternal.service');
 const utilFunction = require('../../shared/util/util');
 const io = require('socket.io-client');
 const URI = require('../../shared/URI');
+const axios = require('axios');
 
 exports.okf_SPL_RQST = function (req, res, next) {
-    let socket;
-
     try {
         let niceSessionKey;
         let preResponse, responseData, dataInqLogSave;
-
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            timeout: 60 * 1000
+        }
         /*
         Checking parameters request
         Request data
@@ -67,15 +72,29 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 //calculated simple limit
                 cicExternalService.insertDataSimpleLimitToSCRPLOG(dataSaveToScrapLog).then(
                     result => {
-                        okFVNService.getSimpleLimit(getdataReq, res).then(data => {
-                            preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                            responseData = new OKF_SPL_RQSTRes(getdataReq, preResponse);
-                            responseData.maxSimpleLimit = data.toString();
-                            // update INQLOG
-                            dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
-                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                            return res.status(200).json(responseData);
+                        //call Rclips
+                        let bodyRclipsSimpleLimit = new simpleLimitPostBody(req.body.mobilePhoneNumber, req.body.natId, req.body.joinYearMonth, req.body.salary);
+                        axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsSimpleLimit, config).then(
+                            resultRclipsSPL => {
+                                if (!_.isEmpty(resultRclipsSPL.data.listResult)) {
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                    responseData = new OKF_SPL_RQSTRes(getdataReq, preResponse);
+                                    responseData.maxSimpleLimit = resultRclipsSPL.data.listResult.OT007.toString();
+                                    // update INQLOG
+                                    dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                    return res.status(200).json(responseData);
+                                } else {
+                                    //    update scraplog & response F048
+                                    console.log('errRclips', resultRclipsSPL.data);
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                    responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
+                                    // update INQLOG
+                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                }
                         }).catch(reason => {
                             return res.status(500).json({error: reason.toString()});
                         });
