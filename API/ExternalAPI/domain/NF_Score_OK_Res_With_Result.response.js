@@ -31,5 +31,5 @@ module.exports = function NFScoreOKResponseWithScore(Request, preResponse, resul
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
     this.nfGrade = resultRclips.listResult.OT009.toString();
-    this.cutoffResult = resultRclips.listResult.OT008;
+    this.cutoffResult = resultRclips.listResult.OT011;
 }

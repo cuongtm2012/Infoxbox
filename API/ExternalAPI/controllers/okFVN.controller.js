@@ -79,7 +79,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                 if (!_.isEmpty(resultRclipsSPL.data.listResult)) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                     responseData = new OKF_SPL_RQSTRes(getdataReq, preResponse);
-                                    responseData.maxSimpleLimit = resultRclipsSPL.data.listResult.OT007.toString();
+                                    responseData.maxSimpleLimit = resultRclipsSPL.data.listResult.OT010.toString();
                                     // update INQLOG
                                     dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
