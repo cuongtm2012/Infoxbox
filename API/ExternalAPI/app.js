@@ -17,7 +17,6 @@ const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'u
 
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
@@ -25,7 +24,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 
 //Timeout

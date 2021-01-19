@@ -45,7 +45,26 @@ var RESCODEEXT = {
     TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
     OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
     FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
-    ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" }
+    ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" },
+    NINATIONALID: {value: 46, name: 'Need to input mandatory item(National ID)', code: "F046"},
+    NISCOREPRODUCT: {value: 47, name: 'Need to input mandatory item(Score Product)', code: "F047"},
+    EXTITFERR: {value: 48, name: 'External interface error', code: "F048"},
+    EXTITFTIMEOUTERR: {value: 49, name: 'External interface timeout error', code: "F049"},
+    NIBASEMONTH: {value: 53, name: 'Need to input mandatory item(Base Month)', code: "F053"},
+    NIIDTYPE: {value: 54, name: 'Need to input mandatory item(Id type)', code: "F054"},
+    NIFRONTIMAGE: {value: 55, name: 'Need to input mandatory item(Front image)', code: "F055"},
+    NIREARIMAGE: {value: 56, name: 'Need to input mandatory item(Rear image)', code: "F056"},
+    NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image, Source image)', code: "F057"},
+    NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image, Target Image)', code: "F058"},
+	HOMEADDRESS: { value: 59, name: "Need to input mandatory item(homeAddress)", code: "F059" },
+	WORKADDRESS: { value: 60, name: "Need to input mandatory item(workAddress)", code: "F060" },
+    NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
+    INVALIDSALARY: {value: 62, name: 'Salary is invalid', code: "F062"},
+    RQOUTOFSIZE: {value: 63, name: 'Request file size should be lower than 4mb/file', code: "F063"},
+    INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
+    UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
+    FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
+	NFGRADE: { value: 67, name: "Need to input mandatory item(nfGrade)", code: "F067" },
 };
 
 const OracleError = {
@@ -75,12 +94,12 @@ var SCRAPPINGERRORCODE = {
 const ScrappingResponseCodeLoginFailure = {
     LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-001] login page check fail', value: 1 },
     LoginFail2: { code: 'LOGIN-002', errMsg: '[LOGIN-002] login page check fail', value: 2 },
-    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
-    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
-    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
-    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
-    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
-    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
+    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
+    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
+    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
+    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
+    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
+    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
 };
 
 const ScrappingResponseCodeCicMobilerror = {
@@ -129,6 +148,7 @@ const ScrappingResponseCodeCicReportResultINQS37Error = {
     CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] CIC No not found.', value: 201 }
 };
 
+
 const ScrapingStatusCode = {
     LoginInError: { code: '20' },
     CicIdInqError: { code: '21' },
@@ -145,17 +165,40 @@ const TaskCode = {
     CIC_S37_RSLT: { code: 'CIC_S37_RSLT' },
     CIC_MACR_RQST: { code: 'CIC_MACR_RQST' },
     CIC_MACR_RSLT: { code: 'CIC_MACR_RSLT' },
-    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' }
+    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
+    ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' },
+    TCO_RK1_RQST: { code: 'TCO_RK1_RQST' },
+    KYC_F01_RQST: { code: 'KYC_F01_RQST'},
+    KYC_F02_RQST: { code: 'KYC_F02_RQST'},
+    KYC_FI1_RQST: { code: 'KYC_FI1_RQST'},
+    OKF_SCO_RQST: { code: 'OKF_SCO_RQST'},
+	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
+	RCS_M01_RQST: { code: 'RCS_M01_RQST'}
 };
 
 const ProductCode = ['06'];
 
 const InfoProvConcent = ['Y'];
 
+const FptIdTypeV01 = ['ID','DL','PP'];
+
+const NF_OK_SCORE_PRD = ['NOK100_001'];
+
+const NZ0100_001 = ['NZ0100_001']
+
 const NiceProductCode = {
     S11A: { code: 'S1001' },
     S37: { code: 'S1002' },
-    Mobile: { code: 'S1003' }
+    Mobile: { code: 'S1003' },
+    ZALO: { code: 'S2001' },
+    VMG_RISK_SCORE: { code: 'S2007'},
+    KYC_F01_RQST: { code: 'S2008'},
+    KYC_F02_RQST: { code: 'S2009'},
+    KYC_FI1_RQST: { code: 'S2010'},
+    OKF_SCO_RQST: { code: 'S2012'},
+    OKF_SPL_RQST: { code: 'S2011'},
+    RCS_M01_RQST: { code: 'S2013'},
+    NICE_CODE_INQLOG: {code: '1010'}
 };
 
 const StatusCodeBatchProcess = {
@@ -164,6 +207,16 @@ const StatusCodeBatchProcess = {
     CICReportInquiryDelay: '02',
     CICReportInquiryDelay3: '03'
 };
+
+const ScoreCode = {
+    zalo: 'NZ0100_001',
+    VmgRiskScore: 'NV0100_001',
+    NOK100_001: 'NOK100_001'
+}
+const CUST_GB = {
+    zalo: '22',
+    VMG: '21'
+}
 
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
@@ -180,3 +233,8 @@ module.exports.NiceProductCode = NiceProductCode;
 module.exports.StatusCodeBatchProcess = StatusCodeBatchProcess;
 module.exports.OracleError = OracleError;
 module.exports.ScrappingResponseCodeCicMobilerror = ScrappingResponseCodeCicMobilerror;
+module.exports.ScoreCode = ScoreCode;
+module.exports.CUST_GB = CUST_GB;
+module.exports.FptIdTypeV01 = FptIdTypeV01;
+module.exports.NF_OK_SCORE_PRD = NF_OK_SCORE_PRD;
+module.exports.NZ0100_001 = NZ0100_001;

@@ -49,10 +49,49 @@ module.exports = {
     },
 
     validFromDateEarlier93Days: function (searchDateFrom) {
-        let today = new Date(this.getCurrentInquiryDate().substring(0, 4), this.getCurrentInquiryDate().substring(5, 6), this.getCurrentInquiryDate().substring(6, 8));
-        let _searchDateFrom = new Date(searchDateFrom.substring(0, 4), searchDateFrom.substring(5, 6), searchDateFrom.substring(6, 8));
+        var yearFrom = searchDateFrom.substring(0, 4);
+        var monthFrom = searchDateFrom.substring(4, 6);
+        var dayFrom = searchDateFrom.substring(6, 8);
+        var dateFrom = new Date(yearFrom, monthFrom - 1, dayFrom);
+        let today = new Date();
+        let DifferenceInTime = today.getTime() - dateFrom.getTime();
+        let DifferenceInDays = this.convertMiliseconds(DifferenceInTime, 'd');
+        return DifferenceInDays < 93;
 
-        return Math.round((today - _searchDateFrom) / (1000 * 60 * 60 * 24)) < 93;
+    },
+
+    getTimeHoursNoDot: function () {
+        return dateFormat(new Date(), "HHMMss");
+    },
+
+    getCurrentMonth: function () {
+        return dateFormat(new Date(), 'yyyymm');
+    },
+
+    convertMiliseconds: function (miliseconds, format) {
+        var days, hours, minutes, seconds, total_hours, total_minutes, total_seconds;
+
+        total_seconds = parseInt(Math.floor(miliseconds / 1000));
+        total_minutes = parseInt(Math.floor(total_seconds / 60));
+        total_hours = parseInt(Math.floor(total_minutes / 60));
+        days = parseInt(Math.floor(total_hours / 24));
+
+        seconds = parseInt(total_seconds % 60);
+        minutes = parseInt(total_minutes % 60);
+        hours = parseInt(total_hours % 24);
+
+        switch (format) {
+            case 's':
+                return total_seconds;
+            case 'm':
+                return total_minutes;
+            case 'h':
+                return total_hours;
+            case 'd':
+                return days;
+            default:
+                return {d: days, h: hours, m: minutes, s: seconds};
+        }
     }
 
 };

@@ -1,0 +1,76 @@
+{
+	"info": {
+		"_postman_id": "8541ba86-2d6a-4a31-8f61-2faf054a0103",
+		"name": "v01",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "v01_id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "requestId",
+							"value": "nice_12345678911",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "ID",
+							"type": "text"
+						},
+						{
+							"key": "isVerify",
+							"value": "false",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "frontImage",
+							"type": "file",
+							"src": "/C:/Users/namnh35/Desktop/Screenshot 2020-10-27 140150.png"
+						},
+						{
+							"key": "backImage",
+							"type": "file",
+							"src": "/C:/Users/namnh35/Desktop/Screenshot 2020-10-27 140150.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://api.uat.trandata.io/aggregator/api/v1/verification/v01_id",
+					"protocol": "https",
+					"host": [
+						"api",
+						"uat",
+						"trandata",
+						"io"
+					],
+					"path": [
+						"aggregator",
+						"api",
+						"v1",
+						"verification",
+						"v01_id"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

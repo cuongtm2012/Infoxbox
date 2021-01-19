@@ -23,15 +23,12 @@ async function getSequence() {
                 //, extendedMetaData: true                 // get extra metadata
                 //, fetchArraySize: 100                    // internal buffer allocation size for tuning
             });
-
-        console.log("rows::", result.rows);
-
         return result.rows;
         // return res.status(200).json(result.rows);
 
 
     } catch (err) {
-        console.log(err);
+        console.log(err); throw err;
         // return res.status(400);
     } finally {
         if (connection) {

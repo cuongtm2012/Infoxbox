@@ -26,6 +26,14 @@ var config = {
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
 	secret: 'apisecretinfoplus12!@',
+	VmgToken: {
+		Dev_Token: '7be47eee76c88f4d2c698d6575cd8155'
+	},
+	AccountFptDev: {
+		username: "nice",
+		password: "nice@123"
+	},
+	SECRET_ZALO_DEV : 'TEST'
 };
 
 module.exports = config;
