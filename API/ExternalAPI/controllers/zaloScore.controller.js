@@ -83,6 +83,7 @@ exports.zaloScore = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
+                                                console.log("errZalo:", resultGetScore.data.message);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
@@ -94,6 +95,7 @@ exports.zaloScore = function (req, res) {
                                     ).catch(
                                         errorGetScore => {
                                             //    update scraplog & response F049
+                                            console.log("errZalo:", errorGetScore.toString());
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new ResponseWithoutScore(req.body, preResponse);
                                             dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
