@@ -65,6 +65,9 @@ var RESCODEEXT = {
     UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
 	NFGRADE: { value: 67, name: "Need to input mandatory item(nfGrade)", code: "F067" },
+    NITEMPLATEID: { value: 68, name: "Need to input mandatory item(Template ID)", code: "F068" },
+    NIALIAS: { value: 69, name: "Need to input mandatory item(Alias)", code: "F069" },
+    ERRCONTRACTDATASENDING: { value: 70, name: "Error on contract data sending", code: "F070" },
 };
 
 const OracleError = {
@@ -173,7 +176,9 @@ const TaskCode = {
     KYC_FI1_RQST: { code: 'KYC_FI1_RQST'},
     OKF_SCO_RQST: { code: 'OKF_SCO_RQST'},
 	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
-	RCS_M01_RQST: { code: 'RCS_M01_RQST'}
+	RCS_M01_RQST: { code: 'RCS_M01_RQST'},
+    FTN_SCD_RQST: { code: 'FTN_SCD_RQST'}
+
 };
 
 const ProductCode = ['06'];
@@ -198,7 +203,8 @@ const NiceProductCode = {
     OKF_SCO_RQST: { code: 'S2012'},
     OKF_SPL_RQST: { code: 'S2011'},
     RCS_M01_RQST: { code: 'S2013'},
-    NICE_CODE_INQLOG: {code: '1010'}
+    NICE_CODE_INQLOG: {code: '1010'},
+    FTN_SCD_RQST: {code: 'S2014'}
 };
 
 const StatusCodeBatchProcess = {
