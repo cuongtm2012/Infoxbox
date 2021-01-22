@@ -9,7 +9,14 @@ module.exports = {
     checkRCSM01ParamRequest: function (getdataReq) {
         var response;
 
-		
+        //fiSessionKey, Application number
+        if (!_.isEmpty(getdataReq.appNumber) && 20 < getdataReq.appNumber.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.name,
+                responseCode: responcodeEXT.RESCODEEXT.FISessionKeyOverLength.code
+            }
+            return response;
+        }
         //ficode
         if (validation.isEmptyStr(getdataReq.fiCode)) {
             response = {

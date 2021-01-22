@@ -17,7 +17,13 @@ var URI = {
 
     URL_FPT_DEV: 'https://api.uat.trandata.io/',
 
-    URL_RCLIPS_DEVELOP: 'http://103.112.124.153:18082/online/rclips/json'
+    URL_RCLIPS_DEVELOP: 'http://103.112.124.153:18082/online/rclips/json',
+
+    URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV: 'https://demo.econtract.fpt.com.vn/app/v1/client-auth/login',
+
+    URL_E_CONTRACT_SUBMIT_INFORMATION_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/sign',
+
+
 };
 
 module.exports = URI;
