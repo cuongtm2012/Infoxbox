@@ -1,3 +1,4 @@
+const logger = require('../config/logger');
 const validRequest = require('../util/validateFptV01andV02request');
 const axios = require('axios');
 const common_service = require('../services/common.service');
@@ -48,6 +49,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                logger.error(responseData);
                 deleteFile(req);
                 return res.status(200).send(responseData);
             }
@@ -59,11 +61,13 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    logger.error(responseData);
                     deleteFile(req);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                    logger.error(responseData);
                     deleteFile(req);
                     return res.status(500).json(responseData);
                 }
@@ -148,6 +152,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     ).catch(reason => {
                                                                         deleteFile(req);
                                                                     });
+                                                                    logger.info(responseData);
                                                                     return res.status(200).json(responseData);
                                                                 } else if (resultV02.data.ErrorCode === 1451 || resultV02.data.ErrorCode === 1455) {
                                                                     // response F064
@@ -158,6 +163,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.INVALIDINPUTIMAGE.code).then();
+                                                                    logger.error(responseData);
                                                                     return res.status(200).json(responseData);
                                                                 } else if (resultV02.data.ErrorCode === 1453 || resultV02.data.ErrorCode === 1653) {
                                                                     // response F065
@@ -168,6 +174,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.UNABLETOVERIFYOCR.code).then();
+                                                                    logger.error(responseData);
                                                                     return res.status(200).json(responseData);
                                                                 } else if (resultV02.data.ErrorCode === 1456 || resultV02.data.ErrorCode === 1551) {
                                                                     // response F066
@@ -178,6 +185,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.FACEMATCHINGFAILURE.code).then();
+                                                                    logger.error(responseData);
                                                                     return res.status(200).json(responseData);
                                                                 } else {
                                                                     //  response F048
@@ -188,18 +196,20 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                    logger.error(responseData);
                                                                     return res.status(200).json(responseData);
                                                                 }
                                                             }
                                                         ).catch(reason => {
                                                             // response F048
-                                                            console.log('Error when call FPT v02: ', reason);
+                                                            console.log('Error when call FPT v02: ', reason.toString());
                                                             deleteFile(req);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                             responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                            logger.error(reason.toString());
                                                             return res.status(200).json(responseData);
                                                         })
                                                     } else if (responseV01.data.ErrorCode === 1451 || responseV01.data.ErrorCode === 1455) {
@@ -211,6 +221,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.INVALIDINPUTIMAGE.code).then();
+                                                        logger.error(responseData);
                                                         return res.status(200).json(responseData);
                                                     } else if (responseV01.data.ErrorCode === 1453 || responseV01.data.ErrorCode === 1653) {
                                                         // response F065
@@ -221,6 +232,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.UNABLETOVERIFYOCR.code).then();
+                                                        logger.error(responseData);
                                                         return res.status(200).json(responseData);
                                                     } else {
                                                         console.log('errV01: ', responseV01.data.Message)
@@ -230,18 +242,20 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                        logger.error(responseData);
                                                         return res.status(200).json(responseData);
                                                     }
                                                 }
                                             ).catch(errV01 => {
                                                 // response F048
-                                                console.log('errV01: ', errV01)
+                                                console.log('errV01: ', errV01.toString())
                                                 deleteFile(req);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                logger.error(responseData);
                                                 return res.status(200).json(responseData);
                                             })
                                         } else {
@@ -253,11 +267,13 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            logger.error(responseData);
                                             return res.status(200).json(responseData);
                                         }
                                     }
                                 ).catch(reason => {
                                     //    get token err response F048
+                                    logger.error(reason.toString());
                                     deleteFile(req);
                                     console.log('Error when get token FPT v01: ', reason);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -269,23 +285,28 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                 })
                             }
                         ).catch(reason => {
+                            logger.error(reason.toString());
                             deleteFile(req);
                             return res.status(500).json({error: reason.toString()});
                         })
                     }
                 ).catch(reason => {
+                    logger.error(reason.toString());
                     deleteFile(req);
                     return res.status(500).json({error: reason.toString()});
                 });
             }).catch(reason => {
+                logger.error(reason.toString());
                 deleteFile(req);
                 return res.status(500).json({error: reason.toString()});
             })
         }).catch(reason => {
+            logger.error(reason.toString());
             deleteFile(req);
             return res.status(500).json({error: reason.toString()});
         })
     } catch (err) {
+        logger.error(err.toString());
         deleteFile(req);
         return res.status(500).json({error: err.toString()});
     }
