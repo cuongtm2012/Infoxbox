@@ -18,6 +18,7 @@ const dateutil = require('../util/dateutil');
 const dataMainScoreSaveToScrapLog = require('../domain/dataMainScoreSaveToScrapLog.save');
 const URI = require('../../shared/URI');
 const axios = require('axios');
+const logger = require('../config/logger');
 exports.rcs_M01_RQST = function (req, res) {
     try {
         const config = {
@@ -43,6 +44,7 @@ exports.rcs_M01_RQST = function (req, res) {
                 // update INQLOG
                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                logger.error(responseData);
                 return res.status(200).json(responseData);
             }
             // check FI contract
@@ -53,10 +55,12 @@ exports.rcs_M01_RQST = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    logger.error(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
+                    logger.error(responseData);
                     return res.status(500).json(responseData);
                 }
                 // end check params reqest
@@ -88,6 +92,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                             cicExternalService.insertDataToVmgLocPct(dataSaveToVmgLocPct).then();
                                                             cicExternalService.insertDataToVmgAddress(dataSaveToVmgAddress).then();
+                                                            logger.info(responseData);
                                                             return res.status(200).json(responseData);
                                                         } else if (resultCAC1.data.error_code === 4) {
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.NODATAEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NODATAEXIST.code);
@@ -95,6 +100,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
+                                                            logger.error(responseData);
+                                                            logger.error(resultCAC1.data);
                                                             return res.status(200).json(responseData);
                                                         } else {
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -102,6 +109,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                            logger.error(responseData);
+                                                            logger.error(resultCAC1.data);
                                                             return res.status(200).json(responseData);
                                                         }
                                                     }
@@ -112,6 +121,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                    logger.error(responseData);
+                                                    logger.error(reason.toString());
                                                     return res.status(200).json(responseData);
                                                 })
                                             } else {
@@ -120,6 +131,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                logger.error(responseData);
+                                                logger.error(resultRclips.data);
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
@@ -129,10 +142,13 @@ exports.rcs_M01_RQST = function (req, res) {
                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                        logger.error(reason.toString());
+                                        logger.error(responseData);
                                         return res.status(200).json(responseData);
                                     })
                                 }
                             ).catch(reason => {
+                                logger.error(reason.toString());
                                 return res.status(500).json({error: reason.toString()});
                             })
                         } else {
@@ -141,18 +157,23 @@ exports.rcs_M01_RQST = function (req, res) {
                             // update INQLOG
                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                            logger.error(responseData);
                             return res.status(200).json(responseData);
                         }
                     }).catch(reason => {
+                    logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 })
             }).catch(reason => {
+                logger.error(reason.toString());
                 return res.status(500).json({error: reason.toString()});
             });
         }).catch(reason => {
+            logger.error(reason.toString());
             return res.status(500).json({error: reason.toString()});
         });
     } catch (error) {
+        logger.error(error.toString());
         return res.status(500).json({error: error.toString()});
     }
 };
