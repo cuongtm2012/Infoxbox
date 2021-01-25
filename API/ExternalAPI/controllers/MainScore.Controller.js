@@ -27,12 +27,6 @@ exports.rcs_M01_RQST = function (req, res) {
             },
             timeout: 60 * 1000
         }
-        // var a = '[{"timerange":"0h-7h","homepercent":-1,"workpercent":-1,"referpercent":-1},{"timerange":"8h-12h","homepercent":-1,"workpercent":-1,"referpercent":-1},{"timerange":"13h-18h","homepercent":-1,"workpercent":-1,"referpercent":-1},{"timerange":"19h-23h","homepercent":-1,"workpercent":-1,"referpercent":-1},{"timerange":"0h-24h","homepercent":83,"workpercent":8,"referpercent":8}]';
-        // var b = JSON.parse(a);
-        // var c = [];
-        // c = b;
-        // console.log(c[0].timerange);
-        // check parameters request
         let rsCheck = validRCS_M01_RQST.checkRCSM01ParamRequest(req.body);
         let preResponse, responseData, dataInqLogSave;
         common_service.getSequence().then(resSeq => {
