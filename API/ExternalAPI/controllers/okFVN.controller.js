@@ -51,6 +51,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 // update INQLOG
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                logger.error(responseData);
                 return res.status(200).json(responseData);
             }
             validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.OKF_SPL_RQST.code).then(dataFICode => {
@@ -60,10 +61,12 @@ exports.okf_SPL_RQST = function (req, res, next) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    logger.error(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
+                    logger.error(responseData);
                     return res.status(500).json(responseData);
                 }
                 //End check params request
@@ -84,6 +87,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
@@ -94,20 +98,28 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    logger.error(responseData);
+                                    logger.error(resultRclipsSPL.data);
+                                    return res.status(200).json(responseData)
                                 }
                         }).catch(reason => {
+                            logger.error(reason.toString());
                             return res.status(500).json({error: reason.toString()});
                         });
                     }).catch(reason => {
+                    logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 });
             }).catch(reason => {
+                logger.error(reason.toString());
                 return res.status(500).json({error: reason.toString()});
             });
         }).catch(reason => {
+            logger.error(reason.toString());
             return res.status(500).json({error: reason.toString()});
         });
     } catch (err) {
+        logger.error(err.toString());
         return res.status(500).json({error: err.toString()});
     }
 };
