@@ -23,6 +23,8 @@ var URI = {
 
     URL_E_CONTRACT_SUBMIT_INFORMATION_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/sign',
 
+    URL_E_CONTRACT_GET_STATUS_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/envelope/status?id='
+
 
 };
 

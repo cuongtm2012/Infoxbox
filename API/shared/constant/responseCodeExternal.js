@@ -68,6 +68,8 @@ var RESCODEEXT = {
     NITEMPLATEID: { value: 68, name: "Need to input mandatory item(Template ID)", code: "F068" },
     NIALIAS: { value: 69, name: "Need to input mandatory item(Alias)", code: "F069" },
     ERRCONTRACTDATASENDING: { value: 70, name: "Error on contract data sending", code: "F070" },
+    NIIDOFCONTRACT: { value: 71, name: "Need to input mandatory item(ID)", code: "F071" },
+    ERRCONTRACTSTATUS: { value: 72, name: "Error on contract data sending", code: "F072" },
 };
 
 const OracleError = {
@@ -177,7 +179,8 @@ const TaskCode = {
     OKF_SCO_RQST: { code: 'OKF_SCO_RQST'},
 	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
 	RCS_M01_RQST: { code: 'RCS_M01_RQST'},
-    FTN_SCD_RQST: { code: 'FTN_SCD_RQST'}
+    FTN_SCD_RQST: { code: 'FTN_SCD_RQST'},
+    FTN_CCS_RQST: { code: 'FTN_CCS_RQST'}
 
 };
 
@@ -204,7 +207,8 @@ const NiceProductCode = {
     OKF_SPL_RQST: { code: 'S2011'},
     RCS_M01_RQST: { code: 'S2013'},
     NICE_CODE_INQLOG: {code: '1010'},
-    FTN_SCD_RQST: {code: 'S2014'}
+    FTN_SCD_RQST: {code: 'S2014'},
+    FTN_CSS_RQST: {code: 'S2014'}
 };
 
 const StatusCodeBatchProcess = {
