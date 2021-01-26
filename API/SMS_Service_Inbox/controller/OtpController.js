@@ -12,8 +12,8 @@ exports.getAuth = function () {
             {
                 json: {
                     grant_type: config.jsonURL.grant_type,
-                    client_id: config.jsonURL.envi.live.client_id,
-                    client_secret: config.jsonURL.envi.live.client_secret,
+                    client_id: config.jsonURL.envi.prod.client_id,
+                    client_secret: config.jsonURL.envi.prod.client_secret,
                     scope: config.jsonURL.scope,
                     session_id: config.jsonURL.session_id
                 }
