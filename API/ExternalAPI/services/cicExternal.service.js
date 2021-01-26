@@ -530,37 +530,47 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
         //Connection db
         connection = await oracledb.getConnection(dbconfig);
 
-        let _fiSessionKey, _inquiryDate, gdscd;
+        let _fiSessionKey, _inquiryDate, gdscd, subFiSessionKey, params;
 
         gdscd = niceGoodCode.niceProductCode(req.taskCode);
-
-        if (_.isEmpty(req.fiSessionKey))
-            _fiSessionKey = '%%';
-        else
-            _fiSessionKey = req.fiSessionKey;
 
         if (_.isEmpty(req.inquiryDate))
             _inquiryDate = '%%';
         else
             _inquiryDate = req.inquiryDate;
-
-        let sqlCusLookup = `SELECT T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
-                            where T.NICE_SSIN_ID = :niceSessionKey
-                            AND T.CUST_CD = :fiCode
-                            AND T.CUST_SSID_ID like :fiSessionKey
-                            AND T.INQ_DTIM like :inquiryDate
-                            AND T.GDS_CD = :gdscd`;
-
-        let result = await connection.execute(
-            // The statement to execute
-            sqlCusLookup,
-            {
+        if (_.isEmpty(req.fiSessionKey)) {
+            _fiSessionKey = '%%';
+            subFiSessionKey = ` AND T.CUST_SSID_ID like '%%' OR T.CUST_SSID_ID IS NULL `;
+            params = {
+                niceSessionKey: {val: req.niceSessionKey},
+                fiCode: {val: req.fiCode},
+                inquiryDate: {val: _inquiryDate},
+                gdscd: {val: gdscd}
+            };
+        }
+        else {
+            _fiSessionKey = req.fiSessionKey;
+            subFiSessionKey = ` AND T.CUST_SSID_ID like :fiSessionKey `;
+            params = {
                 niceSessionKey: {val: req.niceSessionKey},
                 fiCode: {val: req.fiCode},
                 fiSessionKey: {val: _fiSessionKey},
                 inquiryDate: {val: _inquiryDate},
                 gdscd: {val: gdscd}
-            },
+            }
+        }
+
+        let sqlCusLookup = `SELECT T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
+                            where T.NICE_SSIN_ID = :niceSessionKey
+                            AND T.CUST_CD = :fiCode` +
+            subFiSessionKey +
+            `AND T.INQ_DTIM like :inquiryDate
+                            AND T.GDS_CD = :gdscd`;
+
+        let result = await connection.execute(
+            // The statement to execute
+            sqlCusLookup,
+            params,
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
             });
