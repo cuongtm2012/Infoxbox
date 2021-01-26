@@ -43,7 +43,7 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : '';
+    this.scrapingStatusCode = SCRP_STAT_CD ;
     this.cicReportRequestDate = INQ_DTIM;
     this.cicReportResponseDate = SYS_DTIM ? SYS_DTIM.substring(0, 8) : SYS_DTIM;
     this.name = PSN_NM;
@@ -56,6 +56,6 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.creditGrade = GRADE;
     this.baseDate = util.convertDateType(BASE_DATE);
     this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
-    this.relatedFiName = REL_OGZ_LIST ? util.replaceSpacialCharacter(REL_OGZ_LIST) : null;
+    this.relatedFiName = REL_OGZ_LIST;
 };
 
