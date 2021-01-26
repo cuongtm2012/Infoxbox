@@ -4,7 +4,7 @@ const _ = require('lodash');
 const path = require('path');
 const __dad = path.join(__dirname, '..')
 const pathToSaveImg = path.join(__dad, 'uploads');
-const checkRequest = require('../util/checkSizeRequest')
+const checkRequest = require('../util/checkSizeRequest');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: pathToSaveImg});
 
@@ -13,16 +13,18 @@ var cics11a_controller = require('../controllers/cics11a.controller');
 var cicS37Rqst_controller = require('../controllers/cics37.controller');
 var cicProcStat_controller = require('../controllers/cicProcStat.controller');
 const cicMacr_Controller = require('../controllers/cicMacr.controller');
-var zaloScoreController = require('../controllers/zaloScore.controller')
-var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller')
-var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller')
-var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller')
-var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller')
-var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller')
-var mainScoreController = require('../controllers/MainScore.Controller')
+var zaloScoreController = require('../controllers/zaloScore.controller');
+var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller');
+var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller');
+var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller');
+var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller');
+var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller');
+var mainScoreController = require('../controllers/MainScore.Controller');
+var sendingDataContractFPTController = require('../controllers/sendingContractData.controller');
+var statusContractFPTController = require('../controllers/statusOfCotract.controller');
 
-var okFVNController = require('../controllers/okFVN.controller')
-var pingPongController = require('../controllers/pingPong.controller')
+var okFVNController = require('../controllers/okFVN.controller');
+var pingPongController = require('../controllers/pingPong.controller');
 
 router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);
 
@@ -57,5 +59,9 @@ router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, multipartMiddlew
 });
 
 router.get('/api/ping', pingPongController.pingPong);
+
+router.post('/contract/FTN_SCD_RQST', sendingDataContractFPTController.sendingContractData);
+
+router.post('/contract/FTN_CCS_RQST', statusContractFPTController.statusOfContract);
 
 module.exports = router;

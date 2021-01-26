@@ -33,7 +33,14 @@ var config = {
 		username: "nice",
 		password: "nice@123"
 	},
-	SECRET_ZALO_DEV : 'TEST'
+	SECRET_ZALO_DEV : 'TEST',
+
+	bodyGetAuthEContract: {
+		DEV_username: 'jhhan@nicegroup.com.vn',
+		DEV_password: 'nice@123',
+		DEV_clientid: 'be_group',
+		DEV_clientsecret: 'be_group'
+	}
 };
 
 module.exports = config;
