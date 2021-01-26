@@ -4,15 +4,7 @@ var config = {
     BRAND_NAME_TEST:'FTI',
     URL_REQUEST_LIVE: 'http://app.sms.fpt.net',
     URL_REQUEST_SANBOX: 'http://sandbox.sms.fpt.net',
-    TemSMS: {
-        APPLE_LINK : ' https://apps.apple.com/vn/app/icic/id1467621816 ',
-        ANDROID_LINK : ' https://play.google.com/store/apps/details?id=vn.cicb.customer ',
-        MOBILE_LINK: ' https://103.112.124.129:4200/banks?phone='
-    },
-    FinalSMS_1 : `Cam on quy khach su dung dich vu InfoBox. Quy khach vui long tai app tai IOS:`,
-    FinalSMS_2 : `hoac Android:`,
-    FinalSMS_3 : `de dang ky thanh vien, tra cuu bao cao tin dung ca nhan. Tra cuu`,
-    FinalSMS_4: `, chon TCTD, dong y cung cap thong tin va Gui.`,
+    FinalSMS: `Để gửi báo cáo TD cá nhân đến TCTD cần giao dịch, KH tham khảo hướng dẫn tại link (https://mobile-infobox.nicegroup.com.vn:4200/user-guide). Xin cảm ơn!`,
     database: {
         host: '1.55.215.214',
         user: 'root',
