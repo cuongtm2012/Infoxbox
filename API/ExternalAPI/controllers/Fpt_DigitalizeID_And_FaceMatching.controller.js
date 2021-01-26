@@ -86,7 +86,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                     password: configExternal.AccountFptDev.password
                                 }
                                 // get token
-                                axios.post(URI.URL_FPT_DEV + urlGetAuth, body, config).then(
+                                axios.post(URI.URL_FPT_PROD + urlGetAuth, body, config).then(
                                     resultGetAuth => {
                                         if (resultGetAuth.data.ErrorCode === 0) {
                                             // success get auth
@@ -101,7 +101,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                             }
                                             let configWithAuth = {
                                                 method: 'post',
-                                                url: URI.URL_FPT_DEV + urlFptV01,
+                                                url: URI.URL_FPT_PROD + urlFptV01,
                                                 headers: {
                                                     'Content-Type': 'multipart/json',
                                                     'Authorization': `Bearer ${resultGetAuth.data.Data.sessionToken}`, ...bodyFormDataV01.getHeaders()
@@ -126,7 +126,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
 
                                                         let configWithAuth = {
                                                             method: 'post',
-                                                            url: URI.URL_FPT_DEV + urlFptV02,
+                                                            url: URI.URL_FPT_PROD + urlFptV02,
                                                             headers: {
                                                                 'Content-Type': 'multipart/json',
                                                                 'Authorization': `Bearer ${resultGetAuth.data.Data.sessionToken}`, ...bodyFormDataV02.getHeaders()
