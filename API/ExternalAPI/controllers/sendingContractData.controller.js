@@ -81,6 +81,7 @@ exports.sendingContractData = function (req, res) {
                                                 //    update scraplog & response P000
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
+                                                responseData.id = resultSubmitInfo.data;
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
