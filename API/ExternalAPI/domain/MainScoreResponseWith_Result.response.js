@@ -1,4 +1,4 @@
-module.exports = function mainScoreResponseWithResult(RCS_M01_RQSTRequest, preResponse, resultCAC1) {
+module.exports = function mainScoreResponseWithResult(RCS_M01_RQSTRequest, preResponse, resultCAC1, resultRclips) {
     let result7Day = [];
     let result30Day = [];
     let result90Day = [];
@@ -75,9 +75,9 @@ module.exports = function mainScoreResponseWithResult(RCS_M01_RQSTRequest, preRe
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
 //    loan approval result
-    this.finalGrade = '10';
-    this.finalLoanApproval = 'Y';
-    this.loanLimit = '10';
+    this.finalGrade = resultRclips.OT006;
+    this.finalLoanApproval = resultRclips.OT011;
+    this.loanLimit = resultRclips.OT010;
 //  day result
     this.result7Day = result7Day;
     this.result30Day = result30Day;
