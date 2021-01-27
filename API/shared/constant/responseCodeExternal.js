@@ -70,6 +70,7 @@ var RESCODEEXT = {
     ERRCONTRACTDATASENDING: { value: 70, name: "Error on contract data sending", code: "F070" },
     NIIDOFCONTRACT: { value: 71, name: "Need to input mandatory item(ID)", code: "F071" },
     ERRCONTRACTSTATUS: { value: 72, name: "Error on contract data sending", code: "F072" },
+    NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input phone number and FI code", code: "F073" },
 };
 
 const OracleError = {
