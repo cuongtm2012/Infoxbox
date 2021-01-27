@@ -62,6 +62,6 @@ router.get('/api/ping', pingPongController.pingPong);
 
 router.post('/contract/FTN_SCD_RQST', sendingDataContractFPTController.sendingContractData);
 
-router.post('/contract/FTN_CCS_RQST', statusContractFPTController.statusOfContract);
+router.get('/contract/FTN_CCS_RQST', statusContractFPTController.statusOfContract);
 
 module.exports = router;
