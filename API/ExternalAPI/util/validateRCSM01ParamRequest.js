@@ -40,15 +40,7 @@ module.exports = {
             }
             return response;
         }
-        //nfGrade
-		if (validation.isEmptyStr(getdataReq.nfGrade)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NFGRADE.name,
-                responseCode: responcodeEXT.RESCODEEXT.NFGRADE.code
-            }
-            return response;
-        }
-		//cicNiceSessionKey	
+		//cicNiceSessionKey
 		if (validation.isEmptyStr(getdataReq.cicNiceSessionKey)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,

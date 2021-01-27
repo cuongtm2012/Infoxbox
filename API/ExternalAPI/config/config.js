@@ -40,7 +40,9 @@ var config = {
 		DEV_password: 'nice@123',
 		DEV_clientid: 'be_group',
 		DEV_clientsecret: 'be_group'
-	}
+	},
+
+	serviceNameOKF: 'OKF_CSS_ASS'
 };
 
 module.exports = config;
