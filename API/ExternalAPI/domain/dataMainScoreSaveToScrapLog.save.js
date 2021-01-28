@@ -9,6 +9,7 @@ module.exports = function dataMainScoreSaveToScrapLog(Request, niceSessionKey) {
         customerNumber,
         productCode,
         nfGrade,
+        natId,
         cicNiceSessionKey,
         mobilePhoneNumber,
         homeAddress,
@@ -20,6 +21,7 @@ module.exports = function dataMainScoreSaveToScrapLog(Request, niceSessionKey) {
     this.niceSessionKey = niceSessionKey;
     this.custSsId = appNumber ? appNumber : null;
     this.custCd = fiCode;
+    this.natId = natId;
     this.gdsCD = responCode.NiceProductCode.RCS_M01_RQST.code;
     this.inqDt = dateutil.getCurrentInquiryDate();
     this.agrFG = infoProvConcent;
