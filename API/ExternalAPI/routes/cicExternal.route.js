@@ -20,8 +20,7 @@ var fptFaceMatchingController = require('../controllers/fptFaceMatching.controll
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller');
 var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller');
 var mainScoreController = require('../controllers/MainScore.Controller');
-var sendingDataContractFPTController = require('../controllers/sendingContractData.controller');
-var statusContractFPTController = require('../controllers/statusOfCotract.controller');
+
 
 var okFVNController = require('../controllers/okFVN.controller');
 var pingPongController = require('../controllers/pingPong.controller');
@@ -60,8 +59,5 @@ router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, multipartMiddlew
 
 router.get('/api/ping', pingPongController.pingPong);
 
-router.post('/contract/FTN_SCD_RQST', sendingDataContractFPTController.sendingContractData);
-
-router.post('/contract/FTN_CCS_RQST', statusContractFPTController.statusOfContract);
 
 module.exports = router;

@@ -48,7 +48,7 @@ module.exports = {
             }
             return response;
         }
-		//cicNiceSessionKey	
+		//cicNiceSessionKey
 		if (validation.isEmptyStr(getdataReq.cicNiceSessionKey)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,
@@ -56,7 +56,21 @@ module.exports = {
             }
             return response;
         }
-
+        //    national ID
+        if (_.isEmpty(getdataReq.natId)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
+            }
+            return response;
+        }
+        if (50 < getdataReq.natId.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
+            }
+            return response;
+        }
         //mobilePhoneNumber
         //TODO check with list available phone number, data type
         if (validation.isEmptyStr(getdataReq.mobilePhoneNumber)) {

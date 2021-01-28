@@ -5,7 +5,7 @@ const convertTime = require('../util/dateutil');
 const niceGoodCode = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 const _ = require('lodash');
-
+const responCode = require('../../shared/constant/responseCodeExternal');
 async function insertSCRPLOG(req) {
     let connection;
 
@@ -1045,8 +1045,8 @@ async function insertDataReqToSCRPLOG(req) {
         let sql, result;
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, NATL_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :NATL_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -1056,6 +1056,7 @@ async function insertDataReqToSCRPLOG(req) {
                 CUST_SSID_ID: req.custSsId,
                 CUST_CD: req.custCd,
                 GDS_CD: req.gdsCD,
+                NATL_ID: req.natId,
                 INQ_DTIM: req.inqDt,
                 AGR_FG: req.agrFG,
                 SYS_DTIM: req.sysDt,
@@ -1261,43 +1262,44 @@ async function selectValue1InFiCriManage(custCd, cri) {
     }
 }
 
-async function selectPhoneNumberAndNatIDFromScrapLog(niceSskey, custCd) {
+async function selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode(custCd, phoneNumber, gdsCd) {
     let connection;
 
     try {
         let sql, result;
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `SELECT NATL_ID, OLD_NATL_ID, PSPT_NO, TEL_NO_MOBILE FROM TB_SCRPLOG WHERE CUST_CD = :CUST_CD AND NICE_SSIN_ID = :NICE_SSIN_ID`;
+        sql = `SELECT a.SCORE_CD,  a.SCORE_EXT, a.GRADE, b.NATL_ID, b.SYS_DTIM 
+                FROM TB_EXT_SCORE a 
+                INNER JOIN TB_SCRPLOG b
+                ON a.NICE_SSIN_ID = b.NICE_SSIN_ID
+                WHERE b.CUST_CD = :CUST_CD AND b.TEL_NO_MOBILE = :TEL_NO_MOBILE AND b.GDS_CD = :GDS_CD AND RSP_CD = 'P000'
+                ORDER BY b.SYS_DTIM DESC 
+                OFFSET 0 ROWS FETCH NEXT 2 ROWS ONLY`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
-                CUST_CD: custCd,
-                NICE_SSIN_ID: niceSskey
+                CUST_CD: {val: custCd},
+                TEL_NO_MOBILE: {val: phoneNumber},
+                GDS_CD: {val: gdsCd}
             },
             {outFormat: oracledb.OUT_FORMAT_OBJECT}
         );
-        if (result.rows[0] !== undefined) {
-            if (!result.rows[0].TEL_NO_MOBILE) {
-                return {};
-            }
-            if (result.rows[0].NATL_ID) {
-                return result.rows[0];
-            } else if (result.rows[0].OLD_NATL_ID) {
-                return {
-                    NATL_ID: result.rows[0].OLD_NATL_ID,
-                    TEL_NO_MOBILE: result.rows[0].TEL_NO_MOBILE
-                }
-            } else if (result.rows[0].PSPT_NO) {
-                return {
-                    NATL_ID: result.rows[0].PSPT_NO,
-                    TEL_NO_MOBILE: result.rows[0].TEL_NO_MOBILE
-                }
-            } else {
-                return {};
-            }
+        let objResult = {};
+        if (result.rows[0] !== undefined && result.rows.length === 2) {
+            result.rows.forEach(
+                element => {
+                    if (_.isEqual(element.SCORE_CD, responCode.ScoreCode.zalo)) {
+                        objResult.zaloScore = parseFloat(element.SCORE_EXT);
+                        objResult.natID = element.NATL_ID;
+                    } else if (_.isEqual(element.SCORE_CD, responCode.ScoreCode.VmgRiskScore)) {
+                        objResult.vmgScore = parseFloat(element.SCORE_EXT);
+                        objResult.vmgGrade = parseFloat(element.GRADE);
+                    }
+            });
+            return objResult;
         } else {
             return {};
         }
@@ -1482,6 +1484,41 @@ async function insertDataFPTContractToSCRPLOG(req) {
     }
 }
 
+async function selectCICScoreAndGrade(niceSskey) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT SCORE, GRADE FROM TB_CIC_MRPT WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: niceSskey
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT}
+        );
+        if (result.rows[0] !== undefined) {
+            return result.rows[0];
+        } else {
+            return {};
+        }
+    } catch (err) {
+        return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1500,8 +1537,9 @@ module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
 module.exports.insertDataToFptFace = insertDataToFptFace;
 module.exports.insertDataNFScoreOKToSCRPLOG = insertDataNFScoreOKToSCRPLOG;
 module.exports.selectValue1InFiCriManage = selectValue1InFiCriManage;
-module.exports.selectPhoneNumberAndNatIDFromScrapLog = selectPhoneNumberAndNatIDFromScrapLog;
+module.exports.selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode = selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode;
 module.exports.insertDataToVmgLocPct = insertDataToVmgLocPct;
 module.exports.insertDataToVmgAddress = insertDataToVmgAddress;
 module.exports.insertDataSimpleLimitToSCRPLOG = insertDataSimpleLimitToSCRPLOG;
 module.exports.insertDataFPTContractToSCRPLOG = insertDataFPTContractToSCRPLOG;
+module.exports.selectCICScoreAndGrade = selectCICScoreAndGrade;
