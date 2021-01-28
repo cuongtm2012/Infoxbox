@@ -33,6 +33,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 // app.use(haltOnTimedout);
 
 var cicExternalRoute = require('./routes/cicExternal.route');
+var eContractRoute = require('./routes/eContract.route');
 
 // Config DB
 var config = require('./config/config');
@@ -97,7 +98,7 @@ app.use(function (req, res, next) {
 // app.use(expressValidator());
 
 app.use('/external', cicExternalRoute);
-
+app.use('/contract', eContractRoute);
 //Timeout
 // function haltOnTimedout(req, res, next) {
 // 	if (!req.timedout) next();
