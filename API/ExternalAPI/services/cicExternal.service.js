@@ -1045,8 +1045,8 @@ async function insertDataReqToSCRPLOG(req) {
         let sql, result;
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
-        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, NATL_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :NATL_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -1056,6 +1056,7 @@ async function insertDataReqToSCRPLOG(req) {
                 CUST_SSID_ID: req.custSsId,
                 CUST_CD: req.custCd,
                 GDS_CD: req.gdsCD,
+                NATL_ID: req.natId,
                 INQ_DTIM: req.inqDt,
                 AGR_FG: req.agrFG,
                 SYS_DTIM: req.sysDt,

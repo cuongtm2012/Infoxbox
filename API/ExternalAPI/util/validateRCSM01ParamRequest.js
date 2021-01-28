@@ -40,6 +40,14 @@ module.exports = {
             }
             return response;
         }
+        //nfGrade
+		if (validation.isEmptyStr(getdataReq.nfGrade)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NFGRADE.name,
+                responseCode: responcodeEXT.RESCODEEXT.NFGRADE.code
+            }
+            return response;
+        }
 		//cicNiceSessionKey
 		if (validation.isEmptyStr(getdataReq.cicNiceSessionKey)) {
             response = {
@@ -48,7 +56,21 @@ module.exports = {
             }
             return response;
         }
-
+        //    national ID
+        if (_.isEmpty(getdataReq.natId)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
+            }
+            return response;
+        }
+        if (50 < getdataReq.natId.length) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
+            }
+            return response;
+        }
         //mobilePhoneNumber
         //TODO check with list available phone number, data type
         if (validation.isEmptyStr(getdataReq.mobilePhoneNumber)) {
