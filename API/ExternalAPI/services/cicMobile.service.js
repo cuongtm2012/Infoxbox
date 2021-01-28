@@ -117,7 +117,6 @@ async function selectCicMobileDetailReport(req) {
                            AND a.S_SVC_CD = 'A0001'
                            AND b.CUST_CD = :fiCode
                            AND b.GDS_CD = :gdscd
-                           AND b.CUST_SSID_ID like :fiSessionKey
                            AND b.INQ_DTIM like :inquiryDate`;
 
         result = await connection.execute(
@@ -127,7 +126,6 @@ async function selectCicMobileDetailReport(req) {
                 niceSessionKey: { val: req.niceSessionKey },
                 fiCode: { val: req.fiCode },
                 gdscd: { val: gdscd },
-                fiSessionKey: { val: _fiSessionKey },
                 inquiryDate: { val: _inquiryDate }
             },
             {
