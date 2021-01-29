@@ -18,6 +18,7 @@ var config = {
 		port: '3100'
 	},
 	log: {
+		orgSource: '../../logs',
 		orgLog: '../../logs/External'
 	},
 	batch: {

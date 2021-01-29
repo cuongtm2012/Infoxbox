@@ -69,20 +69,27 @@ morgan.token('date', (req, res, tz) => {
 morgan.format('myformat', '[:date[Asia/Ho_Chi_Minh]] ":method :url" :status :res[content-length] - :response-time ms');
 app.use(morgan('combined', { stream: winston.stream }));
 //configure log
-var createFolder = function ensureDirSync(dirpath) {
-	try {
-		return fs.mkdirSync(dirpath)
-	} catch (err) {
-		if (err.code !== 'EEXIST') throw err
-	}
-};
+// var createFolder = function ensureDirSync(dirpath) {
+// 	try {
+// 		return fs.mkdirSync(dirpath)
+// 	} catch (err) {
+// 		if (err.code !== 'EEXIST') throw err
+// 	}
+// };
+(async () => {
+	const fileSys = require('fs').promises;
+	const dirNameSource = config.log.orgSource;
+	const dirNameSub = config.log.orgLog;
+	await fileSys.mkdir(dirNameSource);
+	await fileSys.mkdir(dirNameSub);
+})().catch(console.error);
 
 // LOGS
 var uuid = require('node-uuid');
 var createNamespace = require('continuation-local-storage').createNamespace;
 var myRequest = createNamespace('my request');
 // initialize log folder
-createFolder(config.log.orgLog);
+// createFolder(config.log.orgLog);
 
 // Run the context for each request. Assign a unique identifier to each request
 app.use(function (req, res, next) {
