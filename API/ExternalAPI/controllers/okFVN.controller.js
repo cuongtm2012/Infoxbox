@@ -51,7 +51,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 // update INQLOG
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                logger.error(responseData);
+                logger.info(responseData);
                 return res.status(200).json(responseData);
             }
             validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.OKF_SPL_RQST.code).then(dataFICode => {
@@ -61,12 +61,12 @@ exports.okf_SPL_RQST = function (req, res, next) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                    logger.error(responseData);
+                    logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
-                    logger.error(responseData);
+                    logger.info(responseData);
                     return res.status(500).json(responseData);
                 }
                 //End check params request
@@ -98,8 +98,8 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                    logger.error(responseData);
-                                    logger.error(resultRclipsSPL.data);
+                                    logger.info(responseData);
+                                    logger.info(resultRclipsSPL.data);
                                     return res.status(200).json(responseData)
                                 }
                         }).catch(reason => {

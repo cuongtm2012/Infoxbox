@@ -39,7 +39,7 @@ exports.rcs_M01_RQST = function (req, res) {
                 // update INQLOG
                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                logger.error(responseData);
+                logger.info(responseData);
                 return res.status(200).json(responseData);
             }
             // check FI contract
@@ -50,12 +50,12 @@ exports.rcs_M01_RQST = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                    logger.error(responseData);
+                    logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                    logger.error(responseData);
+                    logger.info(responseData);
                     return res.status(500).json(responseData);
                 }
                 // check CIC score
@@ -105,8 +105,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
-                                                                                    logger.error(responseData);
-                                                                                    logger.error(resultCAC1.data);
+                                                                                    logger.info(responseData);
+                                                                                    logger.info(resultCAC1.data);
                                                                                     return res.status(200).json(responseData);
                                                                                 } else {
                                                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -114,8 +114,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                                    logger.error(responseData);
-                                                                                    logger.error(resultCAC1.data);
+                                                                                    logger.info(responseData);
+                                                                                    logger.info(resultCAC1.data);
                                                                                     return res.status(200).json(responseData);
                                                                                 }
                                                                             }
@@ -126,8 +126,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                            logger.error(responseData);
-                                                                            logger.error(reason.toString());
+                                                                            logger.info(responseData);
+                                                                            logger.info(reason.toString());
                                                                             return res.status(200).json(responseData);
                                                                         })
                                                                     } else {
@@ -136,8 +136,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                        logger.error(responseData);
-                                                                        logger.error(resultRclips.data);
+                                                                        logger.info(responseData);
+                                                                        logger.info(resultRclips.data);
                                                                         return res.status(200).json(responseData);
                                                                     }
                                                                 }).catch(reason => {
@@ -147,8 +147,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                logger.error(reason.toString());
-                                                                logger.error(responseData);
+                                                                logger.info(reason.toString());
+                                                                logger.info(responseData);
                                                                 return res.status(200).json(responseData);
                                                             })
                                                         } else {
@@ -158,8 +158,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                            logger.error(responseData);
-                                                            logger.error(resultKYC2.data);
+                                                            logger.info(responseData);
+                                                            logger.info(resultKYC2.data);
                                                             return res.status(200).json(responseData);
                                                         }
                                                     }).catch(reason => {
@@ -177,7 +177,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                         // update INQLOG
                                         dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                        logger.error(responseData);
+                                        logger.info(responseData);
                                         return res.status(200).json(responseData);
                                     }
                                 }).catch(reason => {
@@ -190,7 +190,7 @@ exports.rcs_M01_RQST = function (req, res) {
                             // update INQLOG
                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                            logger.error(responseData);
+                            logger.info(responseData);
                             return res.status(200).json(responseData);
                         }
                     }).catch(reason => {

@@ -49,7 +49,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                logger.error(responseData);
+                logger.info(responseData);
                 deleteFile(req);
                 return res.status(200).send(responseData);
             }
@@ -61,13 +61,13 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                    logger.error(responseData);
+                    logger.info(responseData);
                     deleteFile(req);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
-                    logger.error(responseData);
+                    logger.info(responseData);
                     deleteFile(req);
                     return res.status(500).json(responseData);
                 }
@@ -163,8 +163,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.INVALIDINPUTIMAGE.code).then();
-                                                                    logger.error(responseData);
-                                                                    logger.error(resultV02.data.Message);
+                                                                    logger.info(responseData);
+                                                                    logger.info(resultV02.data.Message);
                                                                     return res.status(200).json(responseData);
                                                                 } else if (resultV02.data.ErrorCode === 1453 || resultV02.data.ErrorCode === 1653) {
                                                                     // response F065
@@ -175,8 +175,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.UNABLETOVERIFYOCR.code).then();
-                                                                    logger.error(responseData);
-                                                                    logger.error(resultV02.data.Message);
+                                                                    logger.info(responseData);
+                                                                    logger.info(resultV02.data.Message);
                                                                     return res.status(200).json(responseData);
                                                                 } else if (resultV02.data.ErrorCode === 1456 || resultV02.data.ErrorCode === 1551) {
                                                                     // response F066
@@ -187,8 +187,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.FACEMATCHINGFAILURE.code).then();
-                                                                    logger.error(responseData);
-                                                                    logger.error(resultV02.data.Message);
+                                                                    logger.info(responseData);
+                                                                    logger.info(resultV02.data.Message);
                                                                     return res.status(200).json(responseData);
                                                                 } else {
                                                                     //  response F048
@@ -199,8 +199,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                    logger.error(responseData);
-                                                                    logger.error(resultV02.data.Message);
+                                                                    logger.info(responseData);
+                                                                    logger.info(resultV02.data.Message);
                                                                     return res.status(200).json(responseData);
                                                                 }
                                                             }
@@ -213,8 +213,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                            logger.error(responseData);
-                                                            logger.error(reason.toString());
+                                                            logger.info(responseData);
+                                                            logger.info(reason.toString());
                                                             return res.status(200).json(responseData);
                                                         })
                                                     } else if (responseV01.data.ErrorCode === 1451 || responseV01.data.ErrorCode === 1455) {
@@ -226,8 +226,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.INVALIDINPUTIMAGE.code).then();
-                                                        logger.error(responseData);
-                                                        logger.error(responseV01.data.Message);
+                                                        logger.info(responseData);
+                                                        logger.info(responseV01.data.Message);
                                                         return res.status(200).json(responseData);
                                                     } else if (responseV01.data.ErrorCode === 1453 || responseV01.data.ErrorCode === 1653) {
                                                         // response F065
@@ -238,8 +238,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.UNABLETOVERIFYOCR.code).then();
-                                                        logger.error(responseData);
-                                                        logger.error(responseV01.data.Message);
+                                                        logger.info(responseData);
+                                                        logger.info(responseV01.data.Message);
                                                         return res.status(200).json(responseData);
                                                     } else {
                                                         console.log('errV01: ', responseV01.data.Message)
@@ -249,8 +249,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                        logger.error(responseData);
-                                                        logger.error(responseV01.data.Message);
+                                                        logger.info(responseData);
+                                                        logger.info(responseV01.data.Message);
                                                         return res.status(200).json(responseData);
                                                     }
                                                 }
@@ -263,8 +263,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                logger.error(responseData);
-                                                logger.error(errV01.toString());
+                                                logger.info(responseData);
+                                                logger.info(errV01.toString());
                                                 return res.status(200).json(responseData);
                                             })
                                         } else {
@@ -276,8 +276,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                            logger.error(responseData);
-                                            logger.error(resultGetAuth.data.Message);
+                                            logger.info(responseData);
+                                            logger.info(resultGetAuth.data.Message);
                                             return res.status(200).json(responseData);
                                         }
                                     }
@@ -290,8 +290,8 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                    logger.error(responseData);
-                                    logger.error(reason.toString());
+                                    logger.info(responseData);
+                                    logger.info(reason.toString());
                                     return res.status(200).json(responseData);
                                 })
                             }

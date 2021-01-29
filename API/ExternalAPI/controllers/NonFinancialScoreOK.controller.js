@@ -41,7 +41,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                logger.error(responseData);
+                logger.info(responseData);
                 return res.status(200).send(responseData);
             }
             // check FI contract
@@ -52,12 +52,12 @@ exports.nonFinancialScoreOk = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                    logger.error(responseData);
+                    logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
-                    logger.error(responseData);
+                    logger.info(responseData);
                     return res.status(500).json(responseData);
                 }
                 //    end check parmas
@@ -113,8 +113,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                        logger.error(responseData);
-                                                                        logger.error(resultRclipsNF.data);
+                                                                        logger.info(responseData);
+                                                                        logger.info(resultRclipsNF.data);
                                                                         return res.status(200).json(responseData);
                                                                     }
                                                                 }
@@ -126,8 +126,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                logger.error(responseData);
-                                                                logger.error(reason.toString());
+                                                                logger.info(responseData);
+                                                                logger.info(reason.toString());
                                                                 return res.status(200).json(responseData);
                                                             })
                                                         }  else if (resultGetRiskScore.data.error_code === 4) {
@@ -138,8 +138,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
-                                                            logger.error(responseData);
-                                                            logger.error(resultGetRiskScore.data.error_msg);
+                                                            logger.info(responseData);
+                                                            logger.info(resultGetRiskScore.data.error_msg);
                                                             return res.status(200).json(responseData);
                                                         } else if (resultGetRiskScore.data.error_code === 11) {
                                                             //    update scraplog & response F049
@@ -149,8 +149,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
-                                                            logger.error(responseData);
-                                                            logger.error(resultGetRiskScore.data.error_msg);
+                                                            logger.info(responseData);
+                                                            logger.info(resultGetRiskScore.data.error_msg);
                                                             return res.status(200).json(responseData);
                                                         } else {
                                                             //    update scraplog & response F048
@@ -160,8 +160,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                            logger.error(responseData);
-                                                            logger.error(resultGetRiskScore.data.error_msg);
+                                                            logger.info(responseData);
+                                                            logger.info(resultGetRiskScore.data.error_msg);
                                                             return res.status(200).json(responseData);
                                                         }
                                                     }
@@ -174,8 +174,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                        logger.error(responseData);
-                                                        logger.error(errGetRiskScore.toString());
+                                                        logger.info(responseData);
+                                                        logger.info(errGetRiskScore.toString());
                                                         return res.status(200).json(responseData);
                                                     }
                                                 );
@@ -187,8 +187,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                logger.error(responseData);
-                                                logger.error(resultGetZaloScore.data.message);
+                                                logger.info(responseData);
+                                                logger.info(resultGetZaloScore.data.message);
                                                 return res.status(200).json(responseData);
                                             }
                                         }
@@ -200,8 +200,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                        logger.error(responseData);
-                                        logger.error(reason.toString());
+                                        logger.info(responseData);
+                                        logger.info(reason.toString());
                                         return res.status(200).json(responseData);
                                     })
                                 } else {
@@ -212,8 +212,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                    logger.error(responseData);
-                                    logger.error(resultTokenAuth.data);
+                                    logger.info(responseData);
+                                    logger.info(resultTokenAuth.data);
                                     return res.status(200).json(responseData);
                                 }
                             }
@@ -226,8 +226,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                logger.error(responseData);
-                                logger.error(errorGetAuth.toString());
+                                logger.info(responseData);
+                                logger.info(errorGetAuth.toString());
                                 return res.status(200).json(responseData);
                             })
                     }
