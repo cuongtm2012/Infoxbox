@@ -71,11 +71,8 @@ app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
 	try {
-		return fs.mkdir(dirpath, 511 , (result, err) => {
-			console.log('created: ' + dirpath);
-		});
+		return fs.mkdirSync(dirpath,{recursive: true});
 	} catch (err) {
-		console.log(err.toString());
 		if (err.code !== 'EEXIST') throw err
 	}
 };
