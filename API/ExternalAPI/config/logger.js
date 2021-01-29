@@ -1,13 +1,16 @@
 var winston = require('winston');
 const config = require('./config');
+const moment = require('moment');
 
 var getNamespace = require('continuation-local-storage').getNamespace;
 
 var fs = require('file-system');
 
-var now = new Date();
-var folderName = config.log.orgLog + '/' + now.getFullYear() + (now.getMonth()+1);
-var logfile_name = folderName + '/' + now.getFullYear() + "-" + (now.getMonth()+1) + "-" + now.getDate() + '.log';
+var folderName_normal = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM') + '/normal';
+var folderName_error = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM') + '/error';
+var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+
 
 function ensureDirSync(dirpath) {
     try {
@@ -20,11 +23,31 @@ function ensureDirSync(dirpath) {
 var winstonLogger = new winston.Logger({
     transports: [
         new winston.transports.File({
-            level: 'debug',
-            filename: logfile_name,
+            filename: logfile_normal,
             handleExceptions: true,
             json: true,
-            maxsize: 5242880, // 5MB
+            maxsize: 10483960, // 10MB
+            maxFiles: 5,
+            colorize: false,
+            timestamp: true
+        }),
+        new winston.transports.Console({
+            level: 'debug',
+            handleExceptions: true,
+            json: false,
+            colorize: true,
+            timestamp: true
+        })
+    ],
+    exitOnError: false
+});
+var winstonLoggerError = new winston.Logger({
+    transports: [
+        new winston.transports.File({
+            filename: logfile_error,
+            handleExceptions: true,
+            json: true,
+            maxsize: 10483960, // 10MB
             maxFiles: 5,
             colorize: false,
             timestamp: true
@@ -48,7 +71,8 @@ winstonLogger.stream = {
 
 // Wrap Winston logger to print reqId in each log
 var formatMessage = function (message) {
-    ensureDirSync(folderName);
+    ensureDirSync(folderName_normal);
+    ensureDirSync(folderName_error);
     var myRequest = getNamespace('my request');
     message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
     return message;
@@ -59,7 +83,7 @@ var logger = {
         winstonLogger.log(level, formatMessage(message));
     },
     error: function (message) {
-        winstonLogger.error(formatMessage(message));
+        winstonLoggerError.error(formatMessage(message));
     },
     warn: function (message) {
         winstonLogger.warn(formatMessage(message));
