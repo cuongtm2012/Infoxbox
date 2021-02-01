@@ -63,7 +63,7 @@ exports.rcs_M01_RQST = function (req, res) {
                     resultCICScore => {
                         if (resultCICScore.SCORE) {
                             // check Zalo&vmg score
-                            cicExternalService.selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode(req.body.fiCode, req.body.mobilePhoneNumber, responCode.NiceProductCode.OKF_SCO_RQST.code).then(
+                            cicExternalService.selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd( req.body.nfNiceSessionKey, req.body.fiCode).then(
                                 resultZaloVmg => {
                                     if (resultZaloVmg.zaloScore && resultZaloVmg.vmgScore && resultZaloVmg.natID) {
                                         let dataSaveToScraplog = new dataMainScoreSaveToScrapLog(req.body, fullNiceKey);
@@ -83,53 +83,13 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                 resultRclips => {
                                                                     if (resultRclips.data.listResult) {
                                                                         //    success get data Rclips
-                                                                        let bodyCAC1 = new bodyPostVmgCAC1(req.body);
-                                                                        //    call VMG CAC1
-                                                                        axios.post(URI.URL_VMG_DEV, bodyCAC1, config).then(
-                                                                            resultCAC1 => {
-                                                                                if ((resultCAC1.data.error_code === 0 || resultCAC1.data.error_code === 20) && resultCAC1.data.result) {
-                                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                                    responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultCAC1.data, resultRclips.data.listResult);
-                                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                                    let dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
-                                                                                    let dataSaveToVmgAddress = new dataCAC1SaveToVmgAddress(fullNiceKey, resultCAC1.data);
-                                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                                                    cicExternalService.insertDataToVmgLocPct(dataSaveToVmgLocPct).then();
-                                                                                    cicExternalService.insertDataToVmgAddress(dataSaveToVmgAddress).then();
-                                                                                    logger.info(responseData);
-                                                                                    return res.status(200).json(responseData);
-                                                                                } else if (resultCAC1.data.error_code === 4) {
-                                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.NODATAEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NODATAEXIST.code);
-                                                                                    responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
-                                                                                    logger.info(responseData);
-                                                                                    logger.info(resultCAC1.data);
-                                                                                    return res.status(200).json(responseData);
-                                                                                } else {
-                                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                                                    responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                                    logger.info(responseData);
-                                                                                    logger.info(resultCAC1.data);
-                                                                                    return res.status(200).json(responseData);
-                                                                                }
-                                                                            }
-                                                                        ).catch(reason => {
-                                                                            console.log('err: ', reason.toString());
-                                                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                                            responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                            logger.info(responseData);
-                                                                            logger.info(reason.toString());
-                                                                            return res.status(200).json(responseData);
-                                                                        })
+                                                                        preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult);
+                                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                                        logger.info(responseData);
+                                                                        return res.status(200).json(responseData);
                                                                     } else {
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                                         responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
