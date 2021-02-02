@@ -6,8 +6,9 @@ var getNamespace = require('continuation-local-storage').getNamespace;
 
 var fs = require('file-system');
 
-var folderName_normal = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM') + '/normal';
-var folderName_error = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM') + '/error';
+var folderName_External = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM');
+var folderName_normal = folderName_External + '/normal';
+var folderName_error = folderName_External + '/error';
 var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 
@@ -71,8 +72,9 @@ winstonLogger.stream = {
 
 // Wrap Winston logger to print reqId in each log
 var formatMessage = function (message) {
-    ensureDirSync(folderName_normal);
+    ensureDirSync(folderName_External);
     ensureDirSync(folderName_error);
+    ensureDirSync(folderName_normal);
     var myRequest = getNamespace('my request');
     message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
     return message;
