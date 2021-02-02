@@ -19,7 +19,7 @@ var config = {
 	},
 	log: {
 		orgSource: '../../logs',
-		orgLog: 'logs'
+		orgLog: './logs'
 	},
 	batch: {
 		TIME_OUT: 5000

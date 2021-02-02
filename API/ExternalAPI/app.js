@@ -71,7 +71,7 @@ app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
 	try {
-		return fs.mkdirSync(dirpath,{recursive: true});
+		return fs.mkdirSync(dirpath);
 	} catch (err) {
 		if (err.code !== 'EEXIST') throw err
 	}
@@ -82,7 +82,7 @@ var uuid = require('node-uuid');
 var createNamespace = require('continuation-local-storage').createNamespace;
 var myRequest = createNamespace('my request');
 // initialize log folder
-createFolder(config.log.orgLog);
+// createFolder(config.log.orgLog);
 
 // Run the context for each request. Assign a unique identifier to each request
 app.use(function (req, res, next) {
