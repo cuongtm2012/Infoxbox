@@ -6,6 +6,7 @@ var getNamespace = require('continuation-local-storage').getNamespace;
 
 var fs = require('file-system');
 
+var folderLogs = config.log.orgLog;
 var folderName_External = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM');
 var folderName_normal = folderName_External + '/normal';
 var folderName_error = folderName_External + '/error';
@@ -13,7 +14,7 @@ var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-M
 var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 
 
-function ensureDirSync(dirpath) {
+async function ensureDirSync(dirpath) {
     try {
         return fs.mkdirSync(dirpath)
     } catch (err) {
@@ -71,36 +72,37 @@ winstonLogger.stream = {
 };
 
 // Wrap Winston logger to print reqId in each log
-var formatMessage = function (message) {
-    ensureDirSync(folderName_External);
-    ensureDirSync(folderName_error);
-    ensureDirSync(folderName_normal);
+var formatMessage = async function (message) {
+    await ensureDirSync(folderLogs);
+    await ensureDirSync(folderName_External);
+    await ensureDirSync(folderName_error);
+    await ensureDirSync(folderName_normal);
     var myRequest = getNamespace('my request');
     message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
     return message;
 };
 
 var logger = {
-    log: function (level, message) {
-        winstonLogger.log(level, formatMessage(message));
+    log: async function (level, message) {
+        winstonLogger.log(level, await formatMessage(message));
     },
-    error: function (message) {
-        winstonLoggerError.error(formatMessage(message));
+    error: async function (message) {
+        winstonLoggerError.error(await formatMessage(message));
     },
-    warn: function (message) {
-        winstonLogger.warn(formatMessage(message));
+    warn: async function (message) {
+        winstonLogger.warn(await formatMessage(message));
     },
-    verbose: function (message) {
-        winstonLogger.verbose(formatMessage(message));
+    verbose: async function (message) {
+        winstonLogger.verbose(await formatMessage(message));
     },
-    info: function (message) {
-        winstonLogger.info(formatMessage(message));
+    info: async function (message) {
+        winstonLogger.info(await formatMessage(message));
     },
-    debug: function (message) {
-        winstonLogger.debug(formatMessage(message));
+    debug: async function (message) {
+        winstonLogger.debug(await formatMessage(message));
     },
-    silly: function (message) {
-        winstonLogger.silly(formatMessage(message));
+    silly: async function (message) {
+        winstonLogger.silly(await formatMessage(message));
     }
 };
 
