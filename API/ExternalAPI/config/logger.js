@@ -1,13 +1,13 @@
 var winston = require('winston');
 const config = require('./config');
 const moment = require('moment');
-
+var appRoot = require('app-root-path');
 var getNamespace = require('continuation-local-storage').getNamespace;
 
 var fs = require('file-system');
 
-var folderLogs = config.log.orgLog;
-var folderName_External = config.log.orgLog + '/' + moment(new Date()).format('YYYYMM');
+var folderLogs = appRoot + '/logs';
+var folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
 var folderName_normal = folderName_External + '/normal';
 var folderName_error = folderName_External + '/error';
 var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
