@@ -1262,7 +1262,7 @@ async function selectValue1InFiCriManage(custCd, cri) {
     }
 }
 
-async function selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode(custCd, phoneNumber, gdsCd) {
+async function selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd(niceSsKey, custCD) {
     let connection;
 
     try {
@@ -1273,7 +1273,7 @@ async function selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode(custCd, phoneNumb
                 FROM TB_EXT_SCORE a 
                 INNER JOIN TB_SCRPLOG b
                 ON a.NICE_SSIN_ID = b.NICE_SSIN_ID
-                WHERE b.CUST_CD = :CUST_CD AND b.TEL_NO_MOBILE = :TEL_NO_MOBILE AND b.GDS_CD = :GDS_CD AND RSP_CD = 'P000'
+                WHERE a.NICE_SSIN_ID = :NICE_SSIN_ID AND b.CUST_CD = :CUST_CD AND b.RSP_CD = 'P000'
                 ORDER BY b.SYS_DTIM DESC 
                 OFFSET 0 ROWS FETCH NEXT 2 ROWS ONLY`;
 
@@ -1281,9 +1281,8 @@ async function selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode(custCd, phoneNumb
             // The statement to execute
             sql,
             {
-                CUST_CD: {val: custCd},
-                TEL_NO_MOBILE: {val: phoneNumber},
-                GDS_CD: {val: gdsCd}
+                NICE_SSIN_ID: {val: niceSsKey},
+                CUST_CD: {val: custCD}
             },
             {outFormat: oracledb.OUT_FORMAT_OBJECT}
         );
@@ -1491,7 +1490,7 @@ async function selectCICScoreAndGrade(niceSskey) {
         let sql, result;
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `SELECT SCORE, GRADE FROM TB_CIC_MRPT WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+        sql = `SELECT SCORE, GRADE FROM TB_CIC_MRPT a INNER JOIN TB_SCRPLOG b ON a.NICE_SSIN_ID = b.NICE_SSIN_ID WHERE a.NICE_SSIN_ID = :NICE_SSIN_ID AND b.RSP_CD = 'P000'`;
 
         result = await connection.execute(
             // The statement to execute
@@ -1537,7 +1536,7 @@ module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
 module.exports.insertDataToFptFace = insertDataToFptFace;
 module.exports.insertDataNFScoreOKToSCRPLOG = insertDataNFScoreOKToSCRPLOG;
 module.exports.selectValue1InFiCriManage = selectValue1InFiCriManage;
-module.exports.selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode = selectZaloAndVMGRiskScoreByPhoneNumberAndFIcode;
+module.exports.selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd = selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd;
 module.exports.insertDataToVmgLocPct = insertDataToVmgLocPct;
 module.exports.insertDataToVmgAddress = insertDataToVmgAddress;
 module.exports.insertDataSimpleLimitToSCRPLOG = insertDataSimpleLimitToSCRPLOG;

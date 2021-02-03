@@ -31,8 +31,9 @@ async function selectDeplayReport() {
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
-
-        console.log("rows delay report:", result.rows);
+        if (result.rows[0]) {
+            console.log("rows delay report:", result.rows);
+        }
 
         return result.rows;
 
@@ -76,9 +77,9 @@ async function selectDeplayReport2() {
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
-
-        console.log("rows delay report2:", result.rows);
-
+        if (result.rows[0]) {
+            console.log("rows delay report2:", result.rows);
+        }
         return result.rows;
 
 

@@ -18,7 +18,8 @@ var config = {
 		port: '3000'
 	},
 	log: {
-		orgLog: '../../logs/External'
+		orgSource: '../../logs',
+		orgLog: './logs'
 	},
 	batch: {
 		TIME_OUT: 5000

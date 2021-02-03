@@ -40,8 +40,8 @@ module.exports = {
             }
             return response;
         }
-        //nfGrade
-		if (validation.isEmptyStr(getdataReq.nfGrade)) {
+        //nfNiceSessionKey
+		if (validation.isEmptyStr(getdataReq.nfNiceSessionKey)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NFGRADE.name,
                 responseCode: responcodeEXT.RESCODEEXT.NFGRADE.code
@@ -86,24 +86,6 @@ module.exports = {
             }
             return response;
         }
-
-		//homeAddress
-		if (validation.isEmptyStr(getdataReq.homeAddress)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.HOMEADDRESS.name,
-                responseCode: responcodeEXT.RESCODEEXT.HOMEADDRESS.code
-            }
-            return response;
-        }
-		//workAddress
-		if (validation.isEmptyStr(getdataReq.workAddress)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.WORKADDRESS.name,
-                responseCode: responcodeEXT.RESCODEEXT.WORKADDRESS.code
-            }
-            return response;
-        }
-
         //infoProvConcent
         if (validation.isEmptyStr(getdataReq.infoProvConcent)) {
             response = {

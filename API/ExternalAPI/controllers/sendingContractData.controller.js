@@ -37,7 +37,7 @@ exports.sendingContractData = function (req, res) {
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                logger.error(req.body);
+                logger.info(req.body);
                 return res.status(200).send(responseData);
             }
             // check FI contract
@@ -48,12 +48,12 @@ exports.sendingContractData = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                    logger.error(req.body);
+                    logger.info(req.body);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new sendingDataFPTContractResponse(req.body, preResponse);
-                    logger.error(req.body);
+                    logger.info(req.body);
                     return res.status(500).json(responseData);
                 }
                 //    end check parmas
@@ -85,8 +85,7 @@ exports.sendingContractData = function (req, res) {
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                logger.info(req.body);
-                                                logger.info(resultSubmitInfo.data);
+                                                logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else if (resultSubmitInfo.status === 500) {
                                                 //    update scraplog & response F070
@@ -96,8 +95,7 @@ exports.sendingContractData = function (req, res) {
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
-                                                logger.error(req.body);
-                                                logger.error(resultSubmitInfo);
+                                                logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
@@ -107,13 +105,10 @@ exports.sendingContractData = function (req, res) {
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                logger.error(req.body);
-                                                logger.error(resultSubmitInfo);
+                                                logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
-                                        logger.error(req.body);
-                                        logger.error(reason.toString());
                                         if (reason.response && reason.response.status === 500) {
                                             //    update scraplog & response F070
                                             console.log('errSubmitInfo: ', reason.toString());
@@ -122,8 +117,11 @@ exports.sendingContractData = function (req, res) {
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else {
+                                            logger.error(reason.toString());
                                             return res.status(500).json({error: reason.toString()});
                                         }
                                     })
@@ -135,8 +133,7 @@ exports.sendingContractData = function (req, res) {
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
-                                    logger.error(req.body);
-                                    logger.error(resultfetAuthAccess.data);
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
@@ -146,13 +143,10 @@ exports.sendingContractData = function (req, res) {
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                    logger.error(req.body);
-                                    logger.error(resultfetAuthAccess.data);
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            logger.error(req.body);
-                            logger.error(reason.toString());
                             if (reason.response && reason.response.status === 500) {
                                 //    update scraplog & response F070
                                 console.log('errSubmitInfo: ', reason);
@@ -161,24 +155,23 @@ exports.sendingContractData = function (req, res) {
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
+                                logger.info(responseData);
                                 return res.status(200).json(responseData);
                             } else {
+                                logger.error(reason.toString());
                                 return res.status(500).json({error: reason.toString()});
                             }
                         })
                     }).catch(reason => {
-                    logger.error(req.body);
                     logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 })
             }).catch(reason => {
-                logger.error(req.body);
                 logger.error(reason.toString());
                 return res.status(500).json({error: reason.toString()});
             })
         })
     } catch (err) {
-        logger.error(req.body);
         logger.error(err.toString());
         return res.status(500).json({error: err.toString()});
     }
