@@ -1,17 +1,17 @@
-var winston = require('winston');
+const winston = require('winston');
 const config = require('./config');
 const moment = require('moment');
-var appRoot = require('app-root-path');
-var getNamespace = require('continuation-local-storage').getNamespace;
+const appRoot = require('app-root-path');
+const getNamespace = require('continuation-local-storage').getNamespace;
 
-var fs = require('file-system');
+const fs = require('file-system');
 
-var folderLogs = appRoot + '/logs';
-var folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
-var folderName_normal = folderName_External + '/normal';
-var folderName_error = folderName_External + '/error';
-var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+let folderLogs = appRoot + '/logs';
+let folderName_External;
+let folderName_normal;
+let folderName_error;
+let logfile_normal;
+let logfile_error;
 
 
 async function ensureDirSync(dirpath) {
@@ -73,6 +73,11 @@ winstonLogger.stream = {
 
 // Wrap Winston logger to print reqId in each log
 var formatMessage = async function (message) {
+    folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
+    folderName_normal = folderName_External + '/normal';
+    folderName_error = folderName_External + '/error';
+    logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+    logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
     await ensureDirSync(folderLogs);
     await ensureDirSync(folderName_External);
     await ensureDirSync(folderName_error);
