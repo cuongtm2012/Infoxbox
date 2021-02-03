@@ -7,11 +7,11 @@ const getNamespace = require('continuation-local-storage').getNamespace;
 const fs = require('file-system');
 
 let folderLogs = appRoot + '/logs';
-let folderName_External;
-let folderName_normal;
-let folderName_error;
-let logfile_normal;
-let logfile_error;
+let folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
+let folderName_normal = folderName_External + '/normal';
+let folderName_error = folderName_External + '/error';
+let logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+let logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 
 
 async function ensureDirSync(dirpath) {
