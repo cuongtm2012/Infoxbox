@@ -11,7 +11,7 @@ const PreResponse = require('../domain/preResponse.response');
 const DataInqLogSave = require('../domain/INQLOG.save');
 const utilFunction = require('../../shared/util/util');
 const responCode = require('../../shared/constant/responseCodeExternal');
-
+const logger = require('../config/logger');
 exports.cicProcStat = function (req, res) {
     try {
         const getdataReq = new CicProStat(req.body);
@@ -36,6 +36,7 @@ exports.cicProcStat = function (req, res) {
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                 console.log('insert INQLOG:', r);
             });
+            logger.info(responseData);
             return res.status(200).json(responseData);
         }
         validS11AService.selectFiCode(req.body.fiCode, '%%').then(dataFICode => {
@@ -48,13 +49,14 @@ exports.cicProcStat = function (req, res) {
                 cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                     console.log('insert INQLOG:', r);
                 });
+                logger.info(responseData);
                 return res.status(200).json(responseData);
             }
             else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new CICProcStatRes(req.body, preResponse);
-               
+                logger.info(responseData);
                 return res.status(500).json(responseData);
             }
             //End check params request
@@ -80,6 +82,7 @@ exports.cicProcStat = function (req, res) {
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                 cicExternalService.insertINQLOG(dataInqLogSave).then(() => {
+                    logger.info(responseData);
                     return res.status(200).json(responseData);
                 });
             });
@@ -87,6 +90,7 @@ exports.cicProcStat = function (req, res) {
 
     } catch (error) {
         console.log(error);
+        logger.info(error.toString());
         return res.status(500).json({ error: error.toString() });
     }
 };

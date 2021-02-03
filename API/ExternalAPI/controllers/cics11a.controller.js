@@ -47,6 +47,7 @@ exports.cics11aRQST = function (req, res, next) {
 			cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 				console.log('insert INQLOG:', r);
 			});
+			logger.info(responseData);
 			return res.status(200).json(responseData);
 		}
 		validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
@@ -59,13 +60,14 @@ exports.cics11aRQST = function (req, res, next) {
 				cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 					console.log('insert INQLOG:', r);
 				});
+				logger.info(responseData);
 				return res.status(200).json(responseData);
 			}
 			else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
 				responseData = new cics11aRQSTRes(req.body, preResponse);
-
+				logger.info(responseData);
 				return res.status(500).json(responseData);
 			}
 			//End check params request
@@ -96,7 +98,7 @@ exports.cics11aRQST = function (req, res, next) {
 					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 						console.log('insert INQLOG:', r);
 					});
-
+					logger.info(responseData);
 					return res.status(200).json(responseData);
 				});
 			});
@@ -111,6 +113,7 @@ exports.cics11aRQST = function (req, res, next) {
 		socket.emit('end');
 
 		console.log(err);
+		logger.error(err.toString());
 		return res.status(500).json({ error: err.toString() });
 	}
 };
@@ -158,6 +161,7 @@ exports.cics11aRSLT = function (req, res) {
 			cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 				console.log('insert INQLOG:', r);
 			});
+			logger.info(preResponse);
 			return res.status(200).json(preResponse);
 		}
 		validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
@@ -170,13 +174,14 @@ exports.cics11aRSLT = function (req, res) {
 				cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 					console.log('insert INQLOG:', r);
 				});
+				logger.info(responseData);
 				return res.status(200).json(responseData);
 			}
 			else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
 				responseData = new cics11aRQSTRes(req.body, preResponse);
-
+				logger.info(responseData);
 				return res.status(500).json(responseData);
 			}
 			//End check params request
@@ -384,6 +389,7 @@ exports.cics11aRSLT = function (req, res) {
 							cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
 								console.log('insert INQLOG:', r);
 							});
+							logger.info(responseUnknow);
 							return res.status(200).json(responseUnknow);
 						}
 						else {
@@ -452,6 +458,7 @@ exports.cics11aRSLT = function (req, res) {
 
 	} catch (error) {
 		console.log(error);
+		logger.error(error.toString());
 		return res.status(500).json({ error: error.toString() });
 	}
 

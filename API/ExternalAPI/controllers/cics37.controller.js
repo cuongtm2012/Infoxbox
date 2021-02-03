@@ -67,6 +67,7 @@ exports.cics37Rqst = function (req, res) {
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                 console.log('insert INQLOG:', r);
             });
+            logger.info(responseData);
             return res.status(200).json(responseData);
         }
         validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S37.code).then(dataFICode => {
@@ -79,12 +80,13 @@ exports.cics37Rqst = function (req, res) {
                 cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                     console.log('insert INQLOG:', r);
                 });
+                logger.info(responseData);
                 return res.status(200).json(responseData);
             } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cics37RQSTRes(req.body, preResponse);
-
+                logger.info(responseData);
                 return res.status(500).json(responseData);
             }
             //End check params request
@@ -189,7 +191,7 @@ exports.cics37Rqst = function (req, res) {
                                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                                 console.log('insert INQLOG:', r);
                                             });
-
+                                            logger.info(responseData);
                                             return res.status(200).json(responseData);
                                         } else {
                                             let responseUnknow = new PreResponse(responCode.RESCODEEXT.OtherInternalDBError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.OtherInternalDBError.code);
@@ -222,7 +224,7 @@ exports.cics37Rqst = function (req, res) {
                                                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
-
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code));
                                                 }
                                                 else
@@ -238,7 +240,7 @@ exports.cics37Rqst = function (req, res) {
                                                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
-
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code))
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code));
                                                 }
                                                 else
@@ -255,6 +257,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code));
                                                 }
                                                 else
@@ -271,6 +274,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code));
                                                 }
                                                 else
@@ -294,6 +298,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code));
                                                 }
                                                 else
@@ -309,6 +314,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code));
                                                 }
                                                 else
@@ -324,6 +330,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NotUniquePersonInCIC.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NotUniquePersonInCIC.code));
                                                 }
                                                 else
@@ -339,6 +346,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CaptchaProcessFailure.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CaptchaProcessFailure.code));
                                                 }
                                                 else
@@ -356,6 +364,7 @@ exports.cics37Rqst = function (req, res) {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
+                                                    logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code));
                                                     return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code));
                                                 }
                                                 else
@@ -375,6 +384,7 @@ exports.cics37Rqst = function (req, res) {
                                                     console.log('insert INQLOG:', r);
                                                 });
 
+                                                logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code));
                                                 return res.status(200).json(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code));
                                             }
                                             else
@@ -398,6 +408,7 @@ exports.cics37Rqst = function (req, res) {
                                     let responseTimeOut = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
                                     responseData = new cics37RQSTRes(getdataReq, responseTimeOut);
 
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 });
                             });
@@ -405,6 +416,7 @@ exports.cics37Rqst = function (req, res) {
                         let responseUnknow = new PreResponse(responCode.RESCODEEXT.UNKNOWOtherError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.UNKNOWOtherError.code);
                         responseData = new cics37RQSTRes(getdataReq, responseUnknow);
 
+                        logger.info(responseData);
                         return res.status(200).json(responseData);
                     }
                 });
@@ -421,7 +433,7 @@ exports.cics37Rqst = function (req, res) {
         socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_S37_RQST' });
         // Close socket
         socket.emit('end');
-
+        logger.error(err.toString());
         return res.status(500).json({ error: err.toString() });
     }
 };
@@ -489,6 +501,7 @@ exports.cics37RSLT = function (req, res) {
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                 console.log('insert INQLOG:', r);
             });
+            logger.info(responseData);
             return res.status(200).json(responseData);
         }
         validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S37.code).then(dataFICode => {
@@ -501,6 +514,7 @@ exports.cics37RSLT = function (req, res) {
                 cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                     console.log('insert INQLOG:', r);
                 });
+                logger.info(responseData);
                 return res.status(200).json(responseData);
             }
             else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -508,6 +522,7 @@ exports.cics37RSLT = function (req, res) {
 
                 responseData = new cics37RQSTRes(req.body, preResponse);
 
+                logger.info(responseData);
                 return res.status(500).json(responseData);
             }
             //End check params request
@@ -523,6 +538,7 @@ exports.cics37RSLT = function (req, res) {
                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                         console.log('insert INQLOG:', r);
                     });
+                    logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else {
                     cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
@@ -544,6 +560,7 @@ exports.cics37RSLT = function (req, res) {
                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                 console.log('insert INQLOG:', r);
                             });
+                            logger.info(responseUnknow);
                             return res.status(200).json(responseUnknow);
                         }
                         else {
@@ -595,6 +612,7 @@ exports.cics37RSLT = function (req, res) {
                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
                                 console.log('insert INQLOG:', r);
                             });
+                            logger.info(responseSrapingStatus);
                             return res.status(200).json(responseSrapingStatus);
                         }
                     });
@@ -604,6 +622,7 @@ exports.cics37RSLT = function (req, res) {
 
     } catch (error) {
         console.log(error);
+        logger.error(error.toString());
         return res.status(500).json({ error: error.toString() });
     }
 

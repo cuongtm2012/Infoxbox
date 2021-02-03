@@ -64,13 +64,13 @@ var RESCODEEXT = {
     INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
     UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
     FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
-	NFGRADE: { value: 67, name: "Need to input mandatory item(nfGrade)", code: "F067" },
+	NFGRADE: { value: 67, name: "Need to input mandatory item(nfGrade NICE session key)", code: "F067" },
     NITEMPLATEID: { value: 68, name: "Need to input mandatory item(Template ID)", code: "F068" },
     NIALIAS: { value: 69, name: "Need to input mandatory item(Alias)", code: "F069" },
     ERRCONTRACTDATASENDING: { value: 70, name: "Error on contract data sending", code: "F070" },
     NIIDOFCONTRACT: { value: 71, name: "Need to input mandatory item(ID)", code: "F071" },
     ERRCONTRACTSTATUS: { value: 72, name: "Error on contract data sending", code: "F072" },
-    NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input phone number and FI code", code: "F073" },
+    NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input NF Score NICE session key", code: "F073" },
 };
 
 const OracleError = {
