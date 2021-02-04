@@ -20,6 +20,7 @@ var fptFaceMatchingController = require('../controllers/fptFaceMatching.controll
 var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller');
 var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller');
 var mainScoreController = require('../controllers/MainScore.Controller');
+var VmgCAC1Controller = require('../controllers/VmgCAC1.controller');
 
 
 var okFVNController = require('../controllers/okFVN.controller');
@@ -57,6 +58,7 @@ router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, multipartMiddlew
     fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
 });
 
+router.post('/kyc/KYC_VC1_RQST', VmgCAC1Controller.KYC_VC1_RQST);
 router.get('/api/ping', pingPongController.pingPong);
 
 

@@ -181,7 +181,8 @@ const TaskCode = {
 	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
 	RCS_M01_RQST: { code: 'RCS_M01_RQST'},
     FTN_SCD_RQST: { code: 'FTN_SCD_RQST'},
-    FTN_CCS_RQST: { code: 'FTN_CCS_RQST'}
+    FTN_CCS_RQST: { code: 'FTN_CCS_RQST'},
+    KYC_VC1_RQST: { code: 'KYC_VC1_RQST'}
 
 };
 
@@ -209,7 +210,8 @@ const NiceProductCode = {
     RCS_M01_RQST: { code: 'S2013'},
     NICE_CODE_INQLOG: {code: '1010'},
     FTN_SCD_RQST: {code: 'S2014'},
-    FTN_CSS_RQST: {code: 'S2014'}
+    FTN_CSS_RQST: {code: 'S2014'},
+    KYC_VC1_RQST: {code: 'S2002'}
 };
 
 const StatusCodeBatchProcess = {
@@ -227,6 +229,10 @@ const ScoreCode = {
 const CUST_GB = {
     zalo: '22',
     VMG: '21'
+}
+
+const LongStringErr = {
+    timeoutAxios: ''
 }
 
 module.exports.RESCODEEXT = RESCODEEXT;
