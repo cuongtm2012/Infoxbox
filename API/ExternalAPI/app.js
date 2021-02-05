@@ -3,10 +3,11 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 
 var winston = require('./config/winston');
+var logger = require('./config/logger');
 var morgan = require('morgan');
 var fs = require('file-system');
 const moment = require('moment-timezone');
-
+const dateMoment = require('moment');
 var path = require('path');
 
 const https = require('https');
@@ -67,7 +68,21 @@ morgan.token('date', (req, res, tz) => {
 	return moment().tz(tz).format();
 })
 morgan.format('myformat', '[:date[Asia/Ho_Chi_Minh]] ":method :url" :status :res[content-length] - :response-time ms');
-app.use(morgan('combined', { stream: winston.stream }));
+app.use(morgan(function (tokens, req, res) {
+	let debugIncomingRequest = [
+		dateMoment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+		tokens.method(req, res),
+		tokens.url(req, res),
+		tokens.status(req, res),
+		tokens.res(req, res, 'content-length')+'B', '-',
+		tokens['response-time'](req, res), 'ms'
+	].join(' ');
+	if (tokens.status(req, res) == 200) {
+		logger.info(debugIncomingRequest);
+	} else {
+		logger.error(debugIncomingRequest);
+	}
+}));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
 	try {
@@ -114,7 +129,7 @@ app.use(function (err, req, res, next) {
 	res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 	// add this line to include winston logging
-	winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+	logger.error(`${dateMoment(new Date()).format('YYYY-MM-DD hh:mm:ss')} - ${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
 
 	// render the error page
 	res.status(err.status || 500);
