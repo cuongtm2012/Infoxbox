@@ -1623,6 +1623,46 @@ async function insertDataCAC1ToSCRPLOG(req) {
     }
 }
 
+async function updateRspCdAndStatusCdScrapLogAfterGetResult(niceSessionKey, RspCd, StatCd) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET RSP_CD = :RSP_CD , SCRP_STAT_CD = :SCRP_STAT_CD
+                WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: {val: niceSessionKey},
+                RSP_CD: {val: RspCd},
+                SCRP_STAT_CD: {val: StatCd}
+            },
+            {autoCommit: true},
+        );
+        console.log('updateRspCdAndStatusCdScrapLogAfterGetResult: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1649,3 +1689,4 @@ module.exports.insertDataFPTContractToSCRPLOG = insertDataFPTContractToSCRPLOG;
 module.exports.selectCICScoreAndGrade = selectCICScoreAndGrade;
 module.exports.insertDataToVmgIncome = insertDataToVmgIncome;
 module.exports.insertDataCAC1ToSCRPLOG = insertDataCAC1ToSCRPLOG;
+module.exports.updateRspCdAndStatusCdScrapLogAfterGetResult = updateRspCdAndStatusCdScrapLogAfterGetResult;

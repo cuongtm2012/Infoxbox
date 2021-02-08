@@ -161,7 +161,14 @@ const ScrapingStatusCode = {
     CicReportInqError: { code: '22' },
     CicReportResultInqError: { code: '23' },
     CicReportResultNotExist: { code: '24' },
-    OtherError: { code: '29' }
+    OtherError: { code: '29' },
+    Complete: { code: '10' , message: 'Complete'},
+    VMG_InProcessing: { code: '01' , message: 'Waiting for customer consent'},
+    Application_Error: { code: '31' , message: 'Application error'},
+    No_Data_Provide: { code: '32' , message: 'No data to provide'},
+    Other_Error: { code: '39' , message: 'Other error'},
+    Telco_Interface_Error: { code: '34' , message: 'Telco interface error'},
+    Data_Provided_Already: { code: '33' , message: 'Data provided already'}
 };
 
 const TaskCode = {
@@ -231,9 +238,6 @@ const CUST_GB = {
     VMG: '21'
 }
 
-const LongStringErr = {
-    timeoutAxios: ''
-}
 
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
