@@ -54,6 +54,7 @@ async function insertSCRPLOG(req) {
 
     } catch (err) {
         console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -116,6 +117,7 @@ async function insertINQLOG(req) {
 
     } catch (err) {
         console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -510,7 +512,8 @@ async function selectCICS11aRSLT(req) {
             };
         }
     } catch (err) {
-        console.log(err);
+      console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -578,7 +581,8 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
 
         return result.rows;
     } catch (err) {
-        console.log(err);
+      console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -652,7 +656,8 @@ async function selectProcStatus(req) {
 
         return {outputResult, totalCount};
     } catch (err) {
-        console.log(err);
+      console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -707,7 +712,8 @@ async function insertDataZaloINQLOG(req) {
 
 
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -748,7 +754,8 @@ async function insertDataZaloToSCRPLOG(req) {
         );
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -786,7 +793,8 @@ async function updateRspCdScrapLogAfterGetResult(niceSessionKey, RspCd) {
         console.log('updateRspCdScrapLogAfterGetResult: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -826,7 +834,8 @@ async function insertDataZaloToExtScore(req) {
         console.log("insertDataZaloToExtScore::", result.rowsAffected);
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -881,7 +890,8 @@ async function insertDataRiskScoreToINQLOG(req) {
 
 
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -924,7 +934,8 @@ async function insertDataRiskScoreToSCRPLOG(req) {
         console.log('insertDataRiskScoreToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -970,7 +981,8 @@ async function insertDataRiskScoreToExtScore(req) {
         console.log('insertDataRiskScoreToExtScore: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1025,7 +1037,8 @@ async function insertDataToINQLOG(req) {
 
 
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1067,7 +1080,8 @@ async function insertDataReqToSCRPLOG(req) {
         console.log('insertDataReqToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1127,7 +1141,8 @@ async function insertDataFptIdToFptId(req) {
         console.log('insertDataFptIdToFptID: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1173,7 +1188,8 @@ async function insertDataToFptFace(req) {
 
 
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1216,7 +1232,8 @@ async function insertDataNFScoreOKToSCRPLOG(req) {
         console.log('insertDataNFScoreOKToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1249,7 +1266,8 @@ async function selectValue1InFiCriManage(custCd, cri) {
         );
         return result.rows[0] !== undefined ? result.rows[0] : {};
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1430,7 +1448,8 @@ async function insertDataSimpleLimitToSCRPLOG(req) {
         console.log('insertDataSimpleLimitToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1470,7 +1489,8 @@ async function insertDataFPTContractToSCRPLOG(req) {
         console.log('insertDataFPTContractToSCRPLOG: ', result.rowsAffected)
         return result.rowsAffected;
     } catch (err) {
-        console.log(err);
+       console.log(err);
+        throw err;
         // return res.status(400);
     } finally {
         if (connection) {
@@ -1507,6 +1527,48 @@ async function selectCICScoreAndGrade(niceSskey) {
         }
     } catch (err) {
         return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function insertDataToVmgIncome(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1) 
+        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.NICE_SSIN_ID,
+                REQ_ID: req.REQ_ID,
+                INCOME_1: req.INCOME_1,
+                INCOME_2: req.INCOME_2,
+                INCOME_3: req.INCOME_3,
+                TOTAL_INCOME_3: req.TOTAL_INCOME_3,
+                TOTAL_INCOME_2: req.TOTAL_INCOME_2,
+                TOTAL_INCOME_1: req.TOTAL_INCOME_1
+            },
+            {autoCommit: true}
+        );
+        console.log('insertDataToVmgIncome: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -1585,4 +1647,5 @@ module.exports.insertDataToVmgAddress = insertDataToVmgAddress;
 module.exports.insertDataSimpleLimitToSCRPLOG = insertDataSimpleLimitToSCRPLOG;
 module.exports.insertDataFPTContractToSCRPLOG = insertDataFPTContractToSCRPLOG;
 module.exports.selectCICScoreAndGrade = selectCICScoreAndGrade;
+module.exports.insertDataToVmgIncome = insertDataToVmgIncome;
 module.exports.insertDataCAC1ToSCRPLOG = insertDataCAC1ToSCRPLOG;
