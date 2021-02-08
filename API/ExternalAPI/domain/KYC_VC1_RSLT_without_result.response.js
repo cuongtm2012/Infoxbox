@@ -1,4 +1,4 @@
-module.exports = function KYC_VC1_RQST_Response(Request, preResponse) {
+module.exports = function KYC_VC1_RSLT_without_Result_Response(Request, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
@@ -12,9 +12,6 @@ module.exports = function KYC_VC1_RQST_Response(Request, preResponse) {
         taskCode,
         customerNumber,
         mobilePhoneNumber,
-        homeAddress,
-        workAddress,
-        referAddress,
         infoProvConcent
     } = Request;
 
@@ -23,9 +20,6 @@ module.exports = function KYC_VC1_RQST_Response(Request, preResponse) {
     this.taskCode = taskCode ? taskCode : "";
     this.customerNumber = customerNumber ? customerNumber : "";
     this.mobilePhoneNumber = mobilePhoneNumber ? mobilePhoneNumber : "";
-    this.homeAddress = homeAddress ? homeAddress : "";
-    this.workAddress = workAddress ? workAddress : "";
-    this.referAddress = referAddress ? referAddress : "";
     this.infoProvConcent = infoProvConcent ? infoProvConcent : "";
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";

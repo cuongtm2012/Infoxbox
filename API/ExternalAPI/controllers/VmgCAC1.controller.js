@@ -210,3 +210,130 @@ exports.KYC_VC1_RQST = function (req, res) {
         return res.status(500).json({error: err.toString()});
     }
 };
+
+
+const validateKYC_VC1_RSLTRequest = require('../util/validateKYC_VC1_RSLT_Request');
+const KYC_VC1_RSLTResponseWithoutResult = require('../domain/KYC_VC1_RSLT_without_result.response');
+const KYC_VC1_RSLTResponseWithResult = require('../domain/KYC_VC1_RSLT_with_result.response');
+
+exports.KYC_VC1_RSLT = function (req, res) {
+    try {
+        let rsCheck = validateKYC_VC1_RSLTRequest.checkParamRequest(req.body);
+        let preResponse, responseData, dataInqLogSave;
+        let fullNiceKey = req.body.niceSessionKey;
+        if (!_.isEmpty(rsCheck)) {
+            preResponse = new PreResponse(rsCheck.responseMessage, fullNiceKey, dateutil.timeStamp(), rsCheck.responseCode);
+            responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+            // save Inqlog
+            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+            logger.info(responseData);
+            return res.status(200).send(responseData);
+        }
+        // check FI contract
+        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.KYC_VC1_RSLT.code).then(dataFICode => {
+            if (_.isEmpty(dataFICode)) {
+                preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
+                responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                // update INQLOG
+                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                logger.info(responseData);
+                return res.status(200).json(responseData);
+            } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
+                preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
+                responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                logger.info(responseData);
+                return res.status(500).json(responseData);
+            }
+            //    end check params
+            // Select Data
+            cicExternalService.selectDataKYC_VC1_RSLT(fullNiceKey).then(
+                result => {
+                    if (result.SCRP_STAT_CD) {
+                        switch (result.SCRP_STAT_CD) {
+                            case responCode.ScrapingStatusCode.Data_Provided_Already.code:
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                responseData =
+                                    new KYC_VC1_RSLTResponseWithResult(req.body, preResponse, responCode.ScrapingStatusCode.Data_Provided_Already.code, responCode.ScrapingStatusCode.Data_Provided_Already.message, result.RESULT_7D, result.RESULT_30D, result.RESULT_90D,
+                                        result.ADDR_HOME, result.LAT_HOME, result.LONG_HOME, result.ADDR_WORK, result.LAT_WORK, result.LONG_WORK,
+                                        result.ADDR_REFER, result.LAT_REFER, result.LONG_REFER, result.TEL_COMPANY);
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            case responCode.ScrapingStatusCode.Complete.code:
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                responseData =
+                                    new KYC_VC1_RSLTResponseWithResult(req.body, preResponse, responCode.ScrapingStatusCode.Complete.code, responCode.ScrapingStatusCode.Complete.message, result.RESULT_7D, result.RESULT_30D, result.RESULT_90D,
+                                        result.ADDR_HOME, result.LAT_HOME, result.LONG_HOME, result.ADDR_WORK, result.LAT_WORK, result.LONG_WORK,
+                                        result.ADDR_REFER, result.LAT_REFER, result.LONG_REFER, result.TEL_COMPANY);
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            case responCode.ScrapingStatusCode.VMG_InProcessing.code:
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                                responseData.processStatusCode = responCode.ScrapingStatusCode.VMG_InProcessing.code;
+                                responseData.processStatusMessage = responCode.ScrapingStatusCode.VMG_InProcessing.message;
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            case responCode.ScrapingStatusCode.Application_Error.code:
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                                responseData.processStatusCode = responCode.ScrapingStatusCode.Application_Error.code;
+                                responseData.processStatusMessage = responCode.ScrapingStatusCode.Application_Error.message;
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            case responCode.ScrapingStatusCode.Telco_Interface_Error.code:
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                                responseData.processStatusCode = responCode.ScrapingStatusCode.Telco_Interface_Error.code;
+                                responseData.processStatusMessage = responCode.ScrapingStatusCode.Telco_Interface_Error.message;
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            default:
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+                                responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                                responseData.processStatusCode = responCode.ScrapingStatusCode.Other_Error.code;
+                                responseData.processStatusMessage = responCode.ScrapingStatusCode.Other_Error.message;
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                        }
+                    } else {
+                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                        responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                        // update INQLOG
+                        dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                        logger.info(responseData);
+                        return res.status(200).json(responseData);
+                    }
+                }).catch(reason => {
+                logger.error(reason.toString());
+                return res.status(500).json({error: reason.toString()});
+            })
+        }).catch(reason => {
+            logger.error(reason.toString());
+            return res.status(500).json({error: reason.toString()});
+        })
+    } catch (err) {
+        logger.error(err.toString());
+        return res.status(500).json({error: err.toString()});
+    }
+}
