@@ -14,4 +14,5 @@ module.exports = function dataVmgCacSaveToVmgAddress(niceSessionKey, resultCAC1)
     this.LONG_REFER = resultCAC1.result.resCoordinates.refer_long;
     this.MONTH = null;
     this.YEAR = null;
+    this.TEL_COMPANY = resultCAC1.telco;
 }

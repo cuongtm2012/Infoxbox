@@ -59,6 +59,7 @@ router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, multipartMiddlew
 });
 
 router.post('/kyc/KYC_VC1_RQST', VmgCAC1Controller.KYC_VC1_RQST);
+router.post('/kyc/KYC_VC1_RSLT', VmgCAC1Controller.KYC_VC1_RSLT);
 router.get('/api/ping', pingPongController.pingPong);
 
 

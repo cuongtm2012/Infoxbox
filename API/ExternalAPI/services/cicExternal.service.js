@@ -165,7 +165,6 @@ async function selectCICS11aRSLT(req) {
                                 where a.NICE_SSIN_ID = :niceSessionKey
                                 AND a.S_SVC_CD = 'B0003'
                                 AND b.CUST_CD = :fiCode
-                                AND (b.CUST_SSID_ID like :fiSessionKey or b.CUST_SSID_ID is null)
                                 AND b.INQ_DTIM like :inquiryDate`;
 
         resultScrpTranlog = await connection.execute(
@@ -174,7 +173,6 @@ async function selectCICS11aRSLT(req) {
             {
                 niceSessionKey: {val: req.niceSessionKey},
                 fiCode: {val: req.fiCode},
-                fiSessionKey: {val: _fiSessionKey},
                 inquiryDate: {val: _inquiryDate}
             },
             {
@@ -541,34 +539,17 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
             _inquiryDate = '%%';
         else
             _inquiryDate = req.inquiryDate;
-        if (_.isEmpty(req.fiSessionKey)) {
-            _fiSessionKey = '%%';
-            subFiSessionKey = ` AND T.CUST_SSID_ID like '%%' OR T.CUST_SSID_ID IS NULL `;
+
             params = {
                 niceSessionKey: {val: req.niceSessionKey},
                 fiCode: {val: req.fiCode},
-                inquiryDate: {val: _inquiryDate},
-                gdscd: {val: gdscd}
-            };
-        }
-        else {
-            _fiSessionKey = req.fiSessionKey;
-            subFiSessionKey = ` AND T.CUST_SSID_ID like :fiSessionKey `;
-            params = {
-                niceSessionKey: {val: req.niceSessionKey},
-                fiCode: {val: req.fiCode},
-                fiSessionKey: {val: _fiSessionKey},
                 inquiryDate: {val: _inquiryDate},
                 gdscd: {val: gdscd}
             }
-        }
 
         let sqlCusLookup = `SELECT T.SCRP_STAT_CD, T.RSP_CD FROM TB_SCRPLOG T
                             where T.NICE_SSIN_ID = :niceSessionKey
-                            AND T.CUST_CD = :fiCode` +
-            subFiSessionKey +
-            `AND T.INQ_DTIM like :inquiryDate
-                            AND T.GDS_CD = :gdscd`;
+                            AND T.CUST_CD = :fiCode AND T.INQ_DTIM LIKE :inquiryDate AND T.GDS_CD = :gdscd`
 
         let result = await connection.execute(
             // The statement to execute
@@ -1377,28 +1358,29 @@ async function insertDataToVmgAddress(req) {
         let sql, result;
         connection = await oracledb.getConnection(dbconfig);
 
-        sql = `INSERT INTO TB_VMG_ADDRESS (NICE_SSIN_ID, ADDR_HOME, PERCENT_HOME, LAT_HOME, LONG_HOME, ADDR_WORK, PERCENT_WORK, LAT_WORK, LONG_WORK, ADDR_REFER, PERCENT_REFER, LAT_REFER, LONG_REFER, MONTH, YEAR) 
-        VALUES (:NICE_SSIN_ID, :ADDR_HOME, :PERCENT_HOME, :LAT_HOME, :LONG_HOME, :ADDR_WORK, :PERCENT_WORK, :LAT_WORK, :LONG_WORK, :ADDR_REFER, :PERCENT_REFER, :LAT_REFER, :LONG_REFER, :MONTH, :YEAR)`;
+        sql = `INSERT INTO TB_VMG_ADDRESS (NICE_SSIN_ID, ADDR_HOME, PERCENT_HOME, LAT_HOME, LONG_HOME, ADDR_WORK, PERCENT_WORK, LAT_WORK, LONG_WORK, ADDR_REFER, PERCENT_REFER, LAT_REFER, LONG_REFER, MONTH, YEAR, TEL_COMPANY) 
+        VALUES (:NICE_SSIN_ID, :ADDR_HOME, :PERCENT_HOME, :LAT_HOME, :LONG_HOME, :ADDR_WORK, :PERCENT_WORK, :LAT_WORK, :LONG_WORK, :ADDR_REFER, :PERCENT_REFER, :LAT_REFER, :LONG_REFER, :MONTH, :YEAR,:TEL_COMPANY)`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: req.NICE_SSIN_ID,
-                ADDR_HOME: req.ADDR_HOME,
-                PERCENT_HOME: req.PERCENT_HOME,
-                LAT_HOME: req.LAT_HOME,
-                LONG_HOME: req.LONG_HOME,
-                ADDR_WORK: req.ADDR_WORK,
-                PERCENT_WORK: req.PERCENT_WORK,
-                LAT_WORK: req.LAT_WORK,
-                LONG_WORK: req.LONG_WORK,
-                ADDR_REFER: req.ADDR_REFER,
-                PERCENT_REFER: req.PERCENT_REFER,
-                LAT_REFER: req.LAT_REFER,
-                LONG_REFER: req.LONG_REFER,
-                MONTH: req.MONTH,
-                YEAR: req.YEAR
+                NICE_SSIN_ID: {val: req.NICE_SSIN_ID},
+                ADDR_HOME: {val: req.ADDR_HOME},
+                PERCENT_HOME: {val: req.PERCENT_HOME},
+                LAT_HOME: {val: req.LAT_HOME},
+                LONG_HOME: {val: req.LONG_HOME},
+                ADDR_WORK: {val: req.ADDR_WORK},
+                PERCENT_WORK: {val: req.PERCENT_WORK},
+                LAT_WORK: {val: req.LAT_WORK},
+                LONG_WORK: {val: req.LONG_WORK},
+                ADDR_REFER: {val: req.ADDR_REFER},
+                PERCENT_REFER: {val: req.PERCENT_REFER},
+                LAT_REFER: {val: req.LAT_REFER},
+                LONG_REFER: {val: req.LONG_REFER},
+                MONTH: {val: req.MONTH},
+                YEAR: {val: req.YEAR},
+                TEL_COMPANY: {val: req.TEL_COMPANY}
             },
             {autoCommit: true}
         );
@@ -1663,6 +1645,64 @@ async function updateRspCdAndStatusCdScrapLogAfterGetResult(niceSessionKey, RspC
     }
 }
 
+async function selectDataKYC_VC1_RSLT(niceSskey) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `SELECT
+                   a.SCRP_STAT_CD,
+                   b.ADDR_HOME,
+                   b.PERCENT_HOME ,
+                   b.LAT_HOME,
+                   b.LONG_HOME ,
+                   b.ADDR_WORK ,
+                   b.PERCENT_WORK ,
+                   b.LAT_WORK,
+                   b.LONG_WORK,
+                   b.ADDR_REFER,
+                   b.PERCENT_REFER,
+                   b.LAT_REFER,
+                   b.LONG_REFER,
+                   b.MONTH,
+                   b.YEAR,
+                   b.TEL_COMPANY,
+                   c.RESULT_7D,
+                   c.RESULT_30D,
+                   c.RESULT_90D
+               FROM tb_scrplog a
+                        LEFT JOIN tb_vmg_address b ON a.nice_ssin_id = b.nice_ssin_id
+                        LEFT JOIN tb_vmg_loc_pct c ON a.nice_ssin_id = c.nice_ssin_id
+               WHERE a.nice_ssin_id = :nice_ssin_id`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                nice_ssin_id: niceSskey
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT}
+        );
+        if (result.rows[0] !== undefined) {
+            return result.rows[0];
+        } else {
+            return {};
+        }
+    } catch (err) {
+        return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1690,3 +1730,4 @@ module.exports.selectCICScoreAndGrade = selectCICScoreAndGrade;
 module.exports.insertDataToVmgIncome = insertDataToVmgIncome;
 module.exports.insertDataCAC1ToSCRPLOG = insertDataCAC1ToSCRPLOG;
 module.exports.updateRspCdAndStatusCdScrapLogAfterGetResult = updateRspCdAndStatusCdScrapLogAfterGetResult;
+module.exports.selectDataKYC_VC1_RSLT = selectDataKYC_VC1_RSLT;
