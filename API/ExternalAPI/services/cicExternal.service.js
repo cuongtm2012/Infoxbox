@@ -1580,6 +1580,89 @@ async function insertDataToVmgIncome(req) {
     }
 }
 
+async function insertDataCAC1ToSCRPLOG(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
+        VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.niceSessionKey,
+                CUST_SSID_ID: req.custSsId,
+                CUST_CD: req.custCd,
+                GDS_CD: req.gdsCD,
+                TEL_NO_MOBILE: req.mobilePhoneNumber,
+                INQ_DTIM: req.inqDt,
+                AGR_FG: req.agrFG,
+                SYS_DTIM: req.sysDt,
+                WORK_ID: req.workID,
+            },
+            {autoCommit: true}
+        );
+        console.log('insertDataNFScoreOKToSCRPLOG: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function updateRspCdAndStatusCdScrapLogAfterGetResult(niceSessionKey, RspCd, StatCd) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(dbconfig);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET RSP_CD = :RSP_CD , SCRP_STAT_CD = :SCRP_STAT_CD
+                WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: {val: niceSessionKey},
+                RSP_CD: {val: RspCd},
+                SCRP_STAT_CD: {val: StatCd}
+            },
+            {autoCommit: true},
+        );
+        console.log('updateRspCdAndStatusCdScrapLogAfterGetResult: ', result.rowsAffected)
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1605,3 +1688,5 @@ module.exports.insertDataSimpleLimitToSCRPLOG = insertDataSimpleLimitToSCRPLOG;
 module.exports.insertDataFPTContractToSCRPLOG = insertDataFPTContractToSCRPLOG;
 module.exports.selectCICScoreAndGrade = selectCICScoreAndGrade;
 module.exports.insertDataToVmgIncome = insertDataToVmgIncome;
+module.exports.insertDataCAC1ToSCRPLOG = insertDataCAC1ToSCRPLOG;
+module.exports.updateRspCdAndStatusCdScrapLogAfterGetResult = updateRspCdAndStatusCdScrapLogAfterGetResult;
