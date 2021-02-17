@@ -68,7 +68,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                             resultCAC1 => {
                                 let dataSaveToVmgLocPct, dataSaveToVmgAddress;
                                 if (resultCAC1.data.error_code) {
-                                    switch (resultCAC1.data.error_code) {
+                                    switch (parseInt(resultCAC1.data.error_code)) {
                                         case 0:
                                             dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
                                             dataSaveToVmgAddress = new dataCAC1SaveToVmgAddress(fullNiceKey, resultCAC1.data);
