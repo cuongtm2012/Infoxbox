@@ -315,6 +315,14 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
                         }
+                    } else if(_.isEmpty(result)) {
+                        preResponse = new PreResponse(responCode.RESCODEEXT.NOTEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NOTEXIST.code);
+                        responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
+                        // update INQLOG
+                        dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                        logger.info(responseData);
+                        return res.status(200).json(responseData);
                     } else {
                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                         responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
