@@ -6,26 +6,87 @@ module.exports = function KYC_VC1_RSLT_withResult_Response
     let rs30DayConvertJson = JSON.parse(rs30Day);
     let rs90DayConvertJson = JSON.parse(rs90Day);
 
-    let result7Day = {
-        homePercent: rs7DayConvertJson[0].homepercent,
-        workPercent: rs7DayConvertJson[0].workpercent,
-        referPercent: rs7DayConvertJson[0].referpercent,
-        timeRange: rs7DayConvertJson[0].timerange,
-    }
+    let result7Day = [
+        {
+            homePercent: rs7DayConvertJson[0].homepercent,
+            workPercent: rs7DayConvertJson[0].workpercent,
+            referPercent: rs7DayConvertJson[0].referpercent,
+            timeRange: rs7DayConvertJson[0].timerange,
+        },
+        {
+            homePercent: rs7DayConvertJson[1].homepercent,
+            workPercent: rs7DayConvertJson[1].workpercent,
+            referPercent: rs7DayConvertJson[1].referpercent,
+            timeRange: rs7DayConvertJson[1].timerange,
+        },
+        {
+            homePercent: rs7DayConvertJson[2].homepercent,
+            workPercent: rs7DayConvertJson[2].workpercent,
+            referPercent: rs7DayConvertJson[2].referpercent,
+            timeRange: rs7DayConvertJson[2].timerange,
+        },
+        {
+            homePercent: rs7DayConvertJson[3].homepercent,
+            workPercent: rs7DayConvertJson[3].workpercent,
+            referPercent: rs7DayConvertJson[3].referpercent,
+            timeRange: rs7DayConvertJson[3].timerange,
+        }
+    ]
 
-    let result30Day = {
-        homePercent: rs30DayConvertJson[0].homepercent,
-        workPercent: rs30DayConvertJson[0].workpercent,
-        referPercent: rs30DayConvertJson[0].referpercent,
-        timeRange: rs30DayConvertJson[0].timerange,
-    }
+    let result30Day = [
+        {
+            homePercent: rs30DayConvertJson[0].homepercent,
+            workPercent: rs30DayConvertJson[0].workpercent,
+            referPercent: rs30DayConvertJson[0].referpercent,
+            timeRange: rs30DayConvertJson[0].timerange,
+        },
+        {
+            homePercent: rs30DayConvertJson[1].homepercent,
+            workPercent: rs30DayConvertJson[1].workpercent,
+            referPercent: rs30DayConvertJson[1].referpercent,
+            timeRange: rs30DayConvertJson[1].timerange,
+        },
+        {
+            homePercent: rs30DayConvertJson[2].homepercent,
+            workPercent: rs30DayConvertJson[2].workpercent,
+            referPercent: rs30DayConvertJson[2].referpercent,
+            timeRange: rs30DayConvertJson[2].timerange,
+        },
+        {
+            homePercent: rs30DayConvertJson[3].homepercent,
+            workPercent: rs30DayConvertJson[3].workpercent,
+            referPercent: rs30DayConvertJson[3].referpercent,
+            timeRange: rs30DayConvertJson[3].timerange,
+        }
 
-    let result90Day = {
-        homePercent: rs90DayConvertJson[0].homepercent,
-        workPercent: rs90DayConvertJson[0].workpercent,
-        referPercent: rs90DayConvertJson[0].referpercent,
-        timeRange: rs90DayConvertJson[0].timerange,
-    }
+    ]
+
+    let result90Day = [
+        {
+            homePercent: rs90DayConvertJson[0].homepercent,
+            workPercent: rs90DayConvertJson[0].workpercent,
+            referPercent: rs90DayConvertJson[0].referpercent,
+            timeRange: rs90DayConvertJson[0].timerange,
+        },
+        {
+            homePercent: rs90DayConvertJson[1].homepercent,
+            workPercent: rs90DayConvertJson[1].workpercent,
+            referPercent: rs90DayConvertJson[1].referpercent,
+            timeRange: rs90DayConvertJson[1].timerange,
+        },
+        {
+            homePercent: rs90DayConvertJson[2].homepercent,
+            workPercent: rs90DayConvertJson[2].workpercent,
+            referPercent: rs90DayConvertJson[2].referpercent,
+            timeRange: rs90DayConvertJson[2].timerange,
+        },
+        {
+            homePercent: rs90DayConvertJson[3].homepercent,
+            workPercent: rs90DayConvertJson[3].workpercent,
+            referPercent: rs90DayConvertJson[3].referpercent,
+            timeRange: rs90DayConvertJson[3].timerange,
+        }
+    ]
     const {
         responseMessage,
         niceSessionKey,
