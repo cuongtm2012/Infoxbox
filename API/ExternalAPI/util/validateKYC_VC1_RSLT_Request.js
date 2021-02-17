@@ -49,42 +49,12 @@ module.exports = {
             };
             return response;
         }
-        //    phone number
-        if (_.isEmpty(getDataReq.mobilePhoneNumber)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
-                responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
-            };
-            return response;
-        }
-        if (200 < getDataReq.mobilePhoneNumber.length) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
-                responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
-            };
-            return response;
-        }
         //nicesessionkey
         if (_.isEmpty(getDataReq.niceSessionKey)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.name,
                 responseCode: responcodeEXT.RESCODEEXT.NINICESESSIONKEY.code
             }
-            return response;
-        }
-        // infoProvConcent
-        if (_.isEmpty(getDataReq.infoProvConcent)) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
-                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
-            };
-            return response;
-        }
-        if (!checkContains.contains.call(responcodeEXT.InfoProvConcent, getDataReq.infoProvConcent.toUpperCase())) {
-            response = {
-                responseMessage: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.name,
-                responseCode: responcodeEXT.RESCODEEXT.ConsentProvisionIsNotValid.code
-            };
             return response;
         }
 
