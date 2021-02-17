@@ -67,7 +67,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                         axios.post(URI.URL_VMG_DEV, bodyCac1, config).then(
                             resultCAC1 => {
                                 let dataSaveToVmgLocPct, dataSaveToVmgAddress;
-                                if (resultCAC1.data.error_code) {
+                                if (resultCAC1.data.error_code != undefined ) {
                                     switch (parseInt(resultCAC1.data.error_code)) {
                                         case 0:
                                             dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
