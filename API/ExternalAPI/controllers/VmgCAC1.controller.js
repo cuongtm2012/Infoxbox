@@ -278,7 +278,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                 responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
                                 responseData.processStatusCode = responCode.ScrapingStatusCode.VMG_InProcessing.code;
-                                responseData.processStatusMessage = responCode.ScrapingStatusCode.VMG_InProcessing.message;
+                                // responseData.processStatusMessage = responCode.ScrapingStatusCode.VMG_InProcessing.message;
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -288,7 +288,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                 responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
                                 responseData.processStatusCode = responCode.ScrapingStatusCode.Application_Error.code;
-                                responseData.processStatusMessage = responCode.ScrapingStatusCode.Application_Error.message;
+                                // responseData.processStatusMessage = responCode.ScrapingStatusCode.Application_Error.message;
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -298,7 +298,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                 responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
                                 responseData.processStatusCode = responCode.ScrapingStatusCode.Telco_Interface_Error.code;
-                                responseData.processStatusMessage = responCode.ScrapingStatusCode.Telco_Interface_Error.message;
+                                // responseData.processStatusMessage = responCode.ScrapingStatusCode.Telco_Interface_Error.message;
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -308,7 +308,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                 responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
                                 responseData.processStatusCode = responCode.ScrapingStatusCode.Other_Error.code;
-                                responseData.processStatusMessage = responCode.ScrapingStatusCode.Other_Error.message;
+                                // responseData.processStatusMessage = responCode.ScrapingStatusCode.Other_Error.message;
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
