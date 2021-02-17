@@ -59,6 +59,124 @@ exports.KYC_VC1_RQST = function (req, res) {
                     return res.status(500).json(responseData);
                 }
                 //    end check parmas
+                let a = {
+                    "error_code": 0,
+                    "error_msg": "Thông tin trong lịch sử",
+                    "requestid": 1931878,
+                    "cmd": "cac1_nice",
+                    "telco": "viettel",
+                    "result": {
+                        "resLocation": {
+                            "result7Day": [
+                                {
+                                    "timerange": "0h-7h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "8h-12h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "13h-18h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "19h-23h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "0h-24h",
+                                    "homepercent": 2,
+                                    "workpercent": 35,
+                                    "referpercent": 2
+                                }
+                            ],
+                            "result30Day": [
+                                {
+                                    "timerange": "0h-7h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "8h-12h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "13h-18h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "19h-23h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "0h-24h",
+                                    "homepercent": 1,
+                                    "workpercent": 32,
+                                    "referpercent": 1
+                                }
+                            ],
+                            "result90Day": [
+                                {
+                                    "timerange": "0h-7h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "8h-12h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "13h-18h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "19h-23h",
+                                    "homepercent": -1,
+                                    "workpercent": -1,
+                                    "referpercent": -1
+                                },
+                                {
+                                    "timerange": "0h-24h",
+                                    "homepercent": 1,
+                                    "workpercent": 23,
+                                    "referpercent": 1
+                                }
+                            ]
+                        },
+                        "resCoordinates": {
+                            "home_address": "thanh lam, me linh , ha noi",
+                            "home_lat": "21.1960423",
+                            "home_long": "105.7263152",
+                            "work_address": "81 Tran thai tong, cau giay, ha noi",
+                            "work_lat": "21.0322576",
+                            "work_long": "105.7888203",
+                            "refer_address": "thanh lam, me linh , ha noi",
+                            "refer_lat": "21.1960423",
+                            "refer_long": "105.7263152"
+                        }
+                    }
+                }
                 let dataInsertToScrapLog = new dataCAC1SaveToScrapLog(req.body, fullNiceKey);
                 cicExternalService.insertDataCAC1ToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
@@ -67,8 +185,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                         axios.post(URI.URL_VMG_DEV, bodyCac1, config).then(
                             resultCAC1 => {
                                 let dataSaveToVmgLocPct, dataSaveToVmgAddress;
-                                if (resultCAC1.data.error_code) {
-                                    switch (parseInt(resultCAC1.data.error_code)) {
+                                if (a.error_code !== undefined) {
+                                    switch (parseInt(a.error_code)) {
                                         case 0:
                                             dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
                                             dataSaveToVmgAddress = new dataCAC1SaveToVmgAddress(fullNiceKey, resultCAC1.data);
