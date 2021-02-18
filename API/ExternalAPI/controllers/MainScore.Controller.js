@@ -106,15 +106,27 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                         return res.status(200).json(responseData);
                                                                     }
                                                                 }).catch(reason => {
-                                                                console.log("err:", reason.toString());
-                                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                                responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                logger.info(reason.toString());
-                                                                logger.info(responseData);
-                                                                return res.status(200).json(responseData);
+                                                                if (reason.message === 'timeout of 60000ms exceeded') {
+                                                                    console.log("err:", reason.toString());
+                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
+                                                                    responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
+                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
+                                                                    logger.info(reason.toString());
+                                                                    logger.info(responseData);
+                                                                    return res.status(200).json(responseData);
+                                                                } else {
+                                                                    console.log("err:", reason.toString());
+                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                                    responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
+                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                    logger.info(reason.toString());
+                                                                    logger.info(responseData);
+                                                                    return res.status(200).json(responseData);
+                                                                }
                                                             })
                                                         } else {
                                                             console.log('errKYC2: ', resultKYC2.data.error_msg);
