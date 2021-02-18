@@ -108,7 +108,6 @@ module.exports = function KYC_VC1_RSLT_withResult_Response
     this.taskCode = taskCode ? taskCode : "";
     this.customerNumber = customerNumber ? customerNumber : "";
     this.mobilePhoneNumber = mobilePhoneNumber ? mobilePhoneNumber : "";
-    this.infoProvConcent = infoProvConcent ? infoProvConcent : "";
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
