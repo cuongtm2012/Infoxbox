@@ -103,8 +103,19 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     return res.status(200).json(responseData)
                                 }
                         }).catch(reason => {
-                            logger.error(reason.toString());
-                            return res.status(500).json({error: reason.toString()});
+                            if (reason.message === 'timeout of 60000ms exceeded') {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
+                                responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            } else {
+                                logger.error(reason.toString());
+                                return res.status(500).json({error: reason.toString()});
+                            }
                         });
                     }).catch(reason => {
                     logger.error(reason.toString());
