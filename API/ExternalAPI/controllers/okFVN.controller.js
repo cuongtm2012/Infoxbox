@@ -104,17 +104,25 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                 }
                         }).catch(reason => {
                             if (reason.message === 'timeout of 60000ms exceeded') {
-                                preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                 logger.info(responseData);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else {
-                                logger.error(reason.toString());
-                                return res.status(500).json({error: reason.toString()});
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
                             }
                         });
                     }).catch(reason => {

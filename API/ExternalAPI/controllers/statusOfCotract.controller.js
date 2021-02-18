@@ -108,19 +108,35 @@ exports.statusOfContract = function (req, res) {
                                             }
                                         }
                                     ).catch(reason => {
+                                        console.log('errGetStatus: ', reason.toString());
                                         if (reason.response && reason.response.status === 500) {
                                             //    update scraplog & response F072
-                                            console.log('errGetStatus: ', reason.toString());
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                             logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
+                                        } else if (reason.message === 'timeout of 60000ms exceeded') {
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                            responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else {
-                                            logger.error(reason.toString());
-                                            return res.status(500).json({error: reason.toString()});
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                            responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
                                         }
                                     })
                                 } else if (resultfetAuthAccess.status === 500) {
@@ -147,19 +163,35 @@ exports.statusOfContract = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
+                            console.log('errGetStatus: ', reason.toString());
                             if (reason.response && reason.response.status === 500) {
                                 //    update scraplog & response F072
-                                console.log('errGetStatus: ', reason.toString());
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                 logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
+                            } else if (reason.message === 'timeout of 60000ms exceeded') {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else {
-                                logger.error(reason.toString());
-                                return res.status(500).json({error: reason.toString()});
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
                             }
                         })
                     }).catch(reason => {

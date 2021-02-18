@@ -109,9 +109,9 @@ exports.sendingContractData = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
+                                        console.log('errSubmitInfo: ', reason.toString());
                                         if (reason.response && reason.response.status === 500) {
                                             //    update scraplog & response F070
-                                            console.log('errSubmitInfo: ', reason.toString());
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -120,9 +120,24 @@ exports.sendingContractData = function (req, res) {
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
+                                        }  else if (reason.message === 'timeout of 60000ms exceeded') {
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                            responseData = new sendingDataFPTContractResponse(req.body, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
                                         } else {
-                                            logger.error(reason.toString());
-                                            return res.status(500).json({error: reason.toString()});
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                            responseData = new sendingDataFPTContractResponse(req.body, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
                                         }
                                     })
                                 } else if (resultfetAuthAccess.status === 500) {
@@ -157,9 +172,24 @@ exports.sendingContractData = function (req, res) {
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
+                            } else if (reason.message === 'timeout of 60000ms exceeded') {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                responseData = new sendingDataFPTContractResponse(req.body, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
                             } else {
-                                logger.error(reason.toString());
-                                return res.status(500).json({error: reason.toString()});
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                responseData = new sendingDataFPTContractResponse(req.body, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
                             }
                         })
                     }).catch(reason => {

@@ -136,11 +136,11 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             ).catch(reason => {
                                                                 if (reason.message === 'timeout of 60000ms exceeded') {
                                                                     console.log('errRclips', reason.toString());
-                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
+                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                                                     logger.info(responseData);
                                                                     logger.info(reason.toString());
                                                                     return res.status(200).json(responseData);
@@ -196,11 +196,11 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                     errGetRiskScore => {
                                                         if (errGetRiskScore.message === 'timeout of 60000ms exceeded') {
                                                             console.log('errRclips', reason.toString());
-                                                            preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
+                                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                                             logger.info(responseData);
                                                             logger.info(reason.toString());
                                                             return res.status(200).json(responseData);
@@ -234,11 +234,11 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     ).catch(reason => {
                                         if (reason.message === 'timeout of 60000ms exceeded') {
                                             console.log('errRclips', reason.toString());
-                                            preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -270,16 +270,27 @@ exports.nonFinancialScoreOk = function (req, res) {
                             }
                         ).catch(
                             errorGetAuth => {
-                                //    update scraplog & response F048
-                                console.log("err:", errorGetAuth.toString());
-                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
-                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                logger.info(responseData);
-                                logger.info(errorGetAuth.toString());
-                                return res.status(200).json(responseData);
+                                console.log("errorGetAuth:", errorGetAuth.toString());
+                                if (errorGetAuth.message === 'timeout of 60000ms exceeded') {
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                    responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                    logger.info(responseData);
+                                    logger.info(errorGetAuth.toString());
+                                    return res.status(200).json(responseData);
+                                } else {
+                                    //    update scraplog & response F048
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                    responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    logger.info(responseData);
+                                    logger.info(errorGetAuth.toString());
+                                    return res.status(200).json(responseData);
+                                }
                             })
                     }
                 ).catch(reason => {

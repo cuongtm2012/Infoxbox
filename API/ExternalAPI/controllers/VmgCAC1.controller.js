@@ -67,7 +67,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                         axios.post(URI.URL_VMG_DEV, bodyCac1, config).then(
                             resultCAC1 => {
                                 let dataSaveToVmgLocPct, dataSaveToVmgAddress;
-                                if (resultCAC1.data.error_code != undefined ) {
+                                if (resultCAC1.data.error_code != undefined) {
                                     switch (parseInt(resultCAC1.data.error_code)) {
                                         case 0:
                                             dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
@@ -183,15 +183,27 @@ exports.KYC_VC1_RQST = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            preResponse = new PreResponse(responCode.RESCODEEXT.TimeoutError.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.TimeoutError.code);
-                            responseData = new bodyResponse(req.body, preResponse);
-                            // update INQLOG
-                            dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.TimeoutError.code).then();
-                            logger.info(responseData);
-                            logger.info(reason.toString());
-                            return res.status(200).json(responseData);
+                            if (reason.message === 'timeout of 60000ms exceeded') {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                responseData = new bodyResponse(req.body, preResponse);
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
+                            } else {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                responseData = new bodyResponse(req.body, preResponse);
+                                // update INQLOG
+                                dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                logger.info(responseData);
+                                logger.info(reason.toString());
+                                return res.status(200).json(responseData);
+                            }
                         })
                     }).catch(reason => {
                     logger.error(reason.toString());

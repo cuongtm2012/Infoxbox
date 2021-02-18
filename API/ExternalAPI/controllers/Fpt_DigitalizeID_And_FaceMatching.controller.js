@@ -205,17 +205,28 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                                 }
                                                             }
                                                         ).catch(reason => {
-                                                            // response F048
                                                             console.log('Error when call FPT v02: ', reason.toString());
-                                                            deleteFile(req);
-                                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                            responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
-                                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                            logger.info(responseData);
-                                                            logger.info(reason.toString());
-                                                            return res.status(200).json(responseData);
+                                                            if (reason.message === 'timeout of 100000ms exceeded') {
+                                                                deleteFile(req);
+                                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                                                responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                                                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                                logger.info(responseData);
+                                                                logger.info(reason.toString());
+                                                                return res.status(200).json(responseData);
+                                                            } else {
+                                                                deleteFile(req);
+                                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                                responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                                                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                logger.info(responseData);
+                                                                logger.info(reason.toString());
+                                                                return res.status(200).json(responseData);
+                                                            }
                                                         })
                                                     } else if (responseV01.data.ErrorCode === 1451 || responseV01.data.ErrorCode === 1455) {
                                                         // response F064
@@ -255,17 +266,28 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                     }
                                                 }
                                             ).catch(errV01 => {
-                                                // response F048
                                                 console.log('errV01: ', errV01.toString())
-                                                deleteFile(req);
-                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
-                                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                logger.info(responseData);
-                                                logger.info(errV01.toString());
-                                                return res.status(200).json(responseData);
+                                                if (errV01.message === 'timeout of 100000ms exceeded') {
+                                                    deleteFile(req);
+                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                                    responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                    logger.info(responseData);
+                                                    logger.info(errV01.toString());
+                                                    return res.status(200).json(responseData);
+                                                } else {
+                                                    deleteFile(req);
+                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                    responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                    logger.info(responseData);
+                                                    logger.info(errV01.toString());
+                                                    return res.status(200).json(responseData);
+                                                }
                                             })
                                         } else {
                                             deleteFile(req);
@@ -282,17 +304,29 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                         }
                                     }
                                 ).catch(reason => {
-                                    //    get token err response F048
-                                    deleteFile(req);
                                     console.log('Error when get token FPT v01: ', reason.toString());
-                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                    responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
-                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                    logger.info(responseData);
-                                    logger.info(reason.toString());
-                                    return res.status(200).json(responseData);
+                                    if (reason.message === 'timeout of 60000ms exceeded') {
+                                        deleteFile(req);
+                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                        responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                        logger.info(responseData);
+                                        logger.info(reason.toString());
+                                        return res.status(200).json(responseData);
+                                    } else {
+                                        //    get token err response F048
+                                        deleteFile(req);
+                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                        responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
+                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                        logger.info(responseData);
+                                        logger.info(reason.toString());
+                                        return res.status(200).json(responseData);
+                                    }
                                 })
                             }
                         ).catch(reason => {
