@@ -37,24 +37,24 @@ module.exports = function FptDigitalizeIdAndFaceMatchingResponseWithResult(Reque
         nationality: frontImage.nationality,
         home: frontImage.home,
         address: frontImage.address,
-        type_new: frontImage.type_new,
-        address_entities: {
+        typeNew: frontImage.type_new,
+        addressEntities: {
             province: frontImage.address_entities.province,
             district: frontImage.address_entities.district,
             ward: frontImage.address_entities.ward,
             street: frontImage.address_entities.street
         },
         doe: date.transform(frontImage.doe, 'DD-MM-YYYY', 'YYYYMMDD'),
-        type: frontImage.type
+        typeFront: frontImage.type
     };
     this.rearImage = {
         ethnicity: rearImage.ethnicity,
         religion: rearImage.religion,
-        type_new: rearImage.type_new,
+        typeNewRear: rearImage.type_new,
         features: rearImage.features,
-        issue_date: rearImage.issue_date,
-        issue_loc: rearImage.issue_loc,
-        type: rearImage.type
+        issueDate: rearImage.issue_date,
+        issueLoc: rearImage.issue_loc,
+        typeRear: rearImage.type
     };
     this.faceMatchingResult = {
         similarity: truncateFloat(resultFaceMatching.similarity),
@@ -78,6 +78,6 @@ function convertSexString(sex) {
     } else if (sex.toLowerCase() === 'nu') {
         return 'F'
     } else {
-        return '';
+        return sex;
     }
 }
