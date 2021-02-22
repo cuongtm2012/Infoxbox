@@ -21,6 +21,7 @@ const crypto = require('crypto');
 const DataZaloSaveToExtScore = require('../domain/dataZalo_Save_To_ExtScore.save');
 const BodyPostRiskScore = require('../domain/body_Post_RiskScore.body');
 const DataRiskScoreSaveToExtScore = require('../domain/Data_RiskScore_Save_To_ExtScore.save');
+const DEFAULT_SCORE = -99;
 exports.nonFinancialScoreOk = function (req, res) {
     try {
         const config = {
@@ -84,7 +85,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                     dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, resultGetZaloScore.data.data.score, resultGetZaloScore.data.data.request_id);
                                                     cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 } else {
-                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, -99, resultGetZaloScore.data.data.request_id);
+                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, DEFAULT_SCORE, resultGetZaloScore.data.data.request_id);
                                                     cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 }
                                                 //    prepare call VMG Risk Score
@@ -102,8 +103,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                 let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score, req.body.mobilePhoneNumber);
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             } else {
-                                                                VmgScore = -99;
-                                                                VmgGrade = -99;
+                                                                VmgScore = DEFAULT_SCORE;
+                                                                VmgGrade = DEFAULT_SCORE;
                                                                 let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, {}, req.body.mobilePhoneNumber);
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             }
