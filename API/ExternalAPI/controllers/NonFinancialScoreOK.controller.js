@@ -21,6 +21,7 @@ const crypto = require('crypto');
 const DataZaloSaveToExtScore = require('../domain/dataZalo_Save_To_ExtScore.save');
 const BodyPostRiskScore = require('../domain/body_Post_RiskScore.body');
 const DataRiskScoreSaveToExtScore = require('../domain/Data_RiskScore_Save_To_ExtScore.save');
+const DEFAULT_SCORE = -99;
 exports.nonFinancialScoreOk = function (req, res) {
     try {
         const config = {
@@ -77,26 +78,41 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     //    call API get zalo score
                                     axios.get(fullUrlGetScore, config).then(
                                         resultGetZaloScore => {
-                                            if (resultGetZaloScore.data.code === 0) {
+                                            if (resultGetZaloScore.data.code !== undefined) {
                                             //    success get zalo score
                                             //    save score to EXT_SCORE
-                                                dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey,resultGetZaloScore.data.data.score,resultGetZaloScore.data.data.request_id);
-                                                cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
-                                            //    prepare call VMG Risk Score
+                                                if (resultGetZaloScore.data.code === 0) {
+                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, resultGetZaloScore.data.data.score, resultGetZaloScore.data.data.request_id);
+                                                    cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
+                                                } else {
+                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, DEFAULT_SCORE, resultGetZaloScore.data.data.request_id);
+                                                    cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
+                                                }
+                                                //    prepare call VMG Risk Score
                                                 let bodyGetRiskScore = new BodyPostRiskScore(req.body);
                                                 //    get RiskScore
                                                 axios.post(URI.URL_VMG_DEV, bodyGetRiskScore, config).then(
                                                     resultGetRiskScore => {
-                                                        if (resultGetRiskScore.data.error_code === 0) {
+                                                        if (resultGetRiskScore.data.error_code !== undefined) {
                                                         //    success get Risk Score
                                                         //    update To EXT_SCORE
-                                                            let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score);
-                                                            cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
+                                                            let VmgScore, VmgGrade;
+                                                            if(resultGetRiskScore.data.error_code === 0) {
+                                                                VmgScore = resultGetRiskScore.data.result.nice_score.RSK_SCORE;
+                                                                VmgGrade = resultGetRiskScore.data.result.nice_score.RSK_GRADE;
+                                                                let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score, req.body.mobilePhoneNumber);
+                                                                cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
+                                                            } else {
+                                                                VmgScore = DEFAULT_SCORE;
+                                                                VmgGrade = DEFAULT_SCORE;
+                                                                let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, {}, req.body.mobilePhoneNumber);
+                                                                cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
+                                                            }
                                                         //    Call Rclips
-                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, resultGetRiskScore.data.result.nice_score.RSK_SCORE, resultGetRiskScore.data.result.nice_score.RSK_GRADE, resultGetZaloScore.data.data.score);
+                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, resultGetZaloScore.data.data.score);
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore, config).then(
                                                                 resultRclipsNF => {
-                                                                    if (!_.isEmpty(resultRclipsNF.data.listResult)) {
+                                                                    if (resultRclipsNF.data.listResult !== undefined) {
                                                                         // response P000
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                                         responseData = new NFScoreResponseWithResult(req.body, preResponse, resultRclipsNF.data);
@@ -119,16 +135,28 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                     }
                                                                 }
                                                             ).catch(reason => {
-                                                                //    update scraplog & response F048
-                                                                console.log('errRclips', reason.toString());
-                                                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                                responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
-                                                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                logger.info(responseData);
-                                                                logger.info(reason.toString());
-                                                                return res.status(200).json(responseData);
+                                                                if (reason.message === 'timeout of 60000ms exceeded') {
+                                                                    console.log('errRclips', reason.toString());
+                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                                                    responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                                    logger.info(responseData);
+                                                                    logger.info(reason.toString());
+                                                                    return res.status(200).json(responseData);
+                                                                } else {
+                                                                    //    update scraplog & response F048
+                                                                    console.log('errRclips', reason.toString());
+                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                                    responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                    logger.info(responseData);
+                                                                    logger.info(reason.toString());
+                                                                    return res.status(200).json(responseData);
+                                                                }
                                                             })
                                                         }  else if (resultGetRiskScore.data.error_code === 4) {
                                                             //    update scraplog & response F052
@@ -167,16 +195,28 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                     }
                                                 ).catch(
                                                     errGetRiskScore => {
-                                                        //    update scraplog & response F048
-                                                        console.log("errGetRiskScore:", errGetRiskScore.toString());
-                                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                        responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
-                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                        logger.info(responseData);
-                                                        logger.info(errGetRiskScore.toString());
-                                                        return res.status(200).json(responseData);
+                                                        if (errGetRiskScore.message === 'timeout of 60000ms exceeded') {
+                                                            console.log('errRclips', reason.toString());
+                                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                                            responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                            logger.info(responseData);
+                                                            logger.info(reason.toString());
+                                                            return res.status(200).json(responseData);
+                                                        } else {
+                                                            //    update scraplog & response F048
+                                                            console.log("errGetRiskScore:", errGetRiskScore.toString());
+                                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                            responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                            logger.info(responseData);
+                                                            logger.info(errGetRiskScore.toString());
+                                                            return res.status(200).json(responseData);
+                                                        }
                                                     }
                                                 );
                                             }  else {
@@ -193,16 +233,28 @@ exports.nonFinancialScoreOk = function (req, res) {
                                             }
                                         }
                                     ).catch(reason => {
-                                        //    update scraplog & response F048
-                                        console.log("errZalo:", reason.toString())
-                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                        responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
-                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                        logger.info(responseData);
-                                        logger.info(reason.toString());
-                                        return res.status(200).json(responseData);
+                                        if (reason.message === 'timeout of 60000ms exceeded') {
+                                            console.log('errRclips', reason.toString());
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                            responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
+                                        } else {
+                                            //    update scraplog & response F048
+                                            console.log("errZalo:", reason.toString())
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                            responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
+                                        }
                                     })
                                 } else {
                                     //    update scraplog & response F048
@@ -219,16 +271,27 @@ exports.nonFinancialScoreOk = function (req, res) {
                             }
                         ).catch(
                             errorGetAuth => {
-                                //    update scraplog & response F048
-                                console.log("err:", errorGetAuth.toString());
-                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
-                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                logger.info(responseData);
-                                logger.info(errorGetAuth.toString());
-                                return res.status(200).json(responseData);
+                                console.log("errorGetAuth:", errorGetAuth.toString());
+                                if (errorGetAuth.message === 'timeout of 60000ms exceeded') {
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                    responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                    logger.info(responseData);
+                                    logger.info(errorGetAuth.toString());
+                                    return res.status(200).json(responseData);
+                                } else {
+                                    //    update scraplog & response F048
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                    responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
+                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    logger.info(responseData);
+                                    logger.info(errorGetAuth.toString());
+                                    return res.status(200).json(responseData);
+                                }
                             })
                     }
                 ).catch(reason => {

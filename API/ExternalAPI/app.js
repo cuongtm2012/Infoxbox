@@ -35,6 +35,7 @@ app.use(bodyParser.json({limit: '50mb'}));
 
 var cicExternalRoute = require('./routes/cicExternal.route');
 var eContractRoute = require('./routes/eContract.route');
+var eKyc = require('./routes/eKyc.route');
 
 // Config DB
 var config = require('./config/config');
@@ -114,6 +115,7 @@ app.use(function (req, res, next) {
 
 app.use('/external', cicExternalRoute);
 app.use('/contract', eContractRoute);
+app.use('/kyc', eKyc);
 //Timeout
 // function haltOnTimedout(req, res, next) {
 // 	if (!req.timedout) next();

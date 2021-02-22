@@ -21,7 +21,6 @@ var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_Digit
 var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller');
 var mainScoreController = require('../controllers/MainScore.Controller');
 
-
 var okFVNController = require('../controllers/okFVN.controller');
 var pingPongController = require('../controllers/pingPong.controller');
 

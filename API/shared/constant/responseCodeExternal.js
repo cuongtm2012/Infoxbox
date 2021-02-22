@@ -161,7 +161,14 @@ const ScrapingStatusCode = {
     CicReportInqError: { code: '22' },
     CicReportResultInqError: { code: '23' },
     CicReportResultNotExist: { code: '24' },
-    OtherError: { code: '29' }
+    OtherError: { code: '29' },
+    Complete: { code: '10' , message: 'Complete'},
+    VMG_InProcessing: { code: '01' , message: 'Waiting for customer consent'},
+    Application_Error: { code: '31' , message: 'Application error'},
+    No_Data_Provide: { code: '32' , message: 'No data to provide'},
+    Other_Error: { code: '39' , message: 'Other error'},
+    Telco_Interface_Error: { code: '34' , message: 'Telco interface error'},
+    Data_Provided_Already: { code: '33' , message: 'Data provided already'}
 };
 
 const TaskCode = {
@@ -181,7 +188,9 @@ const TaskCode = {
 	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
 	RCS_M01_RQST: { code: 'RCS_M01_RQST'},
     FTN_SCD_RQST: { code: 'FTN_SCD_RQST'},
-    FTN_CCS_RQST: { code: 'FTN_CCS_RQST'}
+    FTN_CCS_RQST: { code: 'FTN_CCS_RQST'},
+    KYC_VC1_RQST: { code: 'KYC_VC1_RQST'},
+    KYC_VC1_RSLT: { code: 'KYC_VC1_RSLT'}
 
 };
 
@@ -209,7 +218,9 @@ const NiceProductCode = {
     RCS_M01_RQST: { code: 'S2013'},
     NICE_CODE_INQLOG: {code: '1010'},
     FTN_SCD_RQST: {code: 'S2014'},
-    FTN_CSS_RQST: {code: 'S2014'}
+    FTN_CSS_RQST: {code: 'S2014'},
+    KYC_VC1_RQST: {code: 'S2002'},
+    KYC_VC1_RSLT: {code: 'S2002'}
 };
 
 const StatusCodeBatchProcess = {
@@ -228,6 +239,7 @@ const CUST_GB = {
     zalo: '22',
     VMG: '21'
 }
+
 
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
