@@ -26,7 +26,7 @@ const utilFunction = require('../../shared/util/util');
 const io = require('socket.io-client');
 const URI = require('../../shared/URI');
 const axios = require('axios');
-
+const dataSimpleLimitRclipsSaveToExtScore = require('../domain/dataSimpLimitRclipsSaveToExtScore.save');
 exports.okf_SPL_RQST = function (req, res, next) {
     try {
         let niceSessionKey;
@@ -85,8 +85,10 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     responseData.maxSimpleLimit = resultRclipsSPL.data.listResult.OT010.toString();
                                     // update INQLOG
                                     dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
+                                    let dataSaveToExtScore = new dataSimpleLimitRclipsSaveToExtScore(fullNiceKey, resultRclipsSPL.data.listResult, req.body.mobilePhoneNumber);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                    cicExternalService.insertDataToExtScore(dataSaveToExtScore).then();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {
