@@ -22,6 +22,7 @@ const DataZaloSaveToExtScore = require('../domain/dataZalo_Save_To_ExtScore.save
 const BodyPostRiskScore = require('../domain/body_Post_RiskScore.body');
 const DataRiskScoreSaveToExtScore = require('../domain/Data_RiskScore_Save_To_ExtScore.save');
 const DEFAULT_SCORE = -99;
+const dataNfScoreRclipsSaveToExtScore = require('../domain/dataNfScoreSaveToExtScore.save');
 exports.nonFinancialScoreOk = function (req, res) {
     try {
         const config = {
@@ -108,7 +109,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                 let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, {}, req.body.mobilePhoneNumber);
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             }
-                                                        //    Call Rclips
+                                                            //    Call Rclips
                                                             let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, resultGetZaloScore.data.data.score);
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore, config).then(
                                                                 resultRclipsNF => {
@@ -117,8 +118,10 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                                         responseData = new NFScoreResponseWithResult(req.body, preResponse, resultRclipsNF.data);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                        let dataSaveToExtScore = new dataNfScoreRclipsSaveToExtScore(fullNiceKey, resultRclipsNF.data.listResult, req.body.mobilePhoneNumber);
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                                        cicExternalService.insertDataToExtScore(dataSaveToExtScore).then();
                                                                         logger.info(responseData);
                                                                         return res.status(200).json(responseData);
                                                                     } else {

@@ -237,7 +237,8 @@ const ScoreCode = {
 }
 const CUST_GB = {
     zalo: '22',
-    VMG: '21'
+    VMG: '21',
+    NICE: '10'
 }
 
 
