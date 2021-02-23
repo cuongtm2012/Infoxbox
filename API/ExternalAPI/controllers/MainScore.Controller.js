@@ -21,6 +21,7 @@ const dataVmgKyc2SaveToVmgIncome = require('../domain/dataVmgKyc2SaveToVmgIncome
 const URI = require('../../shared/URI');
 const axios = require('axios');
 const logger = require('../config/logger');
+const dataMainScoreRclipsSaveToExtScore = require('../domain/dataMainScoreRclipsSaveToExtScore.save')
 exports.rcs_M01_RQST = function (req, res) {
     try {
         const config = {
@@ -91,8 +92,10 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                                         responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                        let dataExtScore = new dataMainScoreRclipsSaveToExtScore(fullNiceKey,resultRclips.data.listResult,req.body.mobilePhoneNumber)
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                                        cicExternalService.insertDataToExtScore(dataExtScore).then();
                                                                         logger.info(responseData);
                                                                         return res.status(200).json(responseData);
                                                                     } else {
