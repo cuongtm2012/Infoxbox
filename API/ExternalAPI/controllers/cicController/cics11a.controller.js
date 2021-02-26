@@ -1,28 +1,28 @@
 
-const logger = require('../config/logger');
+const logger = require('../../config/logger');
 
-const cics11aRQSTReq = require('../domain/CIC_S11A_RQST.request');
+const cics11aRQSTReq = require('../../domain/CIC_S11A_RQST.request');
 
-const cicExternalService = require('../services/cicExternal.service');
+const cicExternalService = require('../../services/cicExternal.service');
 
-const cics11aRQSTRes = require('../domain/CIC_S11A_RQST.response');
+const cics11aRQSTRes = require('../../domain/CIC_S11A_RQST.response');
 
-const dateutil = require('../util/dateutil');
-const validRequest = require('../util/validateParamRequest');
-const encryptPassword = require('../util/encryptPassword');
+const dateutil = require('../../util/dateutil');
+const validRequest = require('../../util/validateParamRequest');
+const encryptPassword = require('../../util/encryptPassword');
 
-const responCode = require('../../shared/constant/responseCodeExternal');
+const responCode = require('../../../shared/constant/responseCodeExternal');
 
-const util = require('../util/dateutil');
-const common_service = require('../services/common.service');
+const util = require('../../util/dateutil');
+const common_service = require('../../services/common.service');
 const _ = require('lodash');
-const utilFunction = require('../../shared/util/util');
+const utilFunction = require('../../../shared/util/util');
 
-const validS11AService = require('../services/validS11A.service');
-const PreResponse = require('../domain/preResponse.response');
-const DataInqLogSave = require('../domain/INQLOG.save');
+const validS11AService = require('../../services/validS11A.service');
+const PreResponse = require('../../domain/preResponse.response');
+const DataInqLogSave = require('../../domain/INQLOG.save');
 const io = require('socket.io-client');
-const URI = require('../../shared/URI');
+const URI = require('../../../shared/URI');
 
 exports.cics11aRQST = function (req, res, next) {
 	let socket;
@@ -118,20 +118,20 @@ exports.cics11aRQST = function (req, res, next) {
 	}
 };
 
-const cics11aRSLTReq = require('../domain/CIC_S11A_RSLT.request');
-const cics11aRSLTRes = require('../domain/CIC_S11A_RSLT.response');
-const validS11ARQLT = require('../util/validRequestS11AResponse');
+const cics11aRSLTReq = require('../../domain/CIC_S11A_RSLT.request');
+const cics11aRSLTRes = require('../../domain/CIC_S11A_RSLT.response');
+const validS11ARQLT = require('../../util/validRequestS11AResponse');
 
-const loanDetailNode = require('../domain/loan/loanDetailNode');
-const disposalLoanNode = require('../domain/loan/disposalVAMCLoan');
-const loan12MInfor = require('../domain/loan/loan12MInfo');
-const npl5YLoan = require('../domain/loan/nplLoan5year');
-const loan12MCat = require('../domain/loan/loan12MCautious');
-const financialContract = require('../domain/loan/financialContract');
-const cusLookup = require('../domain/loan/customerLookupInfo');
+const loanDetailNode = require('../../domain/loan/loanDetailNode');
+const disposalLoanNode = require('../../domain/loan/disposalVAMCLoan');
+const loan12MInfor = require('../../domain/loan/loan12MInfo');
+const npl5YLoan = require('../../domain/loan/nplLoan5year');
+const loan12MCat = require('../../domain/loan/loan12MCautious');
+const financialContract = require('../../domain/loan/financialContract');
+const cusLookup = require('../../domain/loan/customerLookupInfo');
 
-const convertMilionUnit = require('../../shared/util/convertUnit');
-const cics11aRSLTResLength = require('../domain/CIC_S11A_RSLT.responseLegnth');
+const convertMilionUnit = require('../../../shared/util/convertUnit');
+const cics11aRSLTResLength = require('../../domain/CIC_S11A_RSLT.responseLegnth');
 
 exports.cics11aRSLT = function (req, res) {
 	try {

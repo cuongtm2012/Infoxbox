@@ -1,32 +1,32 @@
-const logger = require('../config/logger');
+const logger = require('../../config/logger');
 
-const OKF_SPL_RQSTReq = require('../domain/OKF_SPL_RQST.request');
-const OKF_SPL_RQSTRes = require('../domain/OKF_SPL_RQST.response');
-const dataSimpleLimitSaveToScrapLog = require('../domain/dataSimpleLimitSaveToScrapLog.save');
-const simpleLimitPostBody = require('../domain/simpleLimitRclips.body');
-const okFVNService = require('../services/okFVN.service');
+const OKF_SPL_RQSTReq = require('../../domain/OKF_SPL_RQST.request');
+const OKF_SPL_RQSTRes = require('../../domain/OKF_SPL_RQST.response');
+const dataSimpleLimitSaveToScrapLog = require('../../domain/dataSimpleLimitSaveToScrapLog.save');
+const simpleLimitPostBody = require('../../domain/simpleLimitRclips.body');
+const okFVNService = require('../../services/okFVN.service');
 
-const validation = require('../../shared/util/validation');
+const validation = require('../../../shared/util/validation');
 
-const validRequest = require('../util/validateOKVNParamRequest');
+const validRequest = require('../../util/validateOKVNParamRequest');
 
-const util = require('../util/dateutil');
+const util = require('../../util/dateutil');
 
-const common_service = require('../services/common.service');
+const common_service = require('../../services/common.service');
 
-const responCode = require('../../shared/constant/responseCodeExternal');
+const responCode = require('../../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
 
-const validS11AService = require('../services/validS11A.service');
-const PreResponse = require('../domain/preResponse.response');
-const dateutil = require('../util/dateutil');
-const DataSaveToInqLog = require('../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../services/cicExternal.service');
-const utilFunction = require('../../shared/util/util');
+const validS11AService = require('../../services/validS11A.service');
+const PreResponse = require('../../domain/preResponse.response');
+const dateutil = require('../../util/dateutil');
+const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
+const cicExternalService = require('../../services/cicExternal.service');
+const utilFunction = require('../../../shared/util/util');
 const io = require('socket.io-client');
-const URI = require('../../shared/URI');
+const URI = require('../../../shared/URI');
 const axios = require('axios');
-const dataSimpleLimitRclipsSaveToExtScore = require('../domain/dataSimpLimitRclipsSaveToExtScore.save');
+const dataSimpleLimitRclipsSaveToExtScore = require('../../domain/dataSimpLimitRclipsSaveToExtScore.save');
 exports.okf_SPL_RQST = function (req, res, next) {
     try {
         let niceSessionKey;

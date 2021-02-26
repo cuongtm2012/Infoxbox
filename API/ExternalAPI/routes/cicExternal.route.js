@@ -9,19 +9,19 @@ var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: pathToSaveImg});
 
 
-var cics11a_controller = require('../controllers/cics11a.controller');
-var cicS37Rqst_controller = require('../controllers/cics37.controller');
-var cicProcStat_controller = require('../controllers/cicProcStat.controller');
-const cicMacr_Controller = require('../controllers/cicMacr.controller');
-var zaloScoreController = require('../controllers/zaloScore.controller');
-var vmgRiskScoreController = require('../controllers/vmgRiskScore.controller');
-var fptDigitalizeIDController = require('../controllers/fptDigitalizeID.controller');
-var fptFaceMatchingController = require('../controllers/fptFaceMatching.controller');
-var fptDigitalizeIDAndFaceMatchingController = require('../controllers/Fpt_DigitalizeID_And_FaceMatching.controller');
-var nonFinancialScoreOKController = require('../controllers/NonFinancialScoreOK.controller');
-var mainScoreController = require('../controllers/MainScore.Controller');
+var cics11a_controller = require('../controllers/cicController/cics11a.controller');
+var cicS37Rqst_controller = require('../controllers/cicController/cics37.controller');
+var cicProcStat_controller = require('../controllers/cicController/cicProcStat.controller');
+const cicMacr_Controller = require('../controllers/cicController/cicMacr.controller');
+var zaloScoreController = require('../controllers/zaloAndVmgController/zaloScore.controller');
+var vmgRiskScoreController = require('../controllers/zaloAndVmgController/vmgRiskScore.controller');
+var fptDigitalizeIDController = require('../controllers/fptTrandataController/fptDigitalizeID.controller');
+var fptFaceMatchingController = require('../controllers/fptTrandataController/fptFaceMatching.controller');
+var fptDigitalizeIDAndFaceMatchingController = require('../controllers/fptTrandataController/Fpt_DigitalizeID_And_FaceMatching.controller');
+var nonFinancialScoreOKController = require('../controllers/niceController/NonFinancialScoreOK.controller');
+var mainScoreController = require('../controllers/niceController/MainScore.Controller');
 
-var okFVNController = require('../controllers/okFVN.controller');
+var okFVNController = require('../controllers/niceController/okFVN.controller');
 var pingPongController = require('../controllers/pingPong.controller');
 
 router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);

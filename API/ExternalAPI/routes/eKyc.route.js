@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var VmgCAC1Controller = require('../controllers/VmgCAC1.controller');
+var VmgCAC1Controller = require('../controllers/zaloAndVmgController/VmgCAC1.controller');
 
 
 
