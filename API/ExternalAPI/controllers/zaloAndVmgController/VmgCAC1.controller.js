@@ -1,23 +1,23 @@
-const logger = require('../config/logger');
-const validRequest = require('../util/validateKYC_VC1_RQST_Request');
-const common_service = require('../services/common.service');
-const responCode = require('../../shared/constant/responseCodeExternal');
-const PreResponse = require('../domain/preResponse.response');
-const DataSaveToInqLog = require('../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../services/cicExternal.service');
-const dateutil = require('../util/dateutil');
-const util = require('../util/dateutil');
+const logger = require('../../config/logger');
+const validRequest = require('../../util/validateKYC_VC1_RQST_Request');
+const common_service = require('../../services/common.service');
+const responCode = require('../../../shared/constant/responseCodeExternal');
+const PreResponse = require('../../domain/preResponse.response');
+const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
+const cicExternalService = require('../../services/cicExternal.service');
+const dateutil = require('../../util/dateutil');
+const util = require('../../util/dateutil');
 const _ = require('lodash');
-const bodyResponse = require('../domain/KYC_VC1_RQST.response');
-const validS11AService = require('../services/validS11A.service');
-const utilFunction = require('../../shared/util/util');
+const bodyResponse = require('../../domain/KYC_VC1_RQST.response');
+const validS11AService = require('../../services/validS11A.service');
+const utilFunction = require('../../../shared/util/util');
 const axios = require('axios');
-const URI = require('../../shared/URI');
-const dataCAC1SaveToScrapLog = require('../domain/dataCAC1SaveToScrapLog.save');
-const bodyPostCAC1 = require('../domain/bodyPostVmgCAC1.body');
-const dataCAC1SaveToVmgLocPct = require('../domain/dataCAC1SaveToVmgLocPct.save');
-const dataCAC1SaveToVmgAddress = require('../domain/dataVmgCacSaveToVmgAddress.save');
-const bodyPostWhiteList = require('../domain/bodyVmgWhiteList.body');
+const URI = require('../../../shared/URI');
+const dataCAC1SaveToScrapLog = require('../../domain/dataCAC1SaveToScrapLog.save');
+const bodyPostCAC1 = require('../../domain/bodyPostVmgCAC1.body');
+const dataCAC1SaveToVmgLocPct = require('../../domain/dataCAC1SaveToVmgLocPct.save');
+const dataCAC1SaveToVmgAddress = require('../../domain/dataVmgCacSaveToVmgAddress.save');
+const bodyPostWhiteList = require('../../domain/bodyVmgWhiteList.body');
 
 exports.KYC_VC1_RQST = function (req, res) {
     try {
@@ -224,9 +224,9 @@ exports.KYC_VC1_RQST = function (req, res) {
 };
 
 
-const validateKYC_VC1_RSLTRequest = require('../util/validateKYC_VC1_RSLT_Request');
-const KYC_VC1_RSLTResponseWithoutResult = require('../domain/KYC_VC1_RSLT_without_result.response');
-const KYC_VC1_RSLTResponseWithResult = require('../domain/KYC_VC1_RSLT_with_result.response');
+const validateKYC_VC1_RSLTRequest = require('../../util/validateKYC_VC1_RSLT_Request');
+const KYC_VC1_RSLTResponseWithoutResult = require('../../domain/KYC_VC1_RSLT_without_result.response');
+const KYC_VC1_RSLTResponseWithResult = require('../../domain/KYC_VC1_RSLT_with_result.response');
 
 exports.KYC_VC1_RSLT = function (req, res) {
     try {

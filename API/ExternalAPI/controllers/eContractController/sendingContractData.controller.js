@@ -1,21 +1,21 @@
-const validRequest = require('../util/validateRequestSendingDataContractFPT');
-const common_service = require('../services/common.service');
-const responCode = require('../../shared/constant/responseCodeExternal');
-const PreResponse = require('../domain/preResponse.response');
-const DataSaveToInqLog = require('../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../services/cicExternal.service');
-const logger = require('../config/logger');
-const sendingDataFPTContractResponse = require('../domain/sendingContractFPT.response')
-const dateutil = require('../util/dateutil');
-const util = require('../util/dateutil');
+const validRequest = require('../../util/validateRequestSendingDataContractFPT');
+const common_service = require('../../services/common.service');
+const responCode = require('../../../shared/constant/responseCodeExternal');
+const PreResponse = require('../../domain/preResponse.response');
+const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
+const cicExternalService = require('../../services/cicExternal.service');
+const logger = require('../../config/logger');
+const sendingDataFPTContractResponse = require('../../domain/sendingContractFPT.response')
+const dateutil = require('../../util/dateutil');
+const util = require('../../util/dateutil');
 const _ = require('lodash');
-const validS11AService = require('../services/validS11A.service');
-const utilFunction = require('../../shared/util/util');
-const dataSendingDataFptContractSaveToScrapLog = require('../domain/dataSendingDataFptContractSaveToScrapLog.save');
+const validS11AService = require('../../services/validS11A.service');
+const utilFunction = require('../../../shared/util/util');
+const dataSendingDataFptContractSaveToScrapLog = require('../../domain/dataSendingDataFptContractSaveToScrapLog.save');
 const axios = require('axios');
-const URI = require('../../shared/URI');
-const bodyGetAuthEContract = require('../domain/bodyGetAuthEContract.body')
-const bodySendInformationEContract = require('../domain/bodySubmitInformationEContract.body')
+const URI = require('../../../shared/URI');
+const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
+const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
 
 
 exports.sendingContractData = function (req, res) {

@@ -1703,6 +1703,55 @@ async function selectDataKYC_VC1_RSLT(niceSskey) {
     }
 }
 
+async function insertDataToExtScore(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(dbconfig);
+
+        sql = `INSERT INTO TB_EXT_SCORE(NICE_SSIN_ID, TEL_NO_MOBILE, SCORE_CD, SCORE_EXT, GRADE, BASE_DATE, CUST_GB, EXT_REQ_ID, SYSTEM_DTIM, RSK_GLM_PROB, RSK_RF_PROB, RSK_GRB_PROB, RSK_ESB_PROB, FINAL_LIMIT, FINAL_APPROVAL) 
+        VALUES (:NICE_SSIN_ID, :TEL_NO_MOBILE, :SCORE_CD, :SCORE_EXT, :GRADE, :BASE_DATE, :CUST_GB, :EXT_REQ_ID, :SYSTEM_DTIM, :RSK_GLM_PROB, :RSK_RF_PROB, :RSK_GRB_PROB, :RSK_ESB_PROB, :FINAL_LIMIT, :FINAL_APPROVAL)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: req.NICE_SSIN_ID,
+                TEL_NO_MOBILE: req.TEL_NO_MOBILE,
+                SCORE_CD: req.SCORE_CD,
+                SCORE_EXT: req.SCORE_EXT,
+                GRADE: req.GRADE,
+                BASE_DATE: req.BASE_DATE,
+                CUST_GB: req.CUST_GB,
+                EXT_REQ_ID: req.EXT_REQ_ID,
+                SYSTEM_DTIM: req.SYSTEM_DTIM,
+                RSK_GLM_PROB: req.RSK_GLM_PROB,
+                RSK_RF_PROB: req.RSK_RF_PROB,
+                RSK_GRB_PROB: req.RSK_GRB_PROB,
+                RSK_ESB_PROB: req.RSK_ESB_PROB,
+                FINAL_LIMIT: req.FINAL_LIMIT,
+                FINAL_APPROVAL: req.FINAL_APPROVAL
+            },
+            {autoCommit: true}
+        );
+        console.log("insertDataToExtScore::", result.rowsAffected);
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1731,3 +1780,4 @@ module.exports.insertDataToVmgIncome = insertDataToVmgIncome;
 module.exports.insertDataCAC1ToSCRPLOG = insertDataCAC1ToSCRPLOG;
 module.exports.updateRspCdAndStatusCdScrapLogAfterGetResult = updateRspCdAndStatusCdScrapLogAfterGetResult;
 module.exports.selectDataKYC_VC1_RSLT = selectDataKYC_VC1_RSLT;
+module.exports.insertDataToExtScore = insertDataToExtScore;
