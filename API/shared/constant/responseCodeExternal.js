@@ -233,11 +233,14 @@ const StatusCodeBatchProcess = {
 const ScoreCode = {
     zalo: 'NZ0100_001',
     VmgRiskScore: 'NV0100_001',
-    NOK100_001: 'NOK100_001'
+    NOK100_001: 'NOK100_001',
+    NOK200_001: 'NOK200_001',
+    NOK_SPL_LIMIT: 'NOK_SPL_LIMIT'
 }
 const CUST_GB = {
     zalo: '22',
-    VMG: '21'
+    VMG: '21',
+    NICE: '10'
 }
 
 

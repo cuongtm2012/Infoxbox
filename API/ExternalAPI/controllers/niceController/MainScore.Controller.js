@@ -1,26 +1,27 @@
-const RCS_M01_RQSTRes_Without_Result = require('../domain/RCS_M01_RQST.response');
-const RCS_M01_RQSTRes_With_Result = require('../domain/MainScoreResponseWith_Result.response');
-const PreResponse = require('../domain/preResponse.response');
-const bodyPostRclips = require('../domain/bodyPostRclips.body');
-const bodyPostVmgCAC1 = require('../domain/bodyPostVmgCAC1.body');
-const bodyVmg_KYC_2 = require('../domain/bodyVmg_KYC_2.body');
-const dataCAC1SaveToVmgLocPct = require('../domain/dataCAC1SaveToVmgLocPct.save');
-const dataCAC1SaveToVmgAddress = require('../domain/dataVmgCacSaveToVmgAddress.save');
-const validRCS_M01_RQST = require('../util/validateRCSM01ParamRequest');
+const RCS_M01_RQSTRes_Without_Result = require('../../domain/RCS_M01_RQST.response');
+const RCS_M01_RQSTRes_With_Result = require('../../domain/MainScoreResponseWith_Result.response');
+const PreResponse = require('../../domain/preResponse.response');
+const bodyPostRclips = require('../../domain/bodyPostRclips.body');
+const bodyPostVmgCAC1 = require('../../domain/bodyPostVmgCAC1.body');
+const bodyVmg_KYC_2 = require('../../domain/bodyVmg_KYC_2.body');
+const dataCAC1SaveToVmgLocPct = require('../../domain/dataCAC1SaveToVmgLocPct.save');
+const dataCAC1SaveToVmgAddress = require('../../domain/dataVmgCacSaveToVmgAddress.save');
+const validRCS_M01_RQST = require('../../util/validateRCSM01ParamRequest');
 const _ = require('lodash');
-const common_service = require('../services/common.service');
-const responCode = require('../../shared/constant/responseCodeExternal');
-const DataSaveToInqLog = require('../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../services/cicExternal.service');
-const validS11AService = require('../services/validS11A.service');
-const utilFunction = require('../../shared/util/util');
-const util = require('../util/dateutil');
-const dateutil = require('../util/dateutil');
-const dataMainScoreSaveToScrapLog = require('../domain/dataMainScoreSaveToScrapLog.save');
-const dataVmgKyc2SaveToVmgIncome = require('../domain/dataVmgKyc2SaveToVmgIncome.save');
-const URI = require('../../shared/URI');
+const common_service = require('../../services/common.service');
+const responCode = require('../../../shared/constant/responseCodeExternal');
+const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
+const cicExternalService = require('../../services/cicExternal.service');
+const validS11AService = require('../../services/validS11A.service');
+const utilFunction = require('../../../shared/util/util');
+const util = require('../../util/dateutil');
+const dateutil = require('../../util/dateutil');
+const dataMainScoreSaveToScrapLog = require('../../domain/dataMainScoreSaveToScrapLog.save');
+const dataVmgKyc2SaveToVmgIncome = require('../../domain/dataVmgKyc2SaveToVmgIncome.save');
+const URI = require('../../../shared/URI');
 const axios = require('axios');
-const logger = require('../config/logger');
+const logger = require('../../config/logger');
+const dataMainScoreRclipsSaveToExtScore = require('../../domain/dataMainScoreRclipsSaveToExtScore.save')
 exports.rcs_M01_RQST = function (req, res) {
     try {
         const config = {
@@ -82,7 +83,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             cicExternalService.insertDataToVmgIncome(dataSaveToVmgIncome).then();
                                                             //
                                                             let totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_3) / 12;
-                                                            let bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.phoneNumber, req.body.natID, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            let bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             //    call Rclips
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
                                                                 resultRclips => {
@@ -91,8 +92,10 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                                         responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                                        let dataExtScore = new dataMainScoreRclipsSaveToExtScore(fullNiceKey,resultRclips.data.listResult,req.body.mobilePhoneNumber)
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                                        cicExternalService.insertDataToExtScore(dataExtScore).then();
                                                                         logger.info(responseData);
                                                                         return res.status(200).json(responseData);
                                                                     } else {

@@ -1,29 +1,29 @@
-const logger = require('../config/logger');
+const logger = require('../../config/logger');
 
-const cicMacrRQSTReq = require('../domain/CIC_MACR_RQST.request');
+const cicMacrRQSTReq = require('../../domain/CIC_MACR_RQST.request');
 
-const cicMacrRQSTRes = require('../domain/CIC_MACR_RQST.response');
+const cicMacrRQSTRes = require('../../domain/CIC_MACR_RQST.response');
 
-const cicMobileService = require('../services/cicMobile.service');
+const cicMobileService = require('../../services/cicMobile.service');
 
-const validation = require('../../shared/util/validation');
+const validation = require('../../../shared/util/validation');
 
-const validRequest = require('../util/validateMacrParamRequest');
+const validRequest = require('../../util/validateMacrParamRequest');
 
-const util = require('../util/dateutil');
+const util = require('../../util/dateutil');
 
-const common_service = require('../services/common.service');
+const common_service = require('../../services/common.service');
 
-const responCode = require('../../shared/constant/responseCodeExternal');
+const responCode = require('../../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
-const validS11AService = require('../services/validS11A.service');
-const PreResponse = require('../domain/preResponse.response');
-const dateutil = require('../util/dateutil');
-const DataInqLogSave = require('../domain/INQLOG.save');
-const cicExternalService = require('../services/cicExternal.service');
-const utilFunction = require('../../shared/util/util');
+const validS11AService = require('../../services/validS11A.service');
+const PreResponse = require('../../domain/preResponse.response');
+const dateutil = require('../../util/dateutil');
+const DataInqLogSave = require('../../domain/INQLOG.save');
+const cicExternalService = require('../../services/cicExternal.service');
+const utilFunction = require('../../../shared/util/util');
 const io = require('socket.io-client');
-const URI = require('../../shared/URI');
+const URI = require('../../../shared/URI');
 
 exports.cicMACRRQST = function (req, res, next) {
     let socket;
@@ -118,9 +118,9 @@ exports.cicMACRRQST = function (req, res, next) {
     }
 };
 
-const cicMacrRSLTReq = require('../domain/CIC_MACR_RSLT.request');
-const cicMacrRSLTRes = require('../domain/CIC_MACR_RSLT.response');
-const validMacrRSLT = require('../util/validRequestMACRResponse');
+const cicMacrRSLTReq = require('../../domain/CIC_MACR_RSLT.request');
+const cicMacrRSLTRes = require('../../domain/CIC_MACR_RSLT.response');
+const validMacrRSLT = require('../../util/validRequestMACRResponse');
 
 exports.cicMACRRSLT = function (req, res) {
 
