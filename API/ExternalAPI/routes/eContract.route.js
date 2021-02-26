@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var sendingDataContractFPTController = require('../controllers/sendingContractData.controller');
-var statusContractFPTController = require('../controllers/statusOfCotract.controller');
+var sendingDataContractFPTController = require('../controllers/eContractController/sendingContractData.controller');
+var statusContractFPTController = require('../controllers/eContractController/statusOfCotract.controller');
 
 
 router.post('/FTN_SCD_RQST', sendingDataContractFPTController.sendingContractData);
