@@ -83,7 +83,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             cicExternalService.insertDataToVmgIncome(dataSaveToVmgIncome).then();
                                                             //
                                                             let totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_3) / 12;
-                                                            let bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.phoneNumber, req.body.natID, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            let bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             //    call Rclips
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
                                                                 resultRclips => {
