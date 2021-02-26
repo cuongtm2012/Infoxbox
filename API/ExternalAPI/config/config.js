@@ -43,7 +43,12 @@ var config = {
 		DEV_clientsecret: 'be_group'
 	},
 
-	serviceNameOKF: 'OKF_CSS_ASS'
+	serviceNameOKF: 'OKF_CSS_ASS',
+
+	accountZaloDev: {
+		username: 'agency',
+		password: 'password'
+	}
 };
 
 module.exports = config;
