@@ -1,7 +1,7 @@
 const crypto = require( "crypto" );
 const config = require('../config/config')
 const initializationVector = "53IQ1tPX3aHxzqV4AyePDg==";
-const encryptionKey = config.ZaloAesKey.DEV
+const encryptionKey = config.ZaloAesKey.PROD
 
 module.exports = function bodyZaloPost(token, phoneNumber) {
     let phoneNumberUtf8 =  Buffer.from(phoneNumber, 'utf-8');

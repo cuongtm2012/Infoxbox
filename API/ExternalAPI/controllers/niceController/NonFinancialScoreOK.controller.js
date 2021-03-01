@@ -75,16 +75,16 @@ exports.nonFinancialScoreOk = function (req, res) {
                             },
                             timeout: 60 * 1000
                         }
-                        let dataRqZalo = qs.stringify(configExternal.accountZaloDev)
+                        let dataRqZalo = qs.stringify(configExternal.accountZaloProduction)
                         //    get token Zalo
-                        axios.post(URI.URL_ZALO_GET_AUTH_DEV, dataRqZalo, configRequestZalo).then(
+                        axios.post(URI.URL_ZALO_GET_AUTH_PROD, dataRqZalo, configRequestZalo).then(
                             resultTokenAuth => {
                                 if (resultTokenAuth.data.code === 0) {
                                     // prepare call zalo score
                                     let auth_token = resultTokenAuth.data.data.auth_token;
                                     let dataZaloScoreRq = qs.stringify(new bodyZaloScore(auth_token, req.body.mobilePhoneNumber));
                                     //    call API get zalo score
-                                    axios.post(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, configRequestZalo).then(
+                                    axios.post(URI.URL_ZALO_GET_SCORE_PROD, dataZaloScoreRq, configRequestZalo).then(
                                         resultGetZaloScore => {
                                             if (resultGetZaloScore.data.code !== undefined) {
                                             //    success get zalo score
