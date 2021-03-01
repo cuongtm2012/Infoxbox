@@ -51,8 +51,14 @@ var config = {
 	},
 
 	ZaloAesKey: {
-		DEV: 'Y6/YUVowyH0o7erULHw/Uw=='
-	}
+		DEV: 'Y6/YUVowyH0o7erULHw/Uw==',
+		PROD: 'uRx0k4x8xmhyrhaSQnAAog=='
+	},
+
+	accountZaloProduction: {
+		username: 'OF-W0D8wAPGpqXZPG',
+		password: '5fGm2gKzQo0SdmvLy6a08XYT0r_qR0WlsiSwH8COAWW'
+	},
 };
 
 module.exports = config;
