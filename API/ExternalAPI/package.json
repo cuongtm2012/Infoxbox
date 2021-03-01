@@ -40,6 +40,7 @@
     "node-cron": "^2.0.3",
     "node-uuid": "^1.4.8",
     "oracledb": "^4.1.0",
+    "qs": "^6.9.6",
     "socket.io-client": "^2.3.0",
     "winston": "^2.4.3"
   }
