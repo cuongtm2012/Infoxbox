@@ -86,6 +86,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     //    call API get zalo score
                                     axios.post(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, configRequestZalo).then(
                                         resultGetZaloScore => {
+                                            console.log(resultGetZaloScore.data)
                                             if (resultGetZaloScore.data.code !== undefined) {
                                             //    success get zalo score
                                             //    save score to EXT_SCORE
