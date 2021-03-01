@@ -27,6 +27,9 @@ var URI = {
     URL_E_CONTRACT_GET_STATUS_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/envelope/status?id=',
 
     URL_FPT_PROD: 'https://api.trandata.io/',
+
+    URL_ZALO_GET_AUTH_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/auth',
+    URL_ZALO_GET_SCORE_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/score',
 };
 
 module.exports = URI;
