@@ -10,8 +10,8 @@ var URI = {
     socket_url: 'https://localhost:3400',
     socket_mobile_url: 'https://localhost:3200',
 
-    URL_ZALO_GET_AUTH_DEV : 'https://dev-partner.score.dmp.zaloapp.com/v1/api/auth?username=partner&password=password',
-    URL_ZALO_GET_SCORE_DEV : 'https://dev-partner.score.dmp.zaloapp.com/v1/api/score?',
+    URL_ZALO_GET_AUTH_DEV : 'https://dev-partner.score.dmp.zaloapp.com/v2/api/agency/auth',
+    URL_ZALO_GET_SCORE_DEV : 'https://dev-partner.score.dmp.zaloapp.com/v2/api/agency/score',
 
     URL_VMG_DEV: 'https://api2-test.infosky.vn/app/info_sky_v2/api/request',
 
