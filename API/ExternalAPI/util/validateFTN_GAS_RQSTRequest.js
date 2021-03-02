@@ -35,7 +35,7 @@ module.exports = {
             }
             return response;
         }
-        if (!_.isEqual(responcodeEXT.TaskCode.FTN_CCS_RQST.code, getDataReq.taskCode)) {
+        if (!_.isEqual(responcodeEXT.TaskCode.FTN_GAS_RQST.code, getDataReq.taskCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code

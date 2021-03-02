@@ -15,7 +15,7 @@ const utilFunction = require('../../../shared/util/util');
 const dataStatusOfContractSaveToScrapLog = require('../../domain/dataStatusOfContractSaveToScrapLog.save');
 const axios = require('axios');
 const URI = require('../../../shared/URI');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
+const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 exports.statusOfContract = function (req, res) {
     try {
         const config = {
@@ -62,17 +62,17 @@ exports.statusOfContract = function (req, res) {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
                         axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
-                            resultfetAuthAccess => {
-                                if (!_.isEmpty(resultfetAuthAccess.data.access_token)) {
+                            resultGetAuthAccess => {
+                                if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                 //    get status contract
-                                    let URlgetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
+                                    let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
                                     let configGetStatus = {
                                         headers: {
-                                            'Authorization': `Bearer ${resultfetAuthAccess.data.access_token}`
+                                            'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.get(URlgetStatusContract,configGetStatus).then(
+                                    axios.get(URlGetStatusContract,configGetStatus).then(
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000
@@ -139,27 +139,27 @@ exports.statusOfContract = function (req, res) {
                                             return res.status(200).json(responseData);
                                         }
                                     })
-                                } else if (resultfetAuthAccess.status === 500) {
+                                } else if (resultGetAuthAccess.status === 500) {
                                     //    update scraplog & response F072
-                                    console.log('errGetStatus: ', resultfetAuthAccess);
+                                    console.log('errGetStatus: ', resultGetAuthAccess);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                     responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                     logger.info(responseData);
-                                    logger.info(resultfetAuthAccess.data);
+                                    logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
-                                    console.log('errGetStatus: ', resultfetAuthAccess);
+                                    console.log('errGetStatus: ', resultGetAuthAccess);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                     logger.info(responseData);
-                                    logger.info(resultfetAuthAccess.data);
+                                    logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
