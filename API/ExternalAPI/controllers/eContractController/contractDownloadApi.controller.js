@@ -1,22 +1,22 @@
-const validRequest = require('../../util/validateFTN_GAS_RQSTRequest');
-const logger = require('../../config/logger');
-const common_service = require('../../services/common.service');
+const validRequest = require('../../util/validateFTN_GCT_RQSTRequest');
 const responCode = require('../../../shared/constant/responseCodeExternal');
 const PreResponse = require('../../domain/preResponse.response');
 const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
 const cicExternalService = require('../../services/cicExternal.service');
 const dateutil = require('../../util/dateutil');
 const util = require('../../util/dateutil');
-const getApiStructureResponseWithoutResult = require('../../domain/getApiStructureReponseWithoutResult.response')
+const _ = require('lodash');
+const common_service = require('../../services/common.service');
+const logger = require('../../config/logger');
+const responseContractDownloadApi = require('../../domain/responseContractDownloadApi.response')
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
-const _ = require('lodash');
-const dataGetStructureAPISaveToScrapLog = require('../../domain/dataGetStructureAPISaveToScrapLog.save');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDownloadSaveToScrapLog.save');
 const axios = require('axios');
 const URI = require('../../../shared/URI');
-const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
-exports.getStructureAPI = function (req, res) {
+const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+
+exports.contractDownloadApi = function (req, res) {
     try {
         const config = {
             headers: {
@@ -28,21 +28,20 @@ exports.getStructureAPI = function (req, res) {
         let preResponse, responseData, dataInqLogSave;
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
-            let fullNiceKey = responCode.NiceProductCode.FTN_GAS_RQST.code + niceSessionKey;
+            let fullNiceKey = responCode.NiceProductCode.FTN_GCT_RQST.code + niceSessionKey;
             if (!_.isEmpty(rsCheck)) {
                 preResponse = new PreResponse(rsCheck.responseMessage, fullNiceKey, dateutil.timeStamp(), rsCheck.responseCode);
-                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                responseData = new responseContractDownloadApi(req.query, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             }
-            // check FI contract
-            validS11AService.selectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_GAS_RQST.code).then(dataFICode => {
+            validS11AService.selectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_GCT_RQST.code).then(dataFICode => {
                 if (_.isEmpty(dataFICode)) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
-                    responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                    responseData = new responseContractDownloadApi(req.query, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.query, responseData);
                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -50,66 +49,68 @@ exports.getStructureAPI = function (req, res) {
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
-                    responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                    responseData = new responseContractDownloadApi(req.query, preResponse);
                     logger.info(responseData);
                     return res.status(500).json(responseData);
                 }
-                //    end check parmas
-                let dataScrapLog = new dataGetStructureAPISaveToScrapLog(req.query, fullNiceKey);
-                cicExternalService.insertDataFPTContractToSCRPLOG(dataScrapLog).then(
+                //    end check params
+                let dataInsertToScrapLog = new dataContractDownloadSaveToScrapLog(req.query, fullNiceKey);
+                // insert rq to ScrapLog
+                cicExternalService.insertDataFPTContractToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
                         axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
-                                    let URlGetStructureContract = URI.URL_E_CONTRACT_GET_STRUCTURE_API_DEV + req.query.alias;
-                                    let configGetStructure = {
+                                    let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API + req.query.id;
+                                    let configDownloadContract= {
                                         headers: {
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`,
                                             'Accept-Encoding': 'gzip, deflate, br'
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.get(URlGetStructureContract, configGetStructure).then(
-                                        resultGetStructure => {
-                                            if (resultGetStructure.status === 200 && !_.isEmpty(resultGetStructure.data)) {
+                                    axios.get(URlDownloadContract, configDownloadContract).then(
+                                        resultDownload => {
+                                            if (resultDownload.status === 200 && !_.isEmpty(resultDownload.data)) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                responseData = new responseGetApiStructureResponseWithResult(req.query, preResponse, resultGetStructure.data);
+                                                responseData = new responseContractDownloadApi(req.query, preResponse);
+                                                logger.info(responseData);
+                                                responseData.contractContent = resultDownload.data;
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                logger.info(responseData);
                                                 return res.status(200).json(responseData);
-                                            } else if (resultGetStructure.status === 500) {
+                                            } else if (resultDownload.status === 500) {
                                                 //    update scraplog & response F072
-                                                console.log('errGetStructure: ', resultGetStructure);
+                                                console.log('errResultDownload: ', resultDownload);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                                responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                                 logger.info(responseData);
-                                                logger.info(resultGetStructure.data);
+                                                logger.info(resultDownload.data);
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
-                                                console.log('errGetStructure: ', resultGetStructure);
+                                                console.log('errResultDownload: ', resultDownload);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                                responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                 logger.info(responseData);
-                                                logger.info(resultGetStructure.data);
+                                                logger.info(resultDownload.data);
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
-                                        console.log('errGetAuthAccess: ', reason.toString());
+                                        console.log('errResultDownload: ', reason.toString());
                                         if (reason.response && reason.response.status === 500) {
                                             //    update scraplog & response F072
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                            responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                            responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
@@ -118,7 +119,7 @@ exports.getStructureAPI = function (req, res) {
                                             return res.status(200).json(responseData);
                                         } else if (reason.message === 'timeout of 60000ms exceeded') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
-                                            responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                            responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
@@ -127,7 +128,7 @@ exports.getStructureAPI = function (req, res) {
                                             return res.status(200).json(responseData);
                                         } else {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                            responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                            responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
@@ -136,14 +137,35 @@ exports.getStructureAPI = function (req, res) {
                                             return res.status(200).json(responseData);
                                         }
                                     })
+                                } else if (resultGetAuthAccess.status === 500) {
+                                    //    update scraplog & response F072
+                                    console.log('errGetAuthAccess: ', resultGetAuthAccess);
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
+                                    responseData = new responseContractDownloadApi(req.query, preResponse);
+                                    dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                    logger.info(responseData);
+                                    logger.info(resultGetAuthAccess.data);
+                                    return res.status(200).json(responseData);
+                                } else {
+                                    //    update scraplog & response F048
+                                    console.log('errGetAuthAccess: ', resultGetAuthAccess);
+                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                    responseData = new responseContractDownloadApi(req.query, preResponse);
+                                    dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    logger.info(responseData);
+                                    logger.info(resultGetAuthAccess.data);
+                                    return res.status(200).json(responseData);
                                 }
-                            }
-                        ).catch(reason => {
-                            console.log('errGetStatus: ', reason.toString());
+                            }).catch(reason => {
+                            console.log('errGetAuthAccess: ', reason.toString());
                             if (reason.response && reason.response.status === 500) {
                                 //    update scraplog & response F072
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
@@ -152,7 +174,7 @@ exports.getStructureAPI = function (req, res) {
                                 return res.status(200).json(responseData);
                             } else if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
-                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
@@ -161,7 +183,7 @@ exports.getStructureAPI = function (req, res) {
                                 return res.status(200).json(responseData);
                             } else {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
