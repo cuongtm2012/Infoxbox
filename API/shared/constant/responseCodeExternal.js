@@ -190,7 +190,8 @@ const TaskCode = {
     FTN_SCD_RQST: { code: 'FTN_SCD_RQST'},
     FTN_CCS_RQST: { code: 'FTN_CCS_RQST'},
     KYC_VC1_RQST: { code: 'KYC_VC1_RQST'},
-    KYC_VC1_RSLT: { code: 'KYC_VC1_RSLT'}
+    KYC_VC1_RSLT: { code: 'KYC_VC1_RSLT'},
+    FTN_GAS_RQST: { code: 'FTN_GAS_RQST'}
 
 };
 
@@ -219,6 +220,7 @@ const NiceProductCode = {
     NICE_CODE_INQLOG: {code: '1010'},
     FTN_SCD_RQST: {code: 'S2014'},
     FTN_CSS_RQST: {code: 'S2014'},
+    FTN_GAS_RQST: {code: 'S2014'},
     KYC_VC1_RQST: {code: 'S2002'},
     KYC_VC1_RSLT: {code: 'S2002'}
 };
