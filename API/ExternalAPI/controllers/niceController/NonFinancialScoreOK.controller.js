@@ -23,8 +23,9 @@ const BodyPostRiskScore = require('../../domain/body_Post_RiskScore.body');
 const DataRiskScoreSaveToExtScore = require('../../domain/Data_RiskScore_Save_To_ExtScore.save');
 const DEFAULT_SCORE = -99;
 const dataNfScoreRclipsSaveToExtScore = require('../../domain/dataNfScoreSaveToExtScore.save');
-var qs = require('qs');
+const qs = require('qs');
 const bodyZaloScore = require('../../domain/bodyPostZaloScore.body');
+const uuid = require('uuid');
 exports.nonFinancialScoreOk = function (req, res) {
     try {
         const config = {
@@ -69,7 +70,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                 // insert rq to ScrapLog
                 cicExternalService.insertDataNFScoreOKToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
-                        let configRequestZalo = {
+                        let configRequestZaloGetAuth = {
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             },
@@ -77,14 +78,21 @@ exports.nonFinancialScoreOk = function (req, res) {
                         }
                         let dataRqZalo = qs.stringify(configExternal.accountZaloDev)
                         //    get token Zalo
-                        axios.post(URI.URL_ZALO_GET_AUTH_DEV, dataRqZalo, configRequestZalo).then(
+                        axios.post(URI.URL_ZALO_GET_AUTH_DEV, dataRqZalo, configRequestZaloGetAuth).then(
                             resultTokenAuth => {
                                 if (resultTokenAuth.data.code === 0) {
                                     // prepare call zalo score
+                                    let configRequestZaloGetScore= {
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded',
+                                            'X-Client-Request-Id': uuid.v4()
+                                        },
+                                        timeout: 60 * 1000
+                                    }
                                     let auth_token = resultTokenAuth.data.data.auth_token;
                                     let dataZaloScoreRq = qs.stringify(new bodyZaloScore(auth_token, req.body.mobilePhoneNumber));
                                     //    call API get zalo score
-                                    axios.post(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, configRequestZalo).then(
+                                    axios.post(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, configRequestZaloGetScore).then(
                                         resultGetZaloScore => {
                                             if (resultGetZaloScore.data.code !== undefined) {
                                             //    success get zalo score
