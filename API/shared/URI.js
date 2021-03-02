@@ -29,6 +29,8 @@ var URI = {
 
     URL_ZALO_GET_AUTH_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/auth',
     URL_ZALO_GET_SCORE_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/score',
+
+    URL_E_CONTRACT_GET_STRUCTURE_API_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=',
 };
 
 module.exports = URI;
