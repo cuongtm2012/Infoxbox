@@ -1,6 +1,6 @@
 const crypto = require( "crypto" );
 const config = require('../config/config')
-const initializationVector = "53IQ1tPX3aHxzqV4AyePDg==";
+const initializationVector = Array.apply(null, Array(16)).map(Number.prototype.valueOf,0);
 const encryptionKey = config.ZaloAesKey.DEV
 
 module.exports = function bodyZaloPost(token, phoneNumber) {
