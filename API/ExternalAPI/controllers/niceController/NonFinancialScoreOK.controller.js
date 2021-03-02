@@ -89,10 +89,13 @@ exports.nonFinancialScoreOk = function (req, res) {
                                             if (resultGetZaloScore.data.code !== undefined) {
                                             //    success get zalo score
                                             //    save score to EXT_SCORE
+                                                let ZaloScore;
                                                 if (resultGetZaloScore.data.code === 0) {
+                                                    ZaloScore = resultGetZaloScore.data.data.score;
                                                     dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, resultGetZaloScore.data.data.score, resultGetZaloScore.data.data.request_id);
                                                     cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 } else {
+                                                    ZaloScore = DEFAULT_SCORE;
                                                     dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, DEFAULT_SCORE, resultGetZaloScore.data.data.request_id);
                                                     cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 }
@@ -117,7 +120,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             }
                                                             //    Call Rclips
-                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, resultGetZaloScore.data.data.score);
+                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, ZaloScore);
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore, config).then(
                                                                 resultRclipsNF => {
                                                                     if (resultRclipsNF.data.listResult !== undefined) {
