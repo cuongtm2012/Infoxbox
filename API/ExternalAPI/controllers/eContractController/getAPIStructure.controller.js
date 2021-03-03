@@ -81,17 +81,6 @@ exports.getStructureAPI = function (req, res) {
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
-                                            } else if (resultGetStructure.status === 500) {
-                                                //    update scraplog & response F072
-                                                console.log('errGetStructure: ', resultGetStructure);
-                                                preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
-                                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
-                                                logger.info(responseData);
-                                                logger.info(resultGetStructure.data);
-                                                return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
                                                 console.log('errGetStructure: ', resultGetStructure);
@@ -105,14 +94,14 @@ exports.getStructureAPI = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
-                                        console.log('errGetAuthAccess: ', reason.toString());
-                                        if (reason.response && reason.response.status === 500) {
-                                            //    update scraplog & response F072
-                                            preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
+                                        console.log('errGetStructureContract: ', reason.toString());
+                                        if (reason.response && reason.response.data.message === 'Internal Server Error: template  is not exists') {
+                                            console.log('errGetStructureContract: ', reason.response.data.message);
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.NoContractTemplateForInputAlias.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NoContractTemplateForInputAlias.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NoContractTemplateForInputAlias.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -140,17 +129,7 @@ exports.getStructureAPI = function (req, res) {
                             }
                         ).catch(reason => {
                             console.log('errGetStatus: ', reason.toString());
-                            if (reason.response && reason.response.status === 500) {
-                                //    update scraplog & response F072
-                                preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
-                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
-                                logger.info(responseData);
-                                logger.info(reason.toString());
-                                return res.status(200).json(responseData);
-                            } else if (reason.message === 'timeout of 60000ms exceeded') {
+                            if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);

@@ -64,7 +64,7 @@ exports.contractDownloadApi = function (req, res) {
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API + req.query.id;
-                                    let configDownloadContract= {
+                                    let configDownloadContract = {
                                         headers: {
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`,
                                             'Accept-Encoding': 'gzip, deflate, br'
@@ -82,17 +82,6 @@ exports.contractDownloadApi = function (req, res) {
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 return res.status(200).json(responseData);
-                                            } else if (resultDownload.status === 500) {
-                                                //    update scraplog & response F072
-                                                console.log('errResultDownload: ', resultDownload);
-                                                preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                                responseData = new responseContractDownloadApi(req.query, preResponse);
-                                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
-                                                logger.info(responseData);
-                                                logger.info(resultDownload.data);
-                                                return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
                                                 console.log('errResultDownload: ', resultDownload);
@@ -107,13 +96,13 @@ exports.contractDownloadApi = function (req, res) {
                                             }
                                         }).catch(reason => {
                                         console.log('errResultDownload: ', reason.toString());
-                                        if (reason.response && reason.response.status === 500) {
-                                            //    update scraplog & response F072
-                                            preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
+                                        if (reason.response && reason.response.data.message === ('Internal Server Error: Envelope is not exist: ' + req.query.id)) {
+                                            console.log('errResultDownload: ', reason.response.data.message);
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NoContractForInputId.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -137,17 +126,6 @@ exports.contractDownloadApi = function (req, res) {
                                             return res.status(200).json(responseData);
                                         }
                                     })
-                                } else if (resultGetAuthAccess.status === 500) {
-                                    //    update scraplog & response F072
-                                    console.log('errGetAuthAccess: ', resultGetAuthAccess);
-                                    preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                    responseData = new responseContractDownloadApi(req.query, preResponse);
-                                    dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
-                                    logger.info(responseData);
-                                    logger.info(resultGetAuthAccess.data);
-                                    return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
                                     console.log('errGetAuthAccess: ', resultGetAuthAccess);
@@ -162,17 +140,7 @@ exports.contractDownloadApi = function (req, res) {
                                 }
                             }).catch(reason => {
                             console.log('errGetAuthAccess: ', reason.toString());
-                            if (reason.response && reason.response.status === 500) {
-                                //    update scraplog & response F072
-                                preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                responseData = new responseContractDownloadApi(req.query, preResponse);
-                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
-                                logger.info(responseData);
-                                logger.info(reason.toString());
-                                return res.status(200).json(responseData);
-                            } else if (reason.message === 'timeout of 60000ms exceeded') {
+                            if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
