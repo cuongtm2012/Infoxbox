@@ -71,6 +71,8 @@ var RESCODEEXT = {
     NIIDOFCONTRACT: { value: 71, name: "Need to input mandatory item(ID)", code: "F071" },
     ERRCONTRACTSTATUS: { value: 72, name: "Error on contract data sending", code: "F072" },
     NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input NF Score NICE session key", code: "F073" },
+    NoContractTemplateForInputAlias: { value: 74, name: "No contract template for input alias", code: "F074" },
+    NoContractForInputId: { value: 74, name: "No contract for input id", code: "F075" }
 };
 
 const OracleError = {
@@ -191,7 +193,8 @@ const TaskCode = {
     FTN_CCS_RQST: { code: 'FTN_CCS_RQST'},
     KYC_VC1_RQST: { code: 'KYC_VC1_RQST'},
     KYC_VC1_RSLT: { code: 'KYC_VC1_RSLT'},
-    FTN_GAS_RQST: { code: 'FTN_GAS_RQST'}
+    FTN_GAS_RQST: { code: 'FTN_GAS_RQST'},
+    FTN_GCT_RQST: { code: 'FTN_GCT_RQST'}
 
 };
 
@@ -221,6 +224,7 @@ const NiceProductCode = {
     FTN_SCD_RQST: {code: 'S2014'},
     FTN_CSS_RQST: {code: 'S2014'},
     FTN_GAS_RQST: {code: 'S2014'},
+    FTN_GCT_RQST: {code: 'S2014'},
     KYC_VC1_RQST: {code: 'S2002'},
     KYC_VC1_RSLT: {code: 'S2002'}
 };
