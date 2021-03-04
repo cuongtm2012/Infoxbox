@@ -45,7 +45,6 @@ exports.cicMACRRQST = function (req, res, next) {
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                console.log('insert INQLOG:', r);
             });
             logger.info(responseData);
             return res.status(200).json(responseData);
@@ -58,7 +57,6 @@ exports.cicMACRRQST = function (req, res, next) {
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
                 cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                    console.log('insert INQLOG:', r);
                 });
                 logger.info(responseData);
                 return res.status(200).json(responseData);
@@ -77,15 +75,11 @@ exports.cicMACRRQST = function (req, res, next) {
 
                 const getdataReq = new cicMacrRQSTReq(req.body, niceSessionKey);
                 //JSON.stringify(getdataReq);
-                console.log("getdataReq = ", getdataReq);
-
                 //logging request
                 logger.debug('log request parameters from routes after manage request');
                 logger.info(req.body);
 
                 cicMobileService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
-                    console.log("result cicMacrRQST: ", niceSessionK);
-
                     if (!_.isEmpty(niceSessionK) && niceSessionK.length <= 25) {
                         let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseSuccess);
@@ -96,7 +90,6 @@ exports.cicMACRRQST = function (req, res, next) {
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                        console.log('insert INQLOG:', r);
                     });
                     logger.info(responseData);
                     return res.status(200).json(responseData);
@@ -139,7 +132,6 @@ exports.cicMACRRSLT = function (req, res) {
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                console.log('insert INQLOG:', r);
             });
             logger.info(responseData);
             return res.status(200).json(responseData);
@@ -152,7 +144,6 @@ exports.cicMACRRSLT = function (req, res) {
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                 cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                    console.log('insert INQLOG:', r);
                 });
                 logger.info(responseData);
                 return res.status(200).json(responseData);
@@ -167,7 +158,6 @@ exports.cicMACRRSLT = function (req, res) {
             // end check params reqest
 
             cicMobileService.selectCicMobileDetailReport(getdataReq, res).then(reslt => {
-                console.log("result selectSCRPTRLOG: ", reslt);
                 if (!validation.isEmptyStr(reslt)) {
                     let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                     responseData = new cicMacrRSLTRes(getdataReq, responseSuccess, reslt[0]);
@@ -175,7 +165,6 @@ exports.cicMACRRSLT = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
                     cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                        console.log('insert INQLOG:', r);
                     });
                     logger.info(responseData);
                     return res.status(200).json(responseData);
@@ -198,7 +187,6 @@ exports.cicMACRRSLT = function (req, res) {
                             //update INQLog
                             dataInqLogSave = new DataInqLogSave(getdataReq, responseUnknow.responseCode);
                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                                console.log('insert INQLOG:', r);
                             });
                             logger.info(responseUnknow);
                             return res.status(200).json(responseUnknow);
@@ -212,7 +200,6 @@ exports.cicMACRRSLT = function (req, res) {
                                 _.forEach(responCode.RESCODEEXT, res => {
                                     _.forEach(res, (val, key) => {
                                         if (_.isEqual(val, rsp_cd)) {
-                                            console.log('response nice code:', res.code + '-' + res.name);
                                             responseMessage = res.name;
                                             responseCode = res.code;
                                         }
@@ -254,7 +241,6 @@ exports.cicMACRRSLT = function (req, res) {
                             //update INQLog
                             dataInqLogSave = new DataInqLogSave(getdataReq, responseSrapingStatus.responseCode);
                             cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-                                console.log('insert INQLOG:', r);
                             });
                             logger.info(responseSrapingStatus);
                             return res.status(200).json(responseSrapingStatus);
