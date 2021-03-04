@@ -482,7 +482,7 @@ async function selectCICS11aRSLT(req) {
                     outFormat: oracledb.OUT_FORMAT_OBJECT
                 });
 
-            console.log("resultCusLookup rows:", resultCusLookup.rows);
+            console.log("resultCusLookup rows:", resultCusLookup.rows.length);
             outputCusLookup = resultCusLookup.rows;
 
 
@@ -558,7 +558,7 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
             });
-        console.log("selectScrapingStatusCodeSCRPLOG rows:", result.rows);
+        console.log("selectScrapingStatusCodeSCRPLOG rows:", result.rows.length);
 
         return result.rows;
     } catch (err) {
@@ -616,7 +616,7 @@ async function selectProcStatus(req) {
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
             });
-        console.log("selectProcStatus rows:", result.rows);
+        console.log("selectProcStatus rows:", result.rows.length);
         outputResult = result.rows;
 
         // Execute count total records

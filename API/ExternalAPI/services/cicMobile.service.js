@@ -132,7 +132,7 @@ async function selectCicMobileDetailReport(req) {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
             });
 
-        console.log("tb_cic_mrpt result rows:", result.rows);
+        console.log("tb_cic_mrpt result rows:", result.rows.length);
 
         return result.rows;
     } catch (err) {
