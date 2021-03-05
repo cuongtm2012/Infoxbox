@@ -15,7 +15,6 @@ module.exports = function responseContractDownloadApi(Request, preResponse, data
     this.fiCode = fiCode ? fiCode : "";
     this.taskCode = taskCode ? taskCode : "";
     this.id = id ? id : "";
-    this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
