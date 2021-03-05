@@ -46,7 +46,7 @@ exports.mobileCicController = function (req, res, next) {
 
                         dataReportSave = new CicA0001Save(_dataReport, req.body);
                         console.log('dataReportSave', dataReportSave);
-
+                        logger.info(dataReportSave);
                         cicMobileService.insertMobileReportA0001(dataReportSave).then(rowInsert => {
                             if (1 < rowInsert) {
                                 console.log('insert successfully A0001');
