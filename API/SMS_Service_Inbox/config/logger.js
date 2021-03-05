@@ -2,72 +2,30 @@ const winston = require('winston');
 const config = require('./config');
 const moment = require('moment');
 const appRoot = require('app-root-path');
-const getNamespace = require('continuation-local-storage').getNamespace;
+var getNamespace = require('continuation-local-storage').getNamespace;
 
-const fs = require('file-system');
-const fss = require('fs');
-var folderLogs = appRoot + '/logs';
-var folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
-var folderName_normal = folderName_External + '/normal';
-var folderName_error = folderName_External + '/error';
-var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-var todayLogFile = '';
+var fs = require('file-system');
 
+let folderLogs = appRoot + '/logs';
+let folderName_SMS = folderLogs + '/' + moment(new Date()).format('YYYYMM');
+let logfile_name = folderName_SMS + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 
-async function ensureDirSync(dirpath) {
+function ensureDirSync(dirpath) {
     try {
-
-        if (fss.existsSync(dirpath)){
-            return console.log('dir is exist');
-        } else {
-            return fs.mkdirSync(dirpath)
-        }
+        return fs.mkdirSync(dirpath)
     } catch (err) {
         if (err.code !== 'EEXIST') throw err
     }
 }
 
-async function ensureFileSync(filePath) {
-    try {
-        if (fss.existsSync(filePath)) {
-            return console.log('file is exist');
-        } else {
-            return fs.writeFileSync(filePath, '');
-        }
-    } catch (err) {
-        console.log(err.toString());
-    }
-}
-
-var winstonLogger = new winston.Logger({
+var winstonLogger = winston.createLogger({
     transports: [
         new winston.transports.File({
-            filename: logfile_normal,
-            handleExceptions: true,
-            json: true,
-            maxsize: 10483960, // 10MB
-            maxFiles: 5,
-            colorize: false,
-            timestamp: true
-        }),
-        new winston.transports.Console({
             level: 'debug',
-            handleExceptions: true,
-            json: false,
-            colorize: true,
-            timestamp: true
-        })
-    ],
-    exitOnError: false
-});
-var winstonLoggerError = new winston.Logger({
-    transports: [
-        new winston.transports.File({
-            filename: logfile_error,
+            filename: logfile_name,
             handleExceptions: true,
             json: true,
-            maxsize: 10483960, // 10MB
+            maxsize: 5242880, // 5MB
             maxFiles: 5,
             colorize: false,
             timestamp: true
@@ -90,100 +48,38 @@ winstonLogger.stream = {
 };
 
 // Wrap Winston logger to print reqId in each log
-var formatMessage = async function (message) {
-    if (todayLogFile !== logfile_normal) {
-        console.log('created new logFile: ' +  moment(new Date()).format('YYYYMMDD'));
-        todayLogFile = logfile_normal;
-        await ensureDirSync(folderLogs);
-        await ensureDirSync(folderName_External);
-        await ensureDirSync(folderName_error);
-        await ensureDirSync(folderName_normal);
-        await ensureFileSync(logfile_error);
-        await ensureFileSync(logfile_normal);
-    }
+var formatMessage = function (message) {
+    folderLogs = appRoot + '/logs';
+    folderName_SMS = folderLogs + '/' + moment(new Date()).format('YYYYMM');
+    logfile_name = folderName_SMS + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+    ensureDirSync(folderLogs);
+    ensureDirSync(folderName_SMS);
     var myRequest = getNamespace('my request');
     message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
     return message;
 };
-function refreshDirNameAndFileName() {
-    folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
-    folderName_normal = folderName_External + '/normal';
-    folderName_error = folderName_External + '/error';
-    logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-    logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 
-    winstonLoggerError = new winston.Logger({
-        transports: [
-            new winston.transports.File({
-                filename: logfile_error,
-                handleExceptions: true,
-                json: true,
-                maxsize: 10483960, // 10MB
-                maxFiles: 5,
-                colorize: false,
-                timestamp: true
-            }),
-            new winston.transports.Console({
-                level: 'debug',
-                handleExceptions: true,
-                json: false,
-                colorize: true,
-                timestamp: true
-            })
-        ],
-        exitOnError: false
-    });
-
-    winstonLogger = new winston.Logger({
-        transports: [
-            new winston.transports.File({
-                filename: logfile_normal,
-                handleExceptions: true,
-                json: true,
-                maxsize: 10483960, // 10MB
-                maxFiles: 5,
-                colorize: false,
-                timestamp: true
-            }),
-            new winston.transports.Console({
-                level: 'debug',
-                handleExceptions: true,
-                json: false,
-                colorize: true,
-                timestamp: true
-            })
-        ],
-        exitOnError: false
-    });
-}
 var logger = {
-    log: async function (level, message) {
-        refreshDirNameAndFileName();
-        winstonLogger.log(level, await formatMessage(message));
+    log: function (level, message) {
+        winstonLogger.log(level, formatMessage(message));
     },
-    error: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLoggerError.error(await formatMessage(message));
+    error: function (message) {
+        winstonLogger.error(formatMessage(message));
     },
-    warn: async function (message) {
-        refreshDirNameAndFileName()
-        winstonLogger.warn(await formatMessage(message));
+    warn: function (message) {
+        winstonLogger.warn(formatMessage(message));
     },
-    verbose: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.verbose(await formatMessage(message));
+    verbose: function (message) {
+        winstonLogger.verbose(formatMessage(message));
     },
-    info: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.info(await formatMessage(message));
+    info: function (message) {
+        winstonLogger.info(formatMessage(message));
     },
-    debug: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.debug(await formatMessage(message));
+    debug: function (message) {
+        winstonLogger.debug(formatMessage(message));
     },
-    silly: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.silly(await formatMessage(message));
+    silly: function (message) {
+        winstonLogger.silly(formatMessage(message));
     }
 };
 
