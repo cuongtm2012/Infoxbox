@@ -15,7 +15,6 @@ module.exports = function responseGetApiStructureResponseWithResult(Request, pre
     this.fiCode = fiCode ? fiCode : "";
     this.taskCode = taskCode ? taskCode : "";
     this.alias = alias ? alias : "";
-    this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime  = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
