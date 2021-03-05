@@ -43,10 +43,10 @@ exports.mobileCicController = function (req, res, next) {
                 else if (!_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
                     if (!_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
                         _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
-
+                        console.log(_dataReport);
+                        logger.info(_dataReport);
                         dataReportSave = new CicA0001Save(_dataReport, req.body);
                         logger.info(dataReportSave);
-                        logger.info(req.body);
                         cicMobileService.insertMobileReportA0001(dataReportSave).then(rowInsert => {
                             if (1 < rowInsert) {
                                 console.log('insert successfully A0001');
