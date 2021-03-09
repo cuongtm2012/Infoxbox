@@ -162,9 +162,12 @@ exports.sendingContractData = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
+                            if (reason.response) {
+                                console.log('errGetAuth: ', reason.response.data);
+                            }
                             if (reason.response && reason.response.status === 500) {
                                 //    update scraplog & response F070
-                                console.log('errSubmitInfo: ', reason);
+                                console.log('errSubmitInfo: ', reason.toString());
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
