@@ -64,6 +64,26 @@ var config = {
 		username: 'OF-W0D8wAPGpqXZPG',
 		password: '5fGm2gKzQo0SdmvLy6a08XYT0r_qR0WlsiSwH8COAWW'
 	},
+
+	Vmg_Kyc_2: {
+		DEV_cmd: 'kyc2_nice',
+		DEV_serviceCode: 'kyc2_nice',
+		PROD_cmd: 'score_k2.3_nice_okfin',
+		PROD_serviceCode: 'score_k2.3_nice_okfin',
+	},
+
+	Vmg_RiskScore: {
+		DEV_cmd: 'risk_score_nice',
+		DEV_serviceCode: 'risk_score_nice',
+		PROD_cmd: 'risk_score_nice_okfin',
+		PROD_serviceCode: 'risk_score_nice_okfin',
+	},
+
+	Vmg_CAC_1: {
+		DEV_cmd: 'cac1_nice',
+		DEV_customerCode: 'NICE',
+		DEV_serviceCode: 'cac1_nice'
+	}
 };
 
 module.exports = config;
