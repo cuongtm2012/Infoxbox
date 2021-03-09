@@ -32,7 +32,16 @@ var URI = {
     URL_ZALO_GET_SCORE_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/score',
 
     URL_E_CONTRACT_GET_STRUCTURE_API_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=',
-    URL_E_CONTRACT_DOWNLOAD_API: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
+    URL_E_CONTRACT_DOWNLOAD_API_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
+
+    URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD: 'https://econtract.fpt.com.vn/app/v1/client-auth/login',
+
+    URL_E_CONTRACT_SUBMIT_INFORMATION_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/sign',
+
+    URL_E_CONTRACT_GET_STATUS_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/envelope/status?id=',
+
+    URL_E_CONTRACT_GET_STRUCTURE_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=',
+    URL_E_CONTRACT_DOWNLOAD_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
 };
 
 module.exports = URI;
