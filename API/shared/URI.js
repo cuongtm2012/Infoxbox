@@ -42,6 +42,8 @@ var URI = {
 
     URL_E_CONTRACT_GET_STRUCTURE_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=',
     URL_E_CONTRACT_DOWNLOAD_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
+
+    URL_VMG_PROD: 'https://api-v2.infosky.vn/app/info_sky_v2/api/request',
 };
 
 module.exports = URI;
