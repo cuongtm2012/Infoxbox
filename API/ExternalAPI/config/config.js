@@ -28,7 +28,8 @@ var config = {
 	jwtExpiresIn: 864000000000,
 	secret: 'apisecretinfoplus12!@',
 	VmgToken: {
-		Dev_Token: '7be47eee76c88f4d2c698d6575cd8155'
+		Dev_Token: '7be47eee76c88f4d2c698d6575cd8155',
+		Prod_Token: '72aab4aa1f1dc32734d71852c5a0c91e'
 	},
 	AccountFptDev: {
 		username: "nice",
@@ -40,7 +41,11 @@ var config = {
 		DEV_username: 'jhhan@nicegroup.com.vn',
 		DEV_password: 'nice@123',
 		DEV_clientid: 'be_group',
-		DEV_clientsecret: 'be_group'
+		DEV_clientsecret: 'be_group',
+		PROD_username: 'support@okevay.vn',
+		PROD_password: 'WrWHANGE0Xr1',
+		PROD_clientid: 'be_group',
+		PROD_clientsecret: 'be_group'
 	},
 
 	serviceNameOKF: 'OKF_CSS_ASS',
