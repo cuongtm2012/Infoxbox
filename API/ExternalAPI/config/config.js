@@ -43,7 +43,7 @@ var config = {
 		DEV_clientid: 'be_group',
 		DEV_clientsecret: 'be_group',
 		PROD_username: 'support@okevay.vn',
-		PROD_password: 'WrWHANGE0Xr1',
+		PROD_password: 'okfin@1234',
 		PROD_clientid: 'nice_group',
 		PROD_clientsecret: 'nice_group'
 	},
