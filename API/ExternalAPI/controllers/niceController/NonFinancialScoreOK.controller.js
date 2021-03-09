@@ -111,7 +111,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 //    prepare call VMG Risk Score
                                                 let bodyGetRiskScore = new BodyPostRiskScore(req.body);
                                                 //    get RiskScore
-                                                axios.post(URI.URL_VMG_DEV, bodyGetRiskScore, config).then(
+                                                axios.post(URI.URL_VMG_PROD, bodyGetRiskScore, config).then(
                                                     resultGetRiskScore => {
                                                         if (resultGetRiskScore.data.error_code !== undefined) {
                                                         //    success get Risk Score

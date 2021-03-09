@@ -26,5 +26,5 @@ module.exports = function bodyPostVmgCAC1(req) {
     this.referaddress = referAddress;
     this.customerCode = 'NICE';
     this.serviceCode = 'cac1_nice';
-    this.token = config.VmgToken.Dev_Token;
+    this.token = config.VmgToken.Prod_Token;
 }

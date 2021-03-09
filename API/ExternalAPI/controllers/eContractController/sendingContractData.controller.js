@@ -63,7 +63,7 @@ exports.sendingContractData = function (req, res) {
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth, config).then(
                             resultfetAuthAccess => {
                                 if (!_.isEmpty(resultfetAuthAccess.data.access_token)) {
                                     //    Submit information
@@ -75,7 +75,7 @@ exports.sendingContractData = function (req, res) {
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.post(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_DEV, bodySubmitInfo, configSubmitInfo).then(
+                                    axios.post(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_PROD, bodySubmitInfo, configSubmitInfo).then(
                                         resultSubmitInfo => {
                                             if (resultSubmitInfo.status === 200 && !_.isEmpty(resultSubmitInfo.data)) {
                                                 //    update scraplog & response P000

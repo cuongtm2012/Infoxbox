@@ -61,11 +61,11 @@ exports.statusOfContract = function (req, res) {
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                 //    get status contract
-                                    let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
+                                    let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_PROD + req.query.id;
                                     let configGetStatus = {
                                         headers: {
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`

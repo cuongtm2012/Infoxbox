@@ -16,5 +16,5 @@ module.exports = function bodyPostRiskScore(riskScoreRequest) {
     this.idCard = natId;
     this.month = month ? month : dateutil.getCurrentMonth();
     this.serviceCode = 'risk_score_nice';
-    this.token = config.VmgToken.Dev_Token;
+    this.token = config.VmgToken.Prod_Token;
 }

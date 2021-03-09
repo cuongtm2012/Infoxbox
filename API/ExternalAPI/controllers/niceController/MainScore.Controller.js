@@ -75,7 +75,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 //
                                                 let bodyVmgKyc2 = new bodyVmg_KYC_2(req.body.natId);
                                                 // call VMG KYC 2
-                                                axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
+                                                axios.post(URI.URL_VMG_PROD, bodyVmgKyc2, config).then(
                                                     resultKYC2 => {
                                                         if ((resultKYC2.data.error_code === 0 || resultKYC2.data.error_code === 20) && resultKYC2.data.result) {
                                                             // store data KYC2 to DB

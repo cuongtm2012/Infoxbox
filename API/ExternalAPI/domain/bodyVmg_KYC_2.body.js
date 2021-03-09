@@ -5,6 +5,6 @@ module.exports = function bodyPostVmgKYC2(natId) {
     this.idCard1 = "";
     this.tinCode = "";
     this.name = "";
-    this.token = config.VmgToken.Dev_Token;
+    this.token = config.VmgToken.Prod_Token;
     this.serviceCode = 'kyc2_nice'
 }

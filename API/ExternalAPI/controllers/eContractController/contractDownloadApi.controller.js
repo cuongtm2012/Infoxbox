@@ -55,10 +55,10 @@ exports.contractDownloadApi = function (req, res) {
                     } else {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
-                                    let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API_DEV + req.query.id;
+                                    let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API_PROD + req.query.id;
                                     let configDownloadContract = {
                                         headers: {
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`,
