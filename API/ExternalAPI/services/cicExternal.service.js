@@ -1503,6 +1503,16 @@ async function selectCICScoreAndGrade(niceSskey) {
             {outFormat: oracledb.OUT_FORMAT_OBJECT}
         );
         if (result.rows[0] !== undefined) {
+            if (_.isEmpty(result.rows[0].SCORE)) {
+                result.rows[0].SCORE = '-99';
+            }
+            if (result.rows[0].GRADE === '04_T') {
+                result.rows[0].GRADE = '04';
+            }
+
+            if (result.rows[0].GRADE === '05_T') {
+                result.rows[0].GRADE = '05';
+            }
             return result.rows[0];
         } else {
             return {};
