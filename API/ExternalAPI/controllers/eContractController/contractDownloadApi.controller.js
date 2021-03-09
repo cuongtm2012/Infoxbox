@@ -58,7 +58,7 @@ exports.contractDownloadApi = function (req, res) {
                         axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
-                                    let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API + req.query.id;
+                                    let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API_DEV + req.query.id;
                                     let configDownloadContract = {
                                         headers: {
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`,
