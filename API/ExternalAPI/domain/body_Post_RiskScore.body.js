@@ -11,10 +11,10 @@ module.exports = function bodyPostRiskScore(riskScoreRequest) {
         infoProvConcent
     } = riskScoreRequest;
 
-    this.cmd = "risk_score_nice";
+    this.cmd = config.Vmg_RiskScore.DEV_cmd;
     this.phoneNumber = mobilePhoneNumber;
     this.idCard = natId;
     this.month = month ? month : dateutil.getCurrentMonth();
-    this.serviceCode = 'risk_score_nice';
+    this.serviceCode = config.Vmg_RiskScore.DEV_serviceCode;
     this.token = config.VmgToken.Dev_Token;
 }
