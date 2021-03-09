@@ -44,8 +44,8 @@ var config = {
 		DEV_clientsecret: 'be_group',
 		PROD_username: 'support@okevay.vn',
 		PROD_password: 'WrWHANGE0Xr1',
-		PROD_clientid: 'be_group',
-		PROD_clientsecret: 'be_group'
+		PROD_clientid: 'nice_group',
+		PROD_clientsecret: 'nice_group'
 	},
 
 	serviceNameOKF: 'OKF_CSS_ASS',
