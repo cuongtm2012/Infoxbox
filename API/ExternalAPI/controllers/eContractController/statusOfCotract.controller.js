@@ -82,6 +82,7 @@ exports.statusOfContract = function (req, res) {
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 logger.info(responseData);
+                                                logger.info({resultFromFpt: resultGetStatus.data});
                                                 return res.status(200).json(responseData);
                                             } else if (resultGetStatus.status === 500) {
                                                 //    update scraplog & response F072
