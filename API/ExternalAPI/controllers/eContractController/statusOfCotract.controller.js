@@ -25,6 +25,7 @@ exports.statusOfContract = function (req, res) {
             timeout: 60 * 1000
         }
         let rsCheck = validRequest.checkParamRequest(req.query);
+        logger.info(req.query);
         let preResponse, responseData, dataInqLogSave;
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
@@ -82,6 +83,7 @@ exports.statusOfContract = function (req, res) {
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 logger.info(responseData);
+                                                logger.info({resultFromFpt: resultGetStatus.data});
                                                 return res.status(200).json(responseData);
                                             } else if (resultGetStatus.status === 500) {
                                                 //    update scraplog & response F072
