@@ -27,6 +27,7 @@ exports.sendingContractData = function (req, res) {
             timeout: 60 * 1000
         }
         let rsCheck = validRequest.checkParamRequest(req.body);
+        logger.info(req.body);
         let preResponse, responseData, dataInqLogSave;
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
