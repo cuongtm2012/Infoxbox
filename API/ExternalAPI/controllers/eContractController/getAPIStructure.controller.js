@@ -25,6 +25,7 @@ exports.getStructureAPI = function (req, res) {
             timeout: 60 * 1000
         }
         let rsCheck = validRequest.checkParamRequest(req.query);
+        logger.info(req.query);
         let preResponse, responseData, dataInqLogSave;
             if (!_.isEmpty(rsCheck)) {
                 preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
