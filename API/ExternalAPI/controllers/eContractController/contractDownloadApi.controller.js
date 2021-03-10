@@ -61,8 +61,7 @@ exports.contractDownloadApi = function (req, res) {
                                     let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API_PROD + req.query.id;
                                     let configDownloadContract = {
                                         headers: {
-                                            'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`,
-                                            'Accept-Encoding': 'gzip, deflate, br'
+                                            'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
                                         },
                                         timeout: 60 * 1000,
                                         responseType: "stream"
