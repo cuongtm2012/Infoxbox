@@ -3,6 +3,7 @@ const config = require('./config');
 const moment = require('moment');
 const appRoot = require('app-root-path');
 const getNamespace = require('continuation-local-storage').getNamespace;
+const gracefulFs = require('graceful-fs');
 
 const fs = require('file-system');
 const fss = require('fs');
@@ -14,6 +15,8 @@ var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-
 var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 var todayLogFile = '';
 
+gracefulFs.gracefulify(fs);
+gracefulFs.gracefulify(fss);
 
 async function ensureDirSync(dirpath) {
     try {
