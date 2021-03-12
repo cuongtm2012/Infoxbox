@@ -85,7 +85,15 @@ exports.cicProcStat = function (req, res) {
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 });
+            }).catch(reason => {
+                console.log(reason.toString());
+                logger.error(reason.toString());
+                return res.status(500).json({error: reason.toString()});
             });
+        }).catch(reason => {
+            console.log(reason.toString());
+            logger.error(reason.toString());
+            return res.status(500).json({error: reason.toString()});
         });
 
     } catch (error) {
