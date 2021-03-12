@@ -100,8 +100,20 @@ exports.cics11aRQST = function (req, res, next) {
 					});
 					logger.info(responseData);
 					return res.status(200).json(responseData);
+				}).catch(reason => {
+					console.log(reason.toString());
+					logger.error(reason.toString());
+					return res.status(500).json({error: reason.toString()});
 				});
+			}).catch(reason => {
+				console.log(reason.toString());
+				logger.error(reason.toString());
+				return res.status(500).json({error: reason.toString()});
 			});
+		}).catch(reason => {
+			console.log(reason.toString());
+			logger.error(reason.toString());
+			return res.status(500).json({error: reason.toString()});
 		});
 	} catch (err) {
 		//conneciton socket
@@ -451,9 +463,21 @@ exports.cics11aRSLT = function (req, res) {
 
 							return res.status(200).json(responseSrapingStatus);
 						}
+					}).catch(reason => {
+						console.log(reason.toString());
+						logger.error(reason.toString());
+						return res.status(500).json({error: reason.toString()});
 					});
 				}
+			}).catch(reason => {
+				console.log(reason.toString());
+				logger.error(reason.toString());
+				return res.status(500).json({error: reason.toString()});
 			});
+		}).catch(reason => {
+			console.log(reason.toString());
+			logger.error(reason.toString());
+			return res.status(500).json({error: reason.toString()});
 		});
 
 	} catch (error) {
