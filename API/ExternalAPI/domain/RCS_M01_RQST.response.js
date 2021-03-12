@@ -13,6 +13,7 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, preResponse)
         taskCode,
 		customerNumber,
         productCode,
+        natId,
         nfNiceSessionKey,
 		cicNiceSessionKey,
         mobilePhoneNumber,
@@ -27,6 +28,7 @@ module.exports = function RCS_M01_RQSTResponse(RCS_M01_RQSTRequest, preResponse)
     this.nfNiceSessionKey = nfNiceSessionKey;
     this.cicNiceSessionKey = cicNiceSessionKey;
     this.mobilePhoneNumber = mobilePhoneNumber;
+    this.natId = natId;
     this.infoProvConcent = infoProvConcent;
     this.niceSessionKey = niceSessionKey ? niceSessionKey : "";
     this.responseTime = responseTime ? responseTime : "";
