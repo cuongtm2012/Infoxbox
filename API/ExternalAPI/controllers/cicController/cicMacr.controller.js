@@ -60,8 +60,7 @@ exports.cicMACRRQST = function (req, res, next) {
                 });
                 logger.info(responseData);
                 return res.status(200).json(responseData);
-            }
-            else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
+            } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cicMacrRQSTRes(req.body, preResponse);
@@ -93,21 +92,36 @@ exports.cicMACRRQST = function (req, res, next) {
                     });
                     logger.info(responseData);
                     return res.status(200).json(responseData);
+                }).catch(reason => {
+                    console.log(reason.toString());
+                    logger.error(reason.toString());
+                    return res.status(500).json({ error: reason.toString() });
                 });
 
+            }).catch(reason => {
+                console.log(reason.toString());
+                logger.error(reason.toString());
+                return res.status(500).json({ error: reason.toString() });
             });
+        }).catch(reason => {
+            console.log(reason.toString());
+            logger.error(reason.toString());
+            return res.status(500).json({ error: reason.toString() });
         });
 
     } catch (err) {
         //conneciton socket
-        socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false, multiplex: true });
+        socket = io.connect(URI.socket_url, {secure: true, rejectUnauthorized: false, multiplex: true});
 
         // emit socket
-        socket.emit('External_message', { responseTime: dateutil.getTimeHours(), responseMessage: 'Error CIC_MACR_RQST' });
+        socket.emit('External_message', {
+            responseTime: dateutil.getTimeHours(),
+            responseMessage: 'Error CIC_MACR_RQST'
+        });
         // Close socket
         socket.emit('end');
         logger.error(err.toString());
-        return res.status(500).json({ error: err.toString() });
+        return res.status(500).json({error: err.toString()});
     }
 };
 
@@ -147,8 +161,7 @@ exports.cicMACRRSLT = function (req, res) {
                 });
                 logger.info(responseData);
                 return res.status(200).json(responseData);
-            }
-            else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
+            } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                 responseData = new cicMacrRSLTRes(req.body, preResponse, '');
@@ -190,8 +203,7 @@ exports.cicMACRRSLT = function (req, res) {
                             });
                             logger.info(responseUnknow);
                             return res.status(200).json(responseUnknow);
-                        }
-                        else {
+                        } else {
                             const result = rslt[0].SCRP_STAT_CD;
                             let rsp_cd = rslt[0].RSP_CD;
                             let responseMessage, responseCode;
@@ -216,12 +228,10 @@ exports.cicMACRRSLT = function (req, res) {
                                 } else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
                                     responseMessage = responCode.RESCODEEXT.CICReportInqFailureTimeout.name;
                                     responseCode = responCode.RESCODEEXT.CICReportInqFailureTimeout.code;
-                                }
-                                else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+                                } else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
                                     responseMessage = responCode.RESCODEEXT.INPROCESS.name;
                                     responseCode = responCode.RESCODEEXT.INPROCESS.code;
-                                }
-                                else {
+                                } else {
                                     responseMessage = responCode.RESCODEEXT.ETCError.name;
                                     responseCode = responCode.RESCODEEXT.ETCError.code;
                                 }
@@ -245,14 +255,22 @@ exports.cicMACRRSLT = function (req, res) {
                             logger.info(responseSrapingStatus);
                             return res.status(200).json(responseSrapingStatus);
                         }
+                    }).catch(reason => {
+                        console.log(reason.toString());
+                        logger.error(reason.toString());
+                        return res.status(500).json({error: reason.toString()});
                     });
                 }
             });
+        }).catch(reason => {
+            console.log(reason.toString());
+            logger.error(reason.toString());
+            return res.status(500).json({error: reason.toString()});
         });
 
     } catch (error) {
-        console.log(error);
+        console.log(error.toString());
         logger.error(error.toString());
-        return res.status(500).json({ error: error.toString() });
+        return res.status(500).json({error: error.toString()});
     }
 };

@@ -208,6 +208,10 @@ exports.cics37Rqst = function (req, res) {
 
                                             return res.status(200).json(responseData);
                                         }
+                                    }).catch(reason => {
+                                        console.log(reason.toString());
+                                        logger.error(reason.toString());
+                                        return res.status(500).json({error: reason.toString()});
                                     });
 
                                 }
@@ -229,6 +233,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                                             cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
@@ -245,6 +253,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail7.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                                             cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
@@ -262,6 +274,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         } else {
                                             cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
@@ -279,6 +295,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         }
                                     }
@@ -303,6 +323,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError3.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError201.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
                                             cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code).then(rslt => {
@@ -319,6 +343,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError101.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
                                             cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NotUniquePersonInCIC.code).then(rslt => {
@@ -335,6 +363,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError108.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
                                             cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CaptchaProcessFailure.code).then(rslt => {
@@ -351,6 +383,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
                                         }
                                         else {
@@ -369,6 +405,10 @@ exports.cics37Rqst = function (req, res) {
                                                 }
                                                 else
                                                     console.log('Update scraping status failure!');
+                                            }).catch(reason => {
+                                                console.log(reason.toString());
+                                                logger.error(reason.toString());
+                                                return res.status(500).json({error: reason.toString()});
                                             });
 
                                         }
@@ -389,6 +429,10 @@ exports.cics37Rqst = function (req, res) {
                                             }
                                             else
                                                 console.log('Update scraping status failure!');
+                                        }).catch(reason => {
+                                            console.log(reason.toString());
+                                            logger.error(reason.toString());
+                                            return res.status(500).json({error: reason.toString()});
                                         });
 
                                     }
@@ -410,6 +454,10 @@ exports.cics37Rqst = function (req, res) {
 
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
+                                }).catch(reason => {
+                                    console.log(reason.toString());
+                                    logger.error(reason.toString());
+                                    return res.status(500).json({error: reason.toString()});
                                 });
                             });
                     } else {
@@ -419,8 +467,20 @@ exports.cics37Rqst = function (req, res) {
                         logger.info(responseData);
                         return res.status(200).json(responseData);
                     }
+                }).catch(reason => {
+                    console.log(reason.toString());
+                    logger.error(reason.toString());
+                    return res.status(500).json({error: reason.toString()});
                 });
+            }).catch(reason => {
+                console.log(reason.toString());
+                logger.error(reason.toString());
+                return res.status(500).json({error: reason.toString()});
             });
+        }).catch(reason => {
+            console.log(reason.toString());
+            logger.error(reason.toString());
+            return res.status(500).json({error: reason.toString()});
         });
 
     } catch (err) {
@@ -615,9 +675,21 @@ exports.cics37RSLT = function (req, res) {
                             logger.info(responseSrapingStatus);
                             return res.status(200).json(responseSrapingStatus);
                         }
+                    }).catch(reason => {
+                        console.log(reason.toString());
+                        logger.error(reason.toString());
+                        return res.status(500).json({error: reason.toString()});
                     });
                 }
+            }).catch(reason => {
+                console.log(reason.toString());
+                logger.error(reason.toString());
+                return res.status(500).json({error: reason.toString()});
             });
+        }).catch(reason => {
+            console.log(reason.toString());
+            logger.error(reason.toString());
+            return res.status(500).json({error: reason.toString()});
         });
 
     } catch (error) {
