@@ -1286,7 +1286,7 @@ async function selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd(niceSsKey, custCD) 
             {outFormat: oracledb.OUT_FORMAT_OBJECT}
         );
         let objResult = {};
-        if (result.rows[0] !== undefined && result.rows.length === 2) {
+        if (result.rows[0] !== undefined) {
             result.rows.forEach(
                 element => {
                     if (_.isEqual(element.SCORE_CD, responCode.ScoreCode.zalo)) {
