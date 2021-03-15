@@ -77,22 +77,25 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 // call VMG KYC 2
                                                 axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
                                                     resultKYC2 => {
-                                                        if ((resultKYC2.data.error_code === 0 || resultKYC2.data.error_code === 20) && resultKYC2.data.result) {
-                                                            // store data KYC2 to DB
-                                                            let dataSaveToVmgIncome = new dataVmgKyc2SaveToVmgIncome(fullNiceKey, resultKYC2.data);
-                                                            cicExternalService.insertDataToVmgIncome(dataSaveToVmgIncome).then();
-                                                            //
-                                                            let totalInComeMonth;
-                                                            if(!_.isEmpty(resultKYC2.data.result.totalIncome_3)) {
-                                                                totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_3) / 12;
-                                                            } else if(!_.isEmpty(resultKYC2.data.result.totalIncome_2)) {
-                                                                totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_2) / 12;
-                                                            } else if(!_.isEmpty(resultKYC2.data.result.totalIncome_1)) {
-                                                                totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_1) / 12;
-                                                            } else {
-                                                                totalInComeMonth = 0;
+                                                        if (resultKYC2.data.error_code.toString()) {
+                                                            let bodyRclipsReq;
+                                                            let totalInComeMonth = 0;
+                                                            if ((resultKYC2.data.error_code === 0 || resultKYC2.data.error_code === 20) && resultKYC2.data.result) {
+                                                                // store data KYC2 to DB
+                                                                let dataSaveToVmgIncome = new dataVmgKyc2SaveToVmgIncome(fullNiceKey, resultKYC2.data);
+                                                                cicExternalService.insertDataToVmgIncome(dataSaveToVmgIncome).then();
+                                                                //
+                                                                if (resultKYC2.data.result.totalIncome_3) {
+                                                                    totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_3) / 12;
+                                                                } else if (resultKYC2.data.result.totalIncome_2) {
+                                                                    totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_2) / 12;
+                                                                } else if (resultKYC2.data.result.totalIncome_1) {
+                                                                    totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_1) / 12;
+                                                                } else {
+                                                                    totalInComeMonth = 0;
+                                                                }
                                                             }
-                                                            let bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             //    call Rclips
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
                                                                 resultRclips => {
