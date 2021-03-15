@@ -26,7 +26,7 @@ exports.contractDownloadApi = function (req, res) {
         }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
-        let preResponse, responseData, dataInqLogSave;
+        let preResponse, responseData, dataInqLogSave, filename;
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.FTN_GCT_RQST.code + niceSessionKey;
@@ -73,7 +73,7 @@ exports.contractDownloadApi = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 logger.info(responseData);
-                                                let filename = fullNiceKey + '.pdf';
+                                                filename = fullNiceKey + '.pdf';
                                                 let saveFile = resultDownload.data.pipe(fs.createWriteStream(filename));
                                                 convertPdfToBase64(filename, saveFile).then(
                                                     resultConvertBase64 => {
@@ -111,6 +111,7 @@ exports.contractDownloadApi = function (req, res) {
                                             }
                                         }).catch(reason => {
                                         console.log('errResultDownload: ', reason.toString());
+                                        deleteFile(filename);
                                         if (reason.response && reason.response.data.message === ('Internal Server Error: Envelope is not exist: ' + req.query.id)) {
                                             console.log('errResultDownload: ', reason.response.data.message);
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
@@ -177,11 +178,13 @@ exports.contractDownloadApi = function (req, res) {
                         })
                     }
                 }).catch(reason => {
+                    deleteFile(filename);
                     logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 })
             }
         }).catch(reason => {
+            deleteFile(filename);
             logger.error(reason.toString());
             return res.status(500).json({error: reason.toString()});
         })
