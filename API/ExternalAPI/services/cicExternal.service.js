@@ -1273,8 +1273,7 @@ async function selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd(niceSsKey, custCD) 
                 INNER JOIN TB_SCRPLOG b
                 ON a.NICE_SSIN_ID = b.NICE_SSIN_ID
                 WHERE a.NICE_SSIN_ID = :NICE_SSIN_ID AND b.CUST_CD = :CUST_CD AND b.RSP_CD = 'P000'
-                ORDER BY b.SYS_DTIM DESC 
-                OFFSET 0 ROWS FETCH NEXT 2 ROWS ONLY`;
+                ORDER BY b.SYS_DTIM DESC`;
 
         result = await connection.execute(
             // The statement to execute
