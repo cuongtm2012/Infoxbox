@@ -1,4 +1,6 @@
 const oracledb = require('oracledb');
+const config = require('../config/config');
+
 const dateutil = require('../util/dateutil');
 const nicekey = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
@@ -17,7 +19,7 @@ async function insertSCRPLOG(req, res) {
         let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `INSERT INTO TB_SCRPLOG(
                NICE_SSIN_ID, 
@@ -71,6 +73,14 @@ async function insertSCRPLOG(req, res) {
     } catch (err) {
         console.log(err);
         return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -79,7 +89,7 @@ async function selectCicMobileDetailReport(req) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
         let result;
 
@@ -128,6 +138,14 @@ async function selectCicMobileDetailReport(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 

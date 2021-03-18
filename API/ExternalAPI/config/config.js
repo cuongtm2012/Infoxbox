@@ -83,7 +83,9 @@ var config = {
 		DEV_cmd: 'cac1_nice',
 		DEV_customerCode: 'NICE',
 		DEV_serviceCode: 'cac1_nice'
-	}
+	},
+
+	poolAlias: 'Pool'
 };
 
 module.exports = config;

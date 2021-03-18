@@ -1,6 +1,6 @@
 
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
@@ -15,7 +15,7 @@ async function select01() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -62,7 +62,7 @@ async function select04NotExist() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -110,7 +110,7 @@ async function updateCICReportInquirySuccessful(req) {
         let sql, result;
 
         let sysDim = dateUtil.timeStamp();
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '04', SYS_DTIM = :sysDim
@@ -156,7 +156,7 @@ async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
         let sql, result;
 
         let sysDim = dateUtil.timeStamp();
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
         if (_.isEqual('A0001', svcCd)) {
             sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '10', RSP_CD = 'P000', SYS_DTIM = :sysDim, LOGIN_PW = null
@@ -204,7 +204,7 @@ async function updateScrapingTargetRepostNotExist(req) {
 
         let sysDim = dateUtil.timeStamp();
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sqlUpdateScrplog = `UPDATE TB_SCRPLOG
@@ -243,7 +243,7 @@ async function updateScrpModCdPreRequestToScraping(req) {
     try {
         let sql, result;
         if (!_.isEmpty(req)) {
-            connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection(config.poolAlias);
 
 
             sql = `UPDATE TB_SCRPLOG
@@ -284,7 +284,7 @@ async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey, runTimeV
     try {
         let sql, result;
         if (!_.isEmpty(niceSessionKey)) {
-            connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection(config.poolAlias);
 
 
             sql = `UPDATE TB_SCRPLOG
@@ -329,7 +329,7 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -371,7 +371,7 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -413,7 +413,7 @@ async function updateCICReportInquiryReadyToRequestScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD = '00'
@@ -454,7 +454,7 @@ async function startProcessB0003() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         // let currentTimeStamp = dateUtil.timeStamp();
@@ -507,7 +507,7 @@ async function startProcessB1003() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM
                 FROM TB_SCRPLOG a
@@ -548,7 +548,7 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -589,7 +589,7 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -635,7 +635,7 @@ async function selectExcuteA0001() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();

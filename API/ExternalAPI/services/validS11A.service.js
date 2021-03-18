@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const config = require('../config/config');
 const dateUtil = require('../util/dateutil');
 
 /*
@@ -9,7 +10,7 @@ async function selectFiCode(fiCode, goodCode) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
         let currentDate = dateUtil.getCurrentInquiryDate();
 
@@ -37,7 +38,15 @@ async function selectFiCode(fiCode, goodCode) {
     } catch (err) {
         console.log('err:', err);
         return err;
-    } 
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 }
 
 module.exports.selectFiCode = selectFiCode;
