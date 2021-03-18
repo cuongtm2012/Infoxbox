@@ -15,7 +15,7 @@ const dbOption = {
 
 async function initialize() {
 	//create oracle connection pool
-		oracledb.createPool(
+	await oracledb.createPool(
 			dbOption,
 			function (err, pool) {
 				if (err) {
