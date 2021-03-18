@@ -1,4 +1,6 @@
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
+
 const convertTime = require('../util/dateutil');
 const niceGoodCode = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
@@ -54,6 +56,14 @@ async function insertSCRPLOG(req) {
         console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -109,6 +119,14 @@ async function insertINQLOG(req) {
         console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -495,6 +513,14 @@ async function selectCICS11aRSLT(req) {
       console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -539,6 +565,14 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
       console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -606,6 +640,14 @@ async function selectProcStatus(req) {
       console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -654,6 +696,14 @@ async function insertDataZaloINQLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -688,6 +738,14 @@ async function insertDataZaloToSCRPLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -719,6 +777,14 @@ async function updateRspCdScrapLogAfterGetResult(niceSessionKey, RspCd) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -752,6 +818,14 @@ async function insertDataZaloToExtScore(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -800,6 +874,14 @@ async function insertDataRiskScoreToINQLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -836,6 +918,14 @@ async function insertDataRiskScoreToSCRPLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -875,6 +965,14 @@ async function insertDataRiskScoreToExtScore(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -923,6 +1021,14 @@ async function insertDataToINQLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -958,6 +1064,14 @@ async function insertDataReqToSCRPLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1011,6 +1125,14 @@ async function insertDataFptIdToFptId(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1050,6 +1172,14 @@ async function insertDataToFptFace(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1086,6 +1216,14 @@ async function insertDataNFScoreOKToSCRPLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1112,6 +1250,14 @@ async function selectValue1InFiCriManage(custCd, cri) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1156,6 +1302,14 @@ async function selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd(niceSsKey, custCD) 
         }
     } catch (err) {
         return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1185,6 +1339,14 @@ async function insertDataToVmgLocPct(req) {
     } catch (err) {
         console.log(err);
         return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1226,6 +1388,14 @@ async function insertDataToVmgAddress(req) {
     } catch (err) {
         console.log(err);
         return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1262,6 +1432,14 @@ async function insertDataSimpleLimitToSCRPLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1295,6 +1473,14 @@ async function insertDataFPTContractToSCRPLOG(req) {
        console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1332,6 +1518,14 @@ async function selectCICScoreAndGrade(niceSskey) {
         }
     } catch (err) {
         return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1366,6 +1560,14 @@ async function insertDataToVmgIncome(req) {
         console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1401,6 +1603,14 @@ async function insertDataCAC1ToSCRPLOG(req) {
         console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1433,6 +1643,14 @@ async function updateRspCdAndStatusCdScrapLogAfterGetResult(niceSessionKey, RspC
         console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1483,6 +1701,14 @@ async function selectDataKYC_VC1_RSLT(niceSskey) {
         }
     } catch (err) {
         return err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -1524,6 +1750,14 @@ async function insertDataToExtScore(req) {
         console.log(err);
         throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 

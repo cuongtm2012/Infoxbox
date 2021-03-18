@@ -1,4 +1,6 @@
+
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
 
 async function getSequence() {
     let connection;
@@ -28,6 +30,14 @@ async function getSequence() {
     } catch (err) {
         console.log(err); throw err;
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
