@@ -1,6 +1,4 @@
-
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
 
 async function getSequence() {
     let connection;
@@ -8,7 +6,7 @@ async function getSequence() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT SUBSTR(concat('0000', to_char(SEQ_INQLOG.nextval)), -5) as seq  FROM dual`;
         // where CUS_ID = :CUS_ID`;
@@ -30,14 +28,6 @@ async function getSequence() {
     } catch (err) {
         console.log(err); throw err;
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
