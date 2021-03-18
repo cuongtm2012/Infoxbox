@@ -31,6 +31,8 @@ var config = {
 	authprefix: 'Bearer ',
 	jwtExpiresIn: 864000000000,
 	secret: 'apisecretinfoplus12!@',
+
+	poolAlias: 'internalPool'
 };
 
 module.exports = config;
