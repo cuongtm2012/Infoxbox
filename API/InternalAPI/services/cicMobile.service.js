@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 const dateutil = require('../util/dateutil');
 
 async function insertMobileReportA0001(req) {
@@ -8,7 +8,7 @@ async function insertMobileReportA0001(req) {
     try {
         let sqlInsertMain, resultMain, sqlInsertMrpt, resultMrpt;
 
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
         // tb_cicrpt_main
         sqlInsertMain = `INSERT INTO TB_CICRPT_MAIN(
@@ -104,7 +104,7 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping06(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
