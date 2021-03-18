@@ -11,7 +11,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
 
     try {
         // Create connection to DB
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         // result for insert
         let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo, resultCard3yearInfo;

@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
 const dateUtil = require('../util/dateutil');
 
 /*
@@ -37,7 +38,15 @@ async function selectFiCode(fiCode, goodCode) {
     } catch (err) {
         console.log('err:', err);
         return err;
-    } 
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 }
 
 module.exports.selectFiCode = selectFiCode;

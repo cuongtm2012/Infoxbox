@@ -8,7 +8,7 @@ async function insertMobileReportA0001(req) {
     try {
         let sqlInsertMain, resultMain, sqlInsertMrpt, resultMrpt;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         // tb_cicrpt_main
         sqlInsertMain = `INSERT INTO TB_CICRPT_MAIN(
@@ -104,7 +104,7 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping06(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG

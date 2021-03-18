@@ -8,7 +8,7 @@ async function updateScrapingTranslog(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRP_TRLOG(SCRP_LOG_ID,
                 NICE_SSIN_ID,
