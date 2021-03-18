@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
@@ -14,7 +14,7 @@ async function selectDeplayReport() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim, a.login_id, a.login_pw, a.sys_dtim
         FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
@@ -60,7 +60,7 @@ async function selectDeplayReport2() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim, a.login_id, a.login_pw, a.sys_dtim
         FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
@@ -104,7 +104,7 @@ async function updateScrpModCd03(niceSesKey) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -151,7 +151,7 @@ async function updateDelayReportS11A(niceSessionKey) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = :SCRP_STAT_CD, RSP_CD = :RSP_CD, SCRP_MOD_CD = :SCRP_MOD_CD 

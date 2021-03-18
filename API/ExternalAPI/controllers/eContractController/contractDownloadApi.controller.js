@@ -116,6 +116,7 @@ exports.contractDownloadApi = function (req, res) {
                                             }
                                         }).catch(reason => {
                                         console.log('errResultDownload: ', reason.toString());
+                                        deleteFile(filename);
                                         if (reason.response && reason.response.data.message === ('Internal Server Error: Envelope is not exist: ' + req.query.id)) {
                                             console.log('errResultDownload: ', reason.response.data.message);
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);

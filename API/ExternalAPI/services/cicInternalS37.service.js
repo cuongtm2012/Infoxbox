@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 const dateutil = require('../util/dateutil');
 const getIdGetway = require('../../shared/util/getIPGateWay');
 
@@ -11,7 +11,7 @@ async function insertS37Detail(req) {
         let sysDtim = dateutil.timeStamp();
         const workID = getIdGetway.getIPGateWay();
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //TB CICCRPT MAIN
         sqlInsertCICRPTMain = `INSERT INTO TB_CICRPT_MAIN (NICE_SSIN_ID,

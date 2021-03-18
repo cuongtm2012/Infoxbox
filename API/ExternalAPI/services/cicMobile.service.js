@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 
 const dateutil = require('../util/dateutil');
 const nicekey = require('../../shared/util/niceGoodCode');
@@ -19,7 +19,7 @@ async function insertSCRPLOG(req, res) {
         let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `INSERT INTO TB_SCRPLOG(
                NICE_SSIN_ID, 
@@ -89,7 +89,7 @@ async function selectCicMobileDetailReport(req) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         let result;
 
