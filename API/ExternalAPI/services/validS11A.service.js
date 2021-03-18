@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 const dateUtil = require('../util/dateutil');
 
 /*
@@ -10,7 +10,7 @@ async function selectFiCode(fiCode, goodCode) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
         let currentDate = dateUtil.getCurrentInquiryDate();
 
