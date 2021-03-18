@@ -15,7 +15,11 @@ const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDow
 const axios = require('axios');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+const gracefulFs = require('graceful-fs');
 const fs = require('fs');
+
+
+gracefulFs.gracefulify(fs);
 exports.contractDownloadApi = function (req, res) {
     try {
         const config = {
