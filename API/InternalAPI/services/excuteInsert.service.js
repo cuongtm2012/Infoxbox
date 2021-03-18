@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 
 const getIdGetway = require('../../shared/util/getIPGateWay');
 const dateutil = require('../util/dateutil');
@@ -11,7 +11,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
 
     try {
         // Create connection to DB
-        connection = await oracledb.getConnection();
+        connection = await oracledb.getConnection(config.poolAlias);
 
         // result for insert
         let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo, resultCard3yearInfo;
