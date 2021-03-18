@@ -1,5 +1,4 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
 const dateutil = require('../util/dateutil');
 
 async function updateScrapingTranslog(req) {
@@ -8,7 +7,7 @@ async function updateScrapingTranslog(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRP_TRLOG(SCRP_LOG_ID,
                 NICE_SSIN_ID,
@@ -91,14 +90,6 @@ async function updateScrapingTranslog(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 

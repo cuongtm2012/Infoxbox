@@ -1,6 +1,5 @@
 
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
@@ -15,7 +14,7 @@ async function select01() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -45,14 +44,6 @@ async function select01() {
 
     } catch (err) {
         console.log(err);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -62,7 +53,7 @@ async function select04NotExist() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -90,14 +81,6 @@ async function select04NotExist() {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -110,7 +93,7 @@ async function updateCICReportInquirySuccessful(req) {
         let sql, result;
 
         let sysDim = dateUtil.timeStamp();
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '04', SYS_DTIM = :sysDim
@@ -135,14 +118,6 @@ async function updateCICReportInquirySuccessful(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -156,7 +131,7 @@ async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
         let sql, result;
 
         let sysDim = dateUtil.timeStamp();
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
         if (_.isEqual('A0001', svcCd)) {
             sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '10', RSP_CD = 'P000', SYS_DTIM = :sysDim, LOGIN_PW = null
@@ -185,14 +160,6 @@ async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -204,7 +171,7 @@ async function updateScrapingTargetRepostNotExist(req) {
 
         let sysDim = dateUtil.timeStamp();
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sqlUpdateScrplog = `UPDATE TB_SCRPLOG
@@ -226,14 +193,6 @@ async function updateScrapingTargetRepostNotExist(req) {
         return resultScrpLog.rowsAffected;
     } catch (err) {
         console.log(err);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -243,7 +202,7 @@ async function updateScrpModCdPreRequestToScraping(req) {
     try {
         let sql, result;
         if (!_.isEmpty(req)) {
-            connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection();
 
 
             sql = `UPDATE TB_SCRPLOG
@@ -267,14 +226,6 @@ async function updateScrpModCdPreRequestToScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -284,7 +235,7 @@ async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey, runTimeV
     try {
         let sql, result;
         if (!_.isEmpty(niceSessionKey)) {
-            connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection();
 
 
             sql = `UPDATE TB_SCRPLOG
@@ -312,14 +263,6 @@ async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey, runTimeV
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -329,7 +272,7 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -354,14 +297,6 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -371,7 +306,7 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -396,14 +331,6 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -413,7 +340,7 @@ async function updateCICReportInquiryReadyToRequestScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD = '00'
@@ -435,14 +362,6 @@ async function updateCICReportInquiryReadyToRequestScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 /*
@@ -454,7 +373,7 @@ async function startProcessB0003() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         //get curremt time
         // let currentTimeStamp = dateUtil.timeStamp();
@@ -487,14 +406,6 @@ async function startProcessB0003() {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -507,7 +418,7 @@ async function startProcessB1003() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM
                 FROM TB_SCRPLOG a
@@ -531,14 +442,6 @@ async function startProcessB1003() {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -548,7 +451,7 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -572,14 +475,6 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -589,7 +484,7 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -615,14 +510,6 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -635,7 +522,7 @@ async function selectExcuteA0001() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -666,14 +553,6 @@ async function selectExcuteA0001() {
 
     } catch (err) {
         console.log(err);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 

@@ -8,7 +8,7 @@ async function insertMobileReportA0001(req) {
     try {
         let sqlInsertMain, resultMain, sqlInsertMrpt, resultMrpt;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         // tb_cicrpt_main
         sqlInsertMain = `INSERT INTO TB_CICRPT_MAIN(
@@ -84,14 +84,6 @@ async function insertMobileReportA0001(req) {
         return resultMain.rowsAffected + resultMrpt.rowsAffected;
     } catch (err) {
         console.log(err);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
@@ -104,7 +96,7 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping06(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -129,14 +121,6 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping06(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
