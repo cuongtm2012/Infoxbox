@@ -270,200 +270,287 @@ const bodySimpleLimit = {
 }
 const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         let times = 0;
-        axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
+        // axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
+        //     result => {
+        //         countNextTimeCron('urlSimpleLimit');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('errSimpleLimit');
+        //         return console.log(error.toString());
+        // });
+        //
+        // axios.get(statusContract, config).then(
+        //     result => {
+        //         countNextTimeCron('statusContract');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('statusContract');
+        //         return console.log(error.toString());
+        // });
+        //
+        // axios.get(statusContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('statusContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('statusContractUrl');
+        //     return console.log(error.toString());
+        // });
+        //
+        //
+        // axios.post(urlNFScore, bodyNfSCore, config).then(
+        //     result => {
+        //         countNextTimeCron('NFScore');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('NFScore');
+        //     return console.log(error.toString());
+        // });
+        //
+        // axios.post(urlCreateContract, bodyCreateContract, config).then(
+        //     result => {
+        //         countNextTimeCron('CreateContrac');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('CreateContrac');
+        //     return console.log(error.toString());
+        // });
+        //
+        // axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
+        //     result => {
+        //         countNextTimeCron('SimpleLimit');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('SimpleLimit');
+        //     return console.log(error.toString());
+        // });
+        //
+        // axios.get(statusContract, config).then(
+        //     result => {
+        //         countNextTimeCron('statusContract');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('statusContract');
+        //     return console.log(error.toString());
+        // });
+        //
+        //
+        // axios.get(statusContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('ContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('ContractUrl');
+        //     return console.log(error.toString());
+        // });
+        //
+        //
+        // axios.post(urlNFScore, bodyNfSCore, config).then(
+        //     result => {
+        //         countNextTimeCron('NFScore');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('NFScore');
+        //     return console.log(error.toString());
+        // });
+        //
+        // axios.post(urlCreateContract, bodyCreateContract, config).then(
+        //     result => {
+        //         countNextTimeCron('CreateContract');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('CreateContract');
+        //     return console.log(error.toString());
+        // });
+
+        let URL_FTN_GAS_RQST = 'https://103.112.124.129:3000/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=Loan_Contracts_OK_VAY_20210303_Personal'
+        let bodySimpleLimitPRo = {
+            "mobilePhoneNumber": "0937129528",
+            "infoProvConcent": "Y",
+            "taskCode": "OKF_SPL_RQST",
+            "ifStatus": "00",
+            "fiCode": "B100000011",
+            "natId": "301568618",
+            "salary": "8000000",
+            "ifGlobalID": "2021031808245278900201",
+            "ifBusiness": "NICE",
+            "ifApiUrl": "OKF_SPL_RQST",
+            "ifRequestGubun": "Request"
+        }
+
+        let URL_SPLIMIT_PRO = 'https://103.112.124.129:3000/external/OKF_SPL_RQST'
+
+        let mainscorePro = {
+            "appNumber":"",
+            "fiCode":"B100000011",
+            "taskCode":"RCS_M01_RQST",
+            "customerNumber": "",
+            "productCode": "",
+            "nfNiceSessionKey":"S201220210315144751318844",
+            "cicNiceSessionKey":"S100320200420093489300101",
+            "mobilePhoneNumber":"0964785596",
+            "natId": "173300769",
+            "infoProvConcent": "Y"
+        }
+        let NfscorePro = {
+            "appNumber": "R9000000000010",
+            "fiCode": "B100000011",
+            "taskCode": "OKF_SCO_RQST",
+            "customerNumber": "C2000000000004",
+            "scoreProduct": "NOK100_001",
+            "mobilePhoneNumber": "0943054509",
+            "natId": "385636346",
+            "infoProvConcent": "Y"
+        }
+        let mainScore_URL = 'https://103.112.124.129:3000/external/RCS_M01_RQST';
+        let nfScore_URL = 'https://103.112.124.129:3000/external/OKF_SCO_RQST';
+
+        let StatusEcontract = 'https://103.112.124.129:3000/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000113LIOBGhnvwMORE6H5d40';
+
+        let CIC_MACR_RSLT = 'https://103.112.124.129:3000/external/CIC_MACR_RSLT';
+        let CIC_S11A_RSLT = 'https://103.112.124.129:3000/external/CIC_S11A_RSLT';
+        let CIC_S37_RSLT = 'https://103.112.124.129:3000/external/CIC_S11A_RSLT';
+        let bodyCIC_MACR_RSLT = {
+            "fiSessionKey" : "",
+            "fiCode": "B100000011",
+            "taskCode": "CIC_MACR_RSLT",
+            "niceSessionKey": "S100320210318180484519926",
+            "inquiryDate": ""
+        }
+        let bodyCIC_S37_RSLT = {
+            "fiSessionKey": "",
+            "niceSessionKey": "S100220210318174638019500",
+            "fiCode": "B100000011",
+            "taskCode": "CIC_S37_RSLT",
+            "inquiryDate": "20201201",
+            "infoProvConcent": "Y"
+        }
+        let bodyCIC_S11A_RSLT = {
+            "fiSessionKey" : "",
+            "fiCode": "B100000011",
+            "taskCode": "CIC_S11A_RSLT",
+            "niceSessionKey": "S100120210318174940819749",
+            "inquiryDate": ""
+        }
+        axios.post(CIC_S37_RSLT, bodyCIC_S37_RSLT, config).then(
             result => {
-                countNextTimeCron('urlSimpleLimit');
+                countNextTimeCron('CIC_S37_RSLT: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('errSimpleLimit');
-                return console.log(error.toString());
+            countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
+            return console.log(error.toString());
+        });
+        axios.post(CIC_S11A_RSLT, bodyCIC_S11A_RSLT, config).then(
+            result => {
+                countNextTimeCron('CIC_S11A_RSLT: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('CIC_S11A_RSLT: ' + error.toString());
+            return console.log(error.toString());
+        });
+        axios.post(CIC_MACR_RSLT, bodyCIC_MACR_RSLT, config).then(
+            result => {
+                countNextTimeCron('CIC_MACR_RSLT: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('CIC_MACR_RSLT: ' + error.toString());
+            return console.log(error.toString());
+        });
+        axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
+            result => {
+                countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('bodySimpleLimitPRo: ' + error.toString());
+            return console.log(error.toString());
         });
 
-        axios.get(statusContract, config).then(
+        axios.post(mainScore_URL, mainscorePro, config).then(
             result => {
-                countNextTimeCron('statusContract');
+                countNextTimeCron('mainscorePro: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('statusContract');
-                return console.log(error.toString());
+            countNextTimeCron('mainscorePro: ' + error.toString());
+            return console.log(error.toString());
         });
 
-        axios.get(statusContractUrl, config).then(
+        axios.post(nfScore_URL, NfscorePro, config).then(
             result => {
-                countNextTimeCron('statusContractUrl');
+                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('statusContractUrl');
+            countNextTimeCron('NfscorePro: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.get(StatusEcontract, config).then(
+            result => {
+                countNextTimeCron('StatusEcontract: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('StatusEcontract: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.get(URL_FTN_GAS_RQST, config).then(
+            result => {
+                countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('URL_FTN_GAS_RQST: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
+            result => {
+                countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('bodySimpleLimitPRo: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.post(mainScore_URL, mainscorePro, config).then(
+            result => {
+                countNextTimeCron('mainscorePro: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('mainscorePro: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.post(nfScore_URL, NfscorePro, config).then(
+            result => {
+                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('NfscorePro: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.get(StatusEcontract, config).then(
+            result => {
+                countNextTimeCron('StatusEcontract: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('StatusEcontract: ' + error.toString());
+            return console.log(error.toString());
+        });
+
+        axios.get(URL_FTN_GAS_RQST, config).then(
+            result => {
+                countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('URL_FTN_GAS_RQST: ' + error.toString());
             return console.log(error.toString());
         });
 
 
-        axios.post(urlNFScore, bodyNfSCore, config).then(
-            result => {
-                countNextTimeCron('NFScore');
-            }
-        ).catch((error) => {
-            countNextTimeCron('NFScore');
-            return console.log(error.toString());
-        });
-
-        axios.post(urlCreateContract, bodyCreateContract, config).then(
-            result => {
-                countNextTimeCron('CreateContrac');
-            }
-        ).catch((error) => {
-            countNextTimeCron('CreateContrac');
-            return console.log(error.toString());
-        });
-
-        axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
-            result => {
-                countNextTimeCron('SimpleLimit');
-            }
-        ).catch((error) => {
-            countNextTimeCron('SimpleLimit');
-            return console.log(error.toString());
-        });
-
-        axios.get(statusContract, config).then(
-            result => {
-                countNextTimeCron('statusContract');
-            }
-        ).catch((error) => {
-            countNextTimeCron('statusContract');
-            return console.log(error.toString());
-        });
-
-
-        axios.get(statusContractUrl, config).then(
-            result => {
-                countNextTimeCron('ContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('ContractUrl');
-            return console.log(error.toString());
-        });
-
-
-        axios.post(urlNFScore, bodyNfSCore, config).then(
-            result => {
-                countNextTimeCron('NFScore');
-            }
-        ).catch((error) => {
-            countNextTimeCron('NFScore');
-            return console.log(error.toString());
-        });
-
-        axios.post(urlCreateContract, bodyCreateContract, config).then(
-            result => {
-                countNextTimeCron('CreateContract');
-            }
-        ).catch((error) => {
-            countNextTimeCron('CreateContract');
-            return console.log(error.toString());
-        });
-
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
-        // axios.get(downloadContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('downloadContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('downloadContractUrl');
-        //     return console.log(error.toString());
-        // });
         function countNextTimeCron(any) {
             times++;
             console.log(times , ' : ',  any);
-            if (times === 11) {
+            if (times === 13) {
                 console.log(times);
                oncomplete(0 , 0);
             }
