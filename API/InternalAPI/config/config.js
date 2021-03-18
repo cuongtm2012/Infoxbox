@@ -32,7 +32,7 @@ var config = {
 	jwtExpiresIn: 864000000000,
 	secret: 'apisecretinfoplus12!@',
 
-	poolAlias: 'internalPool'
+	poolAlias: 'Pool'
 };
 
 module.exports = config;
