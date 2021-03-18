@@ -1,5 +1,4 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
 const _ = require('lodash');
 
 async function selectCicS37DetailReport(req) {
@@ -7,7 +6,7 @@ async function selectCicS37DetailReport(req) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         let resultScrpTranlog, outputScrpTranlog, resultS37Detail, outputS37Detail;
 
@@ -77,14 +76,6 @@ async function selectCicS37DetailReport(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
     }
 }
 
