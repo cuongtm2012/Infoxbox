@@ -159,7 +159,7 @@ exports.cics37Rqst = function (req, res) {
                                         if (1 < resultS37) {
                                             console.log('Successfully insert into S37 detail table');
                                             // update complete cic report inquiry status 10
-                                            cicService.updateCICReportInquiryCompleted(niceKey, '').then(resultUpdated => {
+                                            cicExternalService.updateCICReportInquiryCompleted(niceKey, '').then(resultUpdated => {
                                                 console.log("CIC report inquiry completed B1003!", resultUpdated);
 
                                             });
@@ -175,7 +175,7 @@ exports.cics37Rqst = function (req, res) {
                                             let workId = getIdGetway.getIPGateWay();
 
                                             let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password, body.data.outJson.outB1003.cicNo, niceKey);
-                                            cicServiceRes.updateScrapingTranslog(dataTransSave).then(() => {
+                                            cicExternalService.updateScrapingTranslog(dataTransSave).then(() => {
                                                 console.log("Updated to scraping transaction log B1003!");
                                                 // return next();
                                             });
