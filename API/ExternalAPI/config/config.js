@@ -85,7 +85,7 @@ var config = {
 		DEV_serviceCode: 'cac1_nice'
 	},
 
-	poolAlias: 'externalPool'
+	poolAlias: 'Pool'
 };
 
 module.exports = config;
