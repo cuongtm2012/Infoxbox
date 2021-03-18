@@ -1,4 +1,6 @@
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
+
 const dateutil = require('../util/dateutil');
 const nicekey = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
@@ -71,6 +73,14 @@ async function insertSCRPLOG(req, res) {
     } catch (err) {
         console.log(err);
         return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -128,6 +138,14 @@ async function selectCicMobileDetailReport(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 

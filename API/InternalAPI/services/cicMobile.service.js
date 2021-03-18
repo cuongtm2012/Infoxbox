@@ -84,6 +84,14 @@ async function insertMobileReportA0001(req) {
         return resultMain.rowsAffected + resultMrpt.rowsAffected;
     } catch (err) {
         console.log(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -121,6 +129,14 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping06(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 

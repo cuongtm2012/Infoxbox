@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
@@ -39,7 +40,15 @@ async function selectDeplayReport() {
 
     } catch (err) {
         console.log(err);
-    } 
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 }
 
 /*
@@ -76,7 +85,15 @@ async function selectDeplayReport2() {
 
     } catch (err) {
         console.log(err);
-    } 
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 }
 
 /*
@@ -113,7 +130,15 @@ async function updateScrpModCd03(niceSesKey) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
-    } 
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 }
 
 /*
@@ -150,7 +175,15 @@ async function updateDelayReportS11A(niceSessionKey) {
 
     } catch (err) {
         console.log(err);
-    } 
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 }
 
 module.exports.updateDelayReportS11A = updateDelayReportS11A;

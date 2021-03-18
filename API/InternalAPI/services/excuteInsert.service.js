@@ -608,6 +608,14 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
     } catch (err) {
         console.log(err);
         return;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 

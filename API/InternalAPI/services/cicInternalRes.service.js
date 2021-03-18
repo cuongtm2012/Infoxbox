@@ -1,4 +1,5 @@
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
 const dateutil = require('../util/dateutil');
 
 async function updateScrapingTranslog(req) {
@@ -90,6 +91,14 @@ async function updateScrapingTranslog(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 

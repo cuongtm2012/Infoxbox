@@ -1,5 +1,6 @@
 
 const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
@@ -44,6 +45,14 @@ async function select01() {
 
     } catch (err) {
         console.log(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -81,6 +90,14 @@ async function select04NotExist() {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -118,6 +135,14 @@ async function updateCICReportInquirySuccessful(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -160,6 +185,14 @@ async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -193,6 +226,14 @@ async function updateScrapingTargetRepostNotExist(req) {
         return resultScrpLog.rowsAffected;
     } catch (err) {
         console.log(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -226,6 +267,14 @@ async function updateScrpModCdPreRequestToScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -263,6 +312,14 @@ async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey, runTimeV
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -297,6 +354,14 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -331,6 +396,14 @@ async function updateScrpModCdTryCntHasNoResponseFromScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -362,6 +435,14 @@ async function updateCICReportInquiryReadyToRequestScraping(req) {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 /*
@@ -406,6 +487,14 @@ async function startProcessB0003() {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -442,6 +531,14 @@ async function startProcessB1003() {
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -475,6 +572,14 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -510,6 +615,14 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
     } catch (err) {
         console.log(err);
         // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
@@ -553,6 +666,14 @@ async function selectExcuteA0001() {
 
     } catch (err) {
         console.log(err);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 }
 
