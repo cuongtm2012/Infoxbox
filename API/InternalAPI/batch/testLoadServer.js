@@ -270,70 +270,99 @@ const bodySimpleLimit = {
 }
 const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         let times = 0;
-        // axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
-        //     result => {
-        //         countNextTimeCron('urlSimpleLimit');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('errSimpleLimit');
-        //         return console.log(error.toString());
-        // });
-        //
-        // axios.get(statusContract, config).then(
-        //     result => {
-        //         countNextTimeCron('statusContract');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('statusContract');
-        //         return console.log(error.toString());
-        // });
-        //
-        // axios.get(statusContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('statusContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('statusContractUrl');
-        //     return console.log(error.toString());
-        // });
-        //
-        //
-        // axios.post(urlNFScore, bodyNfSCore, config).then(
-        //     result => {
-        //         countNextTimeCron('NFScore');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('NFScore');
-        //     return console.log(error.toString());
-        // });
-        //
-        // axios.post(urlCreateContract, bodyCreateContract, config).then(
-        //     result => {
-        //         countNextTimeCron('CreateContrac');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('CreateContrac');
-        //     return console.log(error.toString());
-        // });
-        //
-        // axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
-        //     result => {
-        //         countNextTimeCron('SimpleLimit');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('SimpleLimit');
-        //     return console.log(error.toString());
-        // });
-        //
-        // axios.get(statusContract, config).then(
-        //     result => {
-        //         countNextTimeCron('statusContract');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('statusContract');
-        //     return console.log(error.toString());
-        // });
-        //
+        axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
+            result => {
+                countNextTimeCron('urlSimpleLimit');
+            }
+        ).catch((error) => {
+            countNextTimeCron('errSimpleLimit');
+                return console.log(error.toString());
+        });
+
+        axios.get(statusContract, config).then(
+            result => {
+                countNextTimeCron('statusContract');
+            }
+        ).catch((error) => {
+            countNextTimeCron('statusContract');
+                return console.log(error.toString());
+        });
+
+        axios.get(statusContractUrl, config).then(
+            result => {
+                countNextTimeCron('statusContractUrl');
+            }
+        ).catch((error) => {
+            countNextTimeCron('statusContractUrl');
+            return console.log(error.toString());
+        });
+
+
+        axios.post(urlNFScore, bodyNfSCore, config).then(
+            result => {
+                countNextTimeCron('NFScore');
+            }
+        ).catch((error) => {
+            countNextTimeCron('NFScore');
+            return console.log(error.toString());
+        });
+
+        axios.post(urlCreateContract, bodyCreateContract, config).then(
+            result => {
+                countNextTimeCron('CreateContrac');
+            }
+        ).catch((error) => {
+            countNextTimeCron('CreateContrac');
+            return console.log(error.toString());
+        });
+
+        axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
+            result => {
+                countNextTimeCron('SimpleLimit');
+            }
+        ).catch((error) => {
+            countNextTimeCron('SimpleLimit');
+            return console.log(error.toString());
+        });
+
+        axios.get(statusContract, config).then(
+            result => {
+                countNextTimeCron('statusContract');
+            }
+        ).catch((error) => {
+            countNextTimeCron('statusContract');
+            return console.log(error.toString());
+        });
+
+
+        axios.get(statusContractUrl, config).then(
+            result => {
+                countNextTimeCron('ContractUrl');
+            }
+        ).catch((error) => {
+            countNextTimeCron('ContractUrl');
+            return console.log(error.toString());
+        });
+
+
+        axios.post(urlNFScore, bodyNfSCore, config).then(
+            result => {
+                countNextTimeCron('NFScore');
+            }
+        ).catch((error) => {
+            countNextTimeCron('NFScore');
+            return console.log(error.toString());
+        });
+
+        axios.post(urlCreateContract, bodyCreateContract, config).then(
+            result => {
+                countNextTimeCron('CreateContract');
+            }
+        ).catch((error) => {
+            countNextTimeCron('CreateContract');
+            return console.log(error.toString());
+        });
+
         // axios.get(downloadContractUrl, config).then(
         //     result => {
         //         countNextTimeCron('downloadContractUrl');
@@ -342,123 +371,95 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         //     countNextTimeCron('downloadContractUrl');
         //     return console.log(error.toString());
         // });
-        //
-        // axios.get(statusContractUrl, config).then(
-        //     result => {
-        //         countNextTimeCron('ContractUrl');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('ContractUrl');
-        //     return console.log(error.toString());
-        // });
-        //
-        //
-        // axios.post(urlNFScore, bodyNfSCore, config).then(
-        //     result => {
-        //         countNextTimeCron('NFScore');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('NFScore');
-        //     return console.log(error.toString());
-        // });
-        //
-        // axios.post(urlCreateContract, bodyCreateContract, config).then(
-        //     result => {
-        //         countNextTimeCron('CreateContract');
-        //     }
-        // ).catch((error) => {
-        //     countNextTimeCron('CreateContract');
-        //     return console.log(error.toString());
-        // });
 
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
-        axios.get(downloadContractUrl, config).then(
-            result => {
-                countNextTimeCron('downloadContractUrl');
-            }
-        ).catch((error) => {
-            countNextTimeCron('downloadContractUrl');
-            return console.log(error.toString());
-        });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
+        // axios.get(downloadContractUrl, config).then(
+        //     result => {
+        //         countNextTimeCron('downloadContractUrl');
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('downloadContractUrl');
+        //     return console.log(error.toString());
+        // });
         function countNextTimeCron(any) {
             times++;
             console.log(times , ' : ',  any);
