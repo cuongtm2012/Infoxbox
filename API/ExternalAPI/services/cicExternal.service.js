@@ -16,7 +16,7 @@ async function insertSCRPLOG(req) {
         let producCode = niceGoodCode.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, CIC_GDS_CD, LOGIN_ID, LOGIN_PW, TAX_ID, NATL_ID, OLD_NATL_ID, PSPT_NO, CIC_ID, SCRP_STAT_CD, AGR_FG, INQ_DTIM, SCRP_REQ_DTIM , SYS_DTIM) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :CIC_GDS_CD, :LOGIN_ID, :LOGIN_PW, :TAX_ID, :NATL_ID, :OLD_NATL_ID, :PSPT_NO, :CIC_ID, :SCRP_STAT_CD, :AGR_FG, :INQ_DTIM, :SCRP_REQ_DTIM ,:SYS_DTIM)`;
@@ -77,7 +77,7 @@ async function insertINQLOG(req) {
         let sysDim = convertTime.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         if (_.isEmpty(req.oldNatId))
             _OTR_ID = req.passportNumber;
@@ -144,7 +144,7 @@ async function selectCICS11aRSLT(req) {
             cmtFinancialContract, cmtCard3Year;
 
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         /*
         ** scrp tranlosg
@@ -529,7 +529,7 @@ async function selectScrapingStatusCodeSCRPLOG(req) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         let _fiSessionKey, _inquiryDate, gdscd, subFiSessionKey, params;
 
@@ -581,7 +581,7 @@ async function selectProcStatus(req) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
         let outputResult, totalCount;
 
         let _scrapingStatusCode;
@@ -659,7 +659,7 @@ async function insertDataZaloINQLOG(req) {
         let sysDim = convertTime.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, NICE_SSIN_ID ,CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID, TEL_NO_MOBILE) 
         VALUES (:INQ_LOG_ID, :NICE_SSIN_ID ,:CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID, :TEL_NO_MOBILE)`;
@@ -712,7 +712,7 @@ async function insertDataZaloToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
@@ -755,7 +755,7 @@ async function updateRspCdScrapLogAfterGetResult(niceSessionKey, RspCd) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -793,7 +793,7 @@ async function insertDataZaloToExtScore(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_EXT_SCORE(NICE_SSIN_ID, TEL_NO_MOBILE, SCORE_CD, SCORE_EXT, CUST_GB, EXT_REQ_ID,SYSTEM_DTIM) 
         VALUES (:NICE_SSIN_ID, :TEL_NO_MOBILE, :SCORE_CD, :SCORE_EXT, :CUST_GB, :EXT_REQ_ID, :SYSTEM_DTIM)`;
@@ -837,7 +837,7 @@ async function insertDataRiskScoreToINQLOG(req) {
         let sysDim = convertTime.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, NICE_SSIN_ID ,CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID, TEL_NO_MOBILE) 
         VALUES (:INQ_LOG_ID, :NICE_SSIN_ID ,:CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID, :TEL_NO_MOBILE)`;
@@ -890,7 +890,7 @@ async function insertDataRiskScoreToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID,NATL_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID, :NATL_ID)`;
@@ -934,7 +934,7 @@ async function insertDataRiskScoreToExtScore(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_EXT_SCORE(NICE_SSIN_ID, TEL_NO_MOBILE, SCORE_CD, SCORE_EXT, CUST_GB, EXT_REQ_ID,SYSTEM_DTIM,GRADE,BASE_DATE,RSK_GLM_PROB,RSK_RF_PROB,RSK_GRB_PROB,RSK_ESB_PROB ) 
         VALUES (:NICE_SSIN_ID, :TEL_NO_MOBILE, :SCORE_CD, :SCORE_EXT, :CUST_GB, :EXT_REQ_ID, :SYSTEM_DTIM, :GRADE, :BASE_DATE, :RSK_GLM_PROB, :RSK_RF_PROB, :RSK_GRB_PROB, :RSK_ESB_PROB)`;
@@ -984,7 +984,7 @@ async function insertDataToINQLOG(req) {
         let sysDim = convertTime.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_INQLOG(INQ_LOG_ID, NICE_SSIN_ID ,CUST_CD, TX_GB_CD, NATL_ID, TAX_ID, OTR_ID, CIC_ID, INQ_DTIM, AGR_FG, RSP_CD, SYS_DTIM, WORK_ID, TEL_NO_MOBILE) 
         VALUES (:INQ_LOG_ID, :NICE_SSIN_ID ,:CUST_CD, :TX_GB_CD, :NATL_ID, :TAX_ID, :OTR_ID, :CIC_ID, :INQ_DTIM, :AGR_FG, :RSP_CD, :SYS_DTIM, :WORK_ID, :TEL_NO_MOBILE)`;
@@ -1037,7 +1037,7 @@ async function insertDataReqToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, NATL_ID, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :NATL_ID, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
@@ -1080,7 +1080,7 @@ async function insertDataFptIdToFptId(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_FPT_ID(NICE_SSIN_ID, FRONT_IMAGE, REAR_IMAGE, ID_NUMBER, NAME, BIRTHDAY, SEX, NATIONALITY, HOME, ADDRESS, ID_TYPE ,PROVINCE, DISTRICT, WARD, STREET, DOE, TYPE_FRONT, ETHINICITY, RELIGION, TYPE_NEW, FEATURES, ISSUE_DATE, ISSUE_LOC, TYPE_REAR, PROVIDER_CODE, REQUEST_ID,RESULT_CODE ) 
         VALUES (:NICE_SSIN_ID, :FRONT_IMAGE, :REAR_IMAGE, :ID_NUMBER, :NAME, :BIRTHDAY, :SEX, :NATIONALITY, :HOME, :ADDRESS, :ID_TYPE ,:PROVINCE, :DISTRICT, :WARD, :STREET, :DOE, :TYPE_FRONT, :ETHINICITY, :RELIGION, :TYPE_NEW, :FEATURES, :ISSUE_DATE, :ISSUE_LOC, :TYPE_REAR, :PROVIDER_CODE, :REQUEST_ID, :RESULT_CODE)`;
@@ -1141,7 +1141,7 @@ async function insertDataToFptFace(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_FPT_FACE(NICE_SSIN_ID, REQUEST_ID, RESULT_CODE, SOURCE_IMAGE, TARGET_IMAGE, SIMILARITY, RESULT, PROVIDER) 
         VALUES (:NICE_SSIN_ID, :REQUEST_ID, :RESULT_CODE, :SOURCE_IMAGE, :TARGET_IMAGE, :SIMILARITY, :RESULT, :PROVIDER)`;
@@ -1188,7 +1188,7 @@ async function insertDataNFScoreOKToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD,NATL_ID , TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :NATL_ID, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
@@ -1232,7 +1232,7 @@ async function selectValue1InFiCriManage(custCd, cri) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT VALUE1 FROM TB_FI_CRI_MANAGE WHERE CUST_CD = :CUST_CD AND CRITERIA1 = :CRITERIA1`;
 
@@ -1266,7 +1266,7 @@ async function selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd(niceSsKey, custCD) 
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT a.SCORE_CD,  a.SCORE_EXT, a.GRADE, b.NATL_ID, b.SYS_DTIM 
                 FROM TB_EXT_SCORE a 
@@ -1318,7 +1318,7 @@ async function insertDataToVmgLocPct(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_VMG_LOC_PCT (NICE_SSIN_ID, RESULT_7D, RESULT_30D, RESULT_90D) 
         VALUES (:NICE_SSIN_ID, :RESULT_7D, :RESULT_30D, :RESULT_90D)`;
@@ -1355,7 +1355,7 @@ async function insertDataToVmgAddress(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_VMG_ADDRESS (NICE_SSIN_ID, ADDR_HOME, PERCENT_HOME, LAT_HOME, LONG_HOME, ADDR_WORK, PERCENT_WORK, LAT_WORK, LONG_WORK, ADDR_REFER, PERCENT_REFER, LAT_REFER, LONG_REFER, MONTH, YEAR, TEL_COMPANY) 
         VALUES (:NICE_SSIN_ID, :ADDR_HOME, :PERCENT_HOME, :LAT_HOME, :LONG_HOME, :ADDR_WORK, :PERCENT_WORK, :LAT_WORK, :LONG_WORK, :ADDR_REFER, :PERCENT_REFER, :LAT_REFER, :LONG_REFER, :MONTH, :YEAR,:TEL_COMPANY)`;
@@ -1404,7 +1404,7 @@ async function insertDataSimpleLimitToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD,NATL_ID , TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :NATL_ID, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
@@ -1448,7 +1448,7 @@ async function insertDataFPTContractToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, INQ_DTIM, SYS_DTIM, WORK_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :INQ_DTIM, :SYS_DTIM, :WORK_ID)`;
@@ -1489,7 +1489,7 @@ async function selectCICScoreAndGrade(niceSskey) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT SCORE, GRADE FROM TB_CIC_MRPT a INNER JOIN TB_SCRPLOG b ON a.NICE_SSIN_ID = b.NICE_SSIN_ID WHERE a.NICE_SSIN_ID = :NICE_SSIN_ID AND b.RSP_CD = 'P000'`;
 
@@ -1534,7 +1534,7 @@ async function insertDataToVmgIncome(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1) 
         VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1)`;
@@ -1576,7 +1576,7 @@ async function insertDataCAC1ToSCRPLOG(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_SCRPLOG(NICE_SSIN_ID, CUST_SSID_ID, CUST_CD, GDS_CD, TEL_NO_MOBILE, INQ_DTIM, AGR_FG, SYS_DTIM, WORK_ID) 
         VALUES (:NICE_SSIN_ID, :CUST_SSID_ID, :CUST_CD, :GDS_CD, :TEL_NO_MOBILE, :INQ_DTIM, :AGR_FG, :SYS_DTIM, :WORK_ID)`;
@@ -1620,7 +1620,7 @@ async function updateRspCdAndStatusCdScrapLogAfterGetResult(niceSessionKey, RspC
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -1659,7 +1659,7 @@ async function selectDataKYC_VC1_RSLT(niceSskey) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT
                    a.SCRP_STAT_CD,
@@ -1717,7 +1717,7 @@ async function insertDataToExtScore(req) {
 
     try {
         let sql, result;
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `INSERT INTO TB_EXT_SCORE(NICE_SSIN_ID, TEL_NO_MOBILE, SCORE_CD, SCORE_EXT, GRADE, BASE_DATE, CUST_GB, EXT_REQ_ID, SYSTEM_DTIM, RSK_GLM_PROB, RSK_RF_PROB, RSK_GRB_PROB, RSK_ESB_PROB, FINAL_LIMIT, FINAL_APPROVAL) 
         VALUES (:NICE_SSIN_ID, :TEL_NO_MOBILE, :SCORE_CD, :SCORE_EXT, :GRADE, :BASE_DATE, :CUST_GB, :EXT_REQ_ID, :SYSTEM_DTIM, :RSK_GLM_PROB, :RSK_RF_PROB, :RSK_GRB_PROB, :RSK_ESB_PROB, :FINAL_LIMIT, :FINAL_APPROVAL)`;

@@ -8,7 +8,7 @@ async function getSequence() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection();
 
         sql = `SELECT SUBSTR(concat('0000', to_char(SEQ_INQLOG.nextval)), -5) as seq  FROM dual`;
         // where CUS_ID = :CUS_ID`;
