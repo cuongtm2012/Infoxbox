@@ -557,7 +557,7 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             times++;
             console.log(times , ' : ',  any);
             if (times === 12) {
-               oncomplete(0 , 0);
+               oncomplete(0 , 0, times);
             }
         }
     }

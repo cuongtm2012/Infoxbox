@@ -6,10 +6,10 @@ let times = 0;
 
 module.exports.start = function () {
     setTimeout(() => {
-        testLoadServerJob.cron((current, max) => {
+        testLoadServerJob.cron((current, max , request) => {
             if (current == max) { // prevent process is running in array
-                times ++;
-                console.log('Time of Load test Localhost__(13request/time)__: ', times);
+                times += request;
+                console.log('localhost(localhost:3100)Counting_request: ', times, ' request');
                 // finish
                 // console.log("call internall batch A0001~~~");
 
