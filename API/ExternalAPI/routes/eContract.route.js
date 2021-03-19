@@ -14,6 +14,4 @@ router.get('/FTN_CCS_RQST', statusContractFPTController.statusOfContract);
 router.get('/FTN_GAS_RQST', getStructureAPIController.getStructureAPI);
 
 router.get('/FTN_GCT_RQST', contractDownloadApiController.contractDownloadApi);
-
-router.get('/TEST_SERVER_RQST', statusContractFPTController.statusOfServerTest);
 module.exports = router;

@@ -214,19 +214,3 @@ exports.statusOfContract = function (req, res) {
         return res.status(500).json({error: err.toString()});
     }
 }
-
-exports.statusOfServerTest = function (req, res) {
-    try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
-		logger.info('Testing ....');	
-        return res.status(200).json(responseData);
-    } catch (err) {
-        logger.error(err.toString());
-        return res.status(500).json({error: err.toString()});
-    }
-}
