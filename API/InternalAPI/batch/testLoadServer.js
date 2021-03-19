@@ -363,7 +363,7 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         //     return console.log(error.toString());
         // });
 
-        let URL_FTN_GAS_RQST = 'https://103.112.124.129:3000/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=Loan_Contracts_OK_VAY_20210303_Personal'
+        let URL_FTN_GAS_RQST = 'https://localhost:3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=Loan_Contracts_OK_VAY_20210303_Personal'
         let bodySimpleLimitPRo = {
             "mobilePhoneNumber": "0937129528",
             "infoProvConcent": "Y",
@@ -378,7 +378,7 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             "ifRequestGubun": "Request"
         }
 
-        let URL_SPLIMIT_PRO = 'https://103.112.124.129:3000/external/OKF_SPL_RQST'
+        let URL_SPLIMIT_PRO = 'https://localhost:3100/external/OKF_SPL_RQST'
 
         let mainscorePro = {
             "appNumber":"",
@@ -402,14 +402,14 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             "natId": "385636346",
             "infoProvConcent": "Y"
         }
-        let mainScore_URL = 'https://103.112.124.129:3000/external/RCS_M01_RQST';
-        let nfScore_URL = 'https://103.112.124.129:3000/external/OKF_SCO_RQST';
+        let mainScore_URL = 'https://localhost:3100/external/RCS_M01_RQST';
+        let nfScore_URL = 'https://localhost:3100/external/OKF_SCO_RQST';
 
-        let StatusEcontract = 'https://103.112.124.129:3000/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000113LIOBGhnvwMORE6H5d40';
+        let StatusEcontract = 'https://localhost:3100/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000113LIOBGhnvwMORE6H5d40';
 
-        let CIC_MACR_RSLT = 'https://103.112.124.129:3000/external/CIC_MACR_RSLT';
-        let CIC_S11A_RSLT = 'https://103.112.124.129:3000/external/CIC_S11A_RSLT';
-        let CIC_S37_RSLT = 'https://103.112.124.129:3000/external/CIC_S11A_RSLT';
+        let CIC_MACR_RSLT = 'https://localhost:3100/external/CIC_MACR_RSLT';
+        let CIC_S11A_RSLT = 'https://localhost:3100/external/CIC_S11A_RSLT';
+        let CIC_S37_RSLT = 'https://localhost:3100/external/CIC_S11A_RSLT';
         let bodyCIC_MACR_RSLT = {
             "fiSessionKey" : "",
             "fiCode": "B100000011",
@@ -473,6 +473,14 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             countNextTimeCron('mainscorePro: ' + error.toString());
             return console.log(error.toString());
         });
+        axios.post(mainScore_URL, mainscorePro, config).then(
+            result => {
+                countNextTimeCron('mainscorePro: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('mainscorePro: ' + error.toString());
+            return console.log(error.toString());
+        });
 
         axios.post(nfScore_URL, NfscorePro, config).then(
             result => {
@@ -482,25 +490,23 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             countNextTimeCron('NfscorePro: ' + error.toString());
             return console.log(error.toString());
         });
-
-        axios.get(StatusEcontract, config).then(
+        axios.post(nfScore_URL, NfscorePro, config).then(
             result => {
-                countNextTimeCron('StatusEcontract: ' + result.data.responseCode);
+                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('StatusEcontract: ' + error.toString());
+            countNextTimeCron('NfscorePro: ' + error.toString());
             return console.log(error.toString());
         });
 
-        axios.get(URL_FTN_GAS_RQST, config).then(
+        axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
             result => {
-                countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.responseCode);
+                countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('URL_FTN_GAS_RQST: ' + error.toString());
+            countNextTimeCron('bodySimpleLimitPRo: ' + error.toString());
             return console.log(error.toString());
         });
-
         axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
             result => {
                 countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
@@ -528,30 +534,29 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             return console.log(error.toString());
         });
 
-        axios.get(StatusEcontract, config).then(
-            result => {
-                countNextTimeCron('StatusEcontract: ' + result.data.responseCode);
-            }
-        ).catch((error) => {
-            countNextTimeCron('StatusEcontract: ' + error.toString());
-            return console.log(error.toString());
-        });
-
-        axios.get(URL_FTN_GAS_RQST, config).then(
-            result => {
-                countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.responseCode);
-            }
-        ).catch((error) => {
-            countNextTimeCron('URL_FTN_GAS_RQST: ' + error.toString());
-            return console.log(error.toString());
-        });
+        // axios.get(StatusEcontract, config).then(
+        //     result => {
+        //         countNextTimeCron('StatusEcontract: ' + result.data.responseCode);
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('StatusEcontract: ' + error.toString());
+        //     return console.log(error.toString());
+        // });
+        //
+        // axios.get(URL_FTN_GAS_RQST, config).then(
+        //     result => {
+        //         countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.responseCode);
+        //     }
+        // ).catch((error) => {
+        //     countNextTimeCron('URL_FTN_GAS_RQST: ' + error.toString());
+        //     return console.log(error.toString());
+        // });
 
 
         function countNextTimeCron(any) {
             times++;
             console.log(times , ' : ',  any);
-            if (times === 13) {
-                console.log(times);
+            if (times === 12) {
                oncomplete(0 , 0);
             }
         }
