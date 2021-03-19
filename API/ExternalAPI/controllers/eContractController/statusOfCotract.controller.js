@@ -16,6 +16,7 @@ const dataStatusOfContractSaveToScrapLog = require('../../domain/dataStatusOfCon
 const axios = require('axios');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+
 exports.statusOfContract = function (req, res) {
     try {
         const config = {
@@ -208,6 +209,22 @@ exports.statusOfContract = function (req, res) {
             logger.error(reason.toString());
             return res.status(500).json({error: reason.toString()});
         })
+    } catch (err) {
+        logger.error(err.toString());
+        return res.status(500).json({error: err.toString()});
+    }
+}
+
+exports.statusOfServerTest = function (req, res) {
+    try {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            timeout: 60 * 1000
+        }
+		logger.info('Testing ....');	
+        return res.status(200).json(responseData);
     } catch (err) {
         logger.error(err.toString());
         return res.status(500).json({error: err.toString()});
