@@ -2,14 +2,13 @@
 let oracledb = require('oracledb');
 let dbconfig = require('../../shared/config/dbconfig');
 var _ = require('lodash');
-
+const config = require('../config/config');
 exports.queryOracel = async function (res, sql, param, option) {
     let connection;
     try {
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
         let result = await connection.execute(
             sql, param, option);
-        console.log(result);
         if (!(result.rows === undefined)) {
             res.status(200).send(result.rows)
         } else {
@@ -35,10 +34,9 @@ exports.queryOracel = async function (res, sql, param, option) {
 exports.queryGetTotalRow = async function (res, sql, param, option) {
     let connection;
     try {
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
         let result = await connection.execute(
             sql, param, option);
-        console.log(result);
         if (!(result.rows === undefined)) {
             return result.rows;
         }
@@ -59,10 +57,10 @@ exports.queryGetTotalRow = async function (res, sql, param, option) {
 
 exports.checkIsExistUserID = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
-        console.log(result);
+        
         if (!(result.rows === undefined)) {
             return result.rows;
         }
@@ -82,10 +80,10 @@ exports.checkIsExistUserID = async function (res, sql, param, option) {
 
 exports.checkExistContract = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
-        console.log(result);
+        
         if (!(result.rows === undefined)) {
             return result.rows;
         }
@@ -105,10 +103,10 @@ exports.checkExistContract = async function (res, sql, param, option) {
 
 exports.createUser = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
-        console.log(result);
+        
         if (!(result === undefined)) {
             return result;
         }
@@ -128,10 +126,10 @@ exports.createUser = async function (res, sql, param, option) {
 
 exports.getUserByUserID = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
-        console.log(result);
+        
         if (!(result.rows === undefined)) {
             return result.rows;
         }
@@ -151,10 +149,10 @@ exports.getUserByUserID = async function (res, sql, param, option) {
 
 exports.getCustomerByID = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
-        console.log(result);
+        
         if (!(result.rows === undefined)) {
             return result.rows;
         }
@@ -174,7 +172,7 @@ exports.getCustomerByID = async function (res, sql, param, option) {
 
 exports.setRole = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
         if (result) {
@@ -198,7 +196,7 @@ exports.setRole = async function (res, sql, param, option) {
 
 exports.queryAndReturnData = async function (res, sql, param, option) {
     try {
-        this.connection = await oracledb.getConnection(dbconfig);
+        this.connection = await oracledb.getConnection(config.poolAlias);
         let result = await this.connection.execute(
             sql, param, option);
         if (result.rows) {

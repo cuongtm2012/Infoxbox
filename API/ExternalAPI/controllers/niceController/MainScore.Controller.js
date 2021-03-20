@@ -79,7 +79,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                     resultKYC2 => {
                                                         if (resultKYC2.data.error_code.toString()) {
                                                             let bodyRclipsReq;
-                                                            let totalInComeMonth = 0;
+                                                            let totalInComeMonth;
                                                             if ((resultKYC2.data.error_code === 0 || resultKYC2.data.error_code === 20) && resultKYC2.data.result) {
                                                                 // store data KYC2 to DB
                                                                 let dataSaveToVmgIncome = new dataVmgKyc2SaveToVmgIncome(fullNiceKey, resultKYC2.data);
@@ -92,7 +92,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                 } else if (resultKYC2.data.result.totalIncome_1) {
                                                                     totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_1) / 12;
                                                                 } else {
-                                                                    totalInComeMonth = 0;
+                                                                    totalInComeMonth = "";
                                                                 }
                                                             }
                                                             bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
@@ -102,7 +102,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                     if (resultRclips.data.listResult) {
                                                                         //    success get data Rclips
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult);
+                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, resultKYC2.data);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         let dataExtScore = new dataMainScoreRclipsSaveToExtScore(fullNiceKey,resultRclips.data.listResult,req.body.mobilePhoneNumber)
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
