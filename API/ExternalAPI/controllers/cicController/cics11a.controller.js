@@ -376,7 +376,6 @@ exports.cics11aRSLT = function (req, res) {
 						console.log('insert INQLOG:', r);
 					});
 					//Logging response
-					logger.debug('Logging result response S11A');
 					logger.info(responseData);
 
 					return res.status(200).json(responseData);
@@ -458,7 +457,6 @@ exports.cics11aRSLT = function (req, res) {
 								console.log('insert INQLOG:', r);
 							});
 							//Logging response
-							logger.debug('Logging result response S11A');
 							logger.info(responseSrapingStatus);
 
 							return res.status(200).json(responseSrapingStatus);

@@ -51,7 +51,8 @@ var config = {
                 client_secret: '4c9C1da8207dd63da81c65d9b890130b64e96211Ecbc15cd115Eddc2a57184f633A7E15c',
             }
         }
-    }
+    },
+    poolAlias: 'Pool'
 };
 
 module.exports = config;

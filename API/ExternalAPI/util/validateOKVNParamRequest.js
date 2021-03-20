@@ -48,14 +48,13 @@ module.exports = {
                 responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
             }
             return response;
-        } else if (!util.validPhoneNumber(getdataReq.mobilePhoneNumber)) {
+        } else if (!util.validPhoneNumber2021(getdataReq.mobilePhoneNumber)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
             }
             return response;
         }
-		
 		//natId
 		if (!util.validNumber(getdataReq.natId)) {
             response = {
