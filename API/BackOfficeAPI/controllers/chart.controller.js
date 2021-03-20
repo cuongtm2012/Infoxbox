@@ -75,7 +75,6 @@ exports.getDataFromDayToDayChartBar = async function (req, res) {
       }
       await result.push(object);
     }
-    console.log('Day la ket qua: ' + result);
     return res.status(200).send(result);
   } else {
     return res.status(204).send([]);
@@ -153,7 +152,6 @@ exports.getDataMonthFromMonth = async function (req, res) {
         DATE: e
       }
       await result.push(object);
-      console.log(count);
     }
     return res.status(200).send(result);
   } else {
@@ -260,7 +258,6 @@ exports.getDataWeek = async function (req,res) {
   let endDateOfWeek = moment(date).endOf('week');
   let firstDayOfWeek = moment(startDateOfWeek).format('YYYYMMDD');
   let lastDayOfWeek =moment(endDateOfWeek).format('YYYYMMDD');
-  console.log(weekNumber,firstDayOfWeek,lastDayOfWeek); // Returns the week number as an integer
 
   if(firstDayOfWeek && lastDayOfWeek) {
     let SQL =

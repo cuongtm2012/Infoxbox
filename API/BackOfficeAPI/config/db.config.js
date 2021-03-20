@@ -1,28 +1,28 @@
-const Sequelize = require('sequelize');
-const config = require('./config');
+const oracledb = require('oracledb');
+const dbconfig = require('../../shared/config/dbconfig');
+const config = require('./config')
 
-const sequelize = new Sequelize(config.database.database, config.database.user, config.database.password, {
-    host: config.database.host,
-    port: config.database.port,
-    dialect: config.database.dialect,
-    define:{freezeTableName:true, timestamps: false},
-   
-	pool: {
-	  max: config.database.pool.max,
-	  min: config.database.pool.min,
-	  acquire: config.database.pool.acquire,
-	  idle: config.database.pool.idle
-	}
-  });
+const dbOption = {
+	user: dbconfig.user,
+	password: dbconfig.password,
+	connectString: dbconfig.connectString,
+	poolAlias: config.poolAlias,
+	poolMax: 2000, // maximum size of the pool
+	poolMin: 0, // let the pool shrink completely
+	poolIncrement: 1, // only grow the pool by one connection at a time
+	poolTimeout: 0  // never terminate idle connections
+}
 
-const db = {};
- 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
- 
-//Models/tables
-db.customers = require('../model/customer.model.js')(sequelize, Sequelize);
-db.itcust = require('../model/itcust.model.js')(sequelize, Sequelize);
- 
- 
-module.exports = db;
+async function initialize() {
+	//create oracle connection pool
+	await oracledb.createPool(
+		dbOption,
+		function (err, pool) {
+			if (err) {
+				console.error("createPool() error: " + err.message);
+				throw err;
+			}
+		}
+	);//end oracledb.createpool
+}
+module.exports.initialize = initialize;
