@@ -65,4 +65,10 @@ module.exports = {
             return false;
         }
     },
+
+    validPhoneNumber2021: function (phoneNumber) {
+        let pattern = /^0[35789]{1}[0-9]{7}[0-9]{1}$/;
+        let reg = new RegExp(pattern);
+        return reg.test(phoneNumber);
+    }
 }

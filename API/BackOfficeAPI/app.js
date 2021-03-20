@@ -2,7 +2,10 @@
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
-
+// create oracle pool.
+const database = require('./config/db.config');
+database.initialize().then();
+//
 var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');

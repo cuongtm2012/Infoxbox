@@ -1,6 +1,5 @@
 const oracledb = require('oracledb');
 const dbconfig = require('../../shared/config/dbconfig');
-
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 var salt = bcrypt.genSaltSync(saltRounds);
@@ -13,7 +12,7 @@ async function getUser(req) {
 
         var user_pwd = req.body.password;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `SELECT TB_ITUSER.ACTIVE, TB_ITUSER.USER_PW , TB_ITUSER.USER_ID, TB_ITUSER.USER_NM, TB_ITUSER.CUST_CD, TB_ITUSER.INOUT_GB, TB_ITUSER.ADDR,
          TB_ITUSER.EMAIL, TB_ITUSER.TEL_NO_MOBILE,

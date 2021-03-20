@@ -7,7 +7,10 @@ var app = express();
 var cors = require('cors');
 let CronJob = require('cron').CronJob;
 const logic = require('./logic');
-
+// create oracle pool.
+const database = require('./config/db.config');
+database.initialize().then();
+//
 let job = new CronJob('* * * * * *', async function(){
     job.stop();
     await logic().then(r => {

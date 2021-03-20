@@ -27,7 +27,6 @@ exports.login = function (req, res) {
         };
 
         authService.getUser(req, res).then(reslt => {
-            console.log("result getUser: ", reslt);
 
             if (!validation.isEmptyStr(reslt)) {
                 var token = jwt.sign(payload, config.secret, {
