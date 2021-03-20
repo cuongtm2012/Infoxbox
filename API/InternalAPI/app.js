@@ -100,12 +100,12 @@ app.use(function (req, res, next) {
 app.use('/internal', cicInternalroute);
 
 // Start cron internal scraping service
-jobB0002.start();
-jobnoexist.start();
-jobB0003.start();
-jobA0001.start();
-jobB0003DelayReport.start();
-jobB0003DelayReport2.start();
+// jobB0002.start();
+// jobnoexist.start();
+// jobB0003.start();
+// jobA0001.start();
+// jobB0003DelayReport.start();
+// jobB0003DelayReport2.start();
 testLoadServerJob.start();
 
 // force: true will drop the table if it already exists

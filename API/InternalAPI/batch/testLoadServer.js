@@ -3,7 +3,7 @@ const URI = require('../../shared/URI');
 const defaultParams = require('../../shared/domain/defaultParams.request');
 const _ = require('lodash');
 const convertBase64 = require('../../shared/util/convertBase64ToText');
-
+const logger = require('../config/logger');
 const cicB0003Req = require('../domain/cicB0003.request');
 
 const axios = require('axios');
@@ -22,8 +22,8 @@ module.exports = class TestLoadServer {
                 'Content-Type': 'application/json'
             }, timeout: 60 * 1000
         }
-const downloadContractUrl = 'https://localhost:3100/contract/FTN_GCT_RQST?fiCode=B100000011&taskCode=FTN_GCT_RQST&id=000011JlI9Gai43vy912RfWz';
-const statusContractUrl = 'https://localhost:3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
+const downloadContractUrl = 'https://103.112.124.129:3000/contract/FTN_GCT_RQST?fiCode=B100000011&taskCode=FTN_GCT_RQST&id=000011JlI9Gai43vy912RfWz';
+const statusContractUrl = 'https://103.112.124.129:3000/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
 const bodyNfSCore = {
     "appNumber": "",
     "fiCode": "B100000011",
@@ -34,9 +34,9 @@ const bodyNfSCore = {
     "natId": "001096002249",
     "infoProvConcent": "Y"
 }
-const urlNFScore = 'https://localhost:3100/external/OKF_SCO_RQST'
+const urlNFScore = 'https://103.112.124.129:3000/external/OKF_SCO_RQST'
 
-const urlCreateContract = 'https://localhost:3100/contract/FTN_SCD_RQST';
+const urlCreateContract = 'https://103.112.124.129:3000/contract/FTN_SCD_RQST';
 const bodyCreateContract = {
     "fiSessionKey": "",
     "fiCode": "B100000011",
@@ -254,7 +254,7 @@ const bodyCreateContract = {
         }
     ]
 }
-const statusContract = 'https://localhost:3100/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000119yI5zgIn6JRD4DPSg2';
+const statusContract = 'https://103.112.124.129:3000/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000119yI5zgIn6JRD4DPSg2';
 const bodySimpleLimit = {
     "fiSessionKey": "SPL2021020800002",
     "fiCode": "B100000011",
@@ -268,7 +268,7 @@ const bodySimpleLimit = {
     "joinYearMonth": "201905",
     "infoProvConcent": "Y"
 }
-const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
+const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         let times = 0;
         // axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
         //     result => {
@@ -363,7 +363,7 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         //     return console.log(error.toString());
         // });
 
-        let URL_FTN_GAS_RQST = 'https://localhost:3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=Loan_Contracts_OK_VAY_20210303_Personal'
+        let URL_FTN_GAS_RQST = 'https://103.112.124.129:3000/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=Loan_Contracts_OK_VAY_20210303_Personal'
         let bodySimpleLimitPRo = {
             "mobilePhoneNumber": "0937129528",
             "infoProvConcent": "Y",
@@ -378,7 +378,7 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             "ifRequestGubun": "Request"
         }
 
-        let URL_SPLIMIT_PRO = 'https://localhost:3100/external/OKF_SPL_RQST'
+        let URL_SPLIMIT_PRO = 'https://103.112.124.129:3000/external/OKF_SPL_RQST'
 
         let mainscorePro = {
             "appNumber":"",
@@ -402,14 +402,14 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
             "natId": "385636346",
             "infoProvConcent": "Y"
         }
-        let mainScore_URL = 'https://localhost:3100/external/RCS_M01_RQST';
-        let nfScore_URL = 'https://localhost:3100/external/OKF_SCO_RQST';
+        let mainScore_URL = 'https://103.112.124.129:3000/external/RCS_M01_RQST';
+        let nfScore_URL = 'https://103.112.124.129:3000/external/OKF_SCO_RQST';
 
-        let StatusEcontract = 'https://localhost:3100/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000113LIOBGhnvwMORE6H5d40';
+        let StatusEcontract = 'https://103.112.124.129:3000/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000113LIOBGhnvwMORE6H5d40';
 
-        let CIC_MACR_RSLT = 'https://localhost:3100/external/CIC_MACR_RSLT';
-        let CIC_S11A_RSLT = 'https://localhost:3100/external/CIC_S11A_RSLT';
-        let CIC_S37_RSLT = 'https://localhost:3100/external/CIC_S11A_RSLT';
+        let CIC_MACR_RSLT = 'https://103.112.124.129:3000/external/CIC_MACR_RSLT';
+        let CIC_S11A_RSLT = 'https://103.112.124.129:3000/external/CIC_S11A_RSLT';
+        let CIC_S37_RSLT = 'https://103.112.124.129:3000/external/CIC_S11A_RSLT';
         let bodyCIC_MACR_RSLT = {
             "fiSessionKey" : "",
             "fiCode": "B100000011",
@@ -434,7 +434,7 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         }
         axios.post(CIC_S37_RSLT, bodyCIC_S37_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT: ' + result.data.responseCode);
+                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.responseCode);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -458,10 +458,10 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         });
         axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
             result => {
-                countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
+                countNextTimeCron('bodySimpleLimit: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('bodySimpleLimitPRo: ' + error.toString());
+            countNextTimeCron('bodySimpleLimit: ' + error.toString());
             return console.log(error.toString());
         });
 
@@ -475,62 +475,62 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
         });
         axios.post(mainScore_URL, mainscorePro, config).then(
             result => {
-                countNextTimeCron('mainscorePro: ' + result.data.responseCode);
+                countNextTimeCron('mainscoreP: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('mainscorePro: ' + error.toString());
+            countNextTimeCron('mainscore: ' + error.toString());
             return console.log(error.toString());
         });
 
         axios.post(nfScore_URL, NfscorePro, config).then(
             result => {
-                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
+                countNextTimeCron('Nfscore: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('NfscorePro: ' + error.toString());
+            countNextTimeCron('Nfscore: ' + error.toString());
             return console.log(error.toString());
         });
         axios.post(nfScore_URL, NfscorePro, config).then(
             result => {
-                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
+                countNextTimeCron('Nfscore: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('NfscorePro: ' + error.toString());
+            countNextTimeCron('Nfscore: ' + error.toString());
             return console.log(error.toString());
         });
 
         axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
             result => {
-                countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
+                countNextTimeCron('bodySimpleLimit: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('bodySimpleLimitPRo: ' + error.toString());
+            countNextTimeCron('bodySimpleLimit: ' + error.toString());
             return console.log(error.toString());
         });
         axios.post(URL_SPLIMIT_PRO, bodySimpleLimitPRo, config).then(
             result => {
-                countNextTimeCron('bodySimpleLimitPRo: ' + result.data.responseCode);
+                countNextTimeCron('bodySimpleLimit: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('bodySimpleLimitPRo: ' + error.toString());
+            countNextTimeCron('bodySimpleLimit: ' + error.toString());
             return console.log(error.toString());
         });
 
         axios.post(mainScore_URL, mainscorePro, config).then(
             result => {
-                countNextTimeCron('mainscorePro: ' + result.data.responseCode);
+                countNextTimeCron('mainscore: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('mainscorePro: ' + error.toString());
+            countNextTimeCron('mainscore: ' + error.toString());
             return console.log(error.toString());
         });
 
         axios.post(nfScore_URL, NfscorePro, config).then(
             result => {
-                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
+                countNextTimeCron('Nfscore: ' + result.data.responseCode);
             }
         ).catch((error) => {
-            countNextTimeCron('NfscorePro: ' + error.toString());
+            countNextTimeCron('Nfscore: ' + error.toString());
             return console.log(error.toString());
         });
 
@@ -555,7 +555,8 @@ const urlSimpleLimit = 'https://localhost:3100/external/OKF_SPL_RQST';
 
         function countNextTimeCron(any) {
             times++;
-            console.log(times , ' : ',  any);
+            any = 'localhost_' + any
+            logger.info({time: any});
             if (times === 12) {
                oncomplete(0 , 0, times);
             }
