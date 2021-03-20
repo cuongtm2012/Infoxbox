@@ -57,7 +57,7 @@ module.exports = {
             return response;
         }
         //    national ID
-        if (_.isEmpty(getdataReq.natId)) {
+        if (!util.validNumber(getdataReq.natId)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
                 responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
@@ -79,7 +79,7 @@ module.exports = {
                 responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
             }
             return response;
-        } else if (!util.validPhoneNumber(getdataReq.mobilePhoneNumber)) {
+        } else if (!util.validPhoneNumber2021(getdataReq.mobilePhoneNumber)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
