@@ -39,11 +39,11 @@ module.exports = function mainScoreResponseWithResult(RCS_M01_RQSTRequest, preRe
     this.loanLimit = resultRclips.OT010;
 //    vmg income
     if ((resultVmgK2.error_code === 20 || resultVmgK2.error_code === 0) && resultVmgK2.result) {
-        this.baseYear1 = resultVmgK2.result.income_3[0].year ? resultVmgK2.result.income_3[0].year.toString() : "";
+        this.baseYear1 = resultVmgK2.result.income_3[0] !== undefined ? resultVmgK2.result.income_3[0].year.toString() : "";
         this.totalIncome1 = resultVmgK2.result.totalIncome_3 ? resultVmgK2.result.totalIncome_3 : "";
-        this.baseYear2 = resultVmgK2.result.income_2[0].year ? resultVmgK2.result.income_2[0].year.toString() : "";
+        this.baseYear2 = resultVmgK2.result.income_2[0] !== undefined ? resultVmgK2.result.income_2[0].year.toString() : "";
         this.totalIncome2 = resultVmgK2.result.totalIncome_2 ? resultVmgK2.result.totalIncome_2 : "";
-        this.baseYear3 = resultVmgK2.result.income_1[0].year ? resultVmgK2.result.income_1[0].year.toString() : "";
+        this.baseYear3 = resultVmgK2.result.income_1[0] !== undefined ? resultVmgK2.result.income_1[0].year.toString() : "";
         this.totalIncome3 = resultVmgK2.result.totalIncome_1 ? resultVmgK2.result.totalIncome_1 : "";
     } else {
         this.baseYear1 = "";
