@@ -91,6 +91,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     }
                                     let auth_token = resultTokenAuth.data.data.auth_token;
                                     let dataZaloScoreRq = qs.stringify(new bodyZaloScore(auth_token, req.body.mobilePhoneNumber));
+                                    logger.info(dataZaloScoreRq);
                                     //    call API get zalo score
                                     axios.post(URI.URL_ZALO_GET_SCORE_PROD, dataZaloScoreRq, configRequestZaloGetScore).then(
                                         resultGetZaloScore => {
@@ -110,6 +111,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 }
                                                 //    prepare call VMG Risk Score
                                                 let bodyGetRiskScore = new BodyPostRiskScore(req.body);
+                                                logger.info(bodyGetRiskScore);
                                                 //    get RiskScore
                                                 axios.post(URI.URL_VMG_PROD, bodyGetRiskScore, config).then(
                                                     resultGetRiskScore => {
@@ -131,6 +133,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             }
                                                             //    Call Rclips
                                                             let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, ZaloScore);
+                                                            logger.info(bodyRclispNfScore);
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore, config).then(
                                                                 resultRclipsNF => {
                                                                     if (resultRclipsNF.data.listResult !== undefined) {
