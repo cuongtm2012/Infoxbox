@@ -74,6 +74,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                             result => {
                                                 //
                                                 let bodyVmgKyc2 = new bodyVmg_KYC_2(req.body.natId);
+                                                logger.info(bodyVmgKyc2);
                                                 // call VMG KYC 2
                                                 axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
                                                     resultKYC2 => {
@@ -96,6 +97,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                 }
                                                             }
                                                             bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            logger.info(bodyRclipsReq);
                                                             //    call Rclips
                                                             axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
                                                                 resultRclips => {
