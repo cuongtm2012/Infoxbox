@@ -77,6 +77,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                     result => {
                         //call Rclips
                         let bodyRclipsSimpleLimit = new simpleLimitPostBody(req.body.mobilePhoneNumber, req.body.natId, req.body.joinYearMonth, req.body.salary);
+                        logger.info(bodyRclipsSimpleLimit);
                         axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsSimpleLimit, config).then(
                             resultRclipsSPL => {
                                 if (!_.isEmpty(resultRclipsSPL.data.listResult)) {
