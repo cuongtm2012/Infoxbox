@@ -16,7 +16,9 @@ const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const axios = require('axios');
 const URI = require('../../../shared/URI');
 const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
+const database = require('../../config/db.config');
 exports.getStructureAPI = function (req, res) {
+    console.log('DatabaseOption: ',database.dbOption);
     try {
         const config = {
             headers: {
