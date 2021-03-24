@@ -16,13 +16,13 @@ const dbOption = {
 async function initialize() {
 	//create oracle connection pool
 	await oracledb.createPool(
-			dbOption,
-			function (err, pool) {
-				if (err) {
-					console.error("createPool() error: " + err.message);
-					throw err;
-				}
+		dbOption,
+		function (err, pool) {
+			if (err) {
+				console.error("createPool() error: " + err.message);
+				throw err;
 			}
-		);//end oracledb.createpool
+		}
+	);//end oracledb.createpool
 }
 module.exports.initialize = initialize;
