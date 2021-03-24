@@ -100,10 +100,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                     console.log(`statusCode: ${response.statusCode}`)
                                                     let resultKYC2;
                                                     response.on('data', d => {
-                                                        resultKYC2 += d;
-                                                    })
-
-                                                    response.on("end", () => {
+                                                         resultKYC2 += d;
                                                         console.log('dataResponse: ', resultKYC2);
                                                         if (resultKYC2.error_code.toString()) {
                                                             let bodyRclipsReq;
