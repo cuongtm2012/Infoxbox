@@ -24,6 +24,8 @@ const logger = require('../../config/logger');
 const dataMainScoreRclipsSaveToExtScore = require('../../domain/dataMainScoreRclipsSaveToExtScore.save')
 const dns = require('dns');
 const https = require('https');
+const http = require('http');
+const querystring = require('querystring');
 exports.rcs_M01_RQST = function (req, res) {
     try {
         const config = {
@@ -67,7 +69,7 @@ exports.rcs_M01_RQST = function (req, res) {
                     resultCICScore => {
                         if (resultCICScore.SCORE) {
                             // check Zalo&vmg score
-                            cicExternalService.selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd( req.body.nfNiceSessionKey, req.body.fiCode).then(
+                            cicExternalService.selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd(req.body.nfNiceSessionKey, req.body.fiCode).then(
                                 resultZaloVmg => {
                                     if (resultZaloVmg.zaloScore && resultZaloVmg.vmgScore && resultZaloVmg.natID) {
                                         let dataSaveToScraplog = new dataMainScoreSaveToScrapLog(req.body, fullNiceKey);
@@ -118,55 +120,35 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                     totalInComeMonth = "";
                                                                 }
                                                             }
-                                                            bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE), totalInComeMonth);
                                                             logger.info(bodyRclipsReq);
-                                                            //    call Rclips
-                                                            axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
-                                                                resultRclips => {
-                                                                    if (resultRclips.data.listResult) {
-                                                                        //    success get data Rclips
-                                                                        preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, resultKYC2);
-                                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                        let dataExtScore = new dataMainScoreRclipsSaveToExtScore(fullNiceKey,resultRclips.data.listResult,req.body.mobilePhoneNumber)
-                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                                        cicExternalService.insertDataToExtScore(dataExtScore).then();
-                                                                        logger.info(responseData);
-                                                                        return res.status(200).json(responseData);
-                                                                    } else {
-                                                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                                        responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                        logger.info(responseData);
-                                                                        logger.info(resultRclips.data);
-                                                                        return res.status(200).json(responseData);
-                                                                    }
-                                                                }).catch(reason => {
-                                                                if (reason.message === 'timeout of 60000ms exceeded') {
-                                                                    console.log("err:", reason.toString());
-                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
-                                                                    responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
-                                                                    logger.info(reason.toString());
-                                                                    logger.info(responseData);
-                                                                    return res.status(200).json(responseData);
-                                                                } else {
-                                                                    console.log("err:", reason.toString());
-                                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                                    responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                                    dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                                    logger.info(reason.toString());
-                                                                    logger.info(responseData);
-                                                                    return res.status(200).json(responseData);
+                                                            const dataRclip = JSON.stringify(bodyRclipsReq);
+                                                            const optionsdataRclip = {
+                                                                hostname: '103.112.124.153',
+                                                                port: '18082',
+                                                                path: '/online/rclips/json',
+                                                                method: 'POST',
+                                                                headers: {
+                                                                    'Content-Type': 'application/json',
+                                                                    'Content-Length': Buffer.byteLength(dataRclip)
                                                                 }
-                                                            })
+                                                            }
+
+                                                            http
+                                                                .request(optionsdataRclip, resdataRclip => {
+                                                                    let data = ""
+                                                                    resdataRclip.on("data", d => {
+                                                                        data += d
+                                                                    })
+                                                                    resdataRclip.on("end", () => {
+                                                                        console.log(data)
+                                                                        return res.status(200).json(data);
+                                                                    })
+                                                                })
+                                                                .on("error", err => {
+                                                                    return res.status(200).json(err);
+                                                                })
+                                                                .end(dataRclip)
                                                         } else {
                                                             console.log('errKYC2: ', resultKYC2.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -192,8 +174,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 request.end()
                                             }
                                         ).catch(reason => {
-											logger.error("reason 111...");
-											console.log(reason);
+                                            logger.error("reason 111...");
+                                            console.log(reason);
                                             logger.error(reason.toString());
                                             return res.status(500).json({error: reason.toString()});
                                         })
@@ -207,8 +189,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                         return res.status(200).json(responseData);
                                     }
                                 }).catch(reason => {
-								logger.error("reason 222...");
-								console.log(reason);
+                                logger.error("reason 222...");
+                                console.log(reason);
                                 logger.error(reason.toString());
                                 return res.status(500).json({error: reason.toString()});
                             })
@@ -222,26 +204,26 @@ exports.rcs_M01_RQST = function (req, res) {
                             return res.status(200).json(responseData);
                         }
                     }).catch(reason => {
-					logger.error("reason 333...");
-					console.log(reason);
+                    logger.error("reason 333...");
+                    console.log(reason);
                     logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 })
             }).catch(reason => {
-				logger.error("reason 444...");
-				console.log(reason);
+                logger.error("reason 444...");
+                console.log(reason);
                 logger.error(reason.toString());
                 return res.status(500).json({error: reason.toString()});
             });
         }).catch(reason => {
-			logger.error("reason 555...");
-			console.log(reason);
+            logger.error("reason 555...");
+            console.log(reason);
             logger.error(reason.toString());
             return res.status(500).json({error: reason.toString()});
         });
     } catch (error) {
-		logger.error("reason 5555...");
-		console.log(reason);
+        logger.error("reason 5555...");
+        console.log(reason);
         logger.error(error.toString());
         return res.status(500).json({error: error.toString()});
     }
