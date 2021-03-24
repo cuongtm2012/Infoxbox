@@ -79,6 +79,7 @@ exports.rcs_M01_RQST = function (req, res) {
 												console.log("dns.lookup api2-test.infosky.vn checking...");
 												dns.lookup('api2-test.infosky.vn', (err, address, family) => {
 												  console.log('address: %j family: IPv%s', address, family);
+												  console.log(err);
 												});
                                                 axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
                                                     resultKYC2 => {
