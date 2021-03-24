@@ -19,7 +19,6 @@ const responseGetApiStructureResponseWithResult = require('../../domain/response
 const database = require('../../config/db.config');
 const dns = require('dns');
 exports.getStructureAPI = function (req, res) {
-    console.log('DatabaseOption: ',database.dbOption);
     try {
         const config = {
             headers: {
