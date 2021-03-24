@@ -69,7 +69,7 @@ var RESCODEEXT = {
     NIALIAS: { value: 69, name: "Need to input mandatory item(Alias)", code: "F069" },
     ERRCONTRACTDATASENDING: { value: 70, name: "Error on contract data sending", code: "F070" },
     NIIDOFCONTRACT: { value: 71, name: "Need to input mandatory item(ID)", code: "F071" },
-    ERRCONTRACTSTATUS: { value: 72, name: "Error on contract data sending", code: "F072" },
+    ERRCONTRACTSTATUS: { value: 72, name: "Error on contract status check", code: "F072" },
     NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input NF Score NICE session key", code: "F073" },
     NoContractTemplateForInputAlias: { value: 74, name: "No contract template for input alias", code: "F074" },
     NoContractForInputId: { value: 74, name: "No contract for input id", code: "F075" }
