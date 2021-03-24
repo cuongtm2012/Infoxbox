@@ -22,6 +22,7 @@ const URI = require('../../../shared/URI');
 const axios = require('axios');
 const logger = require('../../config/logger');
 const dataMainScoreRclipsSaveToExtScore = require('../../domain/dataMainScoreRclipsSaveToExtScore.save')
+const dns = require('dns');
 exports.rcs_M01_RQST = function (req, res) {
     try {
         const config = {
@@ -76,6 +77,11 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 let bodyVmgKyc2 = new bodyVmg_KYC_2(req.body.natId);
                                                 logger.info(bodyVmgKyc2);
                                                 // call VMG KYC 2
+												console.log("dns.lookup api2-test.infosky.vn checking...");
+												dns.lookup('api2-test.infosky.vn', (err, address, family) => {
+												  console.log('address: %j family: IPv%s', address, family);
+												  console.log(err);
+												});
                                                 axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
                                                     resultKYC2 => {
                                                         if (resultKYC2.data.error_code.toString()) {
@@ -99,7 +105,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             logger.info(bodyRclipsReq);
                                                             //    call Rclips
-                                                            axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
+															axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
                                                                 resultRclips => {
                                                                     if (resultRclips.data.listResult) {
                                                                         //    success get data Rclips
@@ -157,6 +163,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             return res.status(200).json(responseData);
                                                         }
                                                     }).catch(reason => {
+													console.log("reason1");
+													console.log(reason);
                                                     if (reason.message === 'timeout of 60000ms exceeded') {
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                         responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
@@ -179,6 +187,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 })
                                             }
                                         ).catch(reason => {
+											logger.error("reason 111...");
+											console.log(reason);
                                             logger.error(reason.toString());
                                             return res.status(500).json({error: reason.toString()});
                                         })
@@ -192,6 +202,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                         return res.status(200).json(responseData);
                                     }
                                 }).catch(reason => {
+								logger.error("reason 222...");
+								console.log(reason);
                                 logger.error(reason.toString());
                                 return res.status(500).json({error: reason.toString()});
                             })
@@ -205,18 +217,26 @@ exports.rcs_M01_RQST = function (req, res) {
                             return res.status(200).json(responseData);
                         }
                     }).catch(reason => {
+					logger.error("reason 333...");
+					console.log(reason);
                     logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 })
             }).catch(reason => {
+				logger.error("reason 444...");
+				console.log(reason);
                 logger.error(reason.toString());
                 return res.status(500).json({error: reason.toString()});
             });
         }).catch(reason => {
+			logger.error("reason 555...");
+			console.log(reason);
             logger.error(reason.toString());
             return res.status(500).json({error: reason.toString()});
         });
     } catch (error) {
+		logger.error("reason 5555...");
+		console.log(reason);
         logger.error(error.toString());
         return res.status(500).json({error: error.toString()});
     }

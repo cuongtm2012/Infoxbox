@@ -1,3 +1,6 @@
+'use strict';
+//Turn of SSL SSL certificate verification
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
@@ -18,8 +21,6 @@ const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'u
 // create oracle pool.
 const database = require('./config/db.config');
 database.initialize().then();
-//Turn of SSL SSL certificate verification
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
