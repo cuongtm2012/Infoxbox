@@ -98,9 +98,10 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 console.log(options);
                                                 const request = https.request(options, response => {
                                                     console.log(`statusCode: ${response.statusCode}`)
-                                                    let resultKYC2;
+                                                    let resultKYC2 = '';
                                                     response.on('data', d => {
                                                          resultKYC2 += d;
+                                                        resultKYC2 = JSON.parse(resultKYC2);
                                                         console.log('dataResponse: ', resultKYC2);
                                                         if (resultKYC2.error_code.toString()) {
                                                             let bodyRclipsReq;
@@ -124,7 +125,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             logger.info(bodyRclipsReq);
                                                             const dataRclip = JSON.stringify(bodyRclipsReq);
                                                             const optionsdataRclip = {
-                                                                hostname: 'localhost',
+                                                                hostname: '103.112.124.153',
                                                                 port: '18082',
                                                                 path: '/online/rclips/json',
                                                                 method: 'POST',
