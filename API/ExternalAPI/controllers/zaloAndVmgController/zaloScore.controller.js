@@ -16,7 +16,7 @@ const cicExternalService = require('../../services/cicExternal.service');
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const URI = require('../../../shared/URI');
-
+const dns = require('dns');
 const SECRET = 'TEST';
 exports.zaloScore = function (req, res) {
     try {
@@ -61,6 +61,12 @@ exports.zaloScore = function (req, res) {
                 let dataInsertScrapLog = new DataZaloSaveToScrapLog(req.body, fullNiceKey);
                 cicExternalService.insertDataZaloToSCRPLOG(dataInsertScrapLog).then(
                     result => {
+	 					let bodyGetAuth = new bodyGetAuthEContract();
+						console.log("dns.lookup checking..." + URI.URL_ZALO_GET_AUTH_DEV);
+						dns.lookup('dev-partner.score.dmp.zaloapp.com', (err, address, family) => {
+						  console.log('address: %j family: IPv%s', address, family);
+						  console.log(err);
+						});
                         axios.get(URI.URL_ZALO_GET_AUTH_DEV, config).then(
                             resultTokenAuth => {
                                 if (resultTokenAuth.data.code === 0) {
@@ -69,6 +75,11 @@ exports.zaloScore = function (req, res) {
                                     let mobileNumberHmac = crypto.createHmac('sha256', SECRET).update(req.body.mobilePhoneNumber).digest('hex');
                                     let paramUrl = `auth_token=${auth_token}&customer_phone=${mobileNumberHmac}&score_version=1`;
                                     let fullUrlGetScore = URI.URL_ZALO_GET_SCORE_DEV + paramUrl;
+									console.log("dns.lookup checking..." + URI.URL_ZALO_GET_SCORE_DEV);
+									dns.lookup('dev-partner.score.dmp.zaloapp.com', (err, address, family) => {
+									  console.log('address: %j family: IPv%s', address, family);
+									  console.log(err);
+									});
                                     axios.get(fullUrlGetScore, config).then(
                                         resultGetScore => {
                                             if (resultGetScore.data.code === 0) {

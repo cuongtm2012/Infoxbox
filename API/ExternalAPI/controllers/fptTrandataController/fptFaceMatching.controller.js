@@ -23,6 +23,7 @@ const urlFptV02 = 'aggregator/api/v1/verification/v02_facematching';
 const utilFunction = require('../../../shared/util/util');
 const URI = require('../../../shared/URI');
 const FormData = require('form-data');
+const dns = require('dns');
 exports.fptFaceMatching = function (req, res) {
     try {
         const config = {
@@ -74,6 +75,12 @@ exports.fptFaceMatching = function (req, res) {
                             username: configExternal.AccountFptDev.username,
                             password: configExternal.AccountFptDev.password
                         }
+						console.log("dns.lookup checking..." + URI.URL_FPT_DEV);
+						dns.lookup('api.uat.trandata.io', (err, address, family) => {
+						  console.log('address: %j family: IPv%s', address, family);
+						  console.log(err);
+						});
+						
                         axios.post(URI.URL_FPT_DEV + urlGetAuth, body, config).then(
                             resultGetAuth => {
                                 if (resultGetAuth.data.ErrorCode === 0) {

@@ -17,6 +17,7 @@ const axios = require('axios');
 const URI = require('../../../shared/URI');
 const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
 const database = require('../../config/db.config');
+const dns = require('dns');
 exports.getStructureAPI = function (req, res) {
     console.log('DatabaseOption: ',database.dbOption);
     try {
@@ -56,6 +57,11 @@ exports.getStructureAPI = function (req, res) {
                     } else {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
+						console.log("dns.lookup checking..." + URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV);
+						dns.lookup('demo.econtract.fpt.com.vn', (err, address, family) => {
+						  console.log('address: %j family: IPv%s', address, family);
+						  console.log(err);
+						});
                         axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
