@@ -16,7 +16,9 @@ const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const axios = require('axios');
 const URI = require('../../../shared/URI');
 const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
-exports.getStructureAPI = function (req, res) {
+const database = require('../../config/db.config');
+exports.getStructureAPI_Test = function (req, res) {
+    console.log('DatabaseOption: ',database.dbOption);
     try {
         const config = {
             headers: {
@@ -54,7 +56,7 @@ exports.getStructureAPI = function (req, res) {
                     } else {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axios.post('https://demo.econtract.fpt.com.vn/app/v1/client-auth/login', bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     let URlGetStructureContract = URI.URL_E_CONTRACT_GET_STRUCTURE_API_DEV + req.query.alias;
@@ -65,7 +67,7 @@ exports.getStructureAPI = function (req, res) {
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.get(URlGetStructureContract, configGetStructure).then(
+                                    axios.get('https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=' + req.query.alias, configGetStructure).then(
                                         resultGetStructure => {
                                             if (resultGetStructure.status === 200 && !_.isEmpty(resultGetStructure.data)) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
