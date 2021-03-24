@@ -98,9 +98,12 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 console.log(options);
                                                 const request = https.request(options, response => {
                                                     console.log(`statusCode: ${response.statusCode}`)
-
+                                                    let resultKYC2;
                                                     response.on('data', d => {
-                                                        let resultKYC2 = JSON.parse(d.toString());
+                                                        resultKYC2 += d;
+                                                    })
+
+                                                    response.on("end", () => {
                                                         console.log('dataResponse: ', resultKYC2);
                                                         if (resultKYC2.error_code.toString()) {
                                                             let bodyRclipsReq;
