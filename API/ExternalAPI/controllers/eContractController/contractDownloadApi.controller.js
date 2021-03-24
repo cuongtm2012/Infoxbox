@@ -15,7 +15,11 @@ const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDow
 const axios = require('axios');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+const gracefulFs = require('graceful-fs');
 const fs = require('fs');
+
+
+gracefulFs.gracefulify(fs);
 exports.contractDownloadApi = function (req, res) {
     try {
         const config = {
@@ -87,6 +91,7 @@ exports.contractDownloadApi = function (req, res) {
                                                         // });
                                                         return res.status(200).json(responseData);
                                                     }).catch(reason => {
+                                                    deleteFile(filename);
                                                     console.log('errResultDownload: ', reason.toString());
                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                     responseData = new responseContractDownloadApi(req.query, preResponse);
@@ -156,6 +161,7 @@ exports.contractDownloadApi = function (req, res) {
                                 }
                             }).catch(reason => {
                             console.log('errGetAuthAccess: ', reason.toString());
+                            deleteFile(filename);
                             if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
