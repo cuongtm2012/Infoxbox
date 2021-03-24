@@ -9,12 +9,12 @@ module.exports.start = function () {
         testLoadServerJob.cron((current, max , request) => {
             if (current == max) { // prevent process is running in array
                 times += request;
-                logger.info({Count_Request_Production: times});
+                logger.info({Count_Request: times});
                 // finish
                 // console.log("call internall batch A0001~~~");
 
                 this.start();
             }
         });
-    }, 1000);
+    }, 2000);
 }
