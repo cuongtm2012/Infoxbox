@@ -124,7 +124,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             logger.info(bodyRclipsReq);
                                                             const dataRclip = JSON.stringify(bodyRclipsReq);
                                                             const optionsdataRclip = {
-                                                                hostname: '103.112.124.153',
+                                                                hostname: 'localhost',
                                                                 port: '18082',
                                                                 path: '/online/rclips/json',
                                                                 method: 'POST',
