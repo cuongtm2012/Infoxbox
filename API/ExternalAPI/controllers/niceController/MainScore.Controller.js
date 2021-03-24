@@ -23,6 +23,7 @@ const axios = require('axios');
 const logger = require('../../config/logger');
 const dataMainScoreRclipsSaveToExtScore = require('../../domain/dataMainScoreRclipsSaveToExtScore.save')
 const dns = require('dns');
+const https = require('https');
 exports.rcs_M01_RQST = function (req, res) {
     try {
         const config = {
@@ -74,30 +75,45 @@ exports.rcs_M01_RQST = function (req, res) {
                                         cicExternalService.insertDataReqToSCRPLOG(dataSaveToScraplog).then(
                                             result => {
                                                 //
-                                                let bodyVmgKyc2 = new bodyVmg_KYC_2(req.body.natId);
-                                                logger.info(bodyVmgKyc2);
                                                 // call VMG KYC 2
-												console.log("dns.lookup api2-test.infosky.vn checking...");
-												dns.lookup('api2-test.infosky.vn', (err, address, family) => {
-												  console.log('address: %j family: IPv%s', address, family);
-												  console.log(err);
-												});
-                                                axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
-                                                    resultKYC2 => {
-                                                        if (resultKYC2.data.error_code.toString()) {
+                                                console.log("dns.lookup api2-test.infosky.vn checking...");
+                                                dns.lookup('api2-test.infosky.vn', (err, address, family) => {
+                                                    console.log('address: %j family: IPv%s', address, family);
+                                                    console.log(err);
+                                                });
+                                                let bodyVmgKyc2 = new bodyVmg_KYC_2(req.body.natId);
+                                                const dataVmgKyc2 = JSON.stringify(bodyVmgKyc2);
+                                                const options = {
+                                                    hostname: 'api2-test.infosky.vn',
+                                                    port: 443,
+                                                    path: '/app/info_sky_v2/api/request',
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Content-Length': dataVmgKyc2.length
+                                                    }
+                                                };
+                                                console.log(options);
+                                                const request = https.request(options, response => {
+                                                    console.log(`statusCode: ${response.statusCode}`)
+
+                                                    response.on('data', d => {
+                                                        let resultKYC2 = JSON.parse(d.toString());
+                                                        console.log('dataResponse: ', resultKYC2);
+                                                        if (resultKYC2.error_code.toString()) {
                                                             let bodyRclipsReq;
                                                             let totalInComeMonth;
-                                                            if ((resultKYC2.data.error_code === 0 || resultKYC2.data.error_code === 20) && resultKYC2.data.result) {
+                                                            if ((resultKYC2.error_code === 0 || resultKYC2.error_code === 20) && resultKYC2.result) {
                                                                 // store data KYC2 to DB
-                                                                let dataSaveToVmgIncome = new dataVmgKyc2SaveToVmgIncome(fullNiceKey, resultKYC2.data);
+                                                                let dataSaveToVmgIncome = new dataVmgKyc2SaveToVmgIncome(fullNiceKey, resultKYC2);
                                                                 cicExternalService.insertDataToVmgIncome(dataSaveToVmgIncome).then();
                                                                 //
-                                                                if (resultKYC2.data.result.totalIncome_3) {
-                                                                    totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_3) / 12;
-                                                                } else if (resultKYC2.data.result.totalIncome_2) {
-                                                                    totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_2) / 12;
-                                                                } else if (resultKYC2.data.result.totalIncome_1) {
-                                                                    totalInComeMonth = parseFloat(resultKYC2.data.result.totalIncome_1) / 12;
+                                                                if (resultKYC2.result.totalIncome_3) {
+                                                                    totalInComeMonth = parseFloat(resultKYC2.result.totalIncome_3) / 12;
+                                                                } else if (resultKYC2.result.totalIncome_2) {
+                                                                    totalInComeMonth = parseFloat(resultKYC2.result.totalIncome_2) / 12;
+                                                                } else if (resultKYC2.result.totalIncome_1) {
+                                                                    totalInComeMonth = parseFloat(resultKYC2.result.totalIncome_1) / 12;
                                                                 } else {
                                                                     totalInComeMonth = "";
                                                                 }
@@ -105,12 +121,12 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             logger.info(bodyRclipsReq);
                                                             //    call Rclips
-															axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
+                                                            axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
                                                                 resultRclips => {
                                                                     if (resultRclips.data.listResult) {
                                                                         //    success get data Rclips
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, resultKYC2.data);
+                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, resultKYC2);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         let dataExtScore = new dataMainScoreRclipsSaveToExtScore(fullNiceKey,resultRclips.data.listResult,req.body.mobilePhoneNumber)
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
@@ -152,39 +168,28 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                 }
                                                             })
                                                         } else {
-                                                            console.log('errKYC2: ', resultKYC2.data.error_msg);
+                                                            console.log('errKYC2: ', resultKYC2.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                             responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                             logger.info(responseData);
-                                                            logger.info(resultKYC2.data);
+                                                            logger.info(resultKYC2);
                                                             return res.status(200).json(responseData);
                                                         }
-                                                    }).catch(reason => {
-													console.log("reason1");
-													console.log(reason);
-                                                    if (reason.message === 'timeout of 60000ms exceeded') {
-                                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
-                                                        responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
-                                                        logger.info(reason.toString());
-                                                        logger.info(responseData);
-                                                        return res.status(200).json(responseData);
-                                                    } else {
-                                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                        responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
-                                                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                        logger.info(reason.toString());
-                                                        logger.info(responseData);
-                                                        return res.status(200).json(responseData);
-                                                    }
+                                                    })
+                                                    response.on('error', e => {
+                                                        let errKYC2 = JSON.parse(e.toString());
+                                                        console.log('errKYC2: ', errKYC2);
+                                                    })
                                                 })
+                                                req.on('error', error => {
+                                                    console.error(error)
+                                                })
+
+                                                request.write(dataVmgKyc2)
+                                                request.end()
                                             }
                                         ).catch(reason => {
 											logger.error("reason 111...");
