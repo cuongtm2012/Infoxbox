@@ -10,11 +10,12 @@ module.exports.start = function () {
             if (current == max) { // prevent process is running in array
                 times += request;
                 logger.info({Count_Request: times});
+                console.log({Count_Request: times});
                 // finish
                 // console.log("call internall batch A0001~~~");
 
                 this.start();
             }
         });
-    }, 5000);
+    }, 1000);
 }

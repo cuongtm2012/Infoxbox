@@ -437,10 +437,10 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
             "natId": "173300769",
             "infoProvConcent": "Y"
         }
-        let CIC_S37_RSLgg = 'https://103.112.124.153:3100/external/RCS_M01_RQST';
+        let CIC_S37_RSLgg = 'https://192.168.33.66:3100/contract/FTN_SCD_RQST';
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('RCS_M01_RQST: ' + error.toString());
@@ -448,7 +448,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -456,7 +456,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -464,7 +464,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('RCS_M01_RQST: ' + error.toString());
@@ -472,7 +472,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('RCS_M01_RQST: ' + error.toString());
@@ -480,7 +480,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -488,7 +488,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -496,7 +496,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -504,7 +504,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -512,7 +512,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -520,7 +520,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -528,7 +528,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.error_code);
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -537,7 +537,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
 
         // axios.get(StatusEcontract, config).then(
         //     result => {
-        //         countNextTimeCron('StatusEcontract: ' + result.data.toString());
+        //         countNextTimeCron('StatusEcontract: ' + result.data.error_code);
         //     }
         // ).catch((error) => {
         //     countNextTimeCron('StatusEcontract: ' + error.toString());
@@ -546,7 +546,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         //
         // axios.get(URL_FTN_GAS_RQST, config).then(
         //     result => {
-        //         countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.toString());
+        //         countNextTimeCron('URL_FTN_GAS_RQST: ' + result.data.error_code);
         //     }
         // ).catch((error) => {
         //     countNextTimeCron('URL_FTN_GAS_RQST: ' + error.toString());
@@ -556,8 +556,9 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
 
         function countNextTimeCron(any) {
             times++;
-            any = 'localhost_' + any
+            any = any
             logger.info({time: any});
+            console.log({time: any});
             if (times === 12) {
                oncomplete(0 , 0, times);
             }
