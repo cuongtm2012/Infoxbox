@@ -440,7 +440,15 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         let CIC_S37_RSLgg = 'https://103.112.124.153:3100/external/RCS_M01_RQST';
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+            }
+        ).catch((error) => {
+            countNextTimeCron('RCS_M01_RQST: ' + error.toString());
+            return console.log(error.toString());
+        });
+        axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
+            result => {
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -448,7 +456,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -456,7 +464,23 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+            }
+        ).catch((error) => {
+            countNextTimeCron('RCS_M01_RQST: ' + error.toString());
+            return console.log(error.toString());
+        });
+        axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
+            result => {
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
+            }
+        ).catch((error) => {
+            countNextTimeCron('RCS_M01_RQST: ' + error.toString());
+            return console.log(error.toString());
+        });
+        axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
+            result => {
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -464,7 +488,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -472,7 +496,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -480,7 +504,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -488,7 +512,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -496,7 +520,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
@@ -504,31 +528,7 @@ const urlSimpleLimit = 'https://103.112.124.129:3000/external/OKF_SPL_RQST';
         });
         axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
             result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
-            }
-        ).catch((error) => {
-            countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
-            return console.log(error.toString());
-        });
-        axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
-            result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
-            }
-        ).catch((error) => {
-            countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
-            return console.log(error.toString());
-        });
-        axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
-            result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
-            }
-        ).catch((error) => {
-            countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
-            return console.log(error.toString());
-        });
-        axios.post(CIC_S37_RSLgg, bodyCIC_S11A_RSLT, config).then(
-            result => {
-                countNextTimeCron('CIC_S37_RSLT_: ' + result.data.toString());
+                countNextTimeCron('RCS_M01_RQST: ' + result.data.toString());
             }
         ).catch((error) => {
             countNextTimeCron('CIC_S37_RSLT: ' + error.toString());
