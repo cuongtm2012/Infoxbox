@@ -9,8 +9,16 @@ var URI = {
     socket_url: 'https://localhost:3400',
     socket_mobile_url: 'https://localhost:3200',
 
-    URL_ZALO_GET_AUTH_DEV: 'https://dev-partner.score.dmp.zaloapp.com/v2/api/agency/auth',
-    URL_ZALO_GET_SCORE_DEV: 'https://dev-partner.score.dmp.zaloapp.com/v2/api/agency/score',
+    URL_ZALO_GET_AUTH_DEV: {
+        host: 'dev-partner.score.dmp.zaloapp.com',
+        path: '/v2/api/agency/auth',
+        port: 443
+    },
+    URL_ZALO_GET_SCORE_DEV: {
+        host: 'dev-partner.score.dmp.zaloapp.com',
+        path: '/v2/api/agency/score',
+        port: 443
+    },
 
     URL_VMG_DEV: {
         host: 'api2-test.infosky.vn',
