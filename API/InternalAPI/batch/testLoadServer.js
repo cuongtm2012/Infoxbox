@@ -35,11 +35,15 @@ let mainscorePro = {
     "natId": "173300769",
     "infoProvConcent": "Y"
 }
+
+//OKF_SPL_RQST,,OKF_SCO_RQST
+
 let times = 0
 const statusContractUrl = 'https://'+IP_TEST+':3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
 let mainScore_URL = 'https://'+IP_TEST+':3100/external/RCS_M01_RQST';
 
-axios.post(mainScore_URL, mainscorePro, config).then(
+		//RCS_M01_RQST
+		axios.post(mainScore_URL, mainscorePro, config).then(
             result => {
                 countNextTimeCron('mainscorePro: ' + result.data.responseCode);
             }
@@ -47,15 +51,59 @@ axios.post(mainScore_URL, mainscorePro, config).then(
             countNextTimeCron('mainscorePro: ' + error.toString());
             return console.log(error.toString());
         });
-/*
-axios.get(statusContractUrl, config).then(
-     result => {
-         countNextTimeCron('statusContractUrl');
-     }
-     ).catch((error) => {
+
+		axios.get(statusContractUrl, config).then(
+	     result => {
+	         countNextTimeCron('statusContractUrl');
+	     }
+	     ).catch((error) => {
              countNextTimeCron('statusContractUrl');
             return console.log(error.toString());
-        });*/
+        });
+
+const bodySimpleLimit = {
+    "fiSessionKey": "SPL2021020800002",
+    "fiCode": "B100000011",
+    "taskCode": "OKF_SPL_RQST",
+    "customerNumber": "CUST0000001001",
+    "name": "NICE TEST",
+    "sex": "F",
+    "mobilePhoneNumber": "0966606850",
+    "natId": "035081004224",
+    "salary": "5000000",
+    "joinYearMonth": "201905",
+    "infoProvConcent": "Y"
+}
+const urlSimpleLimit = 'https://'+IP_TEST+':3100/external/OKF_SPL_RQST';
+        axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
+            result => {
+                countNextTimeCron('urlSimpleLimit');
+            }
+        ).catch((error) => {
+            countNextTimeCron('errSimpleLimit');
+                return console.log(error.toString());
+        });
+
+let nfScore_URL = 'https://'+IP_TEST+':3100/external/OKF_SCO_RQST';
+let NfscorePro = {
+            "appNumber": "R9000000000010",
+            "fiCode": "B100000011",
+            "taskCode": "OKF_SCO_RQST",
+            "customerNumber": "C2000000000004",
+            "scoreProduct": "NOK100_001",
+            "mobilePhoneNumber": "0966606850",
+            "natId": "035081004224",
+            "infoProvConcent": "Y"
+        }
+axios.post(nfScore_URL, NfscorePro, config).then(
+            result => {
+                countNextTimeCron('NfscorePro: ' + result.data.responseCode);
+            }
+        ).catch((error) => {
+            countNextTimeCron('NfscorePro: ' + error.toString());
+            return console.log(error.toString());
+        });
+
 
 
         function countNextTimeCron(any) {
