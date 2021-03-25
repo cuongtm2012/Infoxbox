@@ -1,13 +1,12 @@
 var URI = {
+        cicInternalJson: 'https://10.84.222.154:9002/rest/extJson',
 
-    cicInternalJson: 'https://1.234.53.23:9401/rest/extJson',
+        internal_cic: 'https://localhost:3301/internal/cic',
+        internal_cicB0003: 'https://localhost:3301/internal/cicB0003',
+        internal_cicMobile: 'https://localhost:3301/internal/mobile',
 
-    internal_cic: 'https://localhost:3300/internal/cic',
-    internal_cicB0003: 'https://localhost:3300/internal/cicB0003',
-    internal_cicMobile: 'https://localhost:3300/internal/mobile',
-
-    socket_url: 'https://localhost:3400',
-    socket_mobile_url: 'https://localhost:3200',
+        socket_url: 'https://localhost:3401',
+        socket_mobile_url: 'https://localhost:3201',
 
     URL_ZALO_GET_AUTH_DEV: {
         host: 'dev-partner.score.dmp.zaloapp.com',
@@ -29,7 +28,7 @@ var URI = {
     URL_FPT_DEV: 'https://api.uat.trandata.io/',
 
     URL_RCLIPS: {
-        host: '103.112.124.153',
+        host: 'localhost',
         path: '/online/rclips/json',
         port: 18082
     },
