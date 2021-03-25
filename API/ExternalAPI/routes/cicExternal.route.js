@@ -10,7 +10,7 @@ var multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: pathTo
 
 
 var cics11a_controller = require('../controllers/cicController/cics11a.controller');
-var cicS37Rqst_controller = require('../controllers/cicController/cics37.controller');
+// var cicS37Rqst_controller = require('../controllers/cicController/cics37.controller');
 var cicProcStat_controller = require('../controllers/cicController/cicProcStat.controller');
 const cicMacr_Controller = require('../controllers/cicController/cicMacr.controller');
 var zaloScoreController = require('../controllers/zaloAndVmgController/zaloScore.controller');
@@ -28,9 +28,6 @@ router.post('/CIC_S11A_RQST', cics11a_controller.cics11aRQST);
 
 router.post('/CIC_S11A_RSLT', cics11a_controller.cics11aRSLT);
 
-router.post('/CIC_S37_RQST', cicS37Rqst_controller.cics37Rqst);
-
-router.post('/CIC_S37_RSLT', cicS37Rqst_controller.cics37RSLT);
 
 router.post('/CIC_PROC_STAT', cicProcStat_controller.cicProcStat);
 

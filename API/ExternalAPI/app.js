@@ -16,8 +16,8 @@ const __dad = path.join(__dirname, '..');
 const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 // create oracle pool.
-const database = require('./config/db.config');
-database.initialize().then();
+// const database = require('./config/db.config');
+// database.initialize().then();
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var app = express();
