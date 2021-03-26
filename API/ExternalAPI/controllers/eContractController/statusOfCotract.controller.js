@@ -16,6 +16,7 @@ const dataStatusOfContractSaveToScrapLog = require('../../domain/dataStatusOfCon
 const axios = require('axios');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+
 exports.statusOfContract = function (req, res) {
     try {
         const config = {
