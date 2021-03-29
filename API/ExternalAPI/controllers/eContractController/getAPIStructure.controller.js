@@ -20,7 +20,17 @@ const database = require('../../config/db.config');
 const dns = require('dns');
 exports.getStructureAPI = function(req, res) {
 	try {
-		const config = {
+		let statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
+		if(statusErrorDNS){
+			console.log("222 dns errorrrrrrrrrrrrrrr 22222222222 stop");
+			clearTimeout(timeoutObj);
+			return res.status(500).json({error: statusErrorDNS});
+		}else{
+			console.log("checking....");
+			return res.status(200).send("Ok");
+		}
+
+		/*const config = {
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -82,7 +92,9 @@ exports.getStructureAPI = function(req, res) {
 				return res.status(500).json({ error: reason.toString()});
 				}
 			)
-		}
+		}*/
+		
+		
 	} catch (err) {
 		logger.error(err.toString());
 		return res.status(500).json({ error:err.toString()});
