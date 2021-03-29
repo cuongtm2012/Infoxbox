@@ -23,6 +23,23 @@ module.exports = class TestLoadServer {
             }, timeout: 60 * 1000
         }
 let IP_TEST = '103.112.124.153'
+
+//OKF_SPL_RQST,,OKF_SCO_RQST
+
+let times = 0
+const statusContractUrl = 'https://'+IP_TEST+':3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
+
+axios.get(statusContractUrl, config).then(
+	     result => {
+	         countNextTimeCron('statusContractUrl');
+	     }
+	     ).catch((error) => {
+             countNextTimeCron('statusContractUrl');
+            return console.log(error.toString());
+        });
+
+/*
+
 let mainscorePro = {
     "appNumber":"",
 	"fiCode":"B100000011",
@@ -36,10 +53,6 @@ let mainscorePro = {
     "infoProvConcent": "Y"
 }
 
-//OKF_SPL_RQST,,OKF_SCO_RQST
-
-let times = 0
-const statusContractUrl = 'https://'+IP_TEST+':3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
 let mainScore_URL = 'https://'+IP_TEST+':3100/external/RCS_M01_RQST';
 
 		//RCS_M01_RQST
@@ -49,15 +62,6 @@ let mainScore_URL = 'https://'+IP_TEST+':3100/external/RCS_M01_RQST';
             }
         ).catch((error) => {
             countNextTimeCron('mainscorePro: ' + error.toString());
-            return console.log(error.toString());
-        });
-
-		axios.get(statusContractUrl, config).then(
-	     result => {
-	         countNextTimeCron('statusContractUrl');
-	     }
-	     ).catch((error) => {
-             countNextTimeCron('statusContractUrl');
             return console.log(error.toString());
         });
 
@@ -102,7 +106,7 @@ axios.post(nfScore_URL, NfscorePro, config).then(
         ).catch((error) => {
             countNextTimeCron('NfscorePro: ' + error.toString());
             return console.log(error.toString());
-        });
+        });*/
 
 
 
