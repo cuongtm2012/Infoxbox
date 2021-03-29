@@ -18,6 +18,7 @@ const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
 const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
 const BodyPostRiskScore = require('../../domain/body_Post_RiskScore.body');
 const bodyVmg_KYC_2 = require('../../domain/bodyVmg_KYC_2.body');
+const httpClient = require('../../services/httpClient.service');
 exports.sendingContractData = function (req, res) {
     try {
         const config = {
@@ -31,14 +32,14 @@ exports.sendingContractData = function (req, res) {
             natId: '001096002249'
         }
         let bodyRiskScore = new BodyPostRiskScore(test);
-        axios.post(URI.URL_VMG_DEV, bodyRiskScore, config).then(
+        httpClient.HTTPS_PostJson(URI.URL_VMG_DEV.host, URI.URL_VMG_DEV.path, URI.URL_VMG_DEV.port, bodyRiskScore).then(
             result => {
-                console.log(result.data);
+                console.log(result);
                 let bodyK2 = new bodyVmg_KYC_2(test.natId);
-                axios.post(URI.URL_VMG_DEV, bodyK2, config).then(
+                httpClient.HTTPS_PostJson(URI.URL_VMG_DEV.host, URI.URL_VMG_DEV.path, URI.URL_VMG_DEV.port, bodyK2).then(
                     value => {
-                        console.log(value.data);
-                        return res.status(200).send(value.data);
+                        console.log(value);
+                        return res.status(200).send(value);
                     }
                 ).catch(reason => {
                     console.log(reason.toString());

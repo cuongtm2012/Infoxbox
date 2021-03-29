@@ -17,6 +17,7 @@ function HTTPS_PostJson(host, path, port, body) {
                 },
                 timeout: config.requestTimeOut.applicationJson
             }
+            console.log('optionHttpsPost: ', optionHttpsPost);
             const request = https.request(optionHttpsPost, response => {
                 let result = '';
                 response.on('data', data => {
