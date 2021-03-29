@@ -1,6 +1,6 @@
 'use strict';
 //Turn of SSL SSL certificate verification
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "1";
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
