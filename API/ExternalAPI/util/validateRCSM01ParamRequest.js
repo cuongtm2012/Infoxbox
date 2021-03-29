@@ -79,7 +79,7 @@ module.exports = {
                 responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
             }
             return response;
-        } else if (!util.validPhoneNumber2021(getdataReq.mobilePhoneNumber)) {
+        } else if (!util.validPhoneNumber(getdataReq.mobilePhoneNumber)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code

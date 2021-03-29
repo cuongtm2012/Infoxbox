@@ -26,6 +26,7 @@ const dataNfScoreRclipsSaveToExtScore = require('../../domain/dataNfScoreSaveToE
 const qs = require('qs');
 const bodyZaloScore = require('../../domain/bodyPostZaloScore.body');
 const uuid = require('uuid');
+const httpClient = require('../../services/httpClient.service');
 exports.nonFinancialScoreOk = function (req, res) {
     try {
         const config = {
@@ -70,92 +71,81 @@ exports.nonFinancialScoreOk = function (req, res) {
                 // insert rq to ScrapLog
                 cicExternalService.insertDataNFScoreOKToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
-                        let configRequestZaloGetAuth = {
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            timeout: 60 * 1000
-                        }
-                        let dataRqZalo = qs.stringify(configExternal.accountZaloDev)
+                        let dataRqZalo = configExternal.accountZaloDev;
                         //    get token Zalo
-                        axios.post(URI.URL_ZALO_GET_AUTH_DEV, dataRqZalo, configRequestZaloGetAuth).then(
+                        httpClient.HTTPS_PostUrlEncoded(URI.URL_ZALO_GET_AUTH_DEV.host, URI.URL_ZALO_GET_AUTH_DEV.path, URI.URL_ZALO_GET_AUTH_DEV.port, dataRqZalo).then(
                             resultTokenAuth => {
-                                if (resultTokenAuth.data.code === 0) {
+                                if (resultTokenAuth.code === 0) {
                                     // prepare call zalo score
-                                    let configRequestZaloGetScore= {
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                            'X-Client-Request-Id': uuid.v4()
-                                        },
-                                        timeout: 60 * 1000
-                                    }
-                                    let auth_token = resultTokenAuth.data.data.auth_token;
-                                    let dataZaloScoreRq = qs.stringify(new bodyZaloScore(auth_token, req.body.mobilePhoneNumber));
+                                    let dataZaloScoreRq = new bodyZaloScore(resultTokenAuth.data.auth_token, req.body.mobilePhoneNumber);
+                                    logger.info(dataZaloScoreRq);
                                     //    call API get zalo score
-                                    axios.post(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, configRequestZaloGetScore).then(
+                                    httpClient.HTTPS_PostUrlEncoded(URI.URL_ZALO_GET_SCORE_DEV.host, URI.URL_ZALO_GET_SCORE_DEV.path, URI.URL_ZALO_GET_SCORE_DEV.port, dataZaloScoreRq, uuid.v4()).then(
                                         resultGetZaloScore => {
-                                            if (resultGetZaloScore.data.code !== undefined) {
-                                            //    success get zalo score
-                                            //    save score to EXT_SCORE
+                                            if (resultGetZaloScore.code !== undefined) {
+                                                //    success get zalo score
+                                                //    save score to EXT_SCORE
                                                 let ZaloScore;
-                                                if (resultGetZaloScore.data.code === 0) {
-                                                    ZaloScore = resultGetZaloScore.data.data.score;
-                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, resultGetZaloScore.data.data.score, resultGetZaloScore.data.data.request_id);
+                                                if (resultGetZaloScore.code === 0) {
+                                                    ZaloScore = resultGetZaloScore.data.score;
+                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, resultGetZaloScore.data.score, resultGetZaloScore.data.request_id);
                                                     cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 } else {
-                                                    logger.info(resultGetZaloScore.data);
+                                                    logger.info(resultGetZaloScore);
                                                     ZaloScore = DEFAULT_SCORE;
-                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, DEFAULT_SCORE, resultGetZaloScore.data.data.request_id);
+                                                    dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, DEFAULT_SCORE, resultGetZaloScore.data.request_id);
                                                     cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 }
                                                 //    prepare call VMG Risk Score
                                                 let bodyGetRiskScore = new BodyPostRiskScore(req.body);
+                                                logger.info(bodyGetRiskScore);
                                                 //    get RiskScore
-                                                axios.post(URI.URL_VMG_DEV, bodyGetRiskScore, config).then(
+                                                httpClient.HTTPS_PostJson(URI.URL_VMG_DEV.host, URI.URL_VMG_DEV.path, URI.URL_VMG_DEV.port, bodyGetRiskScore).then(
                                                     resultGetRiskScore => {
-                                                        if (resultGetRiskScore.data.error_code !== undefined) {
-                                                        //    success get Risk Score
-                                                        //    update To EXT_SCORE
+                                                        if (resultGetRiskScore.error_code !== undefined) {
+                                                            //    success get Risk Score
+                                                            //    update To EXT_SCORE
                                                             let VmgScore, VmgGrade;
-                                                            if(resultGetRiskScore.data.error_code === 0) {
-                                                                VmgScore = resultGetRiskScore.data.result.nice_score.RSK_SCORE;
-                                                                VmgGrade = resultGetRiskScore.data.result.nice_score.RSK_GRADE;
-                                                                let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score, req.body.mobilePhoneNumber);
+                                                            if (resultGetRiskScore.error_code === 0) {
+                                                                VmgScore = resultGetRiskScore.result.nice_score.RSK_SCORE;
+                                                                VmgGrade = resultGetRiskScore.result.nice_score.RSK_GRADE;
+                                                                let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.requestid, resultGetRiskScore.result.nice_score, req.body.mobilePhoneNumber);
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             } else {
-                                                                logger.info(resultGetRiskScore.data);
+                                                                logger.info(resultGetRiskScore);
                                                                 VmgScore = DEFAULT_SCORE;
                                                                 VmgGrade = DEFAULT_SCORE;
-                                                                let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, {}, req.body.mobilePhoneNumber);
+                                                                let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.requestid, {}, req.body.mobilePhoneNumber);
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             }
                                                             //    Call Rclips
                                                             let bodyRclispNfScore = new bodyPostNfScore(req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, ZaloScore);
-                                                            axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore, config).then(
+                                                            logger.info(bodyRclispNfScore);
+                                                            httpClient.HTTP_PostJson(URI.URL_RCLIPS.host, URI.URL_RCLIPS.path, URI.URL_RCLIPS.port, bodyRclispNfScore).then(
                                                                 resultRclipsNF => {
-                                                                    if (resultRclipsNF.data.listResult !== undefined) {
+                                                                    if (resultRclipsNF.listResult !== undefined) {
                                                                         // response P000
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                        responseData = new NFScoreResponseWithResult(req.body, preResponse, resultRclipsNF.data);
+                                                                        responseData = new NFScoreResponseWithResult(req.body, preResponse, resultRclipsNF);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                        let dataSaveToExtScore = new dataNfScoreRclipsSaveToExtScore(fullNiceKey, resultRclipsNF.data.listResult, req.body.mobilePhoneNumber);
+                                                                        let dataSaveToExtScore = new dataNfScoreRclipsSaveToExtScore(fullNiceKey, resultRclipsNF.listResult, req.body.mobilePhoneNumber);
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                                         cicExternalService.insertDataToExtScore(dataSaveToExtScore).then();
-                                                                        logger.info(resultRclipsNF.data.listResult);
+                                                                        logger.info(resultRclipsNF.listResult);
                                                                         logger.info(responseData);
                                                                         return res.status(200).json(responseData);
                                                                     } else {
                                                                         //    update scraplog & response F048
-                                                                        console.log('errRclips', resultRclipsNF.data);
-                                                                        logger.info(resultRclipsNF.data);
+                                                                        console.log('errRclips', resultRclipsNF);
+                                                                        logger.info(resultRclipsNF);
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                                         responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                                         cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                                         logger.info(responseData);
-                                                                        logger.info(resultRclipsNF.data);
+                                                                        logger.info(resultRclipsNF);
                                                                         return res.status(200).json(responseData);
                                                                     }
                                                                 }
@@ -183,38 +173,38 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                     return res.status(200).json(responseData);
                                                                 }
                                                             })
-                                                        }  else if (resultGetRiskScore.data.error_code === 4) {
+                                                        } else if (resultGetRiskScore.error_code === 4) {
                                                             //    update scraplog & response F052
-                                                            console.log('errRiskscore:',resultGetRiskScore.data.error_msg);
+                                                            console.log('errRiskscore:', resultGetRiskScore.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.NODATAEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NODATAEXIST.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
                                                             logger.info(responseData);
-                                                            logger.info(resultGetRiskScore.data.error_msg);
+                                                            logger.info(resultGetRiskScore.error_msg);
                                                             return res.status(200).json(responseData);
-                                                        } else if (resultGetRiskScore.data.error_code === 11) {
+                                                        } else if (resultGetRiskScore.error_code === 11) {
                                                             //    update scraplog & response F049
-                                                            console.log('errRiskscore:',resultGetRiskScore.data.error_msg);
+                                                            console.log('errRiskscore:', resultGetRiskScore.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                                             logger.info(responseData);
-                                                            logger.info(resultGetRiskScore.data.error_msg);
+                                                            logger.info(resultGetRiskScore.error_msg);
                                                             return res.status(200).json(responseData);
                                                         } else {
                                                             //    update scraplog & response F048
-                                                            console.log('errRiskscore:',resultGetRiskScore.data.error_msg);
+                                                            console.log('errRiskscore:', resultGetRiskScore.error_msg);
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                             logger.info(responseData);
-                                                            logger.info(resultGetRiskScore.data.error_msg);
+                                                            logger.info(resultGetRiskScore.error_msg);
                                                             return res.status(200).json(responseData);
                                                         }
                                                     }
@@ -244,16 +234,16 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                         }
                                                     }
                                                 );
-                                            }  else {
+                                            } else {
                                                 //    update scraplog & response F048
-                                                console.log("errZalo:", resultGetZaloScore.data.message);
+                                                console.log("errZalo:", resultGetZaloScore.message);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                 logger.info(responseData);
-                                                logger.info(resultGetZaloScore.data.message);
+                                                logger.info(resultGetZaloScore.message);
                                                 return res.status(200).json(responseData);
                                             }
                                         }
@@ -283,14 +273,14 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     })
                                 } else {
                                     //    update scraplog & response F048
-                                    console.log("err:", resultTokenAuth.data)
+                                    console.log("err:", resultTokenAuth)
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                     logger.info(responseData);
-                                    logger.info(resultTokenAuth.data);
+                                    logger.info(resultTokenAuth);
                                     return res.status(200).json(responseData);
                                 }
                             }

@@ -85,7 +85,12 @@ var config = {
 		DEV_serviceCode: 'cac1_nice'
 	},
 
-	poolAlias: 'Pool'
+	poolAlias: 'Pool',
+
+	requestTimeOut: {
+		applicationJson: 60000,
+		applicationFormData: 100000
+	}
 };
 
 module.exports = config;
