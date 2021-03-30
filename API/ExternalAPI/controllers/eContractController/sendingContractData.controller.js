@@ -32,26 +32,26 @@ exports.sendingContractData = function (req, res) {
             natId: '001096002249'
         }
         let bodyRiskScore = new BodyPostRiskScore(test);
-        httpClient.HTTPS_PostJson(URI.URL_VMG_DEV.host, URI.URL_VMG_DEV.path, URI.URL_VMG_DEV.port, bodyRiskScore).then(
+        axios.post(URI.URL_VMG_DEV, bodyRiskScore , config).then(
             result => {
-                console.log(result);
+                console.log(result.data);
                 let bodyK2 = new bodyVmg_KYC_2(test.natId);
-                httpClient.HTTPS_PostJson(URI.URL_VMG_DEV.host, URI.URL_VMG_DEV.path, URI.URL_VMG_DEV.port, bodyK2).then(
+                axios.post(URI.URL_VMG_DEV, bodyK2, config).then(
                     value => {
-                        console.log(value);
-                        return res.status(200).send(value);
+                        console.log(value.data);
+                        return res.status(200).send(value.data);
                     }
                 ).catch(reason => {
-                    console.log(reason.toString());
+                    console.log(reason);
                     return res.status(500).send(reason.toString())
                 })
             }
         ).catch(reason => {
-            console.log(reason.toString());
+            console.log(reason);
             return res.status(500).send(reason.toString());
         })
     } catch (err) {
-        logger.error(err.toString());
+        console.log(err);
         return res.status(500).json({error: err.toString()});
     }
 }
