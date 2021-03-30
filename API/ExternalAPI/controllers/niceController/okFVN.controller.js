@@ -27,7 +27,6 @@ const io = require('socket.io-client');
 const URI = require('../../../shared/URI');
 const axios = require('axios');
 const dataSimpleLimitRclipsSaveToExtScore = require('../../domain/dataSimpLimitRclipsSaveToExtScore.save');
-const httpClient = require('../../services/httpClient.service');
 exports.okf_SPL_RQST = function (req, res, next) {
     try {
         let niceSessionKey;
@@ -79,15 +78,15 @@ exports.okf_SPL_RQST = function (req, res, next) {
                         //call Rclips
                         let bodyRclipsSimpleLimit = new simpleLimitPostBody(req.body.mobilePhoneNumber, req.body.natId, req.body.joinYearMonth, req.body.salary);
                         logger.info(bodyRclipsSimpleLimit);
-                        httpClient.HTTP_PostJson(URI.URL_RCLIPS.host, URI.URL_RCLIPS.path, URI.URL_RCLIPS.port, bodyRclipsSimpleLimit).then(
+                        axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsSimpleLimit, config).then(
                             resultRclipsSPL => {
-                                if (!_.isEmpty(resultRclipsSPL.listResult)) {
+                                if (!_.isEmpty(resultRclipsSPL.data.listResult)) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                     responseData = new OKF_SPL_RQSTRes(getdataReq, preResponse);
-                                    responseData.maxSimpleLimit = resultRclipsSPL.listResult.OT010.toString();
+                                    responseData.maxSimpleLimit = resultRclipsSPL.data.listResult.OT010.toString();
                                     // update INQLOG
                                     dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
-                                    let dataSaveToExtScore = new dataSimpleLimitRclipsSaveToExtScore(fullNiceKey, resultRclipsSPL.listResult, req.body.mobilePhoneNumber);
+                                    let dataSaveToExtScore = new dataSimpleLimitRclipsSaveToExtScore(fullNiceKey, resultRclipsSPL.data.listResult, req.body.mobilePhoneNumber);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                     cicExternalService.insertDataToExtScore(dataSaveToExtScore).then();
@@ -95,7 +94,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
-                                    console.log('errRclips', resultRclipsSPL);
+                                    console.log('errRclips', resultRclipsSPL.data);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                                     // update INQLOG
@@ -103,10 +102,10 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                     logger.info(responseData);
-                                    logger.info(resultRclipsSPL);
+                                    logger.info(resultRclipsSPL.data);
                                     return res.status(200).json(responseData)
                                 }
-                        }).catch(reason => {
+                            }).catch(reason => {
                             if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
