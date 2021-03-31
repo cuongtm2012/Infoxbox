@@ -4,7 +4,7 @@
   "description": "Project for CIC Scraping",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node --tls-min-v1.2 app.js",
     "lint": "tslint"
   },
   "author": "InfoPlusVN",
@@ -12,6 +12,7 @@
   "dependencies": {
     "app-root-path": "^3.0.0",
     "axios": "^0.19.0",
+    "axios-cached-dns-resolve": "^2.0.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "connect-multiparty": "^2.2.0",

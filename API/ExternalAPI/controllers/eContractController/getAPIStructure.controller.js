@@ -18,9 +18,10 @@ const URI = require('../../../shared/URI');
 const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
 const database = require('../../config/db.config');
 const dns = require('dns');
+import { registerInterceptor } from 'axios-cached-dns-resolve'
 exports.getStructureAPI = function(req, res) {
 	try {
-		let statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
+		/*let statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
 		if(statusErrorDNS){
 			console.log("222 dns errorrrrrrrrrrrrrrr 22222222222 stop");
 			clearTimeout(timeoutObj);
@@ -28,9 +29,26 @@ exports.getStructureAPI = function(req, res) {
 		}else{
 			console.log("checking....");
 			return res.status(200).send("Ok");
+		}*/
+		const configDNS = {
+		  disabled: process.env.AXIOS_DNS_DISABLE === 'true',
+		  dnsTtlMs: process.env.AXIOS_DNS_CACHE_TTL_MS || 5000, // when to refresh actively used dns entries (5 sec)
+		  cacheGraceExpireMultiplier: process.env.AXIOS_DNS_CACHE_EXPIRE_MULTIPLIER || 2, // maximum grace to use entry beyond TTL
+		  dnsIdleTtlMs: process.env.AXIOS_DNS_CACHE_IDLE_TTL_MS || 1000 * 60 * 60, // when to remove entry entirely if not being used (1 hour)
+		  backgroundScanMs: process.env.AXIOS_DNS_BACKGROUND_SCAN_MS || 2400, // how frequently to scan for expired TTL and refresh (2.4 sec)
+		  dnsCacheSize: process.env.AXIOS_DNS_CACHE_SIZE || 100, // maximum number of entries to keep in cache
+		  // pino logging options
+		  logging: {
+		    name: 'axios-cache-dns-resolve',
+		    // enabled: true,
+		    level: process.env.AXIOS_DNS_LOG_LEVEL || 'info', // default 'info' others trace, debug, info, warn, error, and fatal
+		    // timestamp: true,
+		    prettyPrint: process.env.NODE_ENV === 'DEBUG' || false,
+		    useLevelLabels: true,
+		  },
 		}
 
-		/*const config = {
+		const config = {
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -64,26 +82,7 @@ exports.getStructureAPI = function(req, res) {
 					logger.info(responseData);
 					return res.status(500).json(responseData);
 				} else {
-					(async() => {
-						console.log("dns.lookup checking..." + URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV);
-						let statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
-						if(statusErrorDNS){
-							console.log("dns errorrrrrrrrrrrrrrr 1111111111 sleep 2s");
-							await sleep(2000);
-							console.log("dns check again");
-							statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
-							if(statusErrorDNS){
-								console.log("dns errorrrrrrrrrrrrrrr 22222222222 stop");
-								return res.status(500).json({error: statusErrorDNS});
-							}else{
-								console.log("getAuthAccess lan 2");
-								return getAuthAccess(config,req, res)
-							}
-						}else{
-							console.log("getAuthAccess lan 1");
-							return getAuthAccess(config,req, res)
-						}
-					})();
+					return getAuthAccess(config,req, res, configDNS)
 					//Tuanma move to function
 
 				}
@@ -92,7 +91,7 @@ exports.getStructureAPI = function(req, res) {
 				return res.status(500).json({ error: reason.toString()});
 				}
 			)
-		}*/
+		}
 		
 		
 	} catch (err) {
@@ -101,35 +100,17 @@ exports.getStructureAPI = function(req, res) {
 	}
 }
 
-function getAuthAccess(config, req, res) {
-	//    getAuthAccess
+function getAuthAccess(config, req, res, configDNS) {
+	//getAuthAccess
+	
 	let bodyGetAuth = new bodyGetAuthEContract();
+	const axiosClient = axios.create(configDNS)
+  	registerInterceptor(axiosClient)
 
-	axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+	axiosClient.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
 		resultGetAuthAccess => {
 			if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
-				(async() => {
-					console.log("222 dns.lookup checking..." + URI.URL_E_CONTRACT_GET_STRUCTURE_API_DEV);
-					let statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
-					if(statusErrorDNS){
-						console.log("222 dns errorrrrrrrrrrrrrrr 1111111111 sleep 2s");
-						await sleep(2000);
-						console.log("222 dns check again");
-						statusErrorDNS = dnsLookup('demo.econtract.fpt.com.vn')
-						if(statusErrorDNS){
-							console.log("222 dns errorrrrrrrrrrrrrrr 22222222222 stop");
-							return res.status(500).json({error: statusErrorDNS});
-						}else{
-							console.log("222 getStructureContract lan 2");
-							return getStructureContract(resultGetAuthAccess,req, res)
-						}
-					}else{
-						console.log("222 getStructureContract lan 1");
-						return getStructureContract(resultGetAuthAccess,req, res)
-					}
-				})();
-					
-				
+				return getStructureContract(resultGetAuthAccess,req, res, configDNS)
 			}
 		}
 	).catch(reason => {
@@ -156,7 +137,7 @@ function getAuthAccess(config, req, res) {
 	})
 }
 
-function getStructureContract(resultGetAuthAccess, req, res){
+function getStructureContract(resultGetAuthAccess, req, res, configDNS){
 	let URlGetStructureContract = URI.URL_E_CONTRACT_GET_STRUCTURE_API_DEV + req.query.alias;
 	let configGetStructure = {
 		headers: {
@@ -165,7 +146,9 @@ function getStructureContract(resultGetAuthAccess, req, res){
 		},
 		timeout: 60 * 1000
 	}
-	axios.get(URlGetStructureContract, configGetStructure).then(
+	const axiosClient = axios.create(configDNS)
+  	registerInterceptor(axiosClient)
+	axiosClient.get(URlGetStructureContract, configGetStructure).then(
 		resultGetStructure => {
 			if (resultGetStructure.status === 200 && !_.isEmpty(resultGetStructure.data)) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
