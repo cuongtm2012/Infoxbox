@@ -19,37 +19,49 @@ const bodySendInformationEContract = require('../../domain/bodySubmitInformation
 const BodyPostRiskScore = require('../../domain/body_Post_RiskScore.body');
 const bodyVmg_KYC_2 = require('../../domain/bodyVmg_KYC_2.body');
 const httpClient = require('../../services/httpClient.service');
-exports.sendingContractData = function (req, res) {
+exports.sendingContractData = async function (req, res)  {
     try {
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 60 * 1000
+            timeout: 60 * 10000
         }
         const test = {
             mobilePhoneNumber: '0964785596',
             natId: '001096002249'
         }
+
+        let resK2 = {};
         let bodyRiskScore = new BodyPostRiskScore(test);
-        axios.post(URI.URL_VMG_DEV, bodyRiskScore , config).then(
-            result => {
+        const resRiskScore = await axios.post(URI.URL_VMG_DEV, bodyRiskScore , config).then(
+            async result => {
                 console.log(result.data);
                 let bodyK2 = new bodyVmg_KYC_2(test.natId);
-                axios.post(URI.URL_VMG_DEV, bodyK2, config).then(
+                resK2 = await axios.post(URI.URL_VMG_DEV, bodyK2, config).then(
                     value => {
-                        console.log(value.data);
-                        return res.status(200).send(value.data);
+                        return value.data;
+                        // console.log(value.data);
+                        // return res.status(200).send(value.data);
                     }
                 ).catch(reason => {
                     console.log(reason);
                     return res.status(500).send(reason.toString())
-                })
+                });
+                return result.data;
             }
         ).catch(reason => {
             console.log(reason);
             return res.status(500).send(reason.toString());
-        })
+        });
+
+
+        const resRisk = {
+            resK2,
+            resRiskScore
+        };
+        console.log(resRisk);
+        return res.end();
     } catch (err) {
         console.log(err);
         return res.status(500).json({error: err.toString()});
