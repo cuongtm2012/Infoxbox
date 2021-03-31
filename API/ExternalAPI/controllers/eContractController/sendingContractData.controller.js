@@ -12,12 +12,12 @@
 // const validS11AService = require('../../services/validS11A.service');
 // const utilFunction = require('../../../shared/util/util');
 // const dataSendingDataFptContractSaveToScrapLog = require('../../domain/dataSendingDataFptContractSaveToScrapLog.save');
-const axios = require('axios');
-const URI = require('../../../shared/URI');
+import axios from 'axios';
+import URI from '../../../shared/URI.js';
 // const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
 // const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
-const BodyPostRiskScore = require('../../domain/body_Post_RiskScore.body');
-const bodyVmg_KYC_2 = require('../../domain/bodyVmg_KYC_2.body');
+import BodyPostRiskScore from '../../domain/body_Post_RiskScore.body.js';
+import bodyVmg_KYC_2 from '../../domain/bodyVmg_KYC_2.body.js';
 // const httpClient = require('../../services/httpClient.service');
 import { registerInterceptor } from 'axios-cached-dns-resolve';
 const config = {
@@ -39,8 +39,7 @@ const config = {
 }
 const axiosClient = axios.create(config);
 registerInterceptor(axiosClient);
-
-exports.sendingContractData = async function (req, res)  {
+export function sendingContractData(req, res) {
     try {
         const config = {
             headers: {
@@ -55,7 +54,7 @@ exports.sendingContractData = async function (req, res)  {
 
         let resK2 = {};
         let bodyRiskScore = new BodyPostRiskScore(test);
-        const resRiskScore = await axiosClient.post(URI.URL_VMG_DEV, bodyRiskScore , config).then(
+        const resRiskScore = axiosClient.post(URI.URL_VMG_DEV, bodyRiskScore , config).then(
             async result => {
                 console.log(result.data);
                 let bodyK2 = new bodyVmg_KYC_2(test.natId);
@@ -87,4 +86,4 @@ exports.sendingContractData = async function (req, res)  {
         console.log(err);
         return res.status(500).json({error: err.toString()});
     }
-}
+};

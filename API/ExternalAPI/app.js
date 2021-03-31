@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import winston from './config/winston';
+// import winston from './config/winston';
 // import logger from './config/logger';
 import morgan from 'morgan';
 import fs from 'file-system';
@@ -12,6 +12,7 @@ import path from 'path';
 
 import https from 'https';
 import fss from 'fs';
+const __dirname = path.resolve()
 const __dad = path.join(__dirname, '..');
 const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
@@ -36,11 +37,11 @@ app.use(bodyParser.json({limit: '50mb'}));
 // app.use(haltOnTimedout);
 
 // var cicExternalRoute = require('./routes/cicExternal.route');
-import eContractRoute from './routes/eContract.route';
+import eContractRoute from './routes/eContract.route.js';
 // var eKyc = require('./routes/eKyc.route');
 
 // Config DB
-import config from './config/config';
+import config from './config/config.js';
 
 import methodOverride from 'method-override';
 app.use(methodOverride(function (req, res) {

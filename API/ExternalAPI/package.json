@@ -4,7 +4,7 @@
   "description": "Project for CIC Scraping",
   "main": "app.js",
   "scripts": {
-    "start": "node -r esm app.js",
+    "start": "node app.js",
     "lint": "tslint"
   },
   "type": "module",
