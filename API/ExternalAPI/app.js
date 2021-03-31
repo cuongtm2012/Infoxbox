@@ -1,17 +1,17 @@
-var express = require('express');
-var cors = require('cors');
-var bodyParser = require('body-parser');
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
-var winston = require('./config/winston');
-var logger = require('./config/logger');
-var morgan = require('morgan');
-var fs = require('file-system');
-const moment = require('moment-timezone');
-const dateMoment = require('moment');
-var path = require('path');
+import winston from './config/winston';
+// import logger from './config/logger';
+import morgan from 'morgan';
+import fs from 'file-system';
+import moment from 'moment-timezone';
+import dateMoment from 'moment';
+import path from 'path';
 
-const https = require('https');
-const fss = require('fs');
+import https from 'https';
+import fss from 'fs';
 const __dad = path.join(__dirname, '..');
 const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
@@ -35,14 +35,14 @@ app.use(bodyParser.json({limit: '50mb'}));
 // app.use(timeout(100 * 1000));
 // app.use(haltOnTimedout);
 
-var cicExternalRoute = require('./routes/cicExternal.route');
-var eContractRoute = require('./routes/eContract.route');
-var eKyc = require('./routes/eKyc.route');
+// var cicExternalRoute = require('./routes/cicExternal.route');
+import eContractRoute from './routes/eContract.route';
+// var eKyc = require('./routes/eKyc.route');
 
 // Config DB
-var config = require('./config/config');
+import config from './config/config';
 
-var methodOverride = require('method-override');
+import methodOverride from 'method-override';
 app.use(methodOverride(function (req, res) {
 	if (req.body && typeof req.body === 'object' && '_method' in req.body) {
 		var method = req.body._method;
@@ -51,9 +51,9 @@ app.use(methodOverride(function (req, res) {
 	}
 }));
 
-var flash = require('express-flash');
-var cookieParser = require('cookie-parser');
-var session = require('express-session');
+import flash from 'express-flash';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 
 app.use(cookieParser('keyboard cat'));
 app.use(session({
@@ -81,9 +81,9 @@ app.use(morgan(function (tokens, req, res) {
 		tokens['response-time'](req, res), 'ms'
 	].join(' ');
 	if (tokens.status(req, res) == 200) {
-		logger.info(debugIncomingRequest);
+		// logger.info(debugIncomingRequest);
 	} else {
-		logger.error(debugIncomingRequest);
+		// logger.error(debugIncomingRequest);
 	}
 }));
 //configure log
@@ -96,8 +96,8 @@ var createFolder = function ensureDirSync(dirpath) {
 };
 
 // LOGS
-var uuid = require('node-uuid');
-var createNamespace = require('continuation-local-storage').createNamespace;
+import uuid from 'node-uuid';
+import {createNamespace} from 'continuation-local-storage';
 var myRequest = createNamespace('my request');
 // initialize log folder
 // createFolder(config.log.orgLog);
@@ -115,9 +115,9 @@ app.use(function (req, res, next) {
 // validator
 // app.use(expressValidator());
 
-app.use('/external', cicExternalRoute);
+// app.use('/external', cicExternalRoute);
 app.use('/contract', eContractRoute);
-app.use('/kyc', eKyc);
+// app.use('/kyc', eKyc);
 //Timeout
 // function haltOnTimedout(req, res, next) {
 // 	if (!req.timedout) next();
@@ -133,7 +133,7 @@ app.use(function (err, req, res, next) {
 	res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 	// add this line to include winston logging
-	logger.error(`${dateMoment(new Date()).format('YYYY-MM-DD hh:mm:ss')} - ${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+	// logger.error(`${dateMoment(new Date()).format('YYYY-MM-DD hh:mm:ss')} - ${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
 
 	// render the error page
 	res.status(err.status || 500);

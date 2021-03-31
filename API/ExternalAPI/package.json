@@ -4,9 +4,10 @@
   "description": "Project for CIC Scraping",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node -r esm app.js",
     "lint": "tslint"
   },
+  "type": "module",
   "author": "InfoPlusVN",
   "license": "ISC",
   "dependencies": {
@@ -24,6 +25,7 @@
     "date-and-time": "^0.14.1",
     "dateformat": "^3.0.3",
     "ejs": "^2.6.2",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-flash": "0.0.2",
     "express-session": "^1.16.2",
