@@ -12,12 +12,10 @@ import _ from 'lodash';
 import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
 import utilFunction from '../../../shared/util/util.js';
 import dataSendingDataFptContractSaveToScrapLog from '../../domain/dataSendingDataFptContractSaveToScrapLog.save.js';
-import axios from 'axios';
+import {axiosPost} from '../../services/httpClient.service.js';
 import URI from '../../../shared/URI.js';
 import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
 import bodySendInformationEContract from '../../domain/bodySubmitInformationEContract.body.js';
-
-
 export function sendingContractData (req, res) {
     try {
         const config = {
@@ -64,7 +62,7 @@ export function sendingContractData (req, res) {
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axiosPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultfetAuthAccess => {
                                 if (!_.isEmpty(resultfetAuthAccess.data.access_token)) {
                                     //    Submit information
@@ -76,7 +74,7 @@ export function sendingContractData (req, res) {
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.post(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_DEV, bodySubmitInfo, configSubmitInfo).then(
+                                    axiosPost(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_DEV, bodySubmitInfo, configSubmitInfo).then(
                                         resultSubmitInfo => {
                                             if (resultSubmitInfo.status === 200 && !_.isEmpty(resultSubmitInfo.data)) {
                                                 //    update scraplog & response P000
