@@ -1,7 +1,7 @@
-const dateFormat = require('dateformat');
-const _ = require('lodash');
+import dateFormat from 'dateformat';
+import _ from 'lodash';
 
-module.exports = {
+const util = {
     formatDate: function (date) {
         var d = new Date(date),
             month = '' + (d.getMonth() + 1),
@@ -95,3 +95,5 @@ module.exports = {
     }
 
 };
+
+export default util;
