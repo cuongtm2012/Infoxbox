@@ -7,7 +7,7 @@
     "start": "node app.js",
     "lint": "tslint"
   },
-   ,
+  "type": "module",
   "author": "InfoPlusVN",
   "license": "ISC",
   "dependencies": {
