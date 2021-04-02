@@ -15,7 +15,7 @@ var config = {
 	},
 	server: {
 		host: '127.0.0.1',
-		port: '3301'
+		port: '3300'
 	},
 	log: {
 		orgLog: '../../logs/Internal'
