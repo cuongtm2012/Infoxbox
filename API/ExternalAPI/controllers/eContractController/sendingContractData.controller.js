@@ -12,33 +12,12 @@
 // const validS11AService = require('../../services/validS11A.service');
 // const utilFunction = require('../../../shared/util/util');
 // const dataSendingDataFptContractSaveToScrapLog = require('../../domain/dataSendingDataFptContractSaveToScrapLog.save');
-import axios from 'axios';
-import URI from '../../../shared/URI.js';
+import {axiosPost} from '../../services/httpClient.service.js';
 // const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
 // const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
 import BodyPostRiskScore from '../../domain/body_Post_RiskScore.body.js';
 import bodyVmg_KYC_2 from '../../domain/bodyVmg_KYC_2.body.js';
-// const httpClient = require('../../services/httpClient.service');
-import { registerInterceptor } from 'axios-cached-dns-resolve';
-const config = {
-    disabled: process.env.AXIOS_DNS_DISABLE === 'true',
-    dnsTtlMs: process.env.AXIOS_DNS_CACHE_TTL_MS || 5000, // when to refresh actively used dns entries (5 sec)
-    cacheGraceExpireMultiplier: process.env.AXIOS_DNS_CACHE_EXPIRE_MULTIPLIER || 2, // maximum grace to use entry beyond TTL
-    dnsIdleTtlMs: process.env.AXIOS_DNS_CACHE_IDLE_TTL_MS || 1000 * 60 * 60, // when to remove entry entirely if not being used (1 hour)
-    backgroundScanMs: process.env.AXIOS_DNS_BACKGROUND_SCAN_MS || 2400, // how frequently to scan for expired TTL and refresh (2.4 sec)
-    dnsCacheSize: process.env.AXIOS_DNS_CACHE_SIZE || 100, // maximum number of entries to keep in cache
-    // pino logging options
-    logging: {
-        name: 'axios-cache-dns-resolve',
-        // enabled: true,
-        level: process.env.AXIOS_DNS_LOG_LEVEL || 'info', // default 'info' others trace, debug, info, warn, error, and fatal
-        // timestamp: true,
-        prettyPrint: process.env.NODE_ENV === 'DEBUG' || false,
-        useLevelLabels: true,
-    },
-}
-const axiosClient = axios.create(config);
-registerInterceptor(axiosClient);
+import URI from '../../../shared/URI.js';
 export function sendingContractData(req, res) {
     try {
         const config = {
@@ -52,10 +31,10 @@ export function sendingContractData(req, res) {
             natId: '001096002249'
         }
         let bodyRiskScore = new BodyPostRiskScore(test);
-        axiosClient.post(URI.URL_VMG_DEV, bodyRiskScore , config).then(
+        axiosPost(URI.URL_VMG_DEV, bodyRiskScore , config).then(
             result => {
                 let bodyK2 = new bodyVmg_KYC_2(test.natId);
-                axiosClient.post(URI.URL_VMG_DEV, bodyK2, config).then(
+                axiosPost(URI.URL_VMG_DEV, bodyK2, config).then(
                     value => {
                         console.log('ok')
                         return res.status(200).send('ok');
