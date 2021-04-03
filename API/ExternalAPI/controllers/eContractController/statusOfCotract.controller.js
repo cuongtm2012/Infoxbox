@@ -13,9 +13,10 @@ import {statusOfContractResponseWithResult} from '../../domain/reponseStatusOfCo
 import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
 import utilFunction from '../../../shared/util/util.js';
 import {dataStatusContractSaveToScrapLog} from '../../domain/dataStatusOfContractSaveToScrapLog.save.js';
-import {axiosPost, axiosGet, httpsGet, requestGet} from '../../services/httpClient.service.js';
+import {axiosPost, axiosGet, httpsGet, superagentGet} from '../../services/httpClient.service.js';
 import URI from '../../../shared/URI.js';
 import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
+import {bodyPostVmgKYC2} from '../../domain/bodyVmg_KYC_2.body.js';
 export function statusOfContract (req, res) {
     try {
         const config = {
@@ -23,6 +24,10 @@ export function statusOfContract (req, res) {
                 'Content-Type': 'application/json'
             },
             timeout: 60 * 1000
+        }
+        const test = {
+            mobilePhoneNumber: '0964785596',
+            natId: '001096002249'
         }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
@@ -54,6 +59,7 @@ export function statusOfContract (req, res) {
                     responseData = new statusOfContractResponse(req.query, preResponse);
                     logger.info(responseData);
                     return res.status(500).json(responseData);
+
                 }
                 //    end check parmas
                 let dataInsertToScrapLog = new dataStatusContractSaveToScrapLog(req.query, fullNiceKey);
@@ -61,11 +67,13 @@ export function statusOfContract (req, res) {
                 insertDataFPTContractToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         //    getAuthAccess
-                        let bodyGetAuth = new bodyGetAuthEContract();
-                        axiosPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        // let bodyGetAuth = new bodyGetAuthEContract();
+                        let bodyK2 = new bodyPostVmgKYC2(test.natId);
+                        axiosPost(URI.URL_VMG_DEV, bodyK2, config).then(
                             resultGetAuthAccess => {
-                                if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
+                                if (!_.isEmpty(resultGetAuthAccess)) {
                                 //    get status contract
+                                    console.log(resultGetAuthAccess.data.error_code)
                                     let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
                                     let configGetStatus = {
                                         headers: {
@@ -78,13 +86,12 @@ export function statusOfContract (req, res) {
                                         'Content-Type': 'application/json',
                                         'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
                                     }
-                                    requestGet(URlGetStatusContract, headers, 'demo.econtract.fpt.com.vn').then(
+                                    superagentGet('https://dev-partner.score.dmp.zaloapp.com/v1/api/auth?username=partner&password=password', {} , `Bearer`).then(
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                responseData = new statusOfContractResponseWithResult(req.query, preResponse, resultGetStatus.data);
-                                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                                responseData = new statusOfContractResponse(req.query, preResponse);                                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 insertDataToINQLOG(dataInqLogSave).then();
                                                 updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 logger.info(responseData);
@@ -148,7 +155,7 @@ export function statusOfContract (req, res) {
                                     })
                                 } else if (resultGetAuthAccess.status === 500) {
                                     //    update scraplog & response F072
-                                    console.log('errGetStatus: ', resultGetAuthAccess);
+                                    console.log('errGetAuth: ', resultGetAuthAccess);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                     responseData = new statusOfContractResponse(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
@@ -159,7 +166,7 @@ export function statusOfContract (req, res) {
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
-                                    console.log('errGetStatus: ', resultGetAuthAccess);
+                                    console.log('errGetAuth: ', resultGetAuthAccess);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new statusOfContractResponse(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
@@ -170,7 +177,7 @@ export function statusOfContract (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            console.log('errGetStatus: ', reason.toString());
+                            console.log('errGetAuth: ', reason.toString());
                             if (reason.response && reason.response.status === 500) {
                                 //    update scraplog & response F072
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
