@@ -1,7 +1,7 @@
-const oracledb = require('oracledb');
-const config = require('../config/config');
-const dateutil = require('../util/dateutil');
-const getIdGetway = require('../../shared/util/getIPGateWay');
+import oracledb from 'oracledb';
+import config from '../config/config.js';
+import dateutil from '../util/dateutil.js';
+import getIdGetway from '../../shared/util/getIPGateWay.js';
 
 async function insertS37Detail(req) {
     let connection;
@@ -95,4 +95,4 @@ async function insertS37Detail(req) {
     }
 }
 
-module.exports.insertS37Detail = insertS37Detail;
+export default insertS37Detail;

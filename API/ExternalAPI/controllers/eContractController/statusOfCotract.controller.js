@@ -13,7 +13,7 @@ import {statusOfContractResponseWithResult} from '../../domain/reponseStatusOfCo
 import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
 import utilFunction from '../../../shared/util/util.js';
 import {dataStatusContractSaveToScrapLog} from '../../domain/dataStatusOfContractSaveToScrapLog.save.js';
-import {axiosPost, axiosGet} from '../../services/httpClient.service.js';
+import {axiosPost, axiosGet, httpsGet} from '../../services/httpClient.service.js';
 import URI from '../../../shared/URI.js';
 import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
 export function statusOfContract (req, res) {
@@ -69,11 +69,12 @@ export function statusOfContract (req, res) {
                                     let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
                                     let configGetStatus = {
                                         headers: {
+                                            'Content-Type': 'application/json',
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axiosGet(URlGetStatusContract,configGetStatus).then(
+                                    axiosGet(URlGetStatusContract, configGetStatus,'demo.econtract.fpt.com.vn' ).then(
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000

@@ -1,6 +1,6 @@
-const dateutil = require('../util/dateutil');
+import dateutil from '../util/dateutil.js';
 
-module.exports = function CIC_S37_RQSTRequest(parameters, password, niceSessionKey) {
+export function cics37RQSTReq(parameters, password, niceSessionKey) {
     const { fiSessionKey,
         fiCode,
         taskCode,
@@ -31,4 +31,4 @@ module.exports = function CIC_S37_RQSTRequest(parameters, password, niceSessionK
     this.infoProvConcent = infoProvConcent.toUpperCase();
     this.niceSessionKey = niceSessionKey;
 
-};
+}
