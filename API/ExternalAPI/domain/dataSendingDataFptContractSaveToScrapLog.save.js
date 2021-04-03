@@ -1,7 +1,7 @@
-const dateutil = require('../util/dateutil');
-const responCode = require('../../shared/constant/responseCodeExternal');
-const ipGateWay = require('../../shared/util/getIPGateWay');
-module.exports = function dataFPTContractSaveToScrapLog(Request, niceSessionKey) {
+import dateutil from  '../util/dateutil.js';
+import responCode from '../../shared/constant/responseCodeExternal.js';
+import ipGateWay from '../../shared/util/getIPGateWay.js';
+export default function dataFPTContractSaveToScrapLog(Request, niceSessionKey) {
     const {
         fiSessionKey,
         fiCode,

@@ -1,19 +1,18 @@
-const winston = require('winston');
-const config = require('./config');
-const moment = require('moment');
-const appRoot = require('app-root-path');
-const getNamespace = require('continuation-local-storage').getNamespace;
-const gracefulFs = require('graceful-fs');
+import winston from 'winston';
+import moment from 'moment';
+import appRoot from 'app-root-path';
+import {getNamespace} from 'continuation-local-storage';
+import gracefulFs from 'graceful-fs';
 
-const fs = require('file-system');
-const fss = require('fs');
-var folderLogs = appRoot + '/logs';
-var folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
-var folderName_normal = folderName_External + '/normal';
-var folderName_error = folderName_External + '/error';
-var logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-var logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-var todayLogFile = '';
+import fs from 'file-system';
+import fss from 'fs';
+let folderLogs = appRoot + '/logs';
+let folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
+let folderName_normal = folderName_External + '/normal';
+let folderName_error = folderName_External + '/error';
+let logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+let logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
+let todayLogFile = '';
 
 gracefulFs.gracefulify(fs);
 gracefulFs.gracefulify(fss);
@@ -43,7 +42,7 @@ async function ensureFileSync(filePath) {
     }
 }
 
-var winstonLogger = new winston.Logger({
+let winstonLogger = new winston.Logger({
     transports: [
         new winston.transports.File({
             filename: logfile_normal,
@@ -64,7 +63,7 @@ var winstonLogger = new winston.Logger({
     ],
     exitOnError: false
 });
-var winstonLoggerError = new winston.Logger({
+let winstonLoggerError = new winston.Logger({
     transports: [
         new winston.transports.File({
             filename: logfile_error,
@@ -93,7 +92,7 @@ winstonLogger.stream = {
 };
 
 // Wrap Winston logger to print reqId in each log
-var formatMessage = async function (message) {
+let formatMessage = async function (message) {
     if (todayLogFile !== logfile_normal) {
         console.log('created new logFile: ' +  moment(new Date()).format('YYYYMMDD'));
         todayLogFile = logfile_normal;
@@ -104,7 +103,7 @@ var formatMessage = async function (message) {
         await ensureFileSync(logfile_error);
         await ensureFileSync(logfile_normal);
     }
-    var myRequest = getNamespace('my request');
+    let myRequest = getNamespace('my request');
     message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
     return message;
 };
@@ -159,7 +158,7 @@ function refreshDirNameAndFileName() {
         exitOnError: false
     });
 }
-var logger = {
+const logger = {
     log: async function (level, message) {
         refreshDirNameAndFileName();
         winstonLogger.log(level, await formatMessage(message));
@@ -190,4 +189,4 @@ var logger = {
     }
 };
 
-module.exports = logger;
+export default logger;

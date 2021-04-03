@@ -1,8 +1,8 @@
-const dateutil = require('../util/dateutil');
-const _ = require('lodash');
-const responseCode = require('../../shared/constant/responseCodeExternal');
+import dateutil from '../util/dateutil.js';
+import _ from 'lodash';
+import responseCode from '../../shared/constant/responseCodeExternal.js';
 
-module.exports = function DataInqLogSave(params, respCd) {
+export function DataInqLogSave(params, respCd) {
     const {
         fiSessionKey,
         fiCode,

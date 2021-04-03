@@ -105,7 +105,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     logger.info(resultRclipsSPL.data);
                                     return res.status(200).json(responseData)
                                 }
-                        }).catch(reason => {
+                            }).catch(reason => {
                             if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);

@@ -1,5 +1,5 @@
 
-module.exports = function CIC_S11A_RQSTResponse(cics11aRQSTRequest, response) {
+export function cics11aRQSTRes(cics11aRQSTRequest, response) {
 
     const {
         responseMessage,
@@ -38,6 +38,5 @@ module.exports = function CIC_S11A_RQSTResponse(cics11aRQSTRequest, response) {
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-
-};
+}
 

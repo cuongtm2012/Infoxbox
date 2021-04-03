@@ -96,8 +96,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     axios.post(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, configRequestZaloGetScore).then(
                                         resultGetZaloScore => {
                                             if (resultGetZaloScore.data.code !== undefined) {
-                                            //    success get zalo score
-                                            //    save score to EXT_SCORE
+                                                //    success get zalo score
+                                                //    save score to EXT_SCORE
                                                 let ZaloScore;
                                                 if (resultGetZaloScore.data.code === 0) {
                                                     ZaloScore = resultGetZaloScore.data.data.score;
@@ -116,8 +116,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 axios.post(URI.URL_VMG_DEV, bodyGetRiskScore, config).then(
                                                     resultGetRiskScore => {
                                                         if (resultGetRiskScore.data.error_code !== undefined) {
-                                                        //    success get Risk Score
-                                                        //    update To EXT_SCORE
+                                                            //    success get Risk Score
+                                                            //    update To EXT_SCORE
                                                             let VmgScore, VmgGrade;
                                                             if(resultGetRiskScore.data.error_code === 0) {
                                                                 VmgScore = resultGetRiskScore.data.result.nice_score.RSK_SCORE;

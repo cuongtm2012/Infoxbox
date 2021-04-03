@@ -1,6 +1,5 @@
-
-const oracledb = require('oracledb');
-const config = require('../config/config');
+import oracledb from 'oracledb';
+import config from '../config/config.js';
 
 async function getSequence() {
     let connection;
@@ -42,4 +41,4 @@ async function getSequence() {
 }
 
 
-module.exports.getSequence = getSequence;
+export default getSequence;

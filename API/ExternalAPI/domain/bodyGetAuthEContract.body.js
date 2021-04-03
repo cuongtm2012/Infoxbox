@@ -1,5 +1,5 @@
-const config = require('../config/config');
-module.exports = function bodyGetAuthEContract() {
+import config from '../config/config.js';
+export default function bodyGetAuthEContract() {
     this.username = config.bodyGetAuthEContract.DEV_username;
     this.password = config.bodyGetAuthEContract.DEV_password;
     this.rememberMe = false;

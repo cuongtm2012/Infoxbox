@@ -1,13 +1,13 @@
-const validation = require('../../shared/util/validation');
+import validation from '../../shared/util/validation.js';
 
-const responcodeEXT = require('../../shared/constant/responseCodeExternal');
+import responcodeEXT from '../../shared/constant/responseCodeExternal.js';
 
-const checkContains = require('../../shared/util/checkcontains');
-const _ = require('lodash');
-const dateUtil = require('../util/dateutil');
-const isBase64 = require('is-base64');
+import checkContains from '../../shared/util/checkcontains.js';
+import _ from 'lodash';
+import dateUtil from '../util/dateutil.js';
+import isBase64 from 'is-base64';
 
-module.exports = {
+const validRequest = {
     checkParamRequest: function (getdataReq) {
         var response;
 
@@ -135,3 +135,5 @@ module.exports = {
 
     }
 };
+
+export default validRequest;

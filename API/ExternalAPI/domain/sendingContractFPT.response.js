@@ -1,4 +1,4 @@
-module.exports = function sendingContractDataFPTResponse(Request, preResponse) {
+export default function sendingContractDataFPTResponse(Request, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
