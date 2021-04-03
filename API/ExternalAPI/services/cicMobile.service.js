@@ -1,11 +1,10 @@
-const oracledb = require('oracledb');
-const config = require('../config/config');
+import oracledb from 'oracledb'
+import config from '../config/config.js';
 
-const dateutil = require('../util/dateutil');
-const nicekey = require('../../shared/util/niceGoodCode');
-const ipGateWay = require('../../shared/util/getIPGateWay');
-const niceGoodCode = require('../../shared/util/niceGoodCode');
-const _ = require('lodash');
+import dateutil from '../util/dateutil.js';
+import nicekey from '../../shared/util/niceGoodCode.js';
+import niceGoodCode from '../../shared/util/niceGoodCode.js';
+import _ from 'lodash';
 
 
 async function insertSCRPLOG(req, res) {
@@ -149,5 +148,4 @@ async function selectCicMobileDetailReport(req) {
     }
 }
 
-module.exports.insertSCRPLOG = insertSCRPLOG;
-module.exports.selectCicMobileDetailReport = selectCicMobileDetailReport;
+export {insertSCRPLOG, selectCicMobileDetailReport};

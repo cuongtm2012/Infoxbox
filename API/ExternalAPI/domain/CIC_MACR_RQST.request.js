@@ -1,6 +1,6 @@
-const dateutil = require('../util/dateutil');
+import dateutil from '../util/dateutil.js';
 
-module.exports = function CIC_MACR_RQSTRequest(parameters, niceSessionKey) {
+function CIC_MACR_RQSTRequest(parameters, niceSessionKey) {
     const {
         fiSessionKey,
         fiCode,
@@ -19,4 +19,6 @@ module.exports = function CIC_MACR_RQSTRequest(parameters, niceSessionKey) {
     this.inquiryDate = inquiryDate ? inquiryDate : dateutil.getCurrentInquiryDate();
     this.infoProvConcent = infoProvConcent;
     this.niceSessionKey = niceSessionKey;
-};
+}
+
+export default CIC_MACR_RQSTRequest;
