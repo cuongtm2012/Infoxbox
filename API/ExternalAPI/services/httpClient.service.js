@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {registerInterceptor} from 'axios-cached-dns-resolve';
 import config from '../config/config.js';
-
+import superagent from'superagent';
 const axiosClient = axios.create(config.configCacheAxios);
 import https from 'https';
 import dnscache from 'dnscache';
@@ -10,7 +10,6 @@ const cache = dnscache({
     "ttl" : 100,
     "cachesize" : 10000
 });
-import request from 'request';
 registerInterceptor(axiosClient);
 // getUri(config?: AxiosRequestConfig): string;
 // request<T = any, R = AxiosResponse<T>> (config: AxiosRequestConfig): Promise<R>;
@@ -78,20 +77,16 @@ function httpsGet(hostname, port, path, headers) {
     })
 }
 
-function requestGet(url, headers, hostname) {
+function superagentGet(url, query, Authorization) {
     return new Promise((resolve, reject) => {
         try {
-            cache.lookup(hostname ? hostname : 'demo.econtract.fpt.com.vn', function(err, result) {
-                console.log('result>>>>>>>>>>>>>>',result);
-            });
-            request({
-                url: url,
-                method: 'GET',
-                headers: headers,
-                timeout: 60 * 1000
-            }, (error, response, body) => {
-                resolve({status: response.statusCode, data: body});
-            });
+            superagent
+                .get(url)
+                .query() // query string
+                .set('Authorization', Authorization)
+                .end((err, res) => {
+                    resolve({status: res.statusCode, data: res.body});
+                });
         } catch (err) {
             console.log(err.toString());
             reject(err)
@@ -99,4 +94,5 @@ function requestGet(url, headers, hostname) {
     })
 }
 
-export {axiosPost, axiosGet, httpsGet, requestGet};
+
+export {axiosPost, axiosGet, httpsGet, superagentGet};

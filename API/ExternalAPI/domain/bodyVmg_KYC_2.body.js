@@ -1,5 +1,5 @@
-const config = require('../config/config');
-module.exports = function bodyPostVmgKYC2(natId) {
+import config from '../config/config.js';
+export function bodyPostVmgKYC2(natId) {
     this.cmd = config.Vmg_Kyc_2.DEV_cmd;
     this.idCard = natId;
     this.idCard1 = "";
