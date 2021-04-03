@@ -67,10 +67,14 @@ export function statusOfContract (req, res) {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                 //    get status contract
                                     let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
-                                    let headers = {
+                                    let configGetStatus = {
+                                        headers: {
+                                            'Content-Type': 'application/json',
                                             'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
-                                        }
-                                    httpsGet('demo.econtract.fpt.com.vn',443,'/app/services/envelope/api/external/v1/envelope/status?id=' + req.query.id, headers).then(
+                                        },
+                                        timeout: 60 * 1000
+                                    }
+                                    axiosGet(URlGetStatusContract, configGetStatus,'demo.econtract.fpt.com.vn' ).then(
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000

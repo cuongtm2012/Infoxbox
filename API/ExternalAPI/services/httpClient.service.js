@@ -30,9 +30,12 @@ function axiosPost(url, data, config) {
     })
 }
 
-function axiosGet(url, config) {
+function axiosGet(url, config, hostname) {
     return new Promise((resolve, reject) => {
         try {
+            cache.lookup(hostname ? hostname : 'demo.econtract.fpt.com.vn', function(err, result) {
+                console.log('result>>>>>>>>>>>>>>',result);
+            });
             resolve(axios.get(url, config));
         } catch (err) {
             console.log(err.toString());
