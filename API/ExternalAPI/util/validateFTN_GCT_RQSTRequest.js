@@ -1,7 +1,6 @@
-const responcodeEXT = require('../../shared/constant/responseCodeExternal');
-const _ = require('lodash');
-const checkContains = require('../../shared/util/checkcontains');
-module.exports = {
+import responcodeEXT from '../../shared/constant/responseCodeExternal.js';
+import _ from 'lodash';
+const validateDownloadContract = {
     checkParamRequest: function (getDataReq) {
         var response;
         //fiSessionKey, appNumber
@@ -63,3 +62,5 @@ module.exports = {
         return response;
     }
 };
+
+export default validateDownloadContract;

@@ -1,4 +1,4 @@
-module.exports = function responseGetApiStructureResponseWithResult(Request, preResponse, dataGetStructure) {
+export function responseGetApiStructureResponseWithResult(Request, preResponse, dataGetStructure) {
     const {
         responseMessage,
         niceSessionKey,

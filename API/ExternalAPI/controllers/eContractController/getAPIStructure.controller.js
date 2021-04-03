@@ -1,22 +1,19 @@
-const validRequest = require('../../util/validateFTN_GAS_RQSTRequest');
-const logger = require('../../config/logger');
-const common_service = require('../../services/common.service');
-const responCode = require('../../../shared/constant/responseCodeExternal');
-const PreResponse = require('../../domain/preResponse.response');
-const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../../services/cicExternal.service');
-const dateutil = require('../../util/dateutil');
-const util = require('../../util/dateutil');
-const getApiStructureResponseWithoutResult = require('../../domain/getApiStructureReponseWithoutResult.response')
-const validS11AService = require('../../services/validS11A.service');
-const utilFunction = require('../../../shared/util/util');
-const _ = require('lodash');
-const dataGetStructureAPISaveToScrapLog = require('../../domain/dataGetStructureAPISaveToScrapLog.save');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
-const axios = require('axios');
-const URI = require('../../../shared/URI');
-const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
-exports.getStructureAPI = function (req, res) {
+import validRequest from '../../util/validateFTN_GAS_RQSTRequest.js';
+import logger from '../../config/logger.js';
+import responCode from '../../../shared/constant/responseCodeExternal.js';
+import PreResponse from '../../domain/preResponse.response.js';
+import DataSaveToInqLog from '../../domain/data_FptId_Save_To_InqLog.save.js';
+import {insertDataToINQLOG} from '../../services/cicExternal.service.js';
+import dateutil from '../../util/dateutil.js';
+import {getApiStructureResponseWithoutResult} from '../../domain/getApiStructureReponseWithoutResult.response.js';
+import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
+import utilFunction from '../../../shared/util/util.js';
+import _ from 'lodash';
+import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
+import {axiosPost, axiosGet} from '../../services/httpClient.service.js';
+import URI from '../../../shared/URI.js';
+import {responseGetApiStructureResponseWithResult} from '../../domain/responseGetStructureApiWithResult.response.js';
+export function getStructureAPI (req, res) {
     try {
         const config = {
             headers: {
@@ -32,18 +29,18 @@ exports.getStructureAPI = function (req, res) {
                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                insertDataToINQLOG(dataInqLogSave).then();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             } else {
                 // check FI contract
-                validS11AService.selectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_GAS_RQST.code).then(dataFICode => {
+                validS11AServiceSelectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_GAS_RQST.code).then(dataFICode => {
                     if (_.isEmpty(dataFICode)) {
                         preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
                         responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                         // update INQLOG
                         dataInqLogSave = new DataSaveToInqLog(req.query, responseData);
-                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                        insertDataToINQLOG(dataInqLogSave).then();
                         logger.info(responseData);
                         return res.status(200).json(responseData);
                     } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -54,7 +51,7 @@ exports.getStructureAPI = function (req, res) {
                     } else {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axiosPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     let URlGetStructureContract = URI.URL_E_CONTRACT_GET_STRUCTURE_API_DEV + req.query.alias;
@@ -65,14 +62,13 @@ exports.getStructureAPI = function (req, res) {
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.get(URlGetStructureContract, configGetStructure).then(
+                                    axiosGet(URlGetStructureContract, configGetStructure).then(
                                         resultGetStructure => {
                                             if (resultGetStructure.status === 200 && !_.isEmpty(resultGetStructure.data)) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new responseGetApiStructureResponseWithResult(req.query, preResponse, resultGetStructure.data);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.NORMAL.code).then();
+                                                insertDataToINQLOG(dataInqLogSave).then();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else {
@@ -81,8 +77,7 @@ exports.getStructureAPI = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                insertDataToINQLOG(dataInqLogSave).then();
                                                 logger.info(responseData);
                                                 logger.info(resultGetStructure.data);
                                                 return res.status(200).json(responseData);
@@ -94,8 +89,7 @@ exports.getStructureAPI = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractTemplateForInputAlias.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractTemplateForInputAlias.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.NoContractTemplateForInputAlias.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -103,8 +97,7 @@ exports.getStructureAPI = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -112,8 +105,7 @@ exports.getStructureAPI = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -127,8 +119,7 @@ exports.getStructureAPI = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -136,8 +127,7 @@ exports.getStructureAPI = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);

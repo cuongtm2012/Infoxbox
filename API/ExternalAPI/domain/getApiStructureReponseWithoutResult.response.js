@@ -1,4 +1,4 @@
-module.exports = function getApiStructureResponseWithoutResult(Request, preResponse) {
+export function getApiStructureResponseWithoutResult(Request, preResponse) {
     const {
         responseMessage,
         niceSessionKey,

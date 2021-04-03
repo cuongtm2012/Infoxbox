@@ -1,4 +1,4 @@
-module.exports = function statusOfContractResponse(Request, preResponse) {
+export function statusOfContractResponse(Request, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
