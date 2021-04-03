@@ -17,6 +17,11 @@ import {axiosPost, axiosGet, httpsGet, superagentGet} from '../../services/httpC
 import URI from '../../../shared/URI.js';
 import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
 import {bodyPostVmgKYC2} from '../../domain/bodyVmg_KYC_2.body.js';
+import axios from 'axios';
+import {registerInterceptor} from 'axios-cached-dns-resolve';
+import config from '../../config/config.js';
+const axiosClient = axios.create(config.configCacheAxios);
+registerInterceptor(axiosClient);
 export function statusOfContract (req, res) {
     try {
         const config = {
@@ -69,7 +74,7 @@ export function statusOfContract (req, res) {
                         //    getAuthAccess
                         // let bodyGetAuth = new bodyGetAuthEContract();
                         let bodyK2 = new bodyPostVmgKYC2(test.natId);
-                        axiosPost(URI.URL_VMG_DEV, bodyK2, config).then(
+                        axios.post(URI.URL_VMG_DEV, bodyK2, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess)) {
                                 //    get status contract
@@ -90,6 +95,7 @@ export function statusOfContract (req, res) {
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000
+                                                console.log('message: ',  resultGetStatus.data.message);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new statusOfContractResponse(req.query, preResponse);                                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 insertDataToINQLOG(dataInqLogSave).then();
