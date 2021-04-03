@@ -1,4 +1,4 @@
-var config = {
+const config = {
 	database: {
 		host: '1.55.215.214',
 		user: 'root',
@@ -90,7 +90,25 @@ var config = {
 	requestTimeOut: {
 		applicationJson: 60000,
 		applicationFormData: 100000
+	},
+
+	configCacheAxios: {
+		disabled: process.env.AXIOS_DNS_DISABLE === 'true',
+		dnsTtlMs: process.env.AXIOS_DNS_CACHE_TTL_MS || 5000, // when to refresh actively used dns entries (5 sec)
+		cacheGraceExpireMultiplier: process.env.AXIOS_DNS_CACHE_EXPIRE_MULTIPLIER || 2, // maximum grace to use entry beyond TTL
+		dnsIdleTtlMs: process.env.AXIOS_DNS_CACHE_IDLE_TTL_MS || 1000 * 60 * 60, // when to remove entry entirely if not being used (1 hour)
+		backgroundScanMs: process.env.AXIOS_DNS_BACKGROUND_SCAN_MS || 2400, // how frequently to scan for expired TTL and refresh (2.4 sec)
+		dnsCacheSize: process.env.AXIOS_DNS_CACHE_SIZE || 100, // maximum number of entries to keep in cache
+		// pino logging options
+		logging: {
+			name: 'axios-cache-dns-resolve',
+			// enabled: true,
+			level: process.env.AXIOS_DNS_LOG_LEVEL || 'info', // default 'info' others trace, debug, info, warn, error, and fatal
+			// timestamp: true,
+			prettyPrint: process.env.NODE_ENV === 'DEBUG' || false,
+			useLevelLabels: true,
+		},
 	}
 };
 
-module.exports = config;
+export default config;

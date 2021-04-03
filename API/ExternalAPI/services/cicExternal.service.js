@@ -1,18 +1,17 @@
-const oracledb = require('oracledb');
-const config = require('../config/config');
-const dateUtil = require('../util/dateutil');
-const convertTime = require('../util/dateutil');
-const niceGoodCode = require('../../shared/util/niceGoodCode');
-const ipGateWay = require('../../shared/util/getIPGateWay');
-const _ = require('lodash');
-const responCode = require('../../shared/constant/responseCodeExternal');
+import oracledb from 'oracledb';
+import config from '../config/config.js';
+import dateUtil from'../util/dateutil.js';
+import niceGoodCode from '../../shared/util/niceGoodCode.js';
+import ipGateWay from '../../shared/util/getIPGateWay.js';
+import _ from 'lodash';
+import responCode from '../../shared/constant/responseCodeExternal.js';
 async function insertSCRPLOG(req) {
     let connection;
 
     try {
         let sql, result;
 
-        let sysDim = convertTime.timeStamp();
+        let sysDim = dateUtil.timeStamp();
         let producCode = niceGoodCode.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
@@ -74,7 +73,7 @@ async function insertINQLOG(req) {
         let sql, result;
         let _OTR_ID;
 
-        let sysDim = convertTime.timeStamp();
+        let sysDim = dateUtil.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
         connection = await oracledb.getConnection(config.poolAlias);
@@ -656,7 +655,7 @@ async function insertDataZaloINQLOG(req) {
 
     try {
         let sql, result;
-        let sysDim = convertTime.timeStamp();
+        let sysDim = dateUtil.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
         connection = await oracledb.getConnection(config.poolAlias);
@@ -834,7 +833,7 @@ async function insertDataRiskScoreToINQLOG(req) {
 
     try {
         let sql, result;
-        let sysDim = convertTime.timeStamp();
+        let sysDim = dateUtil.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
         connection = await oracledb.getConnection(config.poolAlias);
@@ -981,7 +980,7 @@ async function insertDataToINQLOG(req) {
 
     try {
         let sql, result;
-        let sysDim = convertTime.timeStamp();
+        let sysDim = dateUtil.timeStamp();
         let gateway = ipGateWay.getIPGateWay(req);
 
         connection = await oracledb.getConnection(config.poolAlias);
@@ -1908,34 +1907,12 @@ async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
     }
 }
 
-module.exports.insertSCRPLOG = insertSCRPLOG;
-module.exports.insertINQLOG = insertINQLOG;
-module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
-module.exports.selectScrapingStatusCodeSCRPLOG = selectScrapingStatusCodeSCRPLOG;
-module.exports.selectProcStatus = selectProcStatus;
-module.exports.insertDataZaloINQLOG = insertDataZaloINQLOG;
-module.exports.insertDataZaloToSCRPLOG = insertDataZaloToSCRPLOG;
-module.exports.updateRspCdScrapLogAfterGetResult = updateRspCdScrapLogAfterGetResult;
-module.exports.insertDataZaloToExtScore = insertDataZaloToExtScore;
-module.exports.insertDataRiskScoreToINQLOG = insertDataRiskScoreToINQLOG;
-module.exports.insertDataRiskScoreToSCRPLOG = insertDataRiskScoreToSCRPLOG;
-module.exports.insertDataRiskScoreToExtScore = insertDataRiskScoreToExtScore;
-module.exports.insertDataToINQLOG = insertDataToINQLOG;
-module.exports.insertDataReqToSCRPLOG = insertDataReqToSCRPLOG;
-module.exports.insertDataFptIdToFptId = insertDataFptIdToFptId;
-module.exports.insertDataToFptFace = insertDataToFptFace;
-module.exports.insertDataNFScoreOKToSCRPLOG = insertDataNFScoreOKToSCRPLOG;
-module.exports.selectValue1InFiCriManage = selectValue1InFiCriManage;
-module.exports.selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd = selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd;
-module.exports.insertDataToVmgLocPct = insertDataToVmgLocPct;
-module.exports.insertDataToVmgAddress = insertDataToVmgAddress;
-module.exports.insertDataSimpleLimitToSCRPLOG = insertDataSimpleLimitToSCRPLOG;
-module.exports.insertDataFPTContractToSCRPLOG = insertDataFPTContractToSCRPLOG;
-module.exports.selectCICScoreAndGrade = selectCICScoreAndGrade;
-module.exports.insertDataToVmgIncome = insertDataToVmgIncome;
-module.exports.insertDataCAC1ToSCRPLOG = insertDataCAC1ToSCRPLOG;
-module.exports.updateRspCdAndStatusCdScrapLogAfterGetResult = updateRspCdAndStatusCdScrapLogAfterGetResult;
-module.exports.selectDataKYC_VC1_RSLT = selectDataKYC_VC1_RSLT;
-module.exports.insertDataToExtScore = insertDataToExtScore;
-module.exports.updateScrapingTranslog = updateScrapingTranslog;
-module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted;
+export { insertSCRPLOG, insertINQLOG, selectCICS11aRSLT, selectScrapingStatusCodeSCRPLOG, selectProcStatus,
+    insertDataZaloINQLOG, insertDataZaloToSCRPLOG, updateRspCdScrapLogAfterGetResult, insertDataZaloToExtScore,
+    insertDataRiskScoreToINQLOG, insertDataRiskScoreToSCRPLOG, insertDataRiskScoreToExtScore, insertDataToINQLOG,
+    insertDataReqToSCRPLOG, insertDataFptIdToFptId, insertDataToFptFace, insertDataNFScoreOKToSCRPLOG, selectValue1InFiCriManage,
+    selectZaloAndVMGRiskScoreByNiceSsKyAandCustCd, insertDataToVmgLocPct, insertDataToVmgAddress, insertDataSimpleLimitToSCRPLOG,
+    insertDataFPTContractToSCRPLOG, selectCICScoreAndGrade, insertDataToVmgIncome, insertDataCAC1ToSCRPLOG,
+    updateRspCdAndStatusCdScrapLogAfterGetResult, selectDataKYC_VC1_RSLT, insertDataToExtScore ,updateScrapingTranslog,
+    updateCICReportInquiryCompleted}
+

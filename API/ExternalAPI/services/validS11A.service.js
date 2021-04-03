@@ -1,6 +1,6 @@
-const oracledb = require('oracledb');
-const config = require('../config/config');
-const dateUtil = require('../util/dateutil');
+import oracledb from 'oracledb';
+import config from'../config/config.js';
+import dateUtil from'../util/dateutil.js';
 
 /*
 ** select FI code(CUST_CD)
@@ -49,4 +49,4 @@ async function selectFiCode(fiCode, goodCode) {
     }
 }
 
-module.exports.selectFiCode = selectFiCode;
+export default selectFiCode;

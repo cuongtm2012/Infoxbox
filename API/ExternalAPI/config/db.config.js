@@ -1,6 +1,6 @@
-const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
-const config = require('./config')
+import oracledb from'oracledb';
+import dbconfig from'../../shared/config/dbconfig.js';
+import config from'./config.js';
 
 const dbOption = {
 	user: dbconfig.user,
@@ -25,4 +25,5 @@ async function initialize() {
 		}
 	);//end oracledb.createpool
 }
-module.exports.initialize = initialize;
+
+export default initialize;

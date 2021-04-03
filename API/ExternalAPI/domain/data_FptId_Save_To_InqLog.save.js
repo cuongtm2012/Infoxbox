@@ -1,6 +1,6 @@
-const dateutil = require('../util/dateutil');
-const responCode = require('../../shared/constant/responseCodeExternal');
-module.exports = function dataSaveToInqLog(fptRq, preResponse) {
+import dateutil from '../util/dateutil.js';
+import responCode from '../../shared/constant/responseCodeExternal.js';
+export default function DataSaveToInqLog(fptRq, preResponse) {
     const {
         responseMessage,
         niceSessionKey,
