@@ -1,5 +1,5 @@
 
-module.exports = function CIC_MACR_RQSTResponse(cicMacrRQSTRequest, response) {
+function CIC_MACR_RQSTResponse(cicMacrRQSTRequest, response) {
 
     const {
         responseMessage,
@@ -29,4 +29,6 @@ module.exports = function CIC_MACR_RQSTResponse(cicMacrRQSTRequest, response) {
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-};
+}
+
+export default CIC_MACR_RQSTResponse;

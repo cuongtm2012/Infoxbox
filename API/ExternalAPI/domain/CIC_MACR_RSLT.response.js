@@ -1,7 +1,7 @@
-const convertMilionUnit = require('../../shared/util/convertUnit');
-const util = require('../../shared/util/util');
+import convertMilionUnit from '../../shared/util/convertUnit.js';
+import util from '../../shared/util/util.js';
 
-module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, dataRes) {
+function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, dataRes) {
 
     const {
         responseTime,
@@ -57,5 +57,7 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.baseDate = util.convertDateType(BASE_DATE);
     this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
     this.relatedFiName = REL_OGZ_LIST;
-};
+}
+
+export default CIC_MACR_RSLTResponse;
 
