@@ -1,31 +1,32 @@
-const logger = require('../../config/logger');
+import logger from '../../config/logger.js';
 
-const cicMacrRQSTReq = require('../../domain/CIC_MACR_RQST.request');
+import cicMacrRQSTReq from '../../domain/CIC_MACR_RQST.request.js';
 
-const cicMacrRQSTRes = require('../../domain/CIC_MACR_RQST.response');
+import cicMacrRQSTRes from '../../domain/CIC_MACR_RQST.response.js';
 
-const cicMobileService = require('../../services/cicMobile.service');
+import {insertSCRPLOG, selectCicMobileDetailReport} from '../../services/cicMobile.service.js';
+//cicMobileService
+import validation from '../../../shared/util/validation.js';
 
-const validation = require('../../../shared/util/validation');
+import validRequest from '../../util/validateMacrParamRequest.js';
 
-const validRequest = require('../../util/validateMacrParamRequest');
+import util from '../../util/dateutil.js';
 
-const util = require('../../util/dateutil');
+import common_service from '../../services/common.service.js';
 
-const common_service = require('../../services/common.service');
+import responCode from '../../../shared/constant/responseCodeExternal.js';
+import _ from 'lodash';
+import validS11AService from '../../services/validS11A.service.js';
+import PreResponse from '../../domain/preResponse.response.js';
+import dateutil from '../../util/dateutil.js';
+import {DataInqLogSave} from '../../domain/INQLOG.save.js';
+import {insertINQLOG, selectScrapingStatusCodeSCRPLOG} from '../../services/cicExternal.service.js';
+//cicExternalService
+import utilFunction from '../../../shared/util/util.js';
+import io from 'socket.io-client';
+import URI from '../../../shared/URI.js';
 
-const responCode = require('../../../shared/constant/responseCodeExternal');
-const _ = require('lodash');
-const validS11AService = require('../../services/validS11A.service');
-const PreResponse = require('../../domain/preResponse.response');
-const dateutil = require('../../util/dateutil');
-const {DataInqLogSave} = require('../../domain/INQLOG.save');
-const cicExternalService = require('../../services/cicExternal.service');
-const utilFunction = require('../../../shared/util/util');
-const io = require('socket.io-client');
-const URI = require('../../../shared/URI');
-
-exports.cicMACRRQST = function (req, res, next) {
+function cicMACRRQST (req, res, next) {
     let socket;
 
     try {
@@ -36,7 +37,7 @@ exports.cicMACRRQST = function (req, res, next) {
         Checking parameters request
         Request data
         */
-        let rsCheck = validRequest.checkMacrParamRequest(req.body);
+        let rsCheck = validRequest(req.body);
 
         if (!_.isEmpty(rsCheck)) {
             preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
@@ -44,19 +45,19 @@ exports.cicMACRRQST = function (req, res, next) {
             responseData = new cicMacrRQSTRes(req.body, preResponse);
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+            insertINQLOG(dataInqLogSave).then((r) => {
             });
             logger.info(responseData);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.Mobile.code).then(dataFICode => {
+        validS11AService(req.body.fiCode, responCode.NiceProductCode.Mobile.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
                 responseData = new cicMacrRQSTRes(req.body, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                insertINQLOG(dataInqLogSave).then((r) => {
                 });
                 logger.info(responseData);
                 return res.status(200).json(responseData);
@@ -69,7 +70,7 @@ exports.cicMACRRQST = function (req, res, next) {
             }
             //End check params request
 
-            common_service.getSequence().then(resSeq => {
+            common_service().then(resSeq => {
                 niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
 
                 const getdataReq = new cicMacrRQSTReq(req.body, niceSessionKey);
@@ -78,7 +79,7 @@ exports.cicMACRRQST = function (req, res, next) {
                 logger.debug('log request parameters from routes after manage request');
                 logger.info(req.body);
 
-                cicMobileService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
+                insertSCRPLOG(getdataReq, res).then(niceSessionK => {
                     if (!_.isEmpty(niceSessionK) && niceSessionK.length <= 25) {
                         let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                         responseData = new cicMacrRQSTRes(getdataReq, responseSuccess);
@@ -88,7 +89,7 @@ exports.cicMACRRQST = function (req, res, next) {
                     }
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                    insertINQLOG(dataInqLogSave).then((r) => {
                     });
                     logger.info(responseData);
                     return res.status(200).json(responseData);
@@ -125,18 +126,18 @@ exports.cicMACRRQST = function (req, res, next) {
     }
 };
 
-const cicMacrRSLTReq = require('../../domain/CIC_MACR_RSLT.request');
-const cicMacrRSLTRes = require('../../domain/CIC_MACR_RSLT.response');
-const validMacrRSLT = require('../../util/validRequestMACRResponse');
+import cicMacrRSLTReq from '../../domain/CIC_MACR_RSLT.request.js';
+import cicMacrRSLTRes from '../../domain/CIC_MACR_RSLT.response.js';
+import validMacrRSLT from '../../util/validRequestMACRResponse.js';
 
-exports.cicMACRRSLT = function (req, res) {
+function cicMACRRSLT (req, res) {
 
     try {
         const getdataReq = new cicMacrRSLTReq(req.body);
 
         // check parameters request
         // request data
-        let rsCheck = validMacrRSLT.checkParamRequestForResponse(getdataReq);
+        let rsCheck = validMacrRSLT(getdataReq);
         let preResponse, responseData, dataInqLogSave;
 
         if (!validation.isEmptyJson(rsCheck)) {
@@ -145,19 +146,19 @@ exports.cicMACRRSLT = function (req, res) {
             responseData = new cicMacrRSLTRes(getdataReq, preResponse, {});
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+            insertINQLOG(dataInqLogSave).then((r) => {
             });
             logger.info(responseData);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.Mobile.code).then(dataFICode => {
+        validS11AService(req.body.fiCode, responCode.NiceProductCode.Mobile.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
                 responseData = new cicMacrRSLTRes(req.body, preResponse, '');
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                insertINQLOG(dataInqLogSave).then((r) => {
                 });
                 logger.info(responseData);
                 return res.status(200).json(responseData);
@@ -170,20 +171,20 @@ exports.cicMACRRSLT = function (req, res) {
             }
             // end check params reqest
 
-            cicMobileService.selectCicMobileDetailReport(getdataReq, res).then(reslt => {
+            selectCicMobileDetailReport(getdataReq, res).then(reslt => {
                 if (!validation.isEmptyStr(reslt)) {
                     let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                     responseData = new cicMacrRSLTRes(getdataReq, responseSuccess, reslt[0]);
 
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                    insertINQLOG(dataInqLogSave).then((r) => {
                     });
                     logger.info(responseData);
                     return res.status(200).json(responseData);
 
                 } else {
-                    cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+                    selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
                         if (_.isEmpty(rslt)) {
                             let responseUnknow = {
@@ -199,7 +200,7 @@ exports.cicMACRRSLT = function (req, res) {
                             }
                             //update INQLog
                             dataInqLogSave = new DataInqLogSave(getdataReq, responseUnknow.responseCode);
-                            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                            insertINQLOG(dataInqLogSave).then((r) => {
                             });
                             logger.info(responseUnknow);
                             return res.status(200).json(responseUnknow);
@@ -250,7 +251,7 @@ exports.cicMACRRSLT = function (req, res) {
                             }
                             //update INQLog
                             dataInqLogSave = new DataInqLogSave(getdataReq, responseSrapingStatus.responseCode);
-                            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                            insertINQLOG(dataInqLogSave).then((r) => {
                             });
                             logger.info(responseSrapingStatus);
                             return res.status(200).json(responseSrapingStatus);
@@ -273,4 +274,6 @@ exports.cicMACRRSLT = function (req, res) {
         logger.error(error.toString());
         return res.status(500).json({error: error.toString()});
     }
-};
+}
+
+export {cicMACRRQST, cicMACRRSLT};

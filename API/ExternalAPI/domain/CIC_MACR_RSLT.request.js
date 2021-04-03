@@ -1,4 +1,4 @@
-module.exports = function CIC_MACR_RSLT_Request(requestParams) {
+function CIC_MACR_RSLT_Request(requestParams) {
     const {
         fiSessionKey,
         fiCode,
@@ -14,3 +14,5 @@ module.exports = function CIC_MACR_RSLT_Request(requestParams) {
     this.niceSessionKey = niceSessionKey;
     this.inquiryDate = inquiryDate ? inquiryDate : "";
 }
+
+export default CIC_MACR_RSLT_Request;
