@@ -4,7 +4,12 @@ import config from '../config/config.js';
 
 const axiosClient = axios.create(config.configCacheAxios);
 import https from 'https';
-
+import dnscache from 'dnscache';
+const cache = dnscache({
+    "enable" : true,
+    "ttl" : 100,
+    "cachesize" : 10000
+});
 registerInterceptor(axiosClient);
 // getUri(config?: AxiosRequestConfig): string;
 // request<T = any, R = AxiosResponse<T>> (config: AxiosRequestConfig): Promise<R>;
@@ -39,6 +44,9 @@ function axiosGet(url, config) {
 function httpsGet(hostname, port, path, headers) {
     return new Promise((resolve, reject) => {
         try {
+            cache.lookup(hostname, function(err, result) {
+                //do something with result
+            });
             const options = {
                 hostname: hostname,
                 port: port,
