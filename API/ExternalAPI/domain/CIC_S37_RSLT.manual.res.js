@@ -1,7 +1,4 @@
-
-var cics37RSLTReq = require('./CIC_S37_RSLT.request');
-
-module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, outputScrpTranlog, outputS37Detail) {
+export function cics37RSLTManualRes(cics37RSLTRequest, response, outputScrpTranlog, outputS37Detail) {
 
     const {
         responseTime,
@@ -61,5 +58,5 @@ module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, outp
     this.baseDate = BASE_DATE;
     this.warningGrade = EWS_GRD;
     this.reportComment = RPT_CMT;
-};
+}
 

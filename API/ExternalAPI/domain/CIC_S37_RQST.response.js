@@ -1,7 +1,5 @@
-// var BaseResponse = require('./Base.response');
-var cics37RQSTReq = require('./CIC_S37_RQST.request');
 
-module.exports = function CIC_S37_RQSTResponse(cics37RQSTRequest, response) {
+export function cics37RQSTRes(cics37RQSTRequest, response) {
 
     const {
         responseMessage,
@@ -39,5 +37,5 @@ module.exports = function CIC_S37_RQSTResponse(cics37RQSTRequest, response) {
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
 
-};
+}
 

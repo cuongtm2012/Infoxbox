@@ -1,6 +1,6 @@
-const oracledb = require('oracledb');
-const config = require('../config/config');
-const _ = require('lodash');
+import oracledb from 'oracledb';
+import config from '../config/config.js';
+import _ from 'lodash';
 
 async function selectCicS37DetailReport(req) {
     let connection;
@@ -88,4 +88,4 @@ async function selectCicS37DetailReport(req) {
     }
 }
 
-module.exports.selectCicS37DetailReport = selectCicS37DetailReport;
+export default selectCicS37DetailReport;

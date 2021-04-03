@@ -1,5 +1,5 @@
 
-module.exports = function CICB1003Save(params, niceSessionKey) {
+export  function CICB1003Save(params, niceSessionKey) {
     const {
         cicNo,
         name,
