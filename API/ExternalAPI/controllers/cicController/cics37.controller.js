@@ -15,7 +15,7 @@ import util  from '../../util/dateutil.js';
 import common_service  from '../../services/common.service.js';
 import validS11AService  from '../../services/validS11A.service.js';
 import PreResponse  from '../../domain/preResponse.response.js';
-import {DataInqLogSave}  from '../../domain/INQLOG.save.js';
+import DataInqLogSave  from '../../domain/INQLOG.save.js';
 import _  from 'lodash';
 import dateutil  from '../../util/dateutil.js';
 

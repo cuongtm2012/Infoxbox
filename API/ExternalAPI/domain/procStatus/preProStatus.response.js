@@ -1,4 +1,4 @@
-module.exports = function PreProStatusResponse(params) {
+function PreProStatusResponse(params) {
 
     const {
         NICE_SSIN_ID,
@@ -19,5 +19,7 @@ module.exports = function PreProStatusResponse(params) {
     this.inquiryDate = INQ_DTIM;
     this.scrapingStatusCode = SCRP_STAT_CD;
     this.responseCode = RSP_CD;
-};
+}
+
+export default PreProStatusResponse;
 
