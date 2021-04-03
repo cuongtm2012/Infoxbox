@@ -1,6 +1,6 @@
-const convertMilionUnit = require('../../../shared/util/convertUnit');
+import convertMilionUnit from '../../../shared/util/convertUnit.js';
 
-module.exports = function DisposalVamcLoan(params) {
+export function disposalLoanNode(params) {
     const {
         SELL_OGZ_NM,
         PRCP_BAL,
