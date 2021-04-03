@@ -1,22 +1,22 @@
-const logger = require('../../config/logger');
-const validRequest = require('../../util/validateCheckStatusContractRequest');
-const responCode = require('../../../shared/constant/responseCodeExternal');
-const PreResponse = require('../../domain/preResponse.response');
-const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../../services/cicExternal.service');
-const dateutil = require('../../util/dateutil');
-const util = require('../../util/dateutil');
-const _ = require('lodash');
-const common_service = require('../../services/common.service');
-const statusOfContractResponseWithoutResult = require('../../domain/statusOfContractResponseWithoutResult.response')
-const statusOfContractResponseResult = require('../../domain/reponseStatusOfContractWithResult.response')
-const validS11AService = require('../../services/validS11A.service');
-const utilFunction = require('../../../shared/util/util');
-const dataStatusOfContractSaveToScrapLog = require('../../domain/dataStatusOfContractSaveToScrapLog.save');
-const axios = require('axios');
-const URI = require('../../../shared/URI');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
-exports.statusOfContract = function (req, res) {
+import logger from '../../config/logger.js';
+import validRequest from '../../util/validateCheckStatusContractRequest.js';
+import responCode from '../../../shared/constant/responseCodeExternal.js';
+import PreResponse from '../../domain/preResponse.response.js';
+import DataSaveToInqLog from '../../domain/data_FptId_Save_To_InqLog.save.js';
+import { insertDataToINQLOG, insertDataFPTContractToSCRPLOG, updateRspCdScrapLogAfterGetResult} from '../../services/cicExternal.service.js';
+import dateutil from '../../util/dateutil.js';
+import util from '../../util/dateutil.js';
+import _ from 'lodash';
+import commonServiceGetSequence from '../../services/common.service.js';
+import {statusOfContractResponse} from '../../domain/statusOfContractResponseWithoutResult.response.js'
+import {statusOfContractResponseWithResult} from '../../domain/reponseStatusOfContractWithResult.response.js'
+import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
+import utilFunction from '../../../shared/util/util.js';
+import {dataStatusContractSaveToScrapLog} from '../../domain/dataStatusOfContractSaveToScrapLog.save.js';
+import {axiosPost, axiosGet} from '../../services/httpClient.service.js';
+import URI from '../../../shared/URI.js';
+import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
+export function statusOfContract (req, res) {
     try {
         const config = {
             headers: {
@@ -27,42 +27,42 @@ exports.statusOfContract = function (req, res) {
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave;
-        common_service.getSequence().then(resSeq => {
+        commonServiceGetSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.FTN_SCD_RQST.code + niceSessionKey;
             if (!_.isEmpty(rsCheck)) {
                 preResponse = new PreResponse(rsCheck.responseMessage, fullNiceKey, dateutil.timeStamp(), rsCheck.responseCode);
-                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                responseData = new statusOfContractResponse(req.query, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                insertDataToINQLOG(dataInqLogSave).then();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             }
             // check FI contract
-            validS11AService.selectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_CSS_RQST.code).then(dataFICode => {
+            validS11AServiceSelectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_CSS_RQST.code).then(dataFICode => {
                 if (_.isEmpty(dataFICode)) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
-                    responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                    responseData = new statusOfContractResponse(req.query, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.query, responseData);
-                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    insertDataToINQLOG(dataInqLogSave).then();
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
-                    responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                    responseData = new statusOfContractResponse(req.query, preResponse);
                     logger.info(responseData);
                     return res.status(500).json(responseData);
                 }
                 //    end check parmas
-                let dataInsertToScrapLog = new dataStatusOfContractSaveToScrapLog(req.query, fullNiceKey);
+                let dataInsertToScrapLog = new dataStatusContractSaveToScrapLog(req.query, fullNiceKey);
                 // insert rq to ScrapLog
-                cicExternalService.insertDataFPTContractToSCRPLOG(dataInsertToScrapLog).then(
+                insertDataFPTContractToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axiosPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                 //    get status contract
@@ -73,15 +73,15 @@ exports.statusOfContract = function (req, res) {
                                         },
                                         timeout: 60 * 1000
                                     }
-                                    axios.get(URlGetStatusContract,configGetStatus).then(
+                                    axiosGet(URlGetStatusContract,configGetStatus).then(
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                responseData = new statusOfContractResponseResult(req.query, preResponse, resultGetStatus.data);
+                                                responseData = new statusOfContractResponseWithResult(req.query, preResponse, resultGetStatus.data);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                insertDataToINQLOG(dataInqLogSave).then();
+                                                updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
                                                 logger.info(responseData);
                                                 logger.info({resultFromFpt: resultGetStatus.data});
                                                 return res.status(200).json(responseData);
@@ -89,10 +89,10 @@ exports.statusOfContract = function (req, res) {
                                                 //    update scraplog & response F072
                                                 console.log('errGetStatus: ', resultGetStatus);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                                responseData = new statusOfContractResponse(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                                insertDataToINQLOG(dataInqLogSave).then();
+                                                updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                                 logger.info(responseData);
                                                 logger.info(resultGetStatus.data);
                                                 return res.status(200).json(responseData);
@@ -100,10 +100,10 @@ exports.statusOfContract = function (req, res) {
                                                 //    update scraplog & response F048
                                                 console.log('errGetStatus: ', resultGetStatus);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                                responseData = new statusOfContractResponse(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                insertDataToINQLOG(dataInqLogSave).then();
+                                                updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                                 logger.info(responseData);
                                                 logger.info(resultGetStatus.data);
                                                 return res.status(200).json(responseData);
@@ -114,28 +114,28 @@ exports.statusOfContract = function (req, res) {
                                         if (reason.response && reason.response.status === 500) {
                                             //    update scraplog & response F072
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                            responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                            responseData = new statusOfContractResponse(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
+                                            updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else if (reason.message === 'timeout of 60000ms exceeded') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
-                                            responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                            responseData = new statusOfContractResponse(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
+                                            updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                            responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                            responseData = new statusOfContractResponse(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
+                                            updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -145,10 +145,10 @@ exports.statusOfContract = function (req, res) {
                                     //    update scraplog & response F072
                                     console.log('errGetStatus: ', resultGetAuthAccess);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                    responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                    responseData = new statusOfContractResponse(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                    insertDataToINQLOG(dataInqLogSave).then();
+                                    updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
@@ -156,10 +156,10 @@ exports.statusOfContract = function (req, res) {
                                     //    update scraplog & response F048
                                     console.log('errGetStatus: ', resultGetAuthAccess);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                    responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                    responseData = new statusOfContractResponse(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    insertDataToINQLOG(dataInqLogSave).then();
+                                    updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
@@ -169,28 +169,28 @@ exports.statusOfContract = function (req, res) {
                             if (reason.response && reason.response.status === 500) {
                                 //    update scraplog & response F072
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
-                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                responseData = new statusOfContractResponse(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
+                                updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else if (reason.message === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
-                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                responseData = new statusOfContractResponse(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
+                                updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
+                                responseData = new statusOfContractResponse(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
+                                updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);

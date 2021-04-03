@@ -22,4 +22,15 @@ function axiosPost(url, data, config) {
     })
 }
 
-export {axiosPost};
+function axiosGet(url, config) {
+    return new Promise((resolve, reject) => {
+        try {
+            resolve(axios.get(url, config));
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
+export {axiosPost, axiosGet};
