@@ -1,5 +1,5 @@
 
-module.exports = function CIC_PROC_StatusResponse(cicsProcStatRequest, response, responseCount, dataRes, totalCount) {
+function CIC_PROC_StatusResponse(cicsProcStatRequest, response, responseCount, dataRes, totalCount) {
 
     const {
         responseTime,
@@ -31,5 +31,7 @@ module.exports = function CIC_PROC_StatusResponse(cicsProcStatRequest, response,
     this.cicReportStatus = dataRes ? dataRes : null;
 
 
-};
+}
+
+export default CIC_PROC_StatusResponse;
 

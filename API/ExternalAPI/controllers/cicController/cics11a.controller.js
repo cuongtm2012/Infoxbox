@@ -20,7 +20,7 @@ import utilFunction from '../../../shared/util/util.js';
 
 import validS11AService from '../../services/validS11A.service.js';
 import PreResponse from '../../domain/preResponse.response.js';
-import {DataInqLogSave} from '../../domain/INQLOG.save.js';
+import DataInqLogSave from '../../domain/INQLOG.save.js';
 import io from 'socket.io-client';
 import URI from '../../../shared/URI.js';
 

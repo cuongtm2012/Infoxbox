@@ -1,26 +1,28 @@
-const _ = require('lodash');
-const CicProStat = require('../../domain/CIC_PROC_STAT.req.response');
-const validParam = require('../../util/validRequestProcStat');
-const CICProcStatRes = require('../../domain/CIC_PROC_STAT.response');
-const cicExternalService = require('../../services/cicExternal.service');
-const preProStatRes = require('../../domain/procStatus/preProStatus.response');
-const dateutil = require('../../util/dateutil');
-const responcodeEXT = require('../../../shared/constant/responseCodeExternal');
-const validS11AService = require('../../services/validS11A.service');
-const PreResponse = require('../../domain/preResponse.response');
-const {DataInqLogSave} = require('../../domain/INQLOG.save');
-const utilFunction = require('../../../shared/util/util');
-const responCode = require('../../../shared/constant/responseCodeExternal');
-const logger = require('../../config/logger');
-exports.cicProcStat = function (req, res) {
+import _ from 'lodash';
+import CicProStat from '../../domain/CIC_PROC_STAT.req.response.js';
+import validParam from '../../util/validRequestProcStat.js';
+import CICProcStatRes from '../../domain/CIC_PROC_STAT.response.js';
+import { insertINQLOG, selectProcStatus } from '../../services/cicExternal.service.js';
+//cicExternalService 
+import preProStatRes from '../../domain/procStatus/preProStatus.response.js';
+import dateutil from '../../util/dateutil.js';
+import responcodeEXT from '../../../shared/constant/responseCodeExternal.js';
+import validS11AService from '../../services/validS11A.service.js';
+import PreResponse from '../../domain/preResponse.response.js';
+import DataInqLogSave from '../../domain/INQLOG.save.js';
+import utilFunction from '../../../shared/util/util.js';
+import responCode from '../../../shared/constant/responseCodeExternal.js';
+import logger from '../../config/logger.js';
+
+function cicProcStat(req, res) {
     try {
         const getdataReq = new CicProStat(req.body);
 
-		/*
-		* Checking parameters request
-		* Request data
-		*/
-        let rsCheck = validParam.checkParamRequestForResponse(getdataReq);
+        /*
+        * Checking parameters request
+        * Request data
+        */
+        let rsCheck = validParam(getdataReq);
         let preResponse, responseData, dataInqLogSave;
 
         if (!_.isEmpty(rsCheck)) {
@@ -33,20 +35,20 @@ exports.cicProcStat = function (req, res) {
             responseData = new CICProcStatRes(getdataReq, preResponse);
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+            insertINQLOG(dataInqLogSave).then((r) => {
                 console.log('insert INQLOG:', r);
             });
             logger.info(responseData);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode, '%%').then(dataFICode => {
+        validS11AService(req.body.fiCode, '%%').then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responcodeEXT.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responcodeEXT.RESCODEEXT.InvalidNiceProductCode.code);
 
                 responseData = new CICProcStatRes(req.body, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                insertINQLOG(dataInqLogSave).then((r) => {
                     console.log('insert INQLOG:', r);
                 });
                 logger.info(responseData);
@@ -61,7 +63,7 @@ exports.cicProcStat = function (req, res) {
             }
             //End check params request
 
-            cicExternalService.selectProcStatus(getdataReq, res).then(reslt => {
+            selectProcStatus(getdataReq, res).then(reslt => {
                 console.log("result selectProcStatus: ", reslt);
                 var cicReportStatus = [];
                 if (!_.isEmpty(reslt)) {
@@ -81,19 +83,19 @@ exports.cicProcStat = function (req, res) {
 
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then(() => {
+                insertINQLOG(dataInqLogSave).then(() => {
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 });
             }).catch(reason => {
                 console.log(reason.toString());
                 logger.error(reason.toString());
-                return res.status(500).json({error: reason.toString()});
+                return res.status(500).json({ error: reason.toString() });
             });
         }).catch(reason => {
             console.log(reason.toString());
             logger.error(reason.toString());
-            return res.status(500).json({error: reason.toString()});
+            return res.status(500).json({ error: reason.toString() });
         });
 
     } catch (error) {
@@ -101,4 +103,6 @@ exports.cicProcStat = function (req, res) {
         logger.info(error.toString());
         return res.status(500).json({ error: error.toString() });
     }
-};
+}
+
+export { cicProcStat };

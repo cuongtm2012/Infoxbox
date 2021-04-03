@@ -2,7 +2,7 @@ import dateutil from '../util/dateutil.js';
 import _ from 'lodash';
 import responseCode from '../../shared/constant/responseCodeExternal.js';
 
-export function DataInqLogSave(params, respCd) {
+function DataInqLogSave(params, respCd) {
     const {
         fiSessionKey,
         fiCode,
@@ -40,3 +40,5 @@ export function DataInqLogSave(params, respCd) {
     this.infoProvConcent = infoProvConcent ? infoProvConcent : null;
     this.respCd = respCd ? respCd : null;
 }
+
+export default DataInqLogSave;

@@ -19,7 +19,7 @@ import _ from 'lodash';
 import validS11AService from '../../services/validS11A.service.js';
 import PreResponse from '../../domain/preResponse.response.js';
 import dateutil from '../../util/dateutil.js';
-import {DataInqLogSave} from '../../domain/INQLOG.save.js';
+import DataInqLogSave from '../../domain/INQLOG.save.js';
 import {insertINQLOG, selectScrapingStatusCodeSCRPLOG} from '../../services/cicExternal.service.js';
 //cicExternalService
 import utilFunction from '../../../shared/util/util.js';
