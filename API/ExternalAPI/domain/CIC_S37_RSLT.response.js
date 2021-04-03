@@ -1,7 +1,7 @@
 
-const dateutil = require('../util/dateutil');
+import dateutil from '../util/dateutil.js';
 
-module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, CICB1003, defaultValue, scrpStatCd) {
+export function cics37RSLTRes(cics37RSLTRequest, response, CICB1003, defaultValue, scrpStatCd) {
 
     const {
         responseTime,
@@ -70,5 +70,5 @@ module.exports = function CIC_S37_RSLTResponse(cics37RSLTRequest, response, CICB
     this.baseDate = baseDate;
     this.warningGrade = warningGrage;
     this.reportComment = reportComment;
-};
+}
 

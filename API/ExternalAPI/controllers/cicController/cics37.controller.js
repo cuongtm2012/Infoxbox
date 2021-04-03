@@ -1,43 +1,42 @@
-import axios  from('axios');
-import logger  from('../../config/logger');
 
-import cics37RQSTReq  from('../../domain/CIC_S37_RQST.request');
+import {axiosPost} from '../../services/httpClient.service.js';
+import logger  from '../../config/logger.js';
 
-import cicExternalService  from('../../services/cicExternal.service');
-import cicCicS37Service  from('../../services/cicS37.service');
+import {cics37RQSTReq}  from '../../domain/CIC_S37_RQST.request.js';
 
-import cics37RQSTRes  from('../../domain/CIC_S37_RQST.response');
+import {insertINQLOG, insertSCRPLOG, updateCICReportInquiryCompleted, updateScrapingTranslog}  from '../../services/cicExternal.service.js';
+import selectCicS37DetailReport from '../../services/cicS37.service.js';
 
-import validation  from('../../../shared/util/validation');
-import validRequest  from('../../util/validateParamRequestS37');
-import encryptPassword  from('../../util/encryptPassword');
+import {cics37RQSTRes}  from '../../domain/CIC_S37_RQST.response.js';
+import {checkParamRequest}  from '../../util/validateParamRequestS37.js';
+import {encrypt}  from '../../util/encryptPassword.js';
 
-import util  from('../../util/dateutil');
-import common_service  from('../../services/common.service');
-import validS11AService  from('../../services/validS11A.service');
-import PreResponse  from('../../domain/preResponse.response');
-import {DataInqLogSave}  from('../../domain/INQLOG.save');
-import _  from('lodash');
-import dateutil  from('../../util/dateutil');
+import util  from '../../util/dateutil.js';
+import common_service  from '../../services/common.service.js';
+import validS11AService  from '../../services/validS11A.service.js';
+import PreResponse  from '../../domain/preResponse.response.js';
+import {DataInqLogSave}  from '../../domain/INQLOG.save.js';
+import _  from 'lodash';
+import dateutil  from '../../util/dateutil.js';
 
-import URI  from('../../../shared/URI');
-import cicB1003Req  from('../../domain/cicB1003.request');
-import defaultParams  from('../../../shared/domain/defaultParams.request');
-import responCode  from('../../../shared/important/responseCodeExternal');
-import cicService  from('../../../InternalAPI/services/cicInternal.service');
-import utilFunction  from('../../../shared/util/util');
-import CICB1003Save  from('../../domain/cicB1003.save');
-import cicS37Service  from('../../services/cicInternalS37.service');
-import convertBase64  from('../../../shared/util/convertBase64ToText');
-import convertPassword  from('../../../shared/util/convertBase64ToText');
-import getIdGetway  from('../../../shared/util/getIPGateWay');
-import cicTransSave  from('../../../InternalAPI/domain/cicTrans.save');
-import cicServiceRes  from('../../../InternalAPI/services/cicInternalRes.service');
-import cics37RSLTRes  from('../../domain/CIC_S37_RSLT.response');
+import URI  from '../../../shared/URI.js';
+import {cicB1003Req}  from '../../domain/cicB1003.request.js';
+import defaultParams  from '../../../shared/domain/defaultParams.request.js';
+import responCode  from '../../../shared/constant/responseCodeExternal.js';
+// import cicService  from '../../../InternalAPI/services/cicInternal.service.js';
+import {updateScrpStatCdErrorResponseCodeScraping}  from '../../services/internal.service.js';
+import utilFunction  from '../../../shared/util/util.js';
+import {CICB1003Save}  from '../../domain/cicB1003.save.js';
+import insertS37Detail  from '../../services/cicInternalS37.service.js';
+import convertBase64  from '../../../shared/util/convertBase64ToText.js';
+import convertPassword  from '../../../shared/util/convertBase64ToText.js';
+import getIdGetway  from '../../../shared/util/getIPGateWay.js';
+import cicTransSave  from '../../../InternalAPI/domain/cicTrans.save.js';
+import {cics37RSLTRes}  from '../../domain/CIC_S37_RSLT.response.js';
 
-import io  from('socket.io-client');
+import io  from 'socket.io-client';
 
-exports.cics37Rqst = function (req, res) {
+export function cics37Rqst (req, res) {
     let socket;
 
     try {
@@ -48,14 +47,14 @@ exports.cics37Rqst = function (req, res) {
             timeout: 70 * 1000
         }
         // encrypt password
-        let password = encryptPassword.encrypt(req.body.loginPw);
+        let password = encrypt(req.body.loginPw);
         let niceSessionKey;
 
         /*
         * Checking parameters request
         * Request data
         */
-        let rsCheck = validRequest.checkParamRequest(req.body);
+        let rsCheck = checkParamRequest(req.body);
         let preResponse, responseData, dataInqLogSave;
 
         if (!_.isEmpty(rsCheck)) {
@@ -64,20 +63,20 @@ exports.cics37Rqst = function (req, res) {
             responseData = new cics37RQSTRes(req.body, preResponse);
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+            insertINQLOG(dataInqLogSave).then((r) => {
                 console.log('insert INQLOG:', r);
             });
             logger.info(responseData);
             return res.status(200).json(responseData);
         }
-        validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S37.code).then(dataFICode => {
+        validS11AService(req.body.fiCode, responCode.NiceProductCode.S37.code).then(dataFICode => {
             if (_.isEmpty(dataFICode)) {
                 preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
                 responseData = new cics37RQSTRes(req.body, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                insertINQLOG(dataInqLogSave).then((r) => {
                     console.log('insert INQLOG:', r);
                 });
                 logger.info(responseData);
@@ -90,7 +89,7 @@ exports.cics37Rqst = function (req, res) {
                 return res.status(500).json(responseData);
             }
             //End check params request
-            common_service.getSequence().then(resSeq => {
+            common_service().then(resSeq => {
                 niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
                 let fullNiceKey = responCode.NiceProductCode.S37.code + niceSessionKey;
 
@@ -103,7 +102,7 @@ exports.cics37Rqst = function (req, res) {
                 logger.debug('Log request parameters from routes after manage request S37');
                 logger.info(getdataReq);
 
-                cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
+                insertSCRPLOG(getdataReq, res).then(niceSessionK => {
                     console.log("result cics11aRQST: ", niceSessionK);
 
                     if (!_.isEmpty(niceSessionK)) {
@@ -132,7 +131,7 @@ exports.cics37Rqst = function (req, res) {
                         var fnData = new cicB1003Req(req.body, defaultValue, decryptPW, fullNiceKey);
                         console.log('request data:', fnData);
 
-                        axios.post(URI.cicInternalJson, fnData, config)
+                        axiosPost(URI.cicInternalJson, fnData, config)
                             .then((body) => {
                                 console.log('body:', body.data);
 
@@ -154,12 +153,12 @@ exports.cics37Rqst = function (req, res) {
                                     let niceKey = fnData.niceSessionKey;
 
                                     let CICB1003 = new CICB1003Save(dataB1003, niceKey);
-                                    cicS37Service.insertS37Detail(CICB1003).then(resultS37 => {
+                                   insertS37Detail(CICB1003).then(resultS37 => {
                                         console.log('resultS37:', resultS37);
                                         if (1 < resultS37) {
                                             console.log('Successfully insert into S37 detail table');
                                             // update complete cic report inquiry status 10
-                                            cicExternalService.updateCICReportInquiryCompleted(niceKey, '').then(resultUpdated => {
+                                            updateCICReportInquiryCompleted(niceKey, '').then(resultUpdated => {
                                                 console.log("CIC report inquiry completed B1003!", resultUpdated);
 
                                             });
@@ -175,7 +174,7 @@ exports.cics37Rqst = function (req, res) {
                                             let workId = getIdGetway.getIPGateWay();
 
                                             let dataTransSave = new cicTransSave(requestParams, responseParams, scrplogid, workId, password, body.data.outJson.outB1003.cicNo, niceKey);
-                                            cicExternalService.updateScrapingTranslog(dataTransSave).then(() => {
+                                            updateScrapingTranslog(dataTransSave).then(() => {
                                                 console.log("Updated to scraping transaction log B1003!");
                                                 // return next();
                                             });
@@ -188,7 +187,7 @@ exports.cics37Rqst = function (req, res) {
 
                                             // update INQLOG
                                             let dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                                            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                            insertINQLOG(dataInqLogSave).then((r) => {
                                                 console.log('insert INQLOG:', r);
                                             });
                                             logger.info(responseData);
@@ -199,7 +198,7 @@ exports.cics37Rqst = function (req, res) {
 
                                             // update INQLOG
                                             let dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                                            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                            insertINQLOG(dataInqLogSave).then((r) => {
                                                 console.log('insert INQLOG:', r);
                                             });
                                             //Logging response
@@ -219,13 +218,13 @@ exports.cics37Rqst = function (req, res) {
                                     // Log in error
                                     if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
                                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail2.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail6.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteAccessFailure.code);
 
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.CICSiteAccessFailure.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
                                                     logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteAccessFailure.code));
@@ -239,13 +238,13 @@ exports.cics37Rqst = function (req, res) {
                                                 return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail3.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail4.code, responCode.ScrappingResponseCodeLoginFailure.LoginFail5.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICSiteLoginFailure.code);
 
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.CICSiteLoginFailure.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
                                                     logger.info(selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICSiteLoginFailure.code))
@@ -259,13 +258,13 @@ exports.cics37Rqst = function (req, res) {
                                                 return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail7.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.S37ReportScreenAccsError.code);
 
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.S37ReportScreenAccsError.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -280,13 +279,13 @@ exports.cics37Rqst = function (req, res) {
                                                 return res.status(500).json({error: reason.toString()});
                                             });
                                         } else {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.ETCError.code);
 
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.ETCError.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -308,13 +307,13 @@ exports.cics37Rqst = function (req, res) {
                                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError102.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError103.code
                                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError104.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError105.code
                                             , responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError106.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError107.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.S37ReportScreenAccsError.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status B0003:' + responCode.ScrapingStatusCode.CicReportInqError.code + '-' + responCode.RESCODEEXT.S37ReportScreenAccsError.code);
 
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.S37ReportScreenAccsError.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -329,12 +328,12 @@ exports.cics37Rqst = function (req, res) {
                                                 return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError3.code, responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError201.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicIdInqError.code + responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code);
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.NoMatchingCICIDWithNalID.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -349,12 +348,12 @@ exports.cics37Rqst = function (req, res) {
                                                 return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError101.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NotUniquePersonInCIC.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicIdInqError.code, responCode.RESCODEEXT.NotUniquePersonInCIC.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicIdInqError.code + responCode.RESCODEEXT.NotUniquePersonInCIC.code);
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.NotUniquePersonInCIC.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -369,12 +368,12 @@ exports.cics37Rqst = function (req, res) {
                                                 return res.status(500).json({error: reason.toString()});
                                             });
                                         } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicReportResultINQS37Error.CicReportINQError108.code], utilFunction.getStatusScrappingCode(body.data.outJson.outB1003.errMsg, body.data.outJson.errMsg))) {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CaptchaProcessFailure.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.CicReportInqError.code, responCode.RESCODEEXT.CaptchaProcessFailure.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportInqError.code + responCode.RESCODEEXT.CaptchaProcessFailure.code);
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.CaptchaProcessFailure.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -390,13 +389,13 @@ exports.cics37Rqst = function (req, res) {
                                             });
                                         }
                                         else {
-                                            cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                            updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
                                                 if (1 <= rslt) {
                                                     console.log('Update scraping status:' + responCode.ScrapingStatusCode.OtherError.code + '-' + responCode.RESCODEEXT.ETCError.code);
 
                                                     // update INQLOG
                                                     let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.ETCError.code);
-                                                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                    insertINQLOG(dataInqLogSave).then((r) => {
                                                         console.log('insert INQLOG:', r);
                                                     });
 
@@ -414,13 +413,13 @@ exports.cics37Rqst = function (req, res) {
                                         }
                                     }
                                     else {
-                                        cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                        updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
                                             if (1 <= rslt) {
                                                 console.log('Update scraping status:' + responCode.ScrapingStatusCode.OtherError.code + '-' + responCode.RESCODEEXT.ETCError.code);
 
                                                 // update INQLOG
                                                 let dataInqLogSave = new DataInqLogSave(getdataReq, responCode.RESCODEEXT.ETCError.code);
-                                                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                                                insertINQLOG(dataInqLogSave).then((r) => {
                                                     console.log('insert INQLOG:', r);
                                                 });
 
@@ -442,7 +441,7 @@ exports.cics37Rqst = function (req, res) {
                             }).catch((error) => {
                                 console.log("error scraping service S37 report~~", error);
                                 //Update ScrpModCd 00
-                                cicService.updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.TimeoutError.code).then(rslt => {
+                                updateScrpStatCdErrorResponseCodeScraping(fullNiceKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.TimeoutError.code).then(rslt => {
                                     if (1 <= rslt)
                                         console.log("Update scraping status:", responCode.ScrapingStatusCode.OtherError.code + '-' + responCode.RESCODEEXT.TimeoutError.code);
                                     else
@@ -496,7 +495,7 @@ exports.cics37Rqst = function (req, res) {
         logger.error(err.toString());
         return res.status(500).json({ error: err.toString() });
     }
-};
+}
 
 /*
 ** response error code
@@ -537,11 +536,11 @@ function selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, scrapingStatusCo
 }
 
 
-import cics37RSLTReq from('../../domain/CIC_S37_RSLT.request');
-import cics37RSLTManualRes from('../../domain/CIC_S37_RSLT.manual.res');
-import validS11ARQLT from('../../util/validRequestS11AResponse');
+import {cics37RSLTReq} from '../../domain/CIC_S37_RSLT.request.js';
+import {cics37RSLTManualRes} from '../../domain/CIC_S37_RSLT.manual.res.js';
+import {validS11ARQLT} from '../../util/validRequestS11AResponse.js';
 
-exports.cics37RSLT = function (req, res) {
+export function cics37RSLT (req, res) {
     try {
         const getdataReq = new cics37RSLTReq(req.body);
 
@@ -549,7 +548,7 @@ exports.cics37RSLT = function (req, res) {
 		* Checking parameters request
 		* Request data
 		*/
-        let rsCheck = validS11ARQLT.checkParamRequestForResponse(getdataReq);
+        let rsCheck = validS11ARQLT(getdataReq);
         let preResponse, responseData, dataInqLogSave;
 
         if (!_.isEmpty(rsCheck)) {
@@ -558,7 +557,7 @@ exports.cics37RSLT = function (req, res) {
             responseData = new cics37RQSTRes(getdataReq, preResponse);
             // update INQLOG
             dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+            insertINQLOG(dataInqLogSave).then((r) => {
                 console.log('insert INQLOG:', r);
             });
             logger.info(responseData);
@@ -571,7 +570,7 @@ exports.cics37RSLT = function (req, res) {
                 responseData = new cics37RQSTRes(getdataReq, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                insertINQLOG(dataInqLogSave).then((r) => {
                     console.log('insert INQLOG:', r);
                 });
                 logger.info(responseData);
@@ -587,7 +586,7 @@ exports.cics37RSLT = function (req, res) {
             }
             //End check params request
 
-            cicCicS37Service.selectCicS37DetailReport(getdataReq, res).then(reslt => {
+            selectCicS37DetailReport(getdataReq, res).then(reslt => {
                 console.log("result selectCicS37DetailReport: ", reslt);
                 if (!_.isEmpty(reslt)) {
                     let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
@@ -595,13 +594,13 @@ exports.cics37RSLT = function (req, res) {
 
                     // update INQLOG
                     dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-                    cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                    insertINQLOG(dataInqLogSave).then((r) => {
                         console.log('insert INQLOG:', r);
                     });
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else {
-                    cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+                    selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
                         if (_.isEmpty(rslt)) {
                             let responseUnknow = {
@@ -617,7 +616,7 @@ exports.cics37RSLT = function (req, res) {
                             }
                             //update INQLog
                             dataInqLogSave = new DataInqLogSave(getdataReq, responseUnknow.responseCode);
-                            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                            insertINQLOG(dataInqLogSave).then((r) => {
                                 console.log('insert INQLOG:', r);
                             });
                             logger.info(responseUnknow);
@@ -669,7 +668,7 @@ exports.cics37RSLT = function (req, res) {
                             }
                             //update INQLog
                             dataInqLogSave = new DataInqLogSave(getdataReq, responseSrapingStatus.responseCode);
-                            cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+                            insertINQLOG(dataInqLogSave).then((r) => {
                                 console.log('insert INQLOG:', r);
                             });
                             logger.info(responseSrapingStatus);

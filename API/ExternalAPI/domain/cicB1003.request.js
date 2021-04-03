@@ -1,7 +1,7 @@
 
-const dateutil = require('../util/dateutil');
+import dateutil from '../util/dateutil.js';
 
-module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, niceSessionKey) {
+export function cicB1003Req(parameters, defaultValue, decryptPW, niceSessionKey) {
     const {
         loginId,
         natId,
@@ -52,4 +52,4 @@ module.exports = function cicB1003Request(parameters, defaultValue, decryptPW, n
     this.niceSessionKey = niceSessionKey;
     this.sendTime = dateutil.timeStamp();
 
-};
+}
