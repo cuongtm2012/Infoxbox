@@ -1,6 +1,7 @@
-const _ = require('lodash');
 
-module.exports = function CicProcStatus(params) {
+import _ from 'lodash';
+
+function CicProcStatus(params) {
     const {
         fiCode,
         taskCode,
@@ -26,3 +27,5 @@ module.exports = function CicProcStatus(params) {
     this.offset = offset ? offset : _offset;
     this.maxnumrows = maxnumrows ? maxnumrows : _maxnumrows;
 }
+
+export default CicProcStatus;

@@ -12,7 +12,7 @@ const multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: path
 
 import {cics11aRQST, cics11aRSLT} from '../controllers/cicController/cics11a.controller.js';
 import {cics37Rqst} from '../controllers/cicController/cics37.controller.js' ;
-// import cicProcStat_controller from '../controllers/cicController/cicProcStat.controller.js' ;
+import {cicProcStat} from '../controllers/cicController/cicProcStat.controller.js' ;
 import {cicMACRRQST, cicMACRRSLT} from '../controllers/cicController/cicMacr.controller.js' ;
 // import zaloScoreController from '../controllers/zaloAndVmgController/zaloScore.controller.js' ;
 // import vmgRiskScoreController from '../controllers/zaloAndVmgController/vmgRiskScore.controller.js' ;
@@ -33,7 +33,7 @@ router.post('/CIC_S37_RQST', cics37Rqst);
 
 // router.post('/CIC_S37_RSLT', cicS37Rqst_controller.cics37RSLT);
 
-// router.post('/CIC_PROC_STAT', cicProcStat_controller.cicProcStat);
+router.post('/CIC_PROC_STAT', cicProcStat);
 
 router.post('/CIC_MACR_RQST', cicMACRRQST);
 router.post('/CIC_MACR_RSLT', cicMACRRSLT);
