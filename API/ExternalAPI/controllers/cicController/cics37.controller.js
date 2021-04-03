@@ -1,41 +1,41 @@
-const axios = require('axios');
-const logger = require('../../config/logger');
+import axios  from('axios');
+import logger  from('../../config/logger');
 
-const cics37RQSTReq = require('../../domain/CIC_S37_RQST.request');
+import cics37RQSTReq  from('../../domain/CIC_S37_RQST.request');
 
-const cicExternalService = require('../../services/cicExternal.service');
-const cicCicS37Service = require('../../services/cicS37.service');
+import cicExternalService  from('../../services/cicExternal.service');
+import cicCicS37Service  from('../../services/cicS37.service');
 
-const cics37RQSTRes = require('../../domain/CIC_S37_RQST.response');
+import cics37RQSTRes  from('../../domain/CIC_S37_RQST.response');
 
-const validation = require('../../../shared/util/validation');
-const validRequest = require('../../util/validateParamRequestS37');
-const encryptPassword = require('../../util/encryptPassword');
+import validation  from('../../../shared/util/validation');
+import validRequest  from('../../util/validateParamRequestS37');
+import encryptPassword  from('../../util/encryptPassword');
 
-const util = require('../../util/dateutil');
-const common_service = require('../../services/common.service');
-const validS11AService = require('../../services/validS11A.service');
-const PreResponse = require('../../domain/preResponse.response');
-const DataInqLogSave = require('../../domain/INQLOG.save');
-const _ = require('lodash');
-const dateutil = require('../../util/dateutil');
+import util  from('../../util/dateutil');
+import common_service  from('../../services/common.service');
+import validS11AService  from('../../services/validS11A.service');
+import PreResponse  from('../../domain/preResponse.response');
+import {DataInqLogSave}  from('../../domain/INQLOG.save');
+import _  from('lodash');
+import dateutil  from('../../util/dateutil');
 
-const URI = require('../../../shared/URI');
-const cicB1003Req = require('../../domain/cicB1003.request');
-const defaultParams = require('../../../shared/domain/defaultParams.request');
-const responCode = require('../../../shared/constant/responseCodeExternal');
-const cicService = require('../../../InternalAPI/services/cicInternal.service');
-const utilFunction = require('../../../shared/util/util');
-const CICB1003Save = require('../../domain/cicB1003.save');
-const cicS37Service = require('../../services/cicInternalS37.service');
-const convertBase64 = require('../../../shared/util/convertBase64ToText');
-const convertPassword = require('../../../shared/util/convertBase64ToText');
-const getIdGetway = require('../../../shared/util/getIPGateWay');
-const cicTransSave = require('../../../InternalAPI/domain/cicTrans.save');
-const cicServiceRes = require('../../../InternalAPI/services/cicInternalRes.service');
-const cics37RSLTRes = require('../../domain/CIC_S37_RSLT.response');
+import URI  from('../../../shared/URI');
+import cicB1003Req  from('../../domain/cicB1003.request');
+import defaultParams  from('../../../shared/domain/defaultParams.request');
+import responCode  from('../../../shared/important/responseCodeExternal');
+import cicService  from('../../../InternalAPI/services/cicInternal.service');
+import utilFunction  from('../../../shared/util/util');
+import CICB1003Save  from('../../domain/cicB1003.save');
+import cicS37Service  from('../../services/cicInternalS37.service');
+import convertBase64  from('../../../shared/util/convertBase64ToText');
+import convertPassword  from('../../../shared/util/convertBase64ToText');
+import getIdGetway  from('../../../shared/util/getIPGateWay');
+import cicTransSave  from('../../../InternalAPI/domain/cicTrans.save');
+import cicServiceRes  from('../../../InternalAPI/services/cicInternalRes.service');
+import cics37RSLTRes  from('../../domain/CIC_S37_RSLT.response');
 
-const io = require('socket.io-client');
+import io  from('socket.io-client');
 
 exports.cics37Rqst = function (req, res) {
     let socket;
@@ -537,9 +537,9 @@ function selectScrapingStatusCodeSCRPLOG(getdataReqFullNiceKey, scrapingStatusCo
 }
 
 
-const cics37RSLTReq = require('../../domain/CIC_S37_RSLT.request');
-const cics37RSLTManualRes = require('../../domain/CIC_S37_RSLT.manual.res');
-const validS11ARQLT = require('../../util/validRequestS11AResponse');
+import cics37RSLTReq from('../../domain/CIC_S37_RSLT.request');
+import cics37RSLTManualRes from('../../domain/CIC_S37_RSLT.manual.res');
+import validS11ARQLT from('../../util/validRequestS11AResponse');
 
 exports.cics37RSLT = function (req, res) {
     try {

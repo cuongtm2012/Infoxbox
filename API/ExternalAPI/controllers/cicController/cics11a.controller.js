@@ -1,35 +1,35 @@
 
-const logger = require('../../config/logger');
+import logger from '../../config/logger.js';
 
-const cics11aRQSTReq = require('../../domain/CIC_S11A_RQST.request');
+import {CIC_S11A_RQSTRequest} from '../../domain/CIC_S11A_RQST.request.js';
 
-const cicExternalService = require('../../services/cicExternal.service');
+import {insertINQLOG, selectCICS11aRSLT, selectScrapingStatusCodeSCRPLOG, insertSCRPLOG} from '../../services/cicExternal.service.js';
+// cicExternalService
+import {cics11aRQSTRes} from '../../domain/CIC_S11A_RQST.response.js';
 
-const cics11aRQSTRes = require('../../domain/CIC_S11A_RQST.response');
+import dateutil from '../../util/dateutil.js';
+import validRequest from '../../util/validateParamRequest.js';
+import {encrypt} from '../../util/encryptPassword.js';
 
-const dateutil = require('../../util/dateutil');
-const validRequest = require('../../util/validateParamRequest');
-const encryptPassword = require('../../util/encryptPassword');
+import responCode from '../../../shared/constant/responseCodeExternal.js';
 
-const responCode = require('../../../shared/constant/responseCodeExternal');
+import util from '../../util/dateutil.js';
+import common_service from '../../services/common.service.js';
+import _ from 'lodash';
+import utilFunction from '../../../shared/util/util.js';
 
-const util = require('../../util/dateutil');
-const common_service = require('../../services/common.service');
-const _ = require('lodash');
-const utilFunction = require('../../../shared/util/util');
+import validS11AService from '../../services/validS11A.service.js';
+import PreResponse from '../../domain/preResponse.response.js';
+import {DataInqLogSave} from '../../domain/INQLOG.save.js';
+import io from 'socket.io-client';
+import URI from '../../../shared/URI.js';
 
-const validS11AService = require('../../services/validS11A.service');
-const PreResponse = require('../../domain/preResponse.response');
-const DataInqLogSave = require('../../domain/INQLOG.save');
-const io = require('socket.io-client');
-const URI = require('../../../shared/URI');
-
-exports.cics11aRQST = function (req, res, next) {
+export function cics11aRQST(req, res, next) {
 	let socket;
 
 	try {
 		// encrypt password
-		let password = encryptPassword.encrypt(req.body.loginPw);
+		let password = encrypt(req.body.loginPw);
 		let niceSessionKey;
 		/*
 		* Checking parameters request
@@ -44,20 +44,20 @@ exports.cics11aRQST = function (req, res, next) {
 
 			// update INQLOG
 			dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-			cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+			insertINQLOG(dataInqLogSave).then((r) => {
 				console.log('insert INQLOG:', r);
 			});
 			logger.info(responseData);
 			return res.status(200).json(responseData);
 		}
-		validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
+		validS11AService(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
 			if (_.isEmpty(dataFICode)) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
 				responseData = new cics11aRQSTRes(req.body, preResponse);
 				// update INQLOG
 				dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-				cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+				insertINQLOG(dataInqLogSave).then((r) => {
 					console.log('insert INQLOG:', r);
 				});
 				logger.info(responseData);
@@ -71,9 +71,9 @@ exports.cics11aRQST = function (req, res, next) {
 				return res.status(500).json(responseData);
 			}
 			//End check params request
-			common_service.getSequence().then(resSeq => {
+			common_service().then(resSeq => {
 				niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
-				const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
+				const getdataReq = new CIC_S11A_RQSTRequest(req.body, password, niceSessionKey);
 
 				console.log("getdataReq =", getdataReq);
 
@@ -81,7 +81,7 @@ exports.cics11aRQST = function (req, res, next) {
 				logger.debug('Log request parameters from routes after manage request');
 				logger.info(getdataReq);
 
-				cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
+				insertSCRPLOG(getdataReq, res).then(niceSessionK => {
 					console.log("result cics11aRQST: ", niceSessionK);
 					if (!_.isEmpty(niceSessionK)) {
 						let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
@@ -95,7 +95,7 @@ exports.cics11aRQST = function (req, res, next) {
 
 					// update INQLOG
 					dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+					insertINQLOG(dataInqLogSave).then((r) => {
 						console.log('insert INQLOG:', r);
 					});
 					logger.info(responseData);
@@ -103,17 +103,17 @@ exports.cics11aRQST = function (req, res, next) {
 				}).catch(reason => {
 					console.log(reason.toString());
 					logger.error(reason.toString());
-					return res.status(500).json({error: reason.toString()});
+					return res.status(500).json({ error: reason.toString() });
 				});
 			}).catch(reason => {
 				console.log(reason.toString());
 				logger.error(reason.toString());
-				return res.status(500).json({error: reason.toString()});
+				return res.status(500).json({ error: reason.toString() });
 			});
 		}).catch(reason => {
 			console.log(reason.toString());
 			logger.error(reason.toString());
-			return res.status(500).json({error: reason.toString()});
+			return res.status(500).json({ error: reason.toString() });
 		});
 	} catch (err) {
 		//conneciton socket
@@ -130,22 +130,22 @@ exports.cics11aRQST = function (req, res, next) {
 	}
 };
 
-const cics11aRSLTReq = require('../../domain/CIC_S11A_RSLT.request');
-const cics11aRSLTRes = require('../../domain/CIC_S11A_RSLT.response');
-const validS11ARQLT = require('../../util/validRequestS11AResponse');
+import {cics11aRSLTReq} from '../../domain/CIC_S11A_RSLT.request.js';
+import {cics11aRSLTRes} from '../../domain/CIC_S11A_RSLT.response.js';
+import {validS11ARQLT} from '../../util/validRequestS11AResponse.js';
 
-const loanDetailNode = require('../../domain/loan/loanDetailNode');
-const disposalLoanNode = require('../../domain/loan/disposalVAMCLoan');
-const loan12MInfor = require('../../domain/loan/loan12MInfo');
-const npl5YLoan = require('../../domain/loan/nplLoan5year');
-const loan12MCat = require('../../domain/loan/loan12MCautious');
-const financialContract = require('../../domain/loan/financialContract');
-const cusLookup = require('../../domain/loan/customerLookupInfo');
+import loanDetailNode from '../../domain/loan/loanDetailNode.js';
+import {disposalLoanNode} from '../../domain/loan/disposalVAMCLoan.js';
+import loan12MInfor from '../../domain/loan/loan12MInfo.js';
+import npl5YLoan from '../../domain/loan/nplLoan5year.js';
+import loan12MCat from '../../domain/loan/loan12MCautious.js';
+import {financialContract} from '../../domain/loan/financialContract.js';
+import cusLookup from '../../domain/loan/customerLookupInfo.js';
 
-const convertMilionUnit = require('../../../shared/util/convertUnit');
-const cics11aRSLTResLength = require('../../domain/CIC_S11A_RSLT.responseLegnth');
+import convertMilionUnit from '../../../shared/util/convertUnit.js';
+import {cics11aRSLTResLength} from '../../domain/CIC_S11A_RSLT.responseLegnth.js';
 
-exports.cics11aRSLT = function (req, res) {
+export function cics11aRSLT(req, res) {
 	try {
 		const getdataReq = new cics11aRSLTReq(req.body);
 
@@ -153,7 +153,7 @@ exports.cics11aRSLT = function (req, res) {
 		* Checking parameters request
 		* Request data
 		*/
-		let rsCheck = validS11ARQLT.checkParamRequestForResponse(getdataReq);
+		let rsCheck = validS11ARQLT(getdataReq);
 		let preResponse, responseData, dataInqLogSave;
 
 		if (!_.isEmpty(rsCheck)) {
@@ -170,20 +170,20 @@ exports.cics11aRSLT = function (req, res) {
 			}
 			// update INQLOG
 			dataInqLogSave = new DataInqLogSave(getdataReq, preResponse.responseCode);
-			cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+			insertINQLOG(dataInqLogSave).then((r) => {
 				console.log('insert INQLOG:', r);
 			});
 			logger.info(preResponse);
 			return res.status(200).json(preResponse);
 		}
-		validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
+		validS11AService(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
 			if (_.isEmpty(dataFICode)) {
 				preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
 				responseData = new cics11aRQSTRes(getdataReq, preResponse);
 				// update INQLOG
 				dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-				cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+				insertINQLOG(dataInqLogSave).then((r) => {
 					console.log('insert INQLOG:', r);
 				});
 				logger.info(responseData);
@@ -198,7 +198,7 @@ exports.cics11aRSLT = function (req, res) {
 			}
 			//End check params request
 
-			cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
+			selectCICS11aRSLT(getdataReq, res).then(reslt => {
 				console.log("result selectCICS11aRSLT: ", reslt);
 
 				if (!_.isEmpty(reslt)) {
@@ -372,7 +372,7 @@ exports.cics11aRSLT = function (req, res) {
 
 					// update INQLOG
 					dataInqLogSave = new DataInqLogSave(getdataReq, response.responseCode);
-					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+					insertINQLOG(dataInqLogSave).then((r) => {
 						console.log('insert INQLOG:', r);
 					});
 					//Logging response
@@ -381,7 +381,7 @@ exports.cics11aRSLT = function (req, res) {
 					return res.status(200).json(responseData);
 				} else {
 					// select in SCRPLOG check SCRP_STAT_CD
-					cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+					selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
 
 						if (_.isEmpty(rslt)) {
 							let responseUnknow = {
@@ -397,7 +397,7 @@ exports.cics11aRSLT = function (req, res) {
 							}
 							//update INQLog
 							dataInqLogSave = new DataInqLogSave(getdataReq, responseUnknow.responseCode);
-							cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+							insertINQLOG(dataInqLogSave).then((r) => {
 								console.log('insert INQLOG:', r);
 							});
 							logger.info(responseUnknow);
@@ -453,7 +453,7 @@ exports.cics11aRSLT = function (req, res) {
 							}
 							//update INQLog
 							dataInqLogSave = new DataInqLogSave(getdataReq, responseSrapingStatus.responseCode);
-							cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+							insertINQLOG(dataInqLogSave).then((r) => {
 								console.log('insert INQLOG:', r);
 							});
 							//Logging response
@@ -464,18 +464,18 @@ exports.cics11aRSLT = function (req, res) {
 					}).catch(reason => {
 						console.log(reason.toString());
 						logger.error(reason.toString());
-						return res.status(500).json({error: reason.toString()});
+						return res.status(500).json({ error: reason.toString() });
 					});
 				}
 			}).catch(reason => {
 				console.log(reason.toString());
 				logger.error(reason.toString());
-				return res.status(500).json({error: reason.toString()});
+				return res.status(500).json({ error: reason.toString() });
 			});
 		}).catch(reason => {
 			console.log(reason.toString());
 			logger.error(reason.toString());
-			return res.status(500).json({error: reason.toString()});
+			return res.status(500).json({ error: reason.toString() });
 		});
 
 	} catch (error) {
