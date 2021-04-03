@@ -1,4 +1,4 @@
-module.exports = function responseContractDownloadApi(Request, preResponse, dataGetStructure) {
+export function responseContractDownloadApi(Request, preResponse, dataGetStructure) {
     const {
         responseMessage,
         niceSessionKey,

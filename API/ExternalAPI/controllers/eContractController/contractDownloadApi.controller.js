@@ -1,22 +1,21 @@
-const validRequest = require('../../util/validateFTN_GCT_RQSTRequest');
-const responCode = require('../../../shared/constant/responseCodeExternal');
-const PreResponse = require('../../domain/preResponse.response');
-const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
-const cicExternalService = require('../../services/cicExternal.service');
-const dateutil = require('../../util/dateutil');
-const util = require('../../util/dateutil');
-const _ = require('lodash');
-const common_service = require('../../services/common.service');
-const logger = require('../../config/logger');
-const responseContractDownloadApi = require('../../domain/responseContractDownloadApi.response')
-const validS11AService = require('../../services/validS11A.service');
-const utilFunction = require('../../../shared/util/util');
-const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDownloadSaveToScrapLog.save');
-const axios = require('axios');
-const URI = require('../../../shared/URI');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
-const fs = require('fs');
-exports.contractDownloadApi = function (req, res) {
+import validRequest from '../../util/validateFTN_GCT_RQSTRequest.js';
+import responCode from '../../../shared/constant/responseCodeExternal.js';
+import PreResponse from '../../domain/preResponse.response.js';
+import DataSaveToInqLog from '../../domain/data_FptId_Save_To_InqLog.save.js';
+import {insertDataToINQLOG, } from '../../services/cicExternal.service.js';
+import dateutil from '../../util/dateutil.js';
+import util from '../../util/dateutil.js';
+import _ from 'lodash';
+import commonServiceGetSequence from '../../services/common.service.js';
+import logger from '../../config/logger.js';
+import {responseContractDownloadApi} from '../../domain/responseContractDownloadApi.response.js';
+import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
+import utilFunction from '../../../shared/util/util.js';
+import {axiosPost, axiosGet} from '../../services/httpClient.service.js';
+import URI from '../../../shared/URI.js';
+import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
+import fs from 'fs';
+export function contractDownloadApi (req, res) {
     try {
         const config = {
             headers: {
@@ -27,7 +26,7 @@ exports.contractDownloadApi = function (req, res) {
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave, filename;
-        common_service.getSequence().then(resSeq => {
+        commonServiceGetSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.FTN_GCT_RQST.code + niceSessionKey;
             if (!_.isEmpty(rsCheck)) {
@@ -35,17 +34,17 @@ exports.contractDownloadApi = function (req, res) {
                 responseData = new responseContractDownloadApi(req.query, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                insertDataToINQLOG(dataInqLogSave).then();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             } else {
-                validS11AService.selectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_GCT_RQST.code).then(dataFICode => {
+                validS11AServiceSelectFiCode(req.query.fiCode, responCode.NiceProductCode.FTN_GCT_RQST.code).then(dataFICode => {
                     if (_.isEmpty(dataFICode)) {
                         preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
                         responseData = new responseContractDownloadApi(req.query, preResponse);
                         // update INQLOG
                         dataInqLogSave = new DataSaveToInqLog(req.query, responseData);
-                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                        insertDataToINQLOG(dataInqLogSave).then();
                         logger.info(responseData);
                         return res.status(200).json(responseData);
                     } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -56,7 +55,7 @@ exports.contractDownloadApi = function (req, res) {
                     } else {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        axiosPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API_DEV + req.query.id;
@@ -67,7 +66,7 @@ exports.contractDownloadApi = function (req, res) {
                                         timeout: 60 * 1000,
                                         responseType: "stream"
                                     }
-                                    axios.get(URlDownloadContract, configDownloadContract).then(
+                                    axiosGet(URlDownloadContract, configDownloadContract).then(
                                         resultDownload => {
                                             if (resultDownload.status === 200 && !_.isEmpty(resultDownload.data)) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
@@ -78,7 +77,7 @@ exports.contractDownloadApi = function (req, res) {
                                                 convertPdfToBase64(filename, saveFile).then(
                                                     resultConvertBase64 => {
                                                         dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                        insertDataToINQLOG(dataInqLogSave).then();
                                                         responseData.contractContent = resultConvertBase64;
                                                         deleteFile(filename);
                                                         // fs.writeFile('result_document.pdf', resultConvertBase64, 'base64', (error) => {
@@ -91,8 +90,7 @@ exports.contractDownloadApi = function (req, res) {
                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                     responseData = new responseContractDownloadApi(req.query, preResponse);
                                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                    cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                    insertDataToINQLOG(dataInqLogSave).then();
                                                     logger.info(responseData);
                                                     logger.info(resultDownload.data);
                                                     return res.status(200).json(responseData);
@@ -103,8 +101,7 @@ exports.contractDownloadApi = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                insertDataToINQLOG(dataInqLogSave).then();
                                                 logger.info(responseData);
                                                 logger.info(resultDownload.data);
                                                 return res.status(200).json(responseData);
@@ -117,8 +114,7 @@ exports.contractDownloadApi = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.NoContractForInputId.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -126,8 +122,15 @@ exports.contractDownloadApi = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
+                                            logger.info(responseData);
+                                            logger.info(reason.toString());
+                                            return res.status(200).json(responseData);
+                                        } else if (reason.message === 'Request failed with status code 500') {
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
+                                            responseData = new responseContractDownloadApi(req.query, preResponse);
+                                            dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                            insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -135,8 +138,7 @@ exports.contractDownloadApi = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -148,8 +150,7 @@ exports.contractDownloadApi = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new responseContractDownloadApi(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    insertDataToINQLOG(dataInqLogSave).then();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
@@ -160,8 +161,7 @@ exports.contractDownloadApi = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -169,8 +169,7 @@ exports.contractDownloadApi = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
+                                insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
