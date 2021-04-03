@@ -15,7 +15,7 @@ import https from 'https';
 import fss from 'fs';
 import databaseInitialize from './config/db.config.js';
 import methodOverride from 'method-override';
-// import cicExternalRoute from './routes/cicExternal.route';
+import cicExternalRoute from './routes/cicExternal.route.js';
 import eContractRoute from './routes/eContract.route.js';
 // import eKyc from './routes/eKyc.route';
 
@@ -58,7 +58,7 @@ app.use(session({
 app.use(flash());
 
 //access to router
-// app.use('/external', cicExternalRoute);
+app.use('/external', cicExternalRoute);
 app.use('/contract', eContractRoute);
 // app.use('/kyc', eKyc);
 

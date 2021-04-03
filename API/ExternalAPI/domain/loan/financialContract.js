@@ -1,5 +1,5 @@
 
-module.exports = function FinancialContract(params) {
+export function financialContract(params) {
     const {
         FIN_CTRT,
         OGZ_NM,

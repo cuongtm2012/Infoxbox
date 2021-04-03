@@ -1,7 +1,7 @@
 
-const _ = require('lodash');
+import _ from'lodash';
 
-module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+export function cics11aRSLTRes(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
     , creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
     , arrVamcLoanInfo, cmtVmacDisposalLoan
     , arrLoan12MInfo, cmtLoan12MInfo

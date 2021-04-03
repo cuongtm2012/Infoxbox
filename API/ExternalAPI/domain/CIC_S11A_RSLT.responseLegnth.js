@@ -1,7 +1,7 @@
 
-const _ = require('lodash');
+import _ from 'lodash';
 
-module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+export function cics11aRSLTResLength(requestParams, response, outputScrpTranlog, outputCicrptMain, outputLoanDetailinfo, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
     , creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
     , arrVamcLoanInfo, cmtVmacDisposalLoan
     , arrLoan12MInfo, cmtLoan12MInfo
@@ -144,5 +144,5 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         this.commentOnFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
     this.customerInquiryNode = arrCusLookup ? arrCusLookup : '';
 
-};
+}
 
