@@ -13,7 +13,7 @@ const multipartMiddleware = multipart({maxFieldsSize: '1000mb' , uploadDir: path
 import {cics11aRQST, cics11aRSLT} from '../controllers/cicController/cics11a.controller.js';
 import {cics37Rqst} from '../controllers/cicController/cics37.controller.js' ;
 // import cicProcStat_controller from '../controllers/cicController/cicProcStat.controller.js' ;
-// import cicMacr_Controller from '../controllers/cicController/cicMacr.controller.js' ;
+import {cicMACRRQST, cicMACRRSLT} from '../controllers/cicController/cicMacr.controller.js' ;
 // import zaloScoreController from '../controllers/zaloAndVmgController/zaloScore.controller.js' ;
 // import vmgRiskScoreController from '../controllers/zaloAndVmgController/vmgRiskScore.controller.js' ;
 // import fptDigitalizeIDController from '../controllers/fptTrandataController/fptDigitalizeID.controller.js' ;
@@ -35,8 +35,8 @@ router.post('/CIC_S37_RQST', cics37Rqst);
 
 // router.post('/CIC_PROC_STAT', cicProcStat_controller.cicProcStat);
 
-// router.post('/CIC_MACR_RQST', cicMacr_Controller.cicMACRRQST);
-// router.post('/CIC_MACR_RSLT', cicMacr_Controller.cicMACRRSLT);
+router.post('/CIC_MACR_RQST', cicMACRRQST);
+router.post('/CIC_MACR_RSLT', cicMACRRSLT);
 
 // router.post('/PHN_SCO_RQST', zaloScoreController.zaloScore);
 // router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);

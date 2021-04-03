@@ -10,6 +10,7 @@ const cache = dnscache({
     "ttl" : 100,
     "cachesize" : 10000
 });
+import request from 'request';
 registerInterceptor(axiosClient);
 // getUri(config?: AxiosRequestConfig): string;
 // request<T = any, R = AxiosResponse<T>> (config: AxiosRequestConfig): Promise<R>;
@@ -77,4 +78,25 @@ function httpsGet(hostname, port, path, headers) {
     })
 }
 
-export {axiosPost, axiosGet, httpsGet};
+function requestGet(url, headers, hostname) {
+    return new Promise((resolve, reject) => {
+        try {
+            cache.lookup(hostname ? hostname : 'demo.econtract.fpt.com.vn', function(err, result) {
+                console.log('result>>>>>>>>>>>>>>',result);
+            });
+            request({
+                url: url,
+                method: 'GET',
+                headers: headers,
+                timeout: 60 * 1000
+            }, (error, response, body) => {
+                resolve({status: response.statusCode, data: body});
+            });
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
+export {axiosPost, axiosGet, httpsGet, requestGet};
