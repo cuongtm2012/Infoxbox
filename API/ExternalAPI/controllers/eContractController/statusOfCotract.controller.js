@@ -13,7 +13,7 @@ import {statusOfContractResponseWithResult} from '../../domain/reponseStatusOfCo
 import validS11AServiceSelectFiCode from '../../services/validS11A.service.js';
 import utilFunction from '../../../shared/util/util.js';
 import {dataStatusContractSaveToScrapLog} from '../../domain/dataStatusOfContractSaveToScrapLog.save.js';
-import {axiosPost, axiosGet, httpsGet, superagentGet} from '../../services/httpClient.service.js';
+import {axiosPost, axiosGet, httpsGet, superagentGet, superagentPost} from '../../services/httpClient.service.js';
 import URI from '../../../shared/URI.js';
 import bodyGetAuthEContract from '../../domain/bodyGetAuthEContract.body.js';
 import {bodyPostVmgKYC2} from '../../domain/bodyVmg_KYC_2.body.js';
@@ -74,7 +74,7 @@ export function statusOfContract (req, res) {
                         //    getAuthAccess
                         // let bodyGetAuth = new bodyGetAuthEContract();
                         let bodyK2 = new bodyPostVmgKYC2(test.natId);
-                        axios.post(URI.URL_VMG_DEV, bodyK2, config).then(
+                        superagentPost(URI.URL_VMG_DEV, bodyK2, config).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess)) {
                                 //    get status contract

@@ -85,7 +85,33 @@ function superagentGet(url, query, Authorization) {
                 .query() // query string
                 .set('Authorization', Authorization)
                 .end((err, res) => {
-                    resolve({status: res.statusCode, data: res.body});
+                    if (res.statusCode === 200) {
+                        resolve({status: res.statusCode, data: res.body});
+                    } else {
+                        reject(res);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
+function superagentPost(url, body, Authorization) {
+    return new Promise((resolve, reject) => {
+        try {
+            superagent
+                .post(url)
+                .send(body) // query string
+                .set('Authorization', Authorization)
+                .set('Content-Type', 'application/json')
+                .end((err, res) => {
+                    if (res.statusCode === 200) {
+                        resolve({status: res.statusCode, data: res.body});
+                    } else {
+                        reject(res);
+                    }
                 });
         } catch (err) {
             console.log(err.toString());
@@ -95,4 +121,4 @@ function superagentGet(url, query, Authorization) {
 }
 
 
-export {axiosPost, axiosGet, httpsGet, superagentGet};
+export {axiosPost, axiosGet, httpsGet, superagentGet, superagentPost};
