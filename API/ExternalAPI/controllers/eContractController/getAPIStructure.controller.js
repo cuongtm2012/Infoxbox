@@ -74,22 +74,23 @@ exports.getStructureAPI = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
-                                        console.log('errGetStructureContract: ',  reason.res.statusMessage);
-                                        if (reason.res && reason.res.statusMessage === 'Internal Server Error') {
+                                        console.log('errGetStructureContract: ',  reason.toString());
+                                        if (reason.res && reason.statusCode === 500) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractTemplateForInputAlias.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractTemplateForInputAlias.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            console.log('errGetStructureContract: ',  reason.res.statusMessage);
                                             logger.info(responseData);
                                             logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
-                                        } else if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
+                                        } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -97,21 +98,21 @@ exports.getStructureAPI = function (req, res) {
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         }
                                     })
                                 }
                             }
                         ).catch(reason => {
-                            console.log('errGetAuth: ', reason.res.statusMessage);
-                            if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
+                            console.log('errGetAuth: ', reason.toString());
+                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
-                                logger.info(reason.res.statusMessage);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -119,7 +120,7 @@ exports.getStructureAPI = function (req, res) {
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
-                                logger.info(reason.res.statusMessage);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             }
                         })

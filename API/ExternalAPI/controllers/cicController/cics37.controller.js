@@ -1,4 +1,4 @@
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const logger = require('../../config/logger');
 
 const cics37RQSTReq = require('../../domain/CIC_S37_RQST.request');
@@ -132,7 +132,7 @@ exports.cics37Rqst = function (req, res) {
                         var fnData = new cicB1003Req(req.body, defaultValue, decryptPW, fullNiceKey);
                         console.log('request data:', fnData);
 
-                        axios.post(URI.cicInternalJson, fnData, config)
+                        httpClient.superagentPost(URI.cicInternalJson, fnData)
                             .then((body) => {
                                 console.log('body:', body.data);
 

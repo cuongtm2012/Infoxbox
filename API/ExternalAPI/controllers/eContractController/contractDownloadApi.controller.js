@@ -18,12 +18,6 @@ const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const fs = require('fs');
 exports.contractDownloadApi = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave, filename;
@@ -106,9 +100,9 @@ exports.contractDownloadApi = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             }
                                         }).catch(reason => {
-                                        console.log('errResultDownload: ', reason.res.statusMessage);
+                                        console.log('errResultDownload: ', reason.toString());
                                         deleteFile(filename);
-                                        if (reason.res && reason.res.statusMessage === ('Internal Server Error')) {
+                                        if (reason.res && reason.res.statusCode === 500) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
@@ -116,13 +110,13 @@ exports.contractDownloadApi = function (req, res) {
                                             logger.info(responseData);
                                             logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
-                                        } else if (reason.message === 'timeout of 60000ms exceeded') {
+                                        } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -130,7 +124,7 @@ exports.contractDownloadApi = function (req, res) {
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         }
                                     })
@@ -146,14 +140,14 @@ exports.contractDownloadApi = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            console.log('errGetAuthAccess: ', reason.res.statusMessage);
-                            if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
+                            console.log('errGetAuthAccess: ', reason.toString());
+                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
-                                logger.info(reason.res.statusMessage);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -161,7 +155,7 @@ exports.contractDownloadApi = function (req, res) {
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 logger.info(responseData);
-                                logger.info(reason.res.statusMessage);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             }
                         })
