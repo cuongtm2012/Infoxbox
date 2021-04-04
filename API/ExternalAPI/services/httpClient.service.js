@@ -7,7 +7,7 @@ function superagentGet(url, query, Authorization) {
             let data;
             superagent
                 .get(url)
-                .query() // query string
+                .query(query) // query string
                 .set('Authorization', Authorization)
                 .end((err, res) => {
                     if (res.statusCode === 200) {
@@ -55,6 +55,34 @@ function superagentPost(url, body, Authorization) {
     })
 }
 
+function superagentGetAcceptEncoding(url, query, Authorization) {
+    return new Promise((resolve, reject) => {
+        try {
+            let data;
+            superagent
+                .get(url)
+                .query(query) // query string
+                .set('Authorization', Authorization ? Authorization : '')
+                .set('Accept-Encoding', 'gzip, deflate, br')
+                .end((err, res) => {
+                    if (res.statusCode === 200) {
+                        if (res.text)
+                            data = res.text;
+                        if (!_.isEmpty(res.body))
+                            data = res.body;
+                        resolve({status: res.statusCode, data: data});
+                    } else {
+                        reject(res);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
 
 module.exports.superagentPost = superagentPost;
 module.exports.superagentGet = superagentGet;
+module.exports.superagentGetAcceptEncoding = superagentGetAcceptEncoding;
