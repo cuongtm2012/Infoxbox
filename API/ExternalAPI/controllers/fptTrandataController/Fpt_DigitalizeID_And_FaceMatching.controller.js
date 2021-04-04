@@ -1,6 +1,6 @@
 const logger = require('../../config/logger');
 const validRequest = require('../../util/validateFptV01andV02request');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const common_service = require('../../services/common.service');
 const _ = require('lodash');
 const PreResponse = require('../../domain/preResponse.response');
@@ -21,9 +21,6 @@ const DataFptIdAndFaceMatchingSaveToScapLog = require('../../domain/data_Fpt_Id_
 const configExternal = require('../../config/config')
 const URI = require('../../../shared/URI');
 const FormData = require('form-data');
-const urlGetAuth = 'account/unauth/v1/login';
-const urlFptV01 = 'aggregator/api/v1/verification/v01_id';
-const urlFptV02 = 'aggregator/api/v1/verification/v02_facematching';
 const DataFptIdSaveToFptID = require('../../domain/data_FptId_Save_To_FptId.save');
 const DataSaveToFptFace = require('../../domain/data_Fpt_Digital_And_FaceMatching_SaveTo_FptFace.save');
 const DEFAULT_VALUE1 = 0.75;
@@ -86,31 +83,15 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                     password: configExternal.AccountFptDev.password
                                 }
                                 // get token
-                                axios.post(URI.URL_FPT_DEV + urlGetAuth, body, config).then(
+                                httpClient.superagentPost(URI.URL_FPT_DEV_GetAuth, body).then(
                                     resultGetAuth => {
                                         if (resultGetAuth.data.ErrorCode === 0) {
                                             // success get auth
                                             // Prepare to call V01
-                                            let bodyFormDataV01 = new FormData();
+                                            let token = `Bearer ${resultGetAuth.data.Data.sessionToken}`;
                                             let requestIdV01 = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
-                                            bodyFormDataV01.append('requestId', requestIdV01);
-                                            bodyFormDataV01.append('type', req.body.idType);
-                                            req.body.frontImage ? bodyFormDataV01.append('frontImage', req.body.frontImage) : bodyFormDataV01.append('frontImage', fs.createReadStream(req.files.frontImage.path));
-                                            if (req.body.idType.toUpperCase() === 'ID') {
-                                                req.body.rearImage ? bodyFormDataV01.append('backImage', req.body.rearImage) : bodyFormDataV01.append('backImage', fs.createReadStream(req.files.rearImage.path));
-                                            }
-                                            let configWithAuth = {
-                                                method: 'post',
-                                                url: URI.URL_FPT_DEV + urlFptV01,
-                                                headers: {
-                                                    'Content-Type': 'multipart/json',
-                                                    'Authorization': `Bearer ${resultGetAuth.data.Data.sessionToken}`, ...bodyFormDataV01.getHeaders()
-                                                },
-                                                data: bodyFormDataV01,
-                                                timeout: 100 * 1000,
-                                            };
                                             // call to fpt V01
-                                            axios(configWithAuth).then(
+                                            httpClient.superagentPostMultipartV01(URI.URL_FPT_DEV_V01, token, requestIdV01, req.body.idType, req.body.frontImage, req.body.idType.toUpperCase() === 'ID' ? req.body.rearImage : '').then(
                                                 responseV01 => {
                                                     if (responseV01.data.ErrorCode === 0) {
                                                         //    success get data v01
@@ -118,24 +99,9 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         let dataSaveToFptId = new DataFptIdSaveToFptID(req, fullNiceKey, responseV01.data.Data, responseV01.data.ErrorCode, requestIdV01)
                                                         cicExternalService.insertDataFptIdToFptId(dataSaveToFptId).then();
                                                         //     prepare to call V02
-                                                        let bodyFormDataV02 = new FormData();
                                                         let requestIdV02 = configExternal.AccountFptDev.username + '_' + dateutil.getTimeHoursNoDot() + seqRquestId;
-                                                        bodyFormDataV02.append('requestId', requestIdV02);
-                                                        req.body.frontImage ? bodyFormDataV02.append('targetImage', req.body.frontImage) : bodyFormDataV02.append('targetImage', fs.createReadStream(req.files.frontImage.path));
-                                                        req.body.selfieImage ? bodyFormDataV02.append('sourceImage', req.body.selfieImage) : bodyFormDataV02.append('sourceImage', fs.createReadStream(req.files.selfieImage.path));
-
-                                                        let configWithAuth = {
-                                                            method: 'post',
-                                                            url: URI.URL_FPT_DEV + urlFptV02,
-                                                            headers: {
-                                                                'Content-Type': 'multipart/json',
-                                                                'Authorization': `Bearer ${resultGetAuth.data.Data.sessionToken}`, ...bodyFormDataV02.getHeaders()
-                                                            },
-                                                            data: bodyFormDataV02,
-                                                            timeout: 100 * 1000,
-                                                        };
                                                         // call to fpt V02
-                                                        axios(configWithAuth).then(
+                                                        httpClient.superagentPostMultipartV02(URI.URL_FPT_DEV_V02, token, requestIdV02, req.body.frontImage, req.body.selfieImage).then(
                                                             resultV02 => {
                                                                 if (resultV02.data.ErrorCode === 0) {
                                                                     //    success get data v02 response p000
@@ -206,7 +172,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                             }
                                                         ).catch(reason => {
                                                             console.log('Error when call FPT v02: ', reason.toString());
-                                                            if (reason.message === 'timeout of 100000ms exceeded') {
+                                                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                                                 deleteFile(req);
                                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                                 responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
@@ -230,7 +196,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         })
                                                     } else if (responseV01.data.ErrorCode === 1451 || responseV01.data.ErrorCode === 1455) {
                                                         // response F064
-                                                        console.log('message: ', responseV01.data.Message);
+                                                        console.log('messageV01: ', responseV01.data.Message);
                                                         deleteFile(req);
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.INVALIDINPUTIMAGE.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.INVALIDINPUTIMAGE.code);
                                                         responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
@@ -242,7 +208,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         return res.status(200).json(responseData);
                                                     } else if (responseV01.data.ErrorCode === 1453 || responseV01.data.ErrorCode === 1653) {
                                                         // response F065
-                                                        console.log('message: ', responseV01.data.Message);
+                                                        console.log('messageV01: ', responseV01.data.Message);
                                                         deleteFile(req);
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.UNABLETOVERIFYOCR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.UNABLETOVERIFYOCR.code);
                                                         responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
@@ -253,7 +219,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                         logger.info(responseV01.data.Message);
                                                         return res.status(200).json(responseData);
                                                     } else {
-                                                        console.log('errV01: ', responseV01.data.Message)
+                                                        console.log('messageV01: ', responseV01.data.Message)
                                                         deleteFile(req);
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                         responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
@@ -267,7 +233,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                                 }
                                             ).catch(errV01 => {
                                                 console.log('errV01: ', errV01.toString())
-                                                if (errV01.message === 'timeout of 100000ms exceeded') {
+                                                if (errV01.code === 'ETIMEDOUT' || errV01.errno === 'ETIMEDOUT') {
                                                     deleteFile(req);
                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                     responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);
@@ -305,7 +271,7 @@ exports.fptDigitalizeIdAndFaceMatching = function (req, res) {
                                     }
                                 ).catch(reason => {
                                     console.log('Error when get token FPT v01: ', reason.toString());
-                                    if (reason.message === 'timeout of 60000ms exceeded') {
+                                    if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                         deleteFile(req);
                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                         responseData = new responseFptDigitalizeIdAndFaceMatchingResponseWithoutResult(req.body, preResponse);

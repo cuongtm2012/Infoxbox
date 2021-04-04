@@ -167,9 +167,84 @@ function superagentPostZaloEncodeUrl(url, body, clientId) {
         }
     })
 }
+function superagentPostMultipartV01(url, authorization, requestId, type, frontImage, backImage) {
+    return new Promise((resolve, reject) => {
+        try {
+            let data;
+            superagent
+                .post(url)
+                .set('Content-Type', 'multipart/form-data')
+                .set('Authorization', authorization)
+                .accept('application/json')
+                .field('requestId', requestId)
+                .field('type', type)
+                .field('frontImage', frontImage)
+                .field('backImage', backImage ? backImage : '')
+                .timeout({
+                    response: 100000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 100000, // but allow 1 minute for the file to finish loading.
+                })
+                .end((err, response) => {
+                    if (err)
+                        return reject(err);
+                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        if (response.text)
+                            data = response.text;
+                        if (!_.isEmpty(response.body))
+                            data = response.body;
+                        return resolve({status: response.statusCode, data: data});
+                    } else {
+                        return reject(response);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            return reject(err)
+        }
+    })
+}
+
+function superagentPostMultipartV02(url, authorization, requestId, targetImage, sourceImage) {
+    return new Promise((resolve, reject) => {
+        try {
+            let data;
+            superagent
+                .post(url)
+                .set('Content-Type', 'multipart/form-data')
+                .set('Authorization', authorization)
+                .accept('application/json')
+                .field('requestId', requestId)
+                .field('targetImage', targetImage)
+                .field('sourceImage', sourceImage)
+                .timeout({
+                    response: 100000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 100000, // but allow 1 minute for the file to finish loading.
+                })
+                .end((err, response) => {
+                    if (err)
+                        return reject(err);
+                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        if (response.text)
+                            data = response.text;
+                        if (!_.isEmpty(response.body))
+                            data = response.body;
+                        return resolve({status: response.statusCode, data: data});
+                    } else {
+                        return reject(response);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            return reject(err)
+        }
+    })
+}
+
 
 module.exports.superagentPost = superagentPost;
 module.exports.superagentGet = superagentGet;
 module.exports.superagentGetAcceptEncoding = superagentGetAcceptEncoding;
 module.exports.superagentGetStreamType = superagentGetStreamType;
 module.exports.superagentPostZaloEncodeUrl = superagentPostZaloEncodeUrl;
+module.exports.superagentPostMultipartV01 = superagentPostMultipartV01;
+module.exports.superagentPostMultipartV02 = superagentPostMultipartV02;
