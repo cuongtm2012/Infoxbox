@@ -1,126 +1,119 @@
-const https = require('https');
-const http = require('http');
 const config = require('../config/config');
-const qs = require('qs');
-function HTTPS_PostJson(host, path, port, body) {
+const superagent = require('superagent');
+var binaryParser = require('superagent-binary-parser');
+const _ = require('lodash');
+function superagentGet(url, query, Authorization) {
     return new Promise((resolve, reject) => {
         try {
-            const httpsBody = JSON.stringify(body);
-            const optionHttpsPost = {
-                hostname: host,
-                port: port,
-                path: path,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Content-Length': httpsBody.length
-                },
-                timeout: config.requestTimeOut.applicationJson
-            }
-            const request = https.request(optionHttpsPost, response => {
-                let result = '';
-                response.on('data', data => {
-                    result += data;
-                    resolve(JSON.parse(result));
-                })
-                response.on('error', err => {
-                    console.log(err);
-                    reject(err);
+            let data;
+            superagent
+                .get(url)
+                .query(query) // query string
+                .set('Authorization', Authorization)
+                .end((err, res) => {
+                    if (res.statusCode === 200) {
+                        if (res.text)
+                            data = res.text;
+                        if (!_.isEmpty(res.body))
+                            data = res.body;
+                        resolve({status: res.statusCode, data: data});
+                    } else {
+                        reject(res);
+                    }
                 });
-            })
-            request.on('error', error => {
-                console.error(error);
-                reject(error);
-            })
-            request.write(httpsBody)
-            request.end()
         } catch (err) {
             console.log(err.toString());
             reject(err)
         }
-    });
+    })
 }
 
-
-function HTTP_PostJson(host, path, port, body) {
+function superagentPost(url, body, Authorization) {
     return new Promise((resolve, reject) => {
         try {
-            const httpBody = JSON.stringify(body);
-            const optionHttpPost = {
-                hostname: host,
-                port: port,
-                path: path,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Content-Length': Buffer.byteLength(httpBody)
-                },
-                timeout: config.requestTimeOut.applicationJson
-            }
-            const request = http.request(optionHttpPost, response => {
-                let result = '';
-                response.on("data", data => {
-                    result += data;
-                    resolve(JSON.parse(result));
-                })
-                response.on("error", err => {
-                    console.log(err);
-                    reject(err);
-                })
-            })
-            request.on("error", err => {
-                console.log(err);
-                reject(err);
-            })
-            request.end(httpBody)
-        } catch (err) {
-            console.log(err.toString());
-            reject(err);
-        }
-    });
-}
-
-function HTTPS_PostUrlEncoded(host, path, port, body, extendHeader) {
-    return new Promise((resolve, reject) => {
-        try {
-            const httpsBody = qs.stringify(body);
-            const optionHttpsPost = {
-                hostname: host,
-                port: port,
-                path: path,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Content-Length': Buffer.byteLength(httpsBody),
-                    'X-Client-Request-Id': extendHeader ? extendHeader : ''
-                },
-                timeout: config.requestTimeOut.applicationJson
-            }
-            const request = https.request(optionHttpsPost, response => {
-                let result = '';
-                console.log(extendHeader ? 'X-Client-Request-Id: ' + extendHeader : '');
-                response.on('data', data => {
-                    result += data;
-                    resolve(JSON.parse(result));
-                })
-                response.on('error', err => {
-                    console.log(err);
-                    reject(err);
+            let data;
+            superagent
+                .post(url)
+                .send(body) // query string
+                .set('Authorization', Authorization ? Authorization : '')
+                .set('Content-Type', 'application/json')
+                .timeout(60*1000)
+                .end((err, response) => {
+                    if (response.statusCode === 200) {
+                       if (response.text)
+                           data = response.text;
+                       if (!_.isEmpty(response.body))
+                           data = response.body;
+                        resolve({status: response.statusCode, data: data});
+                    } else {
+                        reject(response);
+                    }
                 });
-            })
-            request.on('error', error => {
-                console.error(error);
-                reject(error);
-            })
-            request.write(httpsBody)
-            request.end()
         } catch (err) {
             console.log(err.toString());
             reject(err)
         }
-    });
+    })
 }
 
-module.exports.HTTP_PostJson = HTTP_PostJson;
-module.exports.HTTPS_PostJson = HTTPS_PostJson;
-module.exports.HTTPS_PostUrlEncoded = HTTPS_PostUrlEncoded;
+function superagentGetAcceptEncoding(url, query, Authorization) {
+    return new Promise((resolve, reject) => {
+        try {
+            let data;
+            superagent
+                .get(url)
+                .query(query) // query string
+                .set('Authorization', Authorization ? Authorization : '')
+                .set('Accept-Encoding', 'gzip, deflate, br')
+                .end((err, res) => {
+                    if (res.statusCode === 200) {
+                        if (res.text)
+                            data = res.text;
+                        if (!_.isEmpty(res.body))
+                            data = res.body;
+                        resolve({status: res.statusCode, data: data});
+                    } else {
+                        reject(res);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
+function superagentGetStreamType(url, query, Authorization) {
+    return new Promise((resolve, reject) => {
+        try {
+            let data;
+            superagent
+                .get(url)
+                .query(query) // query string
+                .set('Authorization', Authorization ? Authorization : '')
+                .set('responseType', 'stream')
+                .parse(binaryParser)
+                .buffer()
+                .end((err, res) => {
+                    if (res.statusCode === 200) {
+                        if (res.text)
+                            data = res.text;
+                        if (!_.isEmpty(res.body))
+                            data = res.body;
+                        resolve({status: res.statusCode, data: data});
+                    } else {
+                        reject(res);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
+
+module.exports.superagentPost = superagentPost;
+module.exports.superagentGet = superagentGet;
+module.exports.superagentGetAcceptEncoding = superagentGetAcceptEncoding;
+module.exports.superagentGetStreamType = superagentGetStreamType;
