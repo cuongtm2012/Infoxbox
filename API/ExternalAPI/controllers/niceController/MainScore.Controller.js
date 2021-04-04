@@ -19,7 +19,7 @@ const dateutil = require('../../util/dateutil');
 const dataMainScoreSaveToScrapLog = require('../../domain/dataMainScoreSaveToScrapLog.save');
 const dataVmgKyc2SaveToVmgIncome = require('../../domain/dataVmgKyc2SaveToVmgIncome.save');
 const URI = require('../../../shared/URI');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const logger = require('../../config/logger');
 const dataMainScoreRclipsSaveToExtScore = require('../../domain/dataMainScoreRclipsSaveToExtScore.save')
 exports.rcs_M01_RQST = function (req, res) {
@@ -76,7 +76,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 let bodyVmgKyc2 = new bodyVmg_KYC_2(req.body.natId);
                                                 logger.info(bodyVmgKyc2);
                                                 // call VMG KYC 2
-                                                axios.post(URI.URL_VMG_DEV, bodyVmgKyc2, config).then(
+                                                httpClient.superagentPost(URI.URL_VMG_DEV, bodyVmgKyc2).then(
                                                     resultKYC2 => {
                                                         if (resultKYC2.data.error_code.toString()) {
                                                             let bodyRclipsReq;
@@ -99,10 +99,11 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             bodyRclipsReq = new bodyPostRclips(responCode.TaskCode.RCS_M01_RQST.code, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             logger.info(bodyRclipsReq);
                                                             //    call Rclips
-                                                            axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq, config).then(
+                                                            httpClient.superagentPost(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq).then(
                                                                 resultRclips => {
                                                                     if (resultRclips.data.listResult) {
                                                                         //    success get data Rclips
+                                                                        logger.info(resultRclips.data.listResult);
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                                         responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, resultKYC2.data);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -123,7 +124,8 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                         return res.status(200).json(responseData);
                                                                     }
                                                                 }).catch(reason => {
-                                                                if (reason.message === 'timeout of 60000ms exceeded') {
+                                                                console.log('errRCLIPS: ', reason.toString());
+                                                                if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                                                     console.log("err:", reason.toString());
                                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                                     responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
@@ -134,7 +136,6 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                     logger.info(responseData);
                                                                     return res.status(200).json(responseData);
                                                                 } else {
-                                                                    console.log("err:", reason.toString());
                                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                                     responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -157,7 +158,9 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             return res.status(200).json(responseData);
                                                         }
                                                     }).catch(reason => {
-                                                    if (reason.message === 'timeout of 60000ms exceeded') {
+                                                    console.log('errKy2: ', reason.toString());
+                                                    if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
+                                                        console.log("err:", reason.toString());
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                         responseData = new RCS_M01_RQSTRes_Without_Result(req.body, preResponse);
                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);

@@ -10,6 +10,10 @@ function superagentGet(url, query, Authorization) {
                 .get(url)
                 .query(query) // query string
                 .set('Authorization', Authorization)
+                .timeout({
+                    response: 60000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 60000, // but allow 1 minute for the file to finish loading.
+                })
                 .end((err, res) => {
                     if (res.statusCode === 200) {
                         if (res.text)
@@ -37,9 +41,14 @@ function superagentPost(url, body, Authorization) {
                 .send(body) // query string
                 .set('Authorization', Authorization ? Authorization : '')
                 .set('Content-Type', 'application/json')
-                .timeout(60*1000)
+                .timeout({
+                    response: 60000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 60000, // but allow 1 minute for the file to finish loading.
+                })
                 .end((err, response) => {
-                    if (response.statusCode === 200) {
+                    if (err)
+                        reject(err);
+                    if (response.statusCode !== undefined && response.statusCode === 200) {
                        if (response.text)
                            data = response.text;
                        if (!_.isEmpty(response.body))
@@ -65,6 +74,10 @@ function superagentGetAcceptEncoding(url, query, Authorization) {
                 .query(query) // query string
                 .set('Authorization', Authorization ? Authorization : '')
                 .set('Accept-Encoding', 'gzip, deflate, br')
+                .timeout({
+                    response: 60000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 60000, // but allow 1 minute for the file to finish loading.
+                })
                 .end((err, res) => {
                     if (res.statusCode === 200) {
                         if (res.text)
@@ -92,6 +105,10 @@ function superagentGetStreamType(url, query, Authorization) {
                 .query(query) // query string
                 .set('Authorization', Authorization ? Authorization : '')
                 .set('responseType', 'stream')
+                .timeout({
+                    response: 60000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 60000, // but allow 1 minute for the file to finish loading.
+                })
                 .parse(binaryParser)
                 .buffer()
                 .end((err, res) => {
