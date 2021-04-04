@@ -19,7 +19,7 @@ var URI = {
     URL_FPT_DEV_V01: 'https://api.uat.trandata.io/aggregator/api/v1/verification/v01_id',
     URL_FPT_DEV_V02: 'https://api.uat.trandata.io/aggregator/api/v1/verification/v02_facematching',
 
-    URL_RCLIPS_DEVELOP: 'http://103.112.124.153:18082/online/rclips/json',
+    URL_RCLIPS_DEVELOP: 'http://localhost:18082/online/rclips/json',
 
     URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV: 'https://demo.econtract.fpt.com.vn/app/v1/client-auth/login',
 
