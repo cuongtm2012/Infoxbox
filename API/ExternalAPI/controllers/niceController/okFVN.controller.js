@@ -25,7 +25,7 @@ const cicExternalService = require('../../services/cicExternal.service');
 const utilFunction = require('../../../shared/util/util');
 const io = require('socket.io-client');
 const URI = require('../../../shared/URI');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const dataSimpleLimitRclipsSaveToExtScore = require('../../domain/dataSimpLimitRclipsSaveToExtScore.save');
 exports.okf_SPL_RQST = function (req, res, next) {
     try {
@@ -78,9 +78,10 @@ exports.okf_SPL_RQST = function (req, res, next) {
                         //call Rclips
                         let bodyRclipsSimpleLimit = new simpleLimitPostBody(req.body.mobilePhoneNumber, req.body.natId, req.body.joinYearMonth, req.body.salary);
                         logger.info(bodyRclipsSimpleLimit);
-                        axios.post(URI.URL_RCLIPS_DEVELOP, bodyRclipsSimpleLimit, config).then(
+                        httpClient.superagentPost(URI.URL_RCLIPS_DEVELOP, bodyRclipsSimpleLimit).then(
                             resultRclipsSPL => {
                                 if (!_.isEmpty(resultRclipsSPL.data.listResult)) {
+                                    logger.info(resultRclipsSPL.data);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                     responseData = new OKF_SPL_RQSTRes(getdataReq, preResponse);
                                     responseData.maxSimpleLimit = resultRclipsSPL.data.listResult.OT010.toString();
@@ -103,10 +104,11 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                     logger.info(responseData);
                                     logger.info(resultRclipsSPL.data);
-                                    return res.status(200).json(responseData)
+                                    return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            if (reason.message === 'timeout of 60000ms exceeded') {
+                            console.log('errRclips: ', reason.toString());
+                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                                 // update INQLOG

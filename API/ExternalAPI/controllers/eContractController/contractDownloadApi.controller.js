@@ -18,12 +18,6 @@ const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const fs = require('fs');
 exports.contractDownloadApi = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave, filename;

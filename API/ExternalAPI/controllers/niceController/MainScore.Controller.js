@@ -24,12 +24,6 @@ const logger = require('../../config/logger');
 const dataMainScoreRclipsSaveToExtScore = require('../../domain/dataMainScoreRclipsSaveToExtScore.save')
 exports.rcs_M01_RQST = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRCS_M01_RQST.checkRCSM01ParamRequest(req.body);
         let preResponse, responseData, dataInqLogSave;
         common_service.getSequence().then(resSeq => {
