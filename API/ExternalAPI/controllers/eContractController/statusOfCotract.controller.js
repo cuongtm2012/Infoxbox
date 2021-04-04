@@ -18,12 +18,6 @@ const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 exports.statusOfContract = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave;
@@ -114,7 +108,7 @@ exports.statusOfContract = function (req, res) {
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                             logger.info(responseData);
-                                            logger.info(reason.toString());
+                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
                                         } else if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
@@ -123,7 +117,7 @@ exports.statusOfContract = function (req, res) {
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                             logger.info(responseData);
-                                            logger.info(reason.toString());
+                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
                                         } else {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -132,7 +126,7 @@ exports.statusOfContract = function (req, res) {
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                             logger.info(responseData);
-                                            logger.info(reason.toString());
+                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
                                         }
                                     })
@@ -169,7 +163,7 @@ exports.statusOfContract = function (req, res) {
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                 logger.info(responseData);
-                                logger.info(reason.toString());
+                                logger.info(reason.res.statusMessage);
                                 return res.status(200).json(responseData);
                             } else if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
@@ -178,7 +172,7 @@ exports.statusOfContract = function (req, res) {
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                 logger.info(responseData);
-                                logger.info(reason.toString());
+                                logger.info(reason.res.statusMessage);
                                 return res.status(200).json(responseData);
                             } else {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
@@ -187,7 +181,7 @@ exports.statusOfContract = function (req, res) {
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
                                 logger.info(responseData);
-                                logger.info(reason.toString());
+                                logger.info(reason.res.statusMessage);
                                 return res.status(200).json(responseData);
                             }
                         })

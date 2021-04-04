@@ -18,12 +18,6 @@ const URI = require('../../../shared/URI');
 const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
 exports.getStructureAPI = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave;
@@ -66,7 +60,6 @@ exports.getStructureAPI = function (req, res) {
                                                 responseData = new responseGetApiStructureResponseWithResult(req.query, preResponse, resultGetStructure.data);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.NORMAL.code).then();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else {
@@ -76,7 +69,6 @@ exports.getStructureAPI = function (req, res) {
                                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                                 logger.info(responseData);
                                                 logger.info(resultGetStructure.data);
                                                 return res.status(200).json(responseData);
@@ -88,7 +80,6 @@ exports.getStructureAPI = function (req, res) {
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.NoContractTemplateForInputAlias.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
@@ -97,7 +88,6 @@ exports.getStructureAPI = function (req, res) {
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
@@ -106,7 +96,6 @@ exports.getStructureAPI = function (req, res) {
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
@@ -121,7 +110,6 @@ exports.getStructureAPI = function (req, res) {
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.res.statusMessage);
                                 return res.status(200).json(responseData);
@@ -130,7 +118,6 @@ exports.getStructureAPI = function (req, res) {
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.res.statusMessage);
                                 return res.status(200).json(responseData);

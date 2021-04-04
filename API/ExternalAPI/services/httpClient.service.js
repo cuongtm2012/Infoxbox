@@ -1,5 +1,6 @@
 const config = require('../config/config');
 const superagent = require('superagent');
+var binaryParser = require('superagent-binary-parser');
 const _ = require('lodash');
 function superagentGet(url, query, Authorization) {
     return new Promise((resolve, reject) => {
@@ -82,7 +83,37 @@ function superagentGetAcceptEncoding(url, query, Authorization) {
     })
 }
 
+function superagentGetStreamType(url, query, Authorization) {
+    return new Promise((resolve, reject) => {
+        try {
+            let data;
+            superagent
+                .get(url)
+                .query(query) // query string
+                .set('Authorization', Authorization ? Authorization : '')
+                .set('responseType', 'stream')
+                .parse(binaryParser)
+                .buffer()
+                .end((err, res) => {
+                    if (res.statusCode === 200) {
+                        if (res.text)
+                            data = res.text;
+                        if (!_.isEmpty(res.body))
+                            data = res.body;
+                        resolve({status: res.statusCode, data: data});
+                    } else {
+                        reject(res);
+                    }
+                });
+        } catch (err) {
+            console.log(err.toString());
+            reject(err)
+        }
+    })
+}
+
 
 module.exports.superagentPost = superagentPost;
 module.exports.superagentGet = superagentGet;
 module.exports.superagentGetAcceptEncoding = superagentGetAcceptEncoding;
+module.exports.superagentGetStreamType = superagentGetStreamType;
