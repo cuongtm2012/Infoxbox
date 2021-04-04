@@ -16,20 +16,20 @@ function superagentGet(url, query, Authorization) {
                 })
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
-                        return reject(response);
+                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
@@ -49,20 +49,20 @@ function superagentPost(url, body, Authorization) {
                 })
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                        if (response.text)
                            data = response.text;
                        if (!_.isEmpty(response.body))
                            data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
-                        return reject(response);
+                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
@@ -82,20 +82,20 @@ function superagentGetAcceptEncoding(url, query, Authorization) {
                 })
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
-                        return reject(response);
+                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
@@ -117,20 +117,20 @@ function superagentGetStreamType(url, query, Authorization) {
                 .buffer()
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
@@ -150,20 +150,20 @@ function superagentPostZaloEncodeUrl(url, body, clientId) {
                 })
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
-                        return reject(response);
+                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
@@ -186,20 +186,20 @@ function superagentPostMultipartV01(url, authorization, requestId, type, frontIm
                 })
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
-                        return reject(response);
+                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
@@ -222,20 +222,20 @@ function superagentPostMultipartV02(url, authorization, requestId, targetImage, 
                 })
                 .end((err, response) => {
                     if (err)
-                        return reject(err);
+                         reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                        return resolve({status: response.statusCode, data: data});
+                         resolve({status: response.statusCode, data: data});
                     } else {
-                        return reject(response);
+                         reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-            return reject(err)
+             reject(err)
         }
     })
 }
