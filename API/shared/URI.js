@@ -1,3 +1,4 @@
+
 var URI = {
         cicInternalJson: 'https://10.84.222.154:9002/rest/extJson',
 
@@ -8,30 +9,14 @@ var URI = {
         socket_url: 'https://localhost:3401',
         socket_mobile_url: 'https://localhost:3201',
 
-    URL_ZALO_GET_AUTH_DEV: {
-        host: 'dev-partner.score.dmp.zaloapp.com',
-        path: '/v2/api/agency/auth',
-        port: 443
-    },
-    URL_ZALO_GET_SCORE_DEV: {
-        host: 'dev-partner.score.dmp.zaloapp.com',
-        path: '/v2/api/agency/score',
-        port: 443
-    },
+    URL_ZALO_GET_AUTH_DEV : 'https://dev-partner.score.dmp.zaloapp.com/v2/api/agency/auth',
+    URL_ZALO_GET_SCORE_DEV : 'https://dev-partner.score.dmp.zaloapp.com/v2/api/agency/score',
 
-    URL_VMG_DEV: {
-        host: 'api2-test.infosky.vn',
-        path: '/app/info_sky_v2/api/request',
-        port: 443
-    },
+    URL_VMG_DEV: 'https://api2-test.infosky.vn/app/info_sky_v2/api/request',
 
     URL_FPT_DEV: 'https://api.uat.trandata.io/',
 
-    URL_RCLIPS: {
-        host: 'localhost',
-        path: '/online/rclips/json',
-        port: 18082
-    },
+    URL_RCLIPS_DEVELOP: 'http://103.112.124.153:18082/online/rclips/json',
 
     URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV: 'https://demo.econtract.fpt.com.vn/app/v1/client-auth/login',
 
@@ -41,8 +26,8 @@ var URI = {
 
     URL_FPT_PROD: 'https://api.trandata.io/',
 
-    URL_ZALO_GET_AUTH_PROD: 'https://partner.score.dmp.zaloapp.com/v2/api/agency/auth',
-    URL_ZALO_GET_SCORE_PROD: 'https://partner.score.dmp.zaloapp.com/v2/api/agency/score',
+    URL_ZALO_GET_AUTH_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/auth',
+    URL_ZALO_GET_SCORE_PROD : 'https://partner.score.dmp.zaloapp.com/v2/api/agency/score',
 
     URL_E_CONTRACT_GET_STRUCTURE_API_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=',
     URL_E_CONTRACT_DOWNLOAD_API_DEV: 'https://demo.econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
@@ -56,11 +41,7 @@ var URI = {
     URL_E_CONTRACT_GET_STRUCTURE_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/template/structue?alias=',
     URL_E_CONTRACT_DOWNLOAD_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
 
-    URL_VMG_PROD: {
-        host: 'api-v2.infosky.vn',
-        path: '/app/info_sky_v2/api/request',
-        port: 443
-    },
+    URL_VMG_PROD: 'https://api-v2.infosky.vn/app/info_sky_v2/api/request',
 };
 
 module.exports = URI;
