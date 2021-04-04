@@ -48,7 +48,8 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
         OTR_IDEN_EVD,
         PSN_ADDR,
         PSN_NM,
-        RPT_SEND_DTIM
+        RPT_SEND_DTIM,
+        LOAN_CMT
     } = outputCicrptMain;
 
     this.fiSessionKey = fiSessionKey;
@@ -75,10 +76,20 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.address = PSN_ADDR;
     this.nationalId = NATL_ID;
     this.docIdEvidance = OTR_IDEN_EVD;
+    this.commentOnLoanInfo = LOAN_CMT;
     if (_.isEmpty(cmtLoanDetaiInfo)) {
         this.loanDetailNode = outputLoanDetailinfo;
         this.totalFiLoanVND = totalFiLoanVND;
         this.totalFiLoanUSD = totalFiLoanUSD;
+        //add 8 fields 21/05/2020
+        let resultLoan = getTotalLoan(outputLoanDetailinfo);
+        this.tlv0000001 = totalFiLoanVND;
+        this.tnlv000001 = resultLoan.tnlv000001;
+        this.tclv000001 = resultLoan.tclv000001;
+        this.tflv000001 = resultLoan.tflv000001;
+        this.tdlv000001 = resultLoan.tdlv000001;
+        this.telv000001 = resultLoan.telv000001;
+        this.tblv000001 = resultLoan.tblv000001;
     }
     if (_.isEmpty(outputLoanDetailinfo))
         this.commentOnLoanDetail = cmtLoanDetaiInfo ? cmtLoanDetaiInfo : '';
@@ -125,3 +136,42 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
 
 };
 
+function getTotalLoan(loanDetailNode) {
+    let tnlv000001 = 0.0; // sum of all FI's short term normal loan, mid term normal loan,long term normal loan,other normal loan
+    let tclv000001 = 0.0; // sum of all FI's ,short term cautious loan,mid term cautious loan,long term cautious loan,other cautious loan
+    let tflv000001 = 0.0; // sum of all FI's ,short term fixed loan,mid term fixed loan,long term fixed loan,other fixed loan
+    let tdlv000001 = 0.0; // sum of all FI's ,short term doubt loan,mid term doubt loan,long term doubt loan,other doubt loan
+    let telv000001 = 0.0; // sum of all FI's ,short term estimate loass loan,mid term estimate loass loan,long term estimate loass loan,other estimate loass loan
+    // let tlv0000001 = 0.0; // same as totalFiLoanVnd  
+    let tblv000001 = 0.0; // same as OtherBadLoanVnd
+    
+    _.forEach(loanDetailNode, res => {
+
+        tnlv000001 = tnlv000001 + parseFloat(set1Is0(res.shortTermNormalLoanVnd)) + parseFloat(set1Is0(res.midTermNormalLoanVnd))
+            + parseFloat(set1Is0(res.longTermNormalLoanVnd)) + parseFloat(set1Is0(res.otherNormalLoanVnd));
+
+        tclv000001 = tclv000001 + parseFloat(set1Is0(res.shortTermCautiousLoanVnd)) + parseFloat(set1Is0(res.midTermCautiousLoanVnd))
+            + parseFloat(set1Is0(res.longTermCautiousLoanVnd)) + parseFloat(set1Is0(res.otherCautousLoanVnd));
+
+        tflv000001 = tflv000001 + parseFloat(set1Is0(res.shortTermFixedLoanVnd)) + parseFloat(set1Is0(res.midTermFixedLoanVnd))
+            + parseFloat(set1Is0(res.longTermFixedLoanVnd)) + parseFloat(set1Is0(res.otherFixedLoanVnd));
+
+        tdlv000001 = tdlv000001 + parseFloat(set1Is0(res.shortTermDaubtLoanVnd)) + parseFloat(set1Is0(res.midTermDaubtLoanVnd))
+            + parseFloat(set1Is0(res.longTermDaubtLoanVnd)) + parseFloat(set1Is0(res.otherDaubtLoanVnd));
+
+        telv000001 = telv000001 + parseFloat(set1Is0(res.shortTermEstLossLoanVnd)) + parseFloat(set1Is0(res.midTermEstLossLoanVnd))
+            + parseFloat(set1Is0(res.longTermEstLossLoanVnd)) + parseFloat(set1Is0(res.otherEstLossLoanVnd));
+
+        tblv000001 = tblv000001 + parseFloat(set1Is0(res.otherBadLoanVnd));
+
+    });
+
+    return { tnlv000001, tclv000001, tflv000001, tdlv000001, telv000001, tblv000001 };
+}
+
+function set1Is0(input) {
+    if (_.isNumber(input))
+        return input;
+    else
+        return 0;
+}

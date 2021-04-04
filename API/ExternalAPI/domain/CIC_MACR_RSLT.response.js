@@ -10,7 +10,6 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     } = response;
 
     const {
-        S_REQ_STATUS,
         SCRP_STAT_CD,
         INQ_DTIM,
         SYS_DTIM,
@@ -44,20 +43,19 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.responseTime = responseTime ? responseTime : "";
     this.responseCode = responseCode ? responseCode : "";
     this.responseMessage = responseMessage ? responseMessage : "";
-    this.scrapingStatusCode = SCRP_STAT_CD ? SCRP_STAT_CD : '';
+    this.scrapingStatusCode = SCRP_STAT_CD ;
     this.cicReportRequestDate = INQ_DTIM;
-    this.cicReportResponseDate = SYS_DTIM.substring(0, 8);
-    this.cicReportInquiryUserId = S_REQ_STATUS;
+    this.cicReportResponseDate = SYS_DTIM ? SYS_DTIM.substring(0, 8) : SYS_DTIM;
     this.name = PSN_NM;
-    this.dateOfBirth = BIRTH_YMD;
+    this.dateOfBirth = util.convertDateType(BIRTH_YMD);
     this.cicId = CIC_ID;
     this.address = PSN_ADDR;
     this.phoneNumber = TEL_NO_MOBILE;
     this.natId = NATL_ID;
     this.creditScore = SCORE
     this.creditGrade = GRADE;
-    this.baseDate = BASE_DATE
+    this.baseDate = util.convertDateType(BASE_DATE);
     this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
-    this.relatedFiName = REL_OGZ_LIST ? util.replaceSpacialCharacter(REL_OGZ_LIST) : null;
+    this.relatedFiName = REL_OGZ_LIST;
 };
 

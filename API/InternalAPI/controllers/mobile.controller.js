@@ -6,19 +6,33 @@ const cicService = require('../services/cicInternal.service');
 const cicServiceRes = require('../services/cicInternalRes.service');
 const cicTransA001Save = require('../domain/cicTransA0001.save');
 const CicA0001Save = require('../domain/cicA0001.save');
+const utilFunction = require('../../shared/util/util');
+const responCode = require('../../shared/constant/responseCodeExternal');
+const io = require('socket.io-client');
+const logger = require('../config/logger');
 
 exports.mobileCicController = function (req, res, next) {
     try {
+        //conneciton socket
+        const socket = io.connect(URI.socket_mobile_url, { secure: true, rejectUnauthorized: false });
+
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             },
             timeout: 1 * 60 * 1000
         }
+        //Logging request
+        logger.debug('Log request parameters send from internal Mobile');
+        logger.info(req.body);
 
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
                 let _dataReport, dataReportSave;
+
+                //Logging response
+                logger.debug('Log response parameters from scrapping service B0002');
+                logger.info(body.data);
 
                 if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
@@ -27,48 +41,132 @@ exports.mobileCicController = function (req, res, next) {
                     return res.status(200).json({ imgBase64, dataStep });
                 }
                 else if (!_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
-                    _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
+                    if (!_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
+                        _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
+                        console.log(_dataReport);
+                        logger.info(_dataReport);
+                        dataReportSave = new CicA0001Save(_dataReport, req.body);
+                        logger.info(dataReportSave);
+                        cicMobileService.insertMobileReportA0001(dataReportSave).then(rowInsert => {
+                            if (1 < rowInsert) {
+                                console.log('insert successfully A0001');
+                                // update complete cic report inquiry status 10
+                                cicService.updateCICReportInquiryCompleted(req.body.niceSessionKey, req.body.svcCd).then(resultUpdated => {
+                                    console.log("CIC report inquiry completed!", resultUpdated);
+                                });
 
-                    dataReportSave = new CicA0001Save(_dataReport, req.body);
-                    console.log('dataReportSave', dataReportSave);
+                                /*
+                                **   update translog 
+                                */
+                                // encrypt password
+                                let dataTransSave = new cicTransA001Save(req.body, dataReportSave, body.data.outJson.errMsg);
+                                cicServiceRes.updateScrapingTranslog(dataTransSave).then((r) => {
+                                    if (1 <= r)
+                                        console.log("Updated to scraping transaction log A0001! successful");
+                                    else
+                                        console.log("Updated to scraping transaction log A0001! Failured");
+                                });
 
-                    cicMobileService.insertMobileReportA0001(dataReportSave).then(rowInsert => {
-                        if (1 < rowInsert) {
-                            console.log('insert successfully A0001');
-                            // update complete cic report inquiry status 10
-                            cicService.updateCICReportInquiryCompleted(req.body.niceSessionKey, req.body.svcCd).then(resultUpdated => {
-                                console.log("CIC report inquiry completed!", resultUpdated);
-                            });
+                                // emit socket
+                                socket.emit('mesage_A0001', { responseMessage: true });
+                                // close connection socket
+                                socket.emit('end');
+                            }
+                            else {
+                                console.log('insert failure A0001');
+                                cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey).then(() => {
+                                    console.log("A0001 update SCRP_MOD_CD = 06 ");
+                                    return next();
+                                });
+                            }
+                        });
+                    } else {
+                        cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.CicReportResultNotExist.code, responCode.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.code).then(rslt => {
+                            if (1 <= rslt) {
+                                console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportResultNotExist.code + '-' + responCode.RESCODEEXT.CICMobileAppScrapingTargetReportNotExist.code);
 
-                            /*
-                            **   update translog 
-                            */
-                            // encrypt password
-                            let dataTransSave = new cicTransA001Save(req.body, dataReportSave, body.data.outJson.errMsg);
-                            cicServiceRes.updateScrapingTranslog(dataTransSave).then((r) => {
-                                if (1 <= r)
-                                    console.log("Updated to scraping transaction log A0001! successful");
-                                else
-                                    console.log("Updated to scraping transaction log A0001! Failured");
-                            });
-                        }
-                        else {
-                            console.log('insert failure A0001');
-                            cicService.updateScrpModCdHasNoResponseFromScraping(req.body.niceSessionKey).then(() => {
-                                console.log("B0003 update SCRP_MOD_CD = 00 ");
-                                return next();
-                            });
-                        }
-                    });
-                    return res.status(200).json(dataReportSave);
+                                // emit socket
+                                socket.emit('mesage_A0001', { responseMessage: true });
+                                // close connection socket
+                                socket.emit('end');
+                            }
+                            else
+                                console.log('Update scraping status failure!');
+                        });
+                    }
                 }
                 else {
-                    //TODO - update error cose
-                    cicService.updateScrpModCdHasNoResponseFromScraping(req.body.niceSessionKey).then(() => {
-                        console.log("B0003 update SCRP_MOD_CD = 00 ");
-                        return next();
-                    });
+                    // Log in error
+                    if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
+                            cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICMobileAppLoginFailure.code).then(rslt => {
+                                if (1 <= rslt) {
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICMobileAppLoginFailure.code);
+
+                                    // emit socket
+                                    socket.emit('mesage_A0001', { responseMessage: true });
+                                    // close connection socket
+                                    socket.emit('end');
+                                }
+                                else
+                                    console.log('Update scraping status failure!');
+                            });
+                        } else if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail999.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
+                            cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICMobileAppAccessFailure.code).then(rslt => {
+                                if (1 <= rslt) {
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.LoginInError.code + '-' + responCode.RESCODEEXT.CICMobileAppAccessFailure.code);
+
+                                    // emit socket
+                                    socket.emit('mesage_A0001', { responseMessage: true });
+                                    // close connection socket
+                                    socket.emit('end');
+                                }
+                                else
+                                    console.log('Update scraping status failure!');
+                            });
+                        }
+
+                    } else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicMobilerror, body.data.outJson.outA0001.errMsg)) {
+                        if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicMobilerror.CicIdINQError999.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
+                            cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.CicReportResultInqError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                                if (1 <= rslt) {
+                                    console.log('Update scraping status:' + responCode.ScrapingStatusCode.CicReportResultInqError.code + '-' + responCode.RESCODEEXT.ETCError.code);
+
+                                    // emit socket
+                                    socket.emit('mesage_A0001', { responseMessage: true });
+                                    // close connection socket
+                                    socket.emit('end');
+                                }
+                                else
+                                    console.log('Update scraping status failure!');
+                            });
+                        }
+                    }
+
+                    else {
+                        cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.OtherError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
+                            if (1 <= rslt) {
+                                console.log('Update scraping status:' + responCode.ScrapingStatusCode.OtherError.code + '-' + responCode.RESCODEEXT.ETCError.code);
+
+                                // emit socket
+                                socket.emit('mesage_A0001', { responseMessage: true });
+                                // close connection socket
+                                socket.emit('end');
+                            }
+                            else
+                                console.log('Update scraping status failure!');
+                        });
+                    }
                 }
+
+                return res.status(200).json(body.data);
+            }).catch((error) => {
+                console.log("error scraping service A0001~~", error);
+                //Update ScrpModCd 00
+                cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey, res).then(() => {
+                    console.log("update SCRP_MOD_CD = 06 ");
+                    return next();
+                });
             });
 
     } catch (err) {

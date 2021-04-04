@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const dateUtil = require('../util/dateutil');
+const util = require('../../shared/util/util');
 
 module.exports = {
     checkParamRequestForResponse: function (getdataReq) {
@@ -50,6 +51,13 @@ module.exports = {
             return response;
         }
         // valid inquiryDate less than today
+        if (!(util.validNumber(getdataReq.searchDateFrom)) || !(util.validNumber(getdataReq.searchDateTo))) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.DateFieldTypeError.name,
+                responseCode: responcodeEXT.RESCODEEXT.DateFieldTypeError.code
+            }
+            return response;
+        }
         if (!dateUtil.validDateAndCurrentDate(getdataReq.searchDateFrom, getdataReq.searchDateTo)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.INQDateInvalid.name,
@@ -57,6 +65,22 @@ module.exports = {
             }
             return response;
         }
+        if (!dateUtil.validFromDateEarlier93Days(getdataReq.searchDateFrom)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.SearchDateFromEarlier93Days.name,
+                responseCode: responcodeEXT.RESCODEEXT.SearchDateFromEarlier93Days.code
+            }
+            return response;
+        }
+        // maximum maxnumrows <= 100
+        if (!_.isEmpty(getdataReq.maxnumrows) && 100 < getdataReq.maxnumrows) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.OverMaxnumrows.name,
+                responseCode: responcodeEXT.RESCODEEXT.OverMaxnumrows.code
+            }
+            return response;
+        }
+
         else
             response = {};
 

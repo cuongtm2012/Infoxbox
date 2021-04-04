@@ -10,6 +10,8 @@ const axios = require('axios');
 
 const runRestartPm2 = require('../util/runShellScript');
 const cicDeplayReportService = require('../services/cicDelayReport.service');
+const io = require('socket.io-client');
+const dateutil = require('../util/dateutil');
 
 module.exports = class internalJob {
     //Cron request internal scraping
@@ -23,7 +25,7 @@ module.exports = class internalJob {
 
         cicDeplayReportService.selectDeplayReport().then(resdata => {
             if (_.isEmpty(resdata)) {
-                console.log('No request!');
+                // console.log('No request!');
                 oncomplete(0, 0);
             } else {
                 // convert data follow login_id
@@ -83,9 +85,18 @@ module.exports = class internalJob {
                                     oncomplete(0, 0);
 
                                 }).catch((error) => {
-                                    console.log("error call to internal_cic url B0003~~", error);
+                                    console.log("error call to internal_cic url delay 1 B0003~~", error);
+
+                                    //conneciton socket
+                                    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
+                                    // emit socket
+                                    socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: (listNiceSessionkey[0] + '...'), responseMessage: 'Delay report 1 Error Internal' });
+                                    //close socket
+                                    socket.emit('end');
+
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
-                                        console.log("B0003 update SCRP_MOD_CD = 00 ");
+                                        console.log("B0003 update delay 1 SCRP_MOD_CD = 00 ");
                                         // Restart internal
                                         runRestartPm2.restartInternal();
                                     });

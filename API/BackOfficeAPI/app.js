@@ -2,7 +2,10 @@
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
-
+// create oracle pool.
+const database = require('./config/db.config');
+database.initialize().then();
+//
 var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');
@@ -18,13 +21,16 @@ app.use(bodyParser.json());
 
 const https = require('https');
 const fss = require('fs');
-const privateKey = fss.readFileSync('./sslcert/key.pem', 'utf8');
-const certificate = fss.readFileSync('./sslcert/cert.pem', 'utf8');
+var path = require('path');
+const __dad = path.join(__dirname, './');
+const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
+const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 
 const credentials = { key: privateKey, cert: certificate };
 const httpsServer = https.createServer(credentials, app);
 
 var auth = require('./routes/auth.route');
+var chart = require('./routes/chart.route');
 var customer = require('./routes/customer.route');
 var contract = require('./routes/contract.route');
 var code = require('./routes/code.route');
@@ -32,6 +38,7 @@ var cicreport = require('./routes/cicreport.route');
 var user = require('./routes/user.route');
 var captcha = require('./routes/captcha.route');
 var manualCaptcha = require('./routes/manualCT.route');
+var countTransactions = require('./routes/countTransaction.route')
 // Config DB
 var config = require('./config/config');
 
@@ -63,12 +70,12 @@ app.use(flash());
 app.use(morgan('combined', { stream: winston.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
-		try {
-			return fs.mkdirSync(dirpath)
-		} catch (err) {
-			if (err.code !== 'EEXIST') throw err
-		}
-	};
+	try {
+		return fs.mkdirSync(dirpath)
+	} catch (err) {
+		if (err.code !== 'EEXIST') throw err
+	}
+};
 
 // LOGS
 var uuid = require('node-uuid');
@@ -78,11 +85,11 @@ var myRequest = createNamespace('my request');
 createFolder(config.log.orgLog);
 
 // Run the context for each request. Assign a unique identifier to each request
-app.use(function(req, res, next) {
-		myRequest.run(function() {
-			myRequest.set('reqId', uuid.v1());
-			next();
-		});
+app.use(function (req, res, next) {
+	myRequest.run(function () {
+		myRequest.set('reqId', uuid.v1());
+		next();
+	});
 });
 
 app.use('/auth', auth);
@@ -90,9 +97,11 @@ app.use('/customer', customer);
 app.use('/contract', contract);
 app.use('/code', code);
 app.use('/cicreport', cicreport);
-app.use('/user' , user);
-app.use('/captcha' , captcha);
-app.use('/manualCaptcha' , manualCaptcha);
+app.use('/user', user);
+app.use('/captcha', captcha);
+app.use('/manualCaptcha', manualCaptcha);
+app.use('/chart', chart)
+app.use('/countTransactions', countTransactions)
 
 app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
@@ -109,3 +118,50 @@ app.use(function (err, req, res, next) {
 httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
+
+/*
+**Socket
+**********Start****************
+*/
+// let server = https.createServer(credentials, app);
+//socket.io instantiation
+let socketIO = require('socket.io');
+let io = socketIO.listen(httpsServer, { log: false, origins: '*:*' });
+//listen on every connection
+io.on('connection', (socket) => {
+	console.log('socket connected')
+
+	//listen on new_message
+	socket.on('new_message', (data) => {
+		//broadcast the new message
+		io.sockets.emit('new_message', { username: data.username, message: data.message });
+		// io.sockets.emit('new_message', { message: massage });
+	})
+
+	//listen on typing
+	socket.on('typing', (data) => {
+		socket.broadcast.emit('typing', { username: socket.username })
+	})
+
+	//listen on External
+	socket.on('External_message', (data) => {
+		io.sockets.emit('External_message', data);
+	})
+	//listen on Internal batch process
+	socket.on('Internal_message', (data) => {
+		io.sockets.emit('Internal_message', data);
+	})
+
+	// colse socket
+	socket.on('end', function () {
+		socket.disconnect(0);
+	});
+});
+
+// server.listen(config.server.socket, () => {
+// 	console.log(`started on port: ${config.server.socket}`);
+// });
+
+/*
+************end**************
+*/

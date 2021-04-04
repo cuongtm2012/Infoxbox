@@ -12,8 +12,11 @@ module.exports = {
         return result;
     },
 
-    getStatusScrappingCode: function (msg) {
-        return msg.split(']')[0].split('[')[1];
+    getStatusScrappingCode: function (msg1, msg2) {
+        if (!validation.isEmptyStr(msg1))
+            return msg1.split(']')[0].split('[')[1];
+        else
+            return msg2.split(']')[0].split('[')[1];
     },
 
     validPhoneNumber: function (phoneNum) {
@@ -34,10 +37,38 @@ module.exports = {
     },
 
     replaceSpacialCharacter: function (string) {
-        const regex = /[`~!@#$%^&*()_|+\-=?;:'",.<>br\{\}\[\]\\\/]/gi;
+        const regex = /[`~!@#$%^&*()_|\=?;:'",.<>br\{\}\[\]\\\/]/gi;
         if (!validation.isEmptyStr(string))
             return string.replace(regex, '');
         else
             return string;
+    },
+
+    getOracleCode: function (msg) {
+        let _result = msg.toString();
+        return '[' + _result.split(':')[1].split(':')[0].trim() + ']';
+    },
+
+    convertDateType: function (date) {
+        if (!validation.isEmptyStr(date) && date.length == 8)
+            return date.substring(4, 8) + date.substring(2, 4) + date.substring(0, 2);
+        else
+            return date;
+    },
+
+    validNumber: function (phoneNum) {
+        const regex = /^\d+$/;
+
+        if (phoneNum.match(regex)) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    validPhoneNumber2021: function (phoneNumber) {
+        let pattern = /^0[35789]{1}[0-9]{7}[0-9]{1}$/;
+        let reg = new RegExp(pattern);
+        return reg.test(phoneNumber);
     }
 }

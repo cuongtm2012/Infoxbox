@@ -1,11 +1,14 @@
 var express = require('express');
 var router = express.Router();
 var verifyToken = require('../util/verifyToken');
+var verifyAdmin = require('../util/verifyAdmin');
 var user_router = require('../controllers/user.controller');
 
-router.get('/getUserInfo',  verifyToken ,  user_router.getUserInfo);
-router.post('/createUser', verifyToken ,  user_router.createUser);
-router.put('/updateUser',  verifyToken ,user_router.updateUser);
-router.put('/resetPassword', verifyToken , user_router.resetPassword);
+router.post('/getUserInfo', verifyAdmin ,   user_router.getUserInfo);
+router.post('/createUser',verifyAdmin ,    user_router.createUser);
+router.put('/updateUser', verifyAdmin ,  user_router.updateUser);
+router.put('/resetPassword',verifyAdmin ,   user_router.resetPassword);
+router.put('/changePassword',verifyToken , user_router.changePassword);
+router.get('/getRoleAccount', verifyAdmin ,  user_router.getRoleAccount);
 
 module.exports = router;

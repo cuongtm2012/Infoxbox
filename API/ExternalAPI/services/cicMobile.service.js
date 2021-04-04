@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 
 const dateutil = require('../util/dateutil');
 const nicekey = require('../../shared/util/niceGoodCode');
@@ -19,7 +19,7 @@ async function insertSCRPLOG(req, res) {
         let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `INSERT INTO TB_SCRPLOG(
                NICE_SSIN_ID, 
@@ -89,7 +89,7 @@ async function selectCicMobileDetailReport(req) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         let result;
 
@@ -117,7 +117,6 @@ async function selectCicMobileDetailReport(req) {
                            AND a.S_SVC_CD = 'A0001'
                            AND b.CUST_CD = :fiCode
                            AND b.GDS_CD = :gdscd
-                           AND b.CUST_SSID_ID like :fiSessionKey
                            AND b.INQ_DTIM like :inquiryDate`;
 
         result = await connection.execute(
@@ -127,14 +126,13 @@ async function selectCicMobileDetailReport(req) {
                 niceSessionKey: { val: req.niceSessionKey },
                 fiCode: { val: req.fiCode },
                 gdscd: { val: gdscd },
-                fiSessionKey: { val: _fiSessionKey },
                 inquiryDate: { val: _inquiryDate }
             },
             {
                 outFormat: oracledb.OUT_FORMAT_OBJECT
             });
 
-        console.log("tb_cic_mrpt result rows:", result.rows);
+        console.log("tb_cic_mrpt result rows:", result.rows.length);
 
         return result.rows;
     } catch (err) {

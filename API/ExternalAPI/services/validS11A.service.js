@@ -1,5 +1,5 @@
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 const dateUtil = require('../util/dateutil');
 
 /*
@@ -10,7 +10,7 @@ async function selectFiCode(fiCode, goodCode) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         let currentDate = dateUtil.getCurrentInquiryDate();
 
@@ -18,7 +18,8 @@ async function selectFiCode(fiCode, goodCode) {
                             where T.CUST_CD =:CUST_CD
                             and T.gds_cd like :gds_cd
                             and T.valid_start_dt <= :currentDate
-                            and T.valid_end_dt > :currentDate`;
+                            and T.valid_end_dt > :currentDate
+                            and T.STATUS = 1`;
 
         let result = await connection.execute(
             // The statement to execute
@@ -35,8 +36,8 @@ async function selectFiCode(fiCode, goodCode) {
 
         return result.rows;
     } catch (err) {
-        console.log(err);
-        // return res.status(400);
+        console.log('err:', err);
+        return err;
     } finally {
         if (connection) {
             try {

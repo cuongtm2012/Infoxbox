@@ -9,7 +9,8 @@ const cicB0003Req = require('../domain/cicB0003.request');
 const axios = require('axios');
 
 const runRestartPm2 = require('../util/runShellScript');
-
+const io = require('socket.io-client');
+const dateutil = require('../util/dateutil');
 module.exports = class internalJob {
     //Cron request internal scraping
     cron(oncomplete) {
@@ -20,9 +21,10 @@ module.exports = class internalJob {
             }, timeout: 60 * 3 * 1000
         }
 
+
         cicService.startProcessB0003().then(resdata => {
             if (_.isEmpty(resdata)) {
-                console.log('No request!');
+                // console.log('No request!');
                 oncomplete(0, 0);
             } else {
                 // convert data follow login_id
@@ -83,6 +85,15 @@ module.exports = class internalJob {
 
                                 }).catch((error) => {
                                     console.log("error call to internal_cic url B0003~~", error);
+
+                                    //conneciton socket
+                                    const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
+
+                                    // emit socket
+                                    socket.emit('Internal_message', { responseTime: dateutil.getTimeHours(), niceSessionKey: (listNiceSessionkey[0] + '...'), responseMessage: 'B0003 Error Internal Batch' });
+                                    // close connection socket
+                                    socket.emit('end');
+
                                     cicService.updateCICReportInquiryReadyToRequestScraping(listNiceSessionkey).then(() => {
                                         console.log("B0003 update SCRP_MOD_CD = 00 ");
                                         // Restart internal

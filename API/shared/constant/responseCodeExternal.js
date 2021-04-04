@@ -23,22 +23,64 @@ var RESCODEEXT = {
     NITASKCODE: { value: 18, name: "Need to input mandatory item(Task code)", code: "F018" },
     NINICESESSIONKEY: { value: 19, name: "Need to input mandatory item(NICE session key)", code: "F019" },
     InvalidTaskCode: { value: 20, name: "Invalid task code", code: "F020" },
-    NOTEXIST: { value: 21, name: "No result for input NICE session key", code: "F021" },
+    NOTEXIST: { value: 21, name: "No result for input NICE session key and FI code", code: "F021" },
     InvalidNiceProductCode: { value: 22, name: "Invalid NICE product code(no contract for this product)", code: "F022" },
     CICReportInqReqFaliure: { value: 25, name: "CIC report inquiry request failure(timeout)", code: "F025" },
     NINAME: { value: 26, name: "Need to input mandatory item(Name)", code: "F026" },
     NIMOBILEPHONENUMBER: { value: 27, name: "Need to input mandatory item(Mobile phone number)", code: "F027" },
     ErrorDecryptError: { value: 33, name: "Login password decrypt error", code: "F033" },
     DuplicateAppOfCICReportADay: { value: 34, name: "Duplicated application of CIC report in a day", code: "F034" },
-    InvalidMobileNumber: { value: 44, name: "Invalid mobile number", code: "F044" },
-    UNKNOW: { value: 400, name: "UNKNOW (No result query)", code: "400" },
+    InvalidMobileNumber: { value: 41, name: "Mobile phone number error", code: "F041" },
+    TimeoutError: { value: 42, name: "Timeout error", code: "F042" },
+    UNKNOWOtherError: { value: 400, name: "Unknow Other error", code: "F400" },
+    OtherInternalDBError: { value: 401, name: "Other Internal DB error", code: "F401" },
     NIS11ARQSTNOTNULL: { value: 17, name: "Need to input mandatory one of five item (Tax code, National ID, Old natiomal ID, Passport number, CIC ID)", code: "F017" },
     CICMobileAppLoginFailure: { value: 28, name: "CIC Mobile app log in failure", code: "F028" },
     CICMobileAppAccessFailure: { value: 29, name: "CIC Mobile app access failure", code: "F029" },
-    INQDateInvalid: { value: 39, name: "searchDateFrom should be same or earlier than searchDateTo", code: "F039" },
+    INQDateInvalid: { value: 38, name: "searchDateTo can't be earlier than searchDateFrom", code: "F038" },
+    SearchDateFromEarlier93Days: { value: 43, name: "Can search the result of CIC report request within last three months", code: "F043" },
+    DateFieldTypeError: { value: 44, name: "Date field type error(yyyymmdd)", code: "F044" },
     CICMobileAppScrapingTargetReportNotExist: { value: 30, name: "CIC Mobile app scraping target report does not exist", code: "F030" },
     FiCodeOverLength: { value: 50, name: "fiCode length is over 10", code: "F050" },
-    TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" }
+    TaskCodeOverLength: { value: 51, name: "taskCode length is over 10", code: "F051" },
+    OverMaxnumrows: { value: 52, name: "Maxnumberrows are 100", code: "F052" },
+    FISessionKeyOverLength: { value: 45, name: "fiSessionKey should not be longer than 20", code: "F045" },
+    ErrorDatabaseConnection: { value: 500, name: "Error establishing a database connection", code: "F500" },
+    NINATIONALID: {value: 46, name: 'Need to input mandatory item(National ID)', code: "F046"},
+    NISCOREPRODUCT: {value: 47, name: 'Need to input mandatory item(Score Product)', code: "F047"},
+    EXTITFERR: {value: 48, name: 'External interface error', code: "F048"},
+    EXTITFTIMEOUTERR: {value: 49, name: 'External interface timeout error', code: "F049"},
+    NIBASEMONTH: {value: 53, name: 'Need to input mandatory item(Base Month)', code: "F053"},
+    NIIDTYPE: {value: 54, name: 'Need to input mandatory item(Id type)', code: "F054"},
+    NIFRONTIMAGE: {value: 55, name: 'Need to input mandatory item(Front image)', code: "F055"},
+    NIREARIMAGE: {value: 56, name: 'Need to input mandatory item(Rear image)', code: "F056"},
+    NISELFIEIMAGE: {value: 57, name: 'Need to input mandatory item(Selfie image, Source image)', code: "F057"},
+    NIIDIMAGE: {value: 58, name: 'Need to input mandatory item(Id image, Target Image)', code: "F058"},
+	HOMEADDRESS: { value: 59, name: "Need to input mandatory item(homeAddress)", code: "F059" },
+	WORKADDRESS: { value: 60, name: "Need to input mandatory item(workAddress)", code: "F060" },
+    NODATAEXIST: {value: 61, name: 'No Data Exist', code: "F061"},
+    INVALIDSALARY: {value: 62, name: 'Salary is invalid', code: "F062"},
+    RQOUTOFSIZE: {value: 63, name: 'Request file size should be lower than 4mb/file', code: "F063"},
+    INVALIDINPUTIMAGE: {value: 64, name: 'Invalid image file', code: "F064"},
+    UNABLETOVERIFYOCR: {value: 65, name: 'Unable to verify OCR, Verification failed', code: "F065"},
+    FACEMATCHINGFAILURE: {value: 66, name: 'Face Matching failure', code: "F066"},
+	NFGRADE: { value: 67, name: "Need to input mandatory item(nfGrade NICE session key)", code: "F067" },
+    NITEMPLATEID: { value: 68, name: "Need to input mandatory item(Template ID)", code: "F068" },
+    NIALIAS: { value: 69, name: "Need to input mandatory item(Alias)", code: "F069" },
+    ERRCONTRACTDATASENDING: { value: 70, name: "Error on contract data sending", code: "F070" },
+    NIIDOFCONTRACT: { value: 71, name: "Need to input mandatory item(ID)", code: "F071" },
+    ERRCONTRACTSTATUS: { value: 72, name: "Error on contract status check", code: "F072" },
+    NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input NF Score NICE session key", code: "F073" },
+    NoContractTemplateForInputAlias: { value: 74, name: "No contract template for input alias", code: "F074" },
+    NoContractForInputId: { value: 74, name: "No contract for input id", code: "F075" }
+};
+
+const OracleError = {
+    ErrorDatabaseConnection: { code: "ORA-12537", errMsg: "Error: ORA-12537: TNS:connection closed", value: 12537 },
+    ErrorOIDGenerationFailed: { code: "ORA-21561", errMsg: "Error: ORA-21561: OID generation failed", value: 21561 },
+    ErrorTNSLostContact: { code: "ORA-12547", errMsg: "Error: ORA-12547: TNS:lost contact", value: 12547 },
+    ErrorTNSLostContact: { code: "ORA-12170", errMsg: "Error: ORA-12170: TNS:Connect timeout occurred", value: 12170 },
+    ErrorTNSLostContact: { code: "ORA-01017", errMsg: "Error: ORA-01017: invalid username/password; logon denied", value: 01017 }
 };
 
 var SCRAPPINGERRORCODE = {
@@ -60,11 +102,16 @@ var SCRAPPINGERRORCODE = {
 const ScrappingResponseCodeLoginFailure = {
     LoginFail1: { code: 'LOGIN-001', errMsg: '[LOGIN-001] login page check fail', value: 1 },
     LoginFail2: { code: 'LOGIN-002', errMsg: '[LOGIN-002] login page check fail', value: 2 },
-    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
-    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
-    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
-    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
-    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 }
+    LoginFail3: { code: 'LOGIN-003', errMsg: '[LOGIN-003] Login Fail.', value: 3 },
+    LoginFail4: { code: 'LOGIN-004', errMsg: '[LOGIN-004] Login Fail.', value: 4 },
+    LoginFail5: { code: 'LOGIN-005', errMsg: '[LOGIN-005] Login Fail.', value: 5 },
+    LoginFail6: { code: 'LOGIN-006', errMsg: '[LOGIN-006] Menu Check Fail - Hỏi trả lời tin khách hàng', value: 6 },
+    LoginFail7: { code: 'LOGIN-007', errMsg: '[LOGIN-007] Menu Check Fail - S37- Cảnh báo khách hàng vay', value: 7 },
+    LoginFail999: { code: 'LOGIN-999', errMsg: '[LOGIN-999] Exception message', value: 999 }
+};
+
+const ScrappingResponseCodeCicMobilerror = {
+    CicIdINQError999: { code: 'A0001-999', errMsg: '[A0001-999] Exception message', value: 999 }
 };
 
 const ScrappingResponseCodeCicINQError = {
@@ -109,12 +156,21 @@ const ScrappingResponseCodeCicReportResultINQS37Error = {
     CicReportINQError201: { code: 'B1003-201', errMsg: '[B1003-201] CIC No not found.', value: 201 }
 };
 
+
 const ScrapingStatusCode = {
     LoginInError: { code: '20' },
     CicIdInqError: { code: '21' },
     CicReportInqError: { code: '22' },
     CicReportResultInqError: { code: '23' },
-    OtherError: { code: '29' }
+    CicReportResultNotExist: { code: '24' },
+    OtherError: { code: '29' },
+    Complete: { code: '10' , message: 'Complete'},
+    VMG_InProcessing: { code: '01' , message: 'Waiting for customer consent'},
+    Application_Error: { code: '31' , message: 'Application error'},
+    No_Data_Provide: { code: '32' , message: 'No data to provide'},
+    Other_Error: { code: '39' , message: 'Other error'},
+    Telco_Interface_Error: { code: '34' , message: 'Telco interface error'},
+    Data_Provided_Already: { code: '33' , message: 'Data provided already'}
 };
 
 const TaskCode = {
@@ -124,24 +180,75 @@ const TaskCode = {
     CIC_S37_RSLT: { code: 'CIC_S37_RSLT' },
     CIC_MACR_RQST: { code: 'CIC_MACR_RQST' },
     CIC_MACR_RSLT: { code: 'CIC_MACR_RSLT' },
-    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' }
+    CIC_PROC_STAT: { code: 'CIC_PROC_STAT' },
+    ZALO_SCR_RQST: { code: 'ZALO_SCR_RQST' },
+    TCO_RK1_RQST: { code: 'TCO_RK1_RQST' },
+    KYC_F01_RQST: { code: 'KYC_F01_RQST'},
+    KYC_F02_RQST: { code: 'KYC_F02_RQST'},
+    KYC_FI1_RQST: { code: 'KYC_FI1_RQST'},
+    OKF_SCO_RQST: { code: 'OKF_SCO_RQST'},
+	OKF_SPL_RQST: { code: 'OKF_SPL_RQST'},
+	RCS_M01_RQST: { code: 'RCS_M01_RQST'},
+    FTN_SCD_RQST: { code: 'FTN_SCD_RQST'},
+    FTN_CCS_RQST: { code: 'FTN_CCS_RQST'},
+    KYC_VC1_RQST: { code: 'KYC_VC1_RQST'},
+    KYC_VC1_RSLT: { code: 'KYC_VC1_RSLT'},
+    FTN_GAS_RQST: { code: 'FTN_GAS_RQST'},
+    FTN_GCT_RQST: { code: 'FTN_GCT_RQST'}
+
 };
 
 const ProductCode = ['06'];
 
 const InfoProvConcent = ['Y'];
 
+const FptIdTypeV01 = ['ID','DL','PP'];
+
+const NF_OK_SCORE_PRD = ['NOK100_001'];
+
+const NZ0100_001 = ['NZ0100_001']
+
 const NiceProductCode = {
     S11A: { code: 'S1001' },
     S37: { code: 'S1002' },
-    Mobile: { code: 'S1003' }
+    Mobile: { code: 'S1003' },
+    ZALO: { code: 'S2001' },
+    VMG_RISK_SCORE: { code: 'S2007'},
+    KYC_F01_RQST: { code: 'S2008'},
+    KYC_F02_RQST: { code: 'S2009'},
+    KYC_FI1_RQST: { code: 'S2010'},
+    OKF_SCO_RQST: { code: 'S2012'},
+    OKF_SPL_RQST: { code: 'S2011'},
+    RCS_M01_RQST: { code: 'S2013'},
+    NICE_CODE_INQLOG: {code: '1010'},
+    FTN_SCD_RQST: {code: 'S2014'},
+    FTN_CSS_RQST: {code: 'S2014'},
+    FTN_GAS_RQST: {code: 'S2014'},
+    FTN_GCT_RQST: {code: 'S2014'},
+    KYC_VC1_RQST: {code: 'S2002'},
+    KYC_VC1_RSLT: {code: 'S2002'}
 };
 
 const StatusCodeBatchProcess = {
     ReportInquiryRequest: '01',
     CICReportInquirySuccess: '04',
-    CICReportInquiryDelay: '02'
+    CICReportInquiryDelay: '02',
+    CICReportInquiryDelay3: '03'
 };
+
+const ScoreCode = {
+    zalo: 'NZ0100_001',
+    VmgRiskScore: 'NV0100_001',
+    NOK100_001: 'NOK100_001',
+    NOK200_001: 'NOK200_001',
+    NOK_SPL_LIMIT: 'NOK_SPL_LIMIT'
+}
+const CUST_GB = {
+    zalo: '22',
+    VMG: '21',
+    NICE: '10'
+}
+
 
 module.exports.RESCODEEXT = RESCODEEXT;
 module.exports.SCRAPPINGERRORCODE = SCRAPPINGERRORCODE;
@@ -156,3 +263,10 @@ module.exports.ProductCode = ProductCode;
 module.exports.InfoProvConcent = InfoProvConcent;
 module.exports.NiceProductCode = NiceProductCode;
 module.exports.StatusCodeBatchProcess = StatusCodeBatchProcess;
+module.exports.OracleError = OracleError;
+module.exports.ScrappingResponseCodeCicMobilerror = ScrappingResponseCodeCicMobilerror;
+module.exports.ScoreCode = ScoreCode;
+module.exports.CUST_GB = CUST_GB;
+module.exports.FptIdTypeV01 = FptIdTypeV01;
+module.exports.NF_OK_SCORE_PRD = NF_OK_SCORE_PRD;
+module.exports.NZ0100_001 = NZ0100_001;

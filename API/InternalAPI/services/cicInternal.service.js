@@ -1,6 +1,6 @@
 
 const oracledb = require('oracledb');
-const dbconfig = require('../../shared/config/dbconfig');
+const config = require('../config/config');
 
 const dateUtil = require('../util/dateutil');
 const _ = require('lodash');
@@ -15,7 +15,7 @@ async function select01() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -38,7 +38,7 @@ async function select01() {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
 
-        console.log("rows::", result.rows);
+        // console.log("rows::", result.rows);
 
         return result.rows;
 
@@ -62,7 +62,7 @@ async function select04NotExist() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -110,7 +110,7 @@ async function updateCICReportInquirySuccessful(req) {
         let sql, result;
 
         let sysDim = dateUtil.timeStamp();
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '04', SYS_DTIM = :sysDim
@@ -156,7 +156,7 @@ async function updateCICReportInquiryCompleted(niceSessionKey, svcCd) {
         let sql, result;
 
         let sysDim = dateUtil.timeStamp();
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
         if (_.isEqual('A0001', svcCd)) {
             sql = `UPDATE TB_SCRPLOG
                 SET SCRP_STAT_CD = '10', RSP_CD = 'P000', SYS_DTIM = :sysDim, LOGIN_PW = null
@@ -204,7 +204,7 @@ async function updateScrapingTargetRepostNotExist(req) {
 
         let sysDim = dateUtil.timeStamp();
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sqlUpdateScrplog = `UPDATE TB_SCRPLOG
@@ -243,7 +243,7 @@ async function updateScrpModCdPreRequestToScraping(req) {
     try {
         let sql, result;
         if (!_.isEmpty(req)) {
-            connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection(config.poolAlias);
 
 
             sql = `UPDATE TB_SCRPLOG
@@ -284,7 +284,7 @@ async function updateScrpModCdPreRequestToScrapingB0002(niceSessionKey, runTimeV
     try {
         let sql, result;
         if (!_.isEmpty(niceSessionKey)) {
-            connection = await oracledb.getConnection(dbconfig);
+            connection = await oracledb.getConnection(config.poolAlias);
 
 
             sql = `UPDATE TB_SCRPLOG
@@ -329,7 +329,7 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -365,13 +365,55 @@ async function updateScrpModCdHasNoResponseFromScraping(req) {
     }
 }
 
+async function updateScrpModCdTryCntHasNoResponseFromScraping(req) {
+    let connection;
+
+    try {
+        let sql, result;
+
+        connection = await oracledb.getConnection(config.poolAlias);
+
+
+        sql = `UPDATE TB_SCRPLOG
+                SET SCRP_MOD_CD  = '00', CIC_USED_ID = null, TRY_COUNT = null
+                WHERE NICE_SSIN_ID =:NICE_SSIN_ID`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: { val: req }
+            },
+            { autoCommit: true },
+        );
+
+        console.log("updateScrpModCdHasNoResponseFromScraping trycount updated::", result.rowsAffected);
+
+        return result.rowsAffected;
+        // return res.status(200).json(result.rows);
+
+
+    } catch (err) {
+        console.log(err);
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 async function updateCICReportInquiryReadyToRequestScraping(req) {
     let connection;
 
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD = '00'
@@ -412,12 +454,12 @@ async function startProcessB0003() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         // let currentTimeStamp = dateUtil.timeStamp();
 
-        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim, a.login_id, a.login_pw
+        sql = `SELECT a.nice_ssin_id as niceSessionKey, b.S_CIC_NO as cicId, a.inq_dtim, a.login_id, a.login_pw, a.sys_dtim
         FROM TB_SCRPLOG a inner join tb_scrp_trlog b on a.nice_ssin_id = b.nice_ssin_id
         WHERE a.SCRP_STAT_CD = '04'
             and a.SCRP_MOD_CD = '00'
@@ -436,7 +478,7 @@ async function startProcessB0003() {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
 
-        console.log("rows::", result.rows);
+        // console.log("rows::", result.rows);
 
         return result.rows;
         // return res.status(200).json(result.rows);
@@ -465,7 +507,7 @@ async function startProcessB1003() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `SELECT NICE_SSIN_ID, CIC_ID, LOGIN_ID, LOGIN_PW, PSPT_NO, TAX_ID, NATL_ID, OLD_NATL_ID, SYS_DTIM, INQ_DTIM
                 FROM TB_SCRPLOG a
@@ -506,7 +548,7 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -547,7 +589,7 @@ async function updateListScrpStatCdErrorResponseCodeScraping(niceSessionKey, cod
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
 
         sql = `UPDATE TB_SCRPLOG
@@ -593,7 +635,7 @@ async function selectExcuteA0001() {
     try {
         let sql, result;
 
-        connection = await oracledb.getConnection(dbconfig);
+        connection = await oracledb.getConnection(config.poolAlias);
 
         //get curremt time
         let currentTimeStamp = dateUtil.timeStamp();
@@ -601,7 +643,7 @@ async function selectExcuteA0001() {
         sql = `SELECT NICE_SSIN_ID, LOGIN_ID, LOGIN_PW, NATL_ID, TEL_NO_MOBILE, INQ_DTIM
             FROM TB_SCRPLOG a
             WHERE a.SCRP_STAT_CD = '01' 
-                and (a.SCRP_MOD_CD = '00' or a.SCRP_MOD_CD is null)
+                and a.SCRP_MOD_CD = '06'
                 and a.GDS_CD = 'S1003'
                 and a.AGR_FG = 'Y'
                 and a.LOGIN_PW is not null
@@ -617,7 +659,7 @@ async function selectExcuteA0001() {
                 outFormat: oracledb.OUT_FORMAT_OBJECT  // query result format
             });
 
-        console.log("rows::", result.rows);
+        // console.log("rows::", result.rows);
 
         return result.rows;
 
@@ -649,3 +691,4 @@ module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdError
 module.exports.updateListScrpStatCdErrorResponseCodeScraping = updateListScrpStatCdErrorResponseCodeScraping;
 module.exports.startProcessB1003 = startProcessB1003;
 module.exports.selectExcuteA0001 = selectExcuteA0001;
+module.exports.updateScrpModCdTryCntHasNoResponseFromScraping = updateScrpModCdTryCntHasNoResponseFromScraping;

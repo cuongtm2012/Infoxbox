@@ -17,12 +17,15 @@ module.exports = {
     timeStamp: function () {
         return dateFormat(new Date(), "yyyymmddHHMMss");
     },
+    getTimeHours: function () {
+        return dateFormat(new Date(), "HH:MM:ss");
+    },
 
     getDate: function () {
         return dateFormat(new Date(), "yyyymmdd");
     },
 
-    getSeconds: function(start) {
+    getSeconds: function (start) {
         return ((new Date() - start) % 60000 / 1000).toFixed(2) + "s";
     }
 };

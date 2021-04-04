@@ -1,7 +1,10 @@
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
-
+// create oracle pool.
+const database = require('./config/db.config');
+database.initialize().then();
+//
 var winston = require('./config/winston');
 var morgan = require('morgan');
 var fs = require('file-system');
@@ -20,6 +23,7 @@ var jobnoexist = require('./job-noexist');
 var jobB0003 = require('./job-B0003');
 var jobA0001 = require('./job-A0001');
 var jobB0003DelayReport = require('./job-B0003delayReport');
+var jobB0003DelayReport2 = require('./job-B0003delayReport2');
 
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -100,6 +104,7 @@ jobnoexist.start();
 jobB0003.start();
 jobA0001.start();
 jobB0003DelayReport.start();
+jobB0003DelayReport2.start();
 
 // force: true will drop the table if it already exists
 // db.sequelize.sync({force: true}).then(() => {
