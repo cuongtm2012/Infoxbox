@@ -12,7 +12,6 @@ const _ = require('lodash');
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const dataSendingDataFptContractSaveToScrapLog = require('../../domain/dataSendingDataFptContractSaveToScrapLog.save');
-const axios = require('axios');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body');
@@ -20,12 +19,6 @@ const httpClient = require('../../services/httpClient.service');
 
 exports.sendingContractData = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.body);
         logger.info(req.body);
         let preResponse, responseData, dataInqLogSave;
@@ -69,13 +62,6 @@ exports.sendingContractData = function (req, res) {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     //    Submit information
                                     let bodySubmitInfo = new bodySendInformationEContract(req.body);
-                                    let configSubmitInfo = {
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
-                                        },
-                                        timeout: 60 * 1000
-                                    }
                                     let token = `Bearer ${resultGetAuthAccess.data.access_token}`;
                                     httpClient.superagentPost(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_DEV, bodySubmitInfo, token).then(
                                         resultSubmitInfo => {
@@ -166,7 +152,7 @@ exports.sendingContractData = function (req, res) {
                                 }
                             }).catch(reason => {
                                 console.log('errGetAuth: ', reason.res.statusMessage);
-                            if (reason.res && reason.res.statusCode === 50) {
+                            if (reason.res && reason.res.statusCode === 500) {
                                 //    update scraplog & response F070
                                 console.log('errSubmitInfo: ', reason.toString());
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);

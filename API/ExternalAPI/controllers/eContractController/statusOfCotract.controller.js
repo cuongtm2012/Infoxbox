@@ -13,7 +13,7 @@ const statusOfContractResponseResult = require('../../domain/reponseStatusOfCont
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const dataStatusOfContractSaveToScrapLog = require('../../domain/dataStatusOfContractSaveToScrapLog.save');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 exports.statusOfContract = function (req, res) {
@@ -62,18 +62,13 @@ exports.statusOfContract = function (req, res) {
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth, config).then(
+                        httpClient.superagentPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                 //    get status contract
                                     let URlGetStatusContract = URI.URL_E_CONTRACT_GET_STATUS_DEV + req.query.id;
-                                    let configGetStatus = {
-                                        headers: {
-                                            'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
-                                        },
-                                        timeout: 60 * 1000
-                                    }
-                                    axios.get(URlGetStatusContract,configGetStatus).then(
+                                    let token = `Bearer ${resultGetAuthAccess.data.access_token}`;
+                                    httpClient.superagentGet(URlGetStatusContract,'', token).then(
                                         resultGetStatus => {
                                             if (resultGetStatus.status === 200 && !_.isEmpty(resultGetStatus.data)) {
                                             //    success P000
@@ -110,8 +105,8 @@ exports.statusOfContract = function (req, res) {
                                             }
                                         }
                                     ).catch(reason => {
-                                        console.log('errGetStatus: ', reason.toString());
-                                        if (reason.response && reason.response.status === 500) {
+                                        console.log('errGetStatus: ', reason.res.statusMessage);
+                                        if (reason.res && reason.res.statusCode === 500) {
                                             //    update scraplog & response F072
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
@@ -121,7 +116,7 @@ exports.statusOfContract = function (req, res) {
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
-                                        } else if (reason.message === 'timeout of 60000ms exceeded') {
+                                        } else if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
@@ -165,8 +160,8 @@ exports.statusOfContract = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            console.log('errGetStatus: ', reason.toString());
-                            if (reason.response && reason.response.status === 500) {
+                            console.log('errGetAuth: ', reason.res.statusMessage);
+                            if (reason.res && reason.res.statusCode === 500) {
                                 //    update scraplog & response F072
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
@@ -176,7 +171,7 @@ exports.statusOfContract = function (req, res) {
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
-                            } else if (reason.message === 'timeout of 60000ms exceeded') {
+                            } else if (reason.res && reason.res.statusMessage === 'timeout of 60000ms exceeded') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
