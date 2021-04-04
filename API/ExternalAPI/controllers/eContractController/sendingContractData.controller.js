@@ -16,6 +16,9 @@ const axios = require('axios');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
 const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
+// const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
+// const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
+// const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
 
 
 exports.sendingContractData = function (req, res) {
