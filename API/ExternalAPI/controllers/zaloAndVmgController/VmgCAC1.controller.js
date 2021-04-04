@@ -11,7 +11,7 @@ const _ = require('lodash');
 const bodyResponse = require('../../domain/KYC_VC1_RQST.response');
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
 const dataCAC1SaveToScrapLog = require('../../domain/dataCAC1SaveToScrapLog.save');
 const bodyPostCAC1 = require('../../domain/bodyPostVmgCAC1.body');
@@ -64,7 +64,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                     result => {
                         // call VMG CAC1
                         let bodyCac1 = new bodyPostCAC1(req.body);
-                        axios.post(URI.URL_VMG_DEV, bodyCac1, config).then(
+                        httpClient.superagentPost(URI.URL_VMG_DEV, bodyCac1).then(
                             resultCAC1 => {
                                 let dataSaveToVmgLocPct, dataSaveToVmgAddress;
                                 if (resultCAC1.data.error_code != undefined) {
@@ -183,7 +183,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            if (reason.message === 'timeout of 60000ms exceeded') {
+                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new bodyResponse(req.body, preResponse);
                                 // update INQLOG
