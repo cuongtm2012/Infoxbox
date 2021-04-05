@@ -1,6 +1,7 @@
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
 const checkContains = require('../../shared/util/checkcontains');
+const util = require('../../shared/util/util');
 module.exports = {
     checkParamRequest: function (getDataReq) {
         var response;
@@ -65,6 +66,13 @@ module.exports = {
             return response;
         }
         //    national ID
+        if (!util.validNumber(getDataReq.natId)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,
+                responseCode: responcodeEXT.RESCODEEXT.NINATIONALID.code
+            }
+            return response;
+        }
         if (_.isEmpty(getDataReq.natId)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NINATIONALID.name,

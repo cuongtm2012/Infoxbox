@@ -1,4 +1,4 @@
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const crypto = require('crypto');
 const validRequest = require('../../util/validateZaloScoreRequest');
 const _ = require('lodash');
@@ -16,18 +16,17 @@ const cicExternalService = require('../../services/cicExternal.service');
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const URI = require('../../../shared/URI');
-
+const configExternal = require('../../config/config')
+const qs = require('qs');
+const bodyZaloScore = require('../../domain/bodyPostZaloScore.body');
 const SECRET = 'TEST';
+const uuid = require('uuid');
+const logger = require('../../config/logger');
 exports.zaloScore = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         //checking parameter
         let rsCheck = validRequest.checkParamRequest(req.body);
+        logger.info(req.body);
         let preResponse, responseData, dataInqLogSave, dataScoreEx;
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
@@ -38,6 +37,7 @@ exports.zaloScore = function (req, res) {
                 //    update INQLOG
                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
+                logger.info(responseData);
                 return res.status(200).json(responseData);
             }
             validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.ZALO.code).then(dataFICode => {
@@ -48,12 +48,13 @@ exports.zaloScore = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, responseData);
                     cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
+                    logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
                     responseData = new ResponseWithoutScore(req.body, preResponse);
-
+                    logger.info(responseData);
                     return res.status(500).json(responseData);
                 }
                 //    end check params
@@ -61,16 +62,18 @@ exports.zaloScore = function (req, res) {
                 let dataInsertScrapLog = new DataZaloSaveToScrapLog(req.body, fullNiceKey);
                 cicExternalService.insertDataZaloToSCRPLOG(dataInsertScrapLog).then(
                     result => {
-                        axios.get(URI.URL_ZALO_GET_AUTH_DEV, config).then(
+                        let dataRqZalo = qs.stringify(configExternal.accountZaloDev);
+                        httpClient.superagentPostZaloEncodeUrl(URI.URL_ZALO_GET_AUTH_DEV, dataRqZalo).then(
                             resultTokenAuth => {
+                                logger.info(resultTokenAuth);
                                 if (resultTokenAuth.data.code === 0) {
-                                    //    do API get score
-                                    let auth_token = resultTokenAuth.data.data.auth_token;
-                                    let mobileNumberHmac = crypto.createHmac('sha256', SECRET).update(req.body.mobilePhoneNumber).digest('hex');
-                                    let paramUrl = `auth_token=${auth_token}&customer_phone=${mobileNumberHmac}&score_version=1`;
-                                    let fullUrlGetScore = URI.URL_ZALO_GET_SCORE_DEV + paramUrl;
-                                    axios.get(fullUrlGetScore, config).then(
+                                    // prepare call zalo score
+                                    let dataZaloScoreRq = qs.stringify(new bodyZaloScore(resultTokenAuth.data.data.auth_token, req.body.mobilePhoneNumber));
+                                    logger.info(dataZaloScoreRq);
+                                    //    call API get zalo score
+                                    httpClient.superagentPostZaloEncodeUrl(URI.URL_ZALO_GET_SCORE_DEV, dataZaloScoreRq, uuid.v4()).then(
                                         resultGetScore => {
+                                            logger.info(resultGetScore);
                                             if (resultGetScore.data.code === 0) {
                                                 // update when have success result P000
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
@@ -80,6 +83,7 @@ exports.zaloScore = function (req, res) {
                                                 cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
                                                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
@@ -89,18 +93,21 @@ exports.zaloScore = function (req, res) {
                                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             }
                                         }
                                     ).catch(
                                         errorGetScore => {
-                                            //    update scraplog & response F049
+                                            //    update scraplog & response F048
                                             console.log("errZalo:", errorGetScore.toString());
-                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                            preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new ResponseWithoutScore(req.body, preResponse);
                                             dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                             cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            logger.info(responseData);
+                                            logger.info(errorGetScore);
                                             return res.status(200).json(responseData);
                                         }
                                     );
@@ -111,17 +118,20 @@ exports.zaloScore = function (req, res) {
                                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                     cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 }
                             }
                         ).catch(
                             errorGetAuth => {
-                                //    update scraplog & response F049
-                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
+                                //    update scraplog & response F048
+                                preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                 cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                logger.info(responseData);
+                                logger.info(errorGetAuth);
                                 return res.status(200).json(responseData);
                             }
                         );
