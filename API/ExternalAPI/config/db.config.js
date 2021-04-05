@@ -3,16 +3,17 @@ const dbconfig = require('../../shared/config/dbconfig');
 const config = require('./config')
 
 const dbOption = {
+	_enableStats  : true,
 	user: dbconfig.user,
 	password: dbconfig.password,
 	connectString: dbconfig.connectString,
 	poolAlias: config.poolAlias,
-	poolMax: 4, // maximum size of the pool
-	poolMin: 0, // let the pool shrink completely
-	poolIncrement: 1, // only grow the pool by one connection at a time
-	poolTimeout: 0  // never terminate idle connections
+	poolMax: 50,
+	poolMin: 50,
+	poolIncrement: 0,
+	poolTimeout: 60
 }
-
+let poolInfo;
 async function initialize() {
 	//create oracle connection pool
 	await oracledb.createPool(
@@ -22,7 +23,14 @@ async function initialize() {
 				console.error("createPool() error: " + err.message);
 				throw err;
 			}
+			poolInfo = pool;
+			pool._logStats();
 		}
 	);//end oracledb.createpool
 }
+
+function poolInfoFnc() {
+	console.log(poolInfo._logStats());
+}
 module.exports.initialize = initialize;
+module.exports.poolInfoFnc = poolInfoFnc;
