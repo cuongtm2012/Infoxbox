@@ -12,9 +12,8 @@ module.exports.start = function () {
                 console.log('Time of Load test Localhost__(13request/time)__: ', times);
                 // finish
                 // console.log("call internall batch A0001~~~");
-
                 this.start();
             }
         });
-    }, 300);
+    }, 1000);
 }

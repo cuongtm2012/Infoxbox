@@ -38,6 +38,17 @@ axios.get(statusContractUrl, config).then(
             return console.log(error.toString());
         });
 
+const FTN_CCS_RQSTUrl = 'https://'+IP_TEST+':3000/contract/FTN_CCS_RQST?fiSessionKey&fiCode=B100000011&taskCode=FTN_CCS_RQST&id=0000119yI5zgIn6JRD4DPSg2';
+
+axios.get(FTN_CCS_RQSTUrl, config).then(
+	     result => {
+	         countNextTimeCron('FTN_CCS_RQSTUrl');
+	     }
+	     ).catch((error) => {
+             countNextTimeCron('statusContractUrl');
+            return console.log(error.toString());
+        });
+
 let mainscorePro = {
     "appNumber":"",
 	"fiCode":"B100000011",
@@ -118,9 +129,9 @@ const bodyCreateContract = {
     "datas": [
         {
             "id": "envName",
-            "name": "Há»£p Ä‘á»“ng NiceTest",
+            "name": "Hợp đồng NiceTest",
             "type": "header_fields",
-            "value": "Há»£p Ä‘á»“ng NiceTest",
+            "value": "Hợp đồng NiceTest",
             "owner": "envelope_hdr",
             "dataType": "String",
             "required": true
@@ -136,7 +147,7 @@ const bodyCreateContract = {
         },
         {
             "id": "envDate",
-            "name": "NgÃ y kÃ½",
+            "name": "Ngày ký",
             "type": "header_fields",
             "value": "2021-01-12T05:00:00.000Z",
             "owner": "envelope_hdr",
@@ -145,7 +156,7 @@ const bodyCreateContract = {
         },
         {
             "id": "envSubmittedFrom",
-            "name": " Ä�Æ°á»£c gá»­i tá»« :  ",
+            "name": " Được gửi từ :  ",
             "type": "header_fields",
             "value": "/496/517",
             "owner": "envelope_hdr",
@@ -165,7 +176,7 @@ const bodyCreateContract = {
             "id": "p_001_r_001",
             "name": "name_recipient",
             "type": "r",
-            "value": "Mai Anh Tuáº¥n",
+            "value": "Mai Anh Tuấn",
             "owner": "recipient",
             "dataType": "String",
             "required": true
@@ -201,7 +212,7 @@ const bodyCreateContract = {
             "id": "p_002",
             "name": "name_party",
             "type": "p",
-            "value": "BÃŠN B: BÃŠN VAY",
+            "value": "BÊN B: BÊN VAY",
             "owner": "party",
             "dataType": "String",
             "required": true
@@ -246,7 +257,7 @@ const bodyCreateContract = {
             "id": "p_003",
             "name": "name_party",
             "type": "p",
-            "value": "BÃŠN C: OK VAY",
+            "value": "BÊN C: OK VAY",
             "owner": "party",
             "dataType": "String",
             "required": true
@@ -291,7 +302,7 @@ const bodyCreateContract = {
             "id": "0dd8f8413034a26bb50",
             "name": "fullnameA",
             "type": "ff",
-            "value": "Mai Anh Tuáº¥n",
+            "value": "Mai Anh Tuấn",
             "owner": "requester",
             "dataType": "String",
             "required": false
@@ -300,7 +311,7 @@ const bodyCreateContract = {
             "id": "d6d53b64ed768c59eca",
             "name": "fullnameB",
             "type": "ff",
-            "value": "Ä�á»— VÄƒn Han",
+            "value": "Đỗ Văn Han",
             "owner": "requester",
             "dataType": "String",
             "required": false
@@ -309,7 +320,7 @@ const bodyCreateContract = {
             "id": "edc5c854ad5e38c7f94",
             "name": "addressC",
             "type": "ff",
-            "value": "54 Liá»…u Giai, Ba Ä�Ã¬nh, HÃ  Ná»™i",
+            "value": "54 Liễu Giai, Ba Đình, Hà Nội",
             "owner": "requester",
             "dataType": "String",
             "required": false
@@ -323,10 +334,11 @@ const bodyCreateContract = {
             "dataType": "Number",
             "required": false
         }
-    ]
+    ],
+    "infoProvConcent": "Y"
 }
 
-axios.post(urlCreateContract, bodyCreateContract, config).then(
+	axios.post(urlCreateContract, bodyCreateContract, config).then(
         result => {
             countNextTimeCron("urlCreateContract");
         }
@@ -335,10 +347,78 @@ axios.post(urlCreateContract, bodyCreateContract, config).then(
         return console.log(error.toString());
     });
 
+
+
+const bodyOKF_SCO_RQST = {
+    "appNumber": "NFS2021020800001",
+    "fiCode": "B100000011",
+    "taskCode": "OKF_SCO_RQST",
+    "customerNumber": "C0000001",
+    "scoreProduct": "NOK100_001",
+    "mobilePhoneNumber": "0912345678",
+    "natId": "012345678",
+    "infoProvConcent": "Y"
+}
+
+const urlOKF_SCO_RQST = 'https://'+IP_TEST+':3000/external/OKF_SCO_RQST';
+        axios.post(urlOKF_SCO_RQST, bodyOKF_SCO_RQST, config).then(
+            result => {
+                countNextTimeCron('bodyOKF_SCO_RQST');
+            }
+        ).catch((error) => {
+            countNextTimeCron('errSimpleLimit');
+                return console.log(error.toString());
+        });
+
+
+const bodyCIC_MACR_RQST = {
+	"fiSessionKey":"20190601001000000001",
+	"fiCode":"B100000011",
+	"taskCode":"CIC_MACR_RQST",
+	"name":"test",
+	"mobilePhoneNumber":"0968699385",
+	"inquiryDate":"",
+	"infoProvConcent":"Y"
+}
+
+const urlCIC_MACR_RQST = 'https://'+IP_TEST+':3000/external/CIC_MACR_RQST';
+        axios.post(urlCIC_MACR_RQST, bodyCIC_MACR_RQST, config).then(
+            result => {
+                countNextTimeCron('urlCIC_MACR_RQST');
+            }
+        ).catch((error) => {
+            countNextTimeCron('errSimpleLimit');
+                return console.log(error.toString());
+        });
+
+const bodyKYC_VC1_RQST = {
+    "appNumber": "",
+    "fiCode": "B100000011",
+    "taskCode": "KYC_VC1_RQST",
+    "customerNumber": "",
+    "mobilePhoneNumber": "0964785596",
+    "workAddress": "81 Tran thai tong, cau giay, ha noi",
+    "homeAddress": "thanh lam, me linh , ha noi",
+    "referAddress": "thanh lam, me linh , ha noi",
+    "infoProvConcent": "Y"
+}
+
+const urlKYC_VC1_RQST = 'https://'+IP_TEST+':3000/kyc/KYC_VC1_RQST';
+        axios.post(urlKYC_VC1_RQST, bodyKYC_VC1_RQST, config).then(
+            result => {
+                countNextTimeCron('bodyKYC_VC1_RQST');
+            }
+        ).catch((error) => {
+            countNextTimeCron('errSimpleLimit');
+                return console.log(error.toString());
+        });
+
+
+
         function countNextTimeCron(any) {
             times++;
             console.log(times , ' : ',  any);
-            if (times === 4) {
+            if (times === 8) {
                oncomplete(0 , 0);
             }
         }
