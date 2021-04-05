@@ -24,12 +24,6 @@ const uuid = require('uuid');
 const logger = require('../../config/logger');
 exports.zaloScore = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         //checking parameter
         let rsCheck = validRequest.checkParamRequest(req.body);
         logger.info(req.body);
