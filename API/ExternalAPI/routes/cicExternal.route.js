@@ -37,7 +37,7 @@ router.post('/CIC_PROC_STAT', cicProcStat_controller.cicProcStat);
 router.post('/CIC_MACR_RQST', cicMacr_Controller.cicMACRRQST);
 router.post('/CIC_MACR_RSLT', cicMacr_Controller.cicMACRRSLT);
 
-// router.post('/PHN_SCO_RQST', zaloScoreController.zaloScore);
+router.post('/PHN_SCO_RQST', zaloScoreController.zaloScore);
 // router.post('/TCO_S01_RQST', vmgRiskScoreController.vmgRiskScore);
 router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 
