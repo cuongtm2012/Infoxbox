@@ -15,5 +15,5 @@ module.exports.start = function () {
                 this.start();
             }
         });
-    }, 1000);
+    }, 2000);
 }
