@@ -101,7 +101,7 @@ exports.sendingContractData = function (req, res) {
                                         console.log('errSubmitInfo: ', reason.toString());
                                         if (reason.res && reason.res.statusCode === 500) {
                                             //    update scraplog & response F070
-                                            console.log('errSubmitInfo: ', reason.res.statusMessage);
+                                            console.log('errSubmitInfo500: ', reason.res.statusMessage, reason.res.statusCode);
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -155,7 +155,7 @@ exports.sendingContractData = function (req, res) {
                                 console.log('errGetAuth: ', reason.toString());
                             if (reason.res && reason.res.statusCode === 500) {
                                 //    update scraplog & response F070
-                                console.log('errSubmitInfo: ', reason.res.statusMessage);
+                                console.log('errGetAuth 500: ', reason.res.statusMessage, reason.res.statusCode);
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
