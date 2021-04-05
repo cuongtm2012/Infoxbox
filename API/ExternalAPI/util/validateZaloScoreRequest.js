@@ -1,6 +1,7 @@
 const responcodeEXT = require('../../shared/constant/responseCodeExternal');
 const _ = require('lodash');
 const checkContains = require('../../shared/util/checkcontains');
+const util = require('../../shared/util/util');
 module.exports = {
     checkParamRequest: function (getDataReq) {
         var response;
@@ -54,6 +55,12 @@ module.exports = {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.name,
                 responseCode: responcodeEXT.RESCODEEXT.NIMOBILEPHONENUMBER.code
+            }
+            return response;
+        } else if (!util.validPhoneNumber(getDataReq.mobilePhoneNumber)) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.InvalidMobileNumber.name,
+                responseCode: responcodeEXT.RESCODEEXT.InvalidMobileNumber.code
             }
             return response;
         }
