@@ -27,18 +27,16 @@ let IP_TEST = '103.112.124.153'
 //OKF_SPL_RQST,,OKF_SCO_RQST
 
 let times = 0
-const statusContractUrl = 'https://'+IP_TEST+':3100/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
+const statusContractUrl = 'https://'+IP_TEST+':3000/contract/FTN_GAS_RQST?fiCode=B100000011&taskCode=FTN_GAS_RQST&alias=hop_dong_nice_test_0112';
 
-/*axios.get(statusContractUrl, config).then(
+axios.get(statusContractUrl, config).then(
 	     result => {
 	         countNextTimeCron('statusContractUrl');
 	     }
 	     ).catch((error) => {
              countNextTimeCron('statusContractUrl');
             return console.log(error.toString());
-        });*/
-
-/*
+        });
 
 let mainscorePro = {
     "appNumber":"",
@@ -53,7 +51,7 @@ let mainscorePro = {
     "infoProvConcent": "Y"
 }
 
-let mainScore_URL = 'https://'+IP_TEST+':3100/external/RCS_M01_RQST';
+let mainScore_URL = 'https://'+IP_TEST+':3000/external/RCS_M01_RQST';
 
 		//RCS_M01_RQST
 		axios.post(mainScore_URL, mainscorePro, config).then(
@@ -78,7 +76,7 @@ const bodySimpleLimit = {
     "joinYearMonth": "201905",
     "infoProvConcent": "Y"
 }
-const urlSimpleLimit = 'https://'+IP_TEST+':3100/external/OKF_SPL_RQST';
+const urlSimpleLimit = 'https://'+IP_TEST+':3000/external/OKF_SPL_RQST';
         axios.post(urlSimpleLimit, bodySimpleLimit, config).then(
             result => {
                 countNextTimeCron('urlSimpleLimit');
@@ -88,7 +86,7 @@ const urlSimpleLimit = 'https://'+IP_TEST+':3100/external/OKF_SPL_RQST';
                 return console.log(error.toString());
         });
 
-let nfScore_URL = 'https://'+IP_TEST+':3100/external/OKF_SCO_RQST';
+let nfScore_URL = 'https://'+IP_TEST+':3000/external/OKF_SCO_RQST';
 let NfscorePro = {
             "appNumber": "R9000000000010",
             "fiCode": "B100000011",
@@ -106,10 +104,10 @@ axios.post(nfScore_URL, NfscorePro, config).then(
         ).catch((error) => {
             countNextTimeCron('NfscorePro: ' + error.toString());
             return console.log(error.toString());
-        });*/
+        });
 
 
-const urlCreateContract = 'https://222.252.25.116:3100/contract/FTN_SCD_RQST';
+const urlCreateContract = 'https://'+IP_TEST+':3000/contract/FTN_SCD_RQST';
 const bodyCreateContract = {
     "fiSessionKey": "",
     "fiCode": "B100000011",
@@ -340,7 +338,7 @@ axios.post(urlCreateContract, bodyCreateContract, config).then(
         function countNextTimeCron(any) {
             times++;
             console.log(times , ' : ',  any);
-            if (times === 1) {
+            if (times === 4) {
                oncomplete(0 , 0);
             }
         }
