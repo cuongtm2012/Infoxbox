@@ -8,10 +8,10 @@ const dbOption = {
 	password: dbconfig.password,
 	connectString: dbconfig.connectString,
 	poolAlias: config.poolAlias,
-	poolMax: 50,
-	poolMin: 50,
+	poolMax: 10,
+	poolMin: 10,
 	poolIncrement: 0,
-	poolTimeout: 60
+	poolTimeout: 0
 }
 let poolInfo;
 async function initialize() {
