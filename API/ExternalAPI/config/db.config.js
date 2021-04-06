@@ -23,8 +23,12 @@ async function initialize() {
 				console.error("createPool() error: " + err.message);
 				throw err;
 			}
+			setInterval(function(){
+				pool.getConnection(function(e,c){
+					poolInfoFnc();
+					c.release(); });
+			}, 60000);
 			poolInfo = pool;
-			pool._logStats();
 		}
 	);//end oracledb.createpool
 }
