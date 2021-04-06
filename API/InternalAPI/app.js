@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 const database = require('./config/db.config');
 database.initialize().then();
 //
-var winston = require('./config/winston');
+var logger = require('./config/logger');
 var morgan = require('morgan');
 var fs = require('file-system');
 const moment = require('moment-timezone');
@@ -71,7 +71,7 @@ morgan.token('date', (req, res, tz) => {
 	return moment().tz(tz).format();
 })
 morgan.format('myformat', '[:date[Asia/Ho_Chi_Minh]] ":method :url" :status :res[content-length] - :response-time ms');
-app.use(morgan('combined', { stream: winston.stream }));
+app.use(morgan('combined', { stream: logger.stream }));
 //configure log
 var createFolder = function ensureDirSync(dirpath) {
 	try {
@@ -120,7 +120,7 @@ app.use(function (err, req, res, next) {
 	res.locals.error = req.app.get('env') === 'development' ? err : {};
 
 	// add this line to include winston logging
-	winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+	logger.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
 
 	// render the error page
 	res.status(err.status || 500);
