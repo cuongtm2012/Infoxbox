@@ -43,14 +43,31 @@ async function ensureFileSync(filePath) {
     }
 }
 
-var winstonLogger = new winston.Logger({
+var winstonLogger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.splat(),
+        // Định dạng time cho log
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        // thêm màu sắc
+        winston.format.colorize(),
+        // thiết lập định dạng của log
+        winston.format.printf(
+            log => {
+                // nếu log là error hiển thị stack trace còn không hiển thị message của log
+                if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+            },
+        ),
+    ),
     transports: [
         new winston.transports.File({
             filename: logfile_normal,
             handleExceptions: true,
             json: true,
             maxsize: 10483960, // 10MB
-            maxFiles: 5,
+            maxFiles: 10,
             colorize: false,
             timestamp: true
         }),
@@ -64,14 +81,32 @@ var winstonLogger = new winston.Logger({
     ],
     exitOnError: false
 });
-var winstonLoggerError = new winston.Logger({
+
+var winstonLoggerError = new winston.createLogger({
+    format: winston.format.combine(
+        winston.format.splat(),
+        // Định dạng time cho log
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        // thêm màu sắc
+        winston.format.colorize(),
+        // thiết lập định dạng của log
+        winston.format.printf(
+            log => {
+                // nếu log là error hiển thị stack trace còn không hiển thị message của log
+                if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+            },
+        ),
+    ),
     transports: [
         new winston.transports.File({
             filename: logfile_error,
             handleExceptions: true,
             json: true,
             maxsize: 10483960, // 10MB
-            maxFiles: 5,
+            maxFiles: 10,
             colorize: false,
             timestamp: true
         }),
@@ -115,14 +150,31 @@ function refreshDirNameAndFileName() {
     logfile_error = folderName_error + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
     logfile_normal = folderName_normal + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
 
-    winstonLoggerError = new winston.Logger({
+    winstonLogger = winston.createLogger({
+        format: winston.format.combine(
+            winston.format.splat(),
+            // Định dạng time cho log
+            winston.format.timestamp({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            }),
+            // thêm màu sắc
+            winston.format.colorize(),
+            // thiết lập định dạng của log
+            winston.format.printf(
+                log => {
+                    // nếu log là error hiển thị stack trace còn không hiển thị message của log
+                    if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                    return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+                },
+            ),
+        ),
         transports: [
             new winston.transports.File({
-                filename: logfile_error,
+                filename: logfile_normal,
                 handleExceptions: true,
                 json: true,
                 maxsize: 10483960, // 10MB
-                maxFiles: 5,
+                maxFiles: 10,
                 colorize: false,
                 timestamp: true
             }),
@@ -137,14 +189,31 @@ function refreshDirNameAndFileName() {
         exitOnError: false
     });
 
-    winstonLogger = new winston.Logger({
+    winstonLogger = winston.createLogger({
+        format: winston.format.combine(
+            winston.format.splat(),
+            // Định dạng time cho log
+            winston.format.timestamp({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            }),
+            // thêm màu sắc
+            winston.format.colorize(),
+            // thiết lập định dạng của log
+            winston.format.printf(
+                log => {
+                    // nếu log là error hiển thị stack trace còn không hiển thị message của log
+                    if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                    return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+                },
+            ),
+        ),
         transports: [
             new winston.transports.File({
                 filename: logfile_normal,
                 handleExceptions: true,
                 json: true,
                 maxsize: 10483960, // 10MB
-                maxFiles: 5,
+                maxFiles: 10,
                 colorize: false,
                 timestamp: true
             }),
