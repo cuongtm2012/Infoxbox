@@ -12,18 +12,12 @@ const responseContractDownloadApi = require('../../domain/responseContractDownlo
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDownloadSaveToScrapLog.save');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const fs = require('fs');
 exports.contractDownloadApi = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.query);
         logger.info(req.query);
         let preResponse, responseData, dataInqLogSave, filename;
@@ -56,47 +50,44 @@ exports.contractDownloadApi = function (req, res) {
                     } else {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth, config).then(
+                        httpClient.superagentPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     let URlDownloadContract = URI.URL_E_CONTRACT_DOWNLOAD_API_PROD + req.query.id;
-                                    let configDownloadContract = {
-                                        headers: {
-                                            'Authorization': `Bearer ${resultGetAuthAccess.data.access_token}`
-                                        },
-                                        timeout: 60 * 1000,
-                                        responseType: "stream"
-                                    }
-                                    axios.get(URlDownloadContract, configDownloadContract).then(
+                                    let token = `Bearer ${resultGetAuthAccess.data.access_token}`;
+                                    httpClient.superagentGetStreamType(URlDownloadContract, '', token).then(
                                         resultDownload => {
                                             if (resultDownload.status === 200 && !_.isEmpty(resultDownload.data)) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 logger.info(responseData);
                                                 filename = fullNiceKey + '.pdf';
-                                                let saveFile = resultDownload.data.pipe(fs.createWriteStream(filename));
-                                                convertPdfToBase64(filename, saveFile).then(
-                                                    resultConvertBase64 => {
+                                                fs.writeFile(filename, resultDownload.data, 'binary', (error) => {
+                                                    if (error) throw error;
+                                                    console.log("Doc saved!");
+                                                    convertPdfToBase64(filename).then(
+                                                        resultConvertBase64 => {
+                                                            dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                            logger.info(responseData);
+                                                            responseData.contractContent = resultConvertBase64;
+                                                            deleteFile(filename);
+                                                            // fs.writeFile('result_document.pdf', resultConvertBase64, 'base64', (error) => {
+                                                            //     if (error) throw error;
+                                                            //     console.log("Doc saved!");
+                                                            // });
+                                                            return res.status(200).json(responseData);
+                                                        }).catch(reason => {
+                                                        console.log('errResultDownload: ', reason.res.statusMessage);
+                                                        preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
+                                                        responseData = new responseContractDownloadApi(req.query, preResponse);
                                                         dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                        responseData.contractContent = resultConvertBase64;
-                                                        deleteFile(filename);
-                                                        // fs.writeFile('result_document.pdf', resultConvertBase64, 'base64', (error) => {
-                                                        //     if (error) throw error;
-                                                        //     console.log("Doc saved!");
-                                                        // });
+                                                        logger.info(responseData);
+                                                        logger.info(resultDownload.data);
                                                         return res.status(200).json(responseData);
-                                                    }).catch(reason => {
-                                                    console.log('errResultDownload: ', reason.toString());
-                                                    preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
-                                                    responseData = new responseContractDownloadApi(req.query, preResponse);
-                                                    dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                    cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
-                                                    logger.info(responseData);
-                                                    logger.info(resultDownload.data);
-                                                    return res.status(200).json(responseData);
-                                                })
+                                                    })
+                                                });
                                             } else {
                                                 //    update scraplog & response F048
                                                 console.log('errResultDownload: ', resultDownload);
@@ -104,7 +95,6 @@ exports.contractDownloadApi = function (req, res) {
                                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                                 logger.info(responseData);
                                                 logger.info(resultDownload.data);
                                                 return res.status(200).json(responseData);
@@ -112,22 +102,19 @@ exports.contractDownloadApi = function (req, res) {
                                         }).catch(reason => {
                                         console.log('errResultDownload: ', reason.toString());
                                         deleteFile(filename);
-                                        if (reason.response && reason.response.data.message === ('Internal Server Error: Envelope is not exist: ' + req.query.id)) {
-                                            console.log('errResultDownload: ', reason.response.data.message);
+                                        if (reason.res && reason.res.statusCode === 500) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.NoContractForInputId.code).then();
                                             logger.info(responseData);
-                                            logger.info(reason.toString());
+                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
-                                        } else if (reason.message === 'timeout of 60000ms exceeded') {
+                                        } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -136,7 +123,6 @@ exports.contractDownloadApi = function (req, res) {
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -149,19 +135,17 @@ exports.contractDownloadApi = function (req, res) {
                                     responseData = new responseContractDownloadApi(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
                             console.log('errGetAuthAccess: ', reason.toString());
-                            if (reason.message === 'timeout of 60000ms exceeded') {
+                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -170,7 +154,6 @@ exports.contractDownloadApi = function (req, res) {
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult('', responCode.RESCODEEXT.EXTITFERR.code).then();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -194,15 +177,13 @@ exports.contractDownloadApi = function (req, res) {
     }
 }
 
-async function convertPdfToBase64(filename, saveFile) {
+async function convertPdfToBase64(filename) {
     return new Promise((resolve, reject) => {
-        saveFile.on('finish', function () {
-            fs.readFile(filename, function read(err, data) {
-                if (err) {
-                    reject();
-                }
-                resolve(data.toString("base64"));
-            });
+        fs.readFile(filename, function read(err, data) {
+            if (err) {
+                reject();
+            }
+            resolve(data.toString("base64"));
         });
     });
 }

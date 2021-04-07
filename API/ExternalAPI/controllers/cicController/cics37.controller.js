@@ -1,4 +1,4 @@
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const logger = require('../../config/logger');
 
 const cics37RQSTReq = require('../../domain/CIC_S37_RQST.request');
@@ -8,7 +8,6 @@ const cicCicS37Service = require('../../services/cicS37.service');
 
 const cics37RQSTRes = require('../../domain/CIC_S37_RQST.response');
 
-const validation = require('../../../shared/util/validation');
 const validRequest = require('../../util/validateParamRequestS37');
 const encryptPassword = require('../../util/encryptPassword');
 
@@ -24,7 +23,7 @@ const URI = require('../../../shared/URI');
 const cicB1003Req = require('../../domain/cicB1003.request');
 const defaultParams = require('../../../shared/domain/defaultParams.request');
 const responCode = require('../../../shared/constant/responseCodeExternal');
-const cicService = require('../../../InternalAPI/services/cicInternal.service');
+const cicService = require('../../services/internalService');
 const utilFunction = require('../../../shared/util/util');
 const CICB1003Save = require('../../domain/cicB1003.save');
 const cicS37Service = require('../../services/cicInternalS37.service');
@@ -32,7 +31,6 @@ const convertBase64 = require('../../../shared/util/convertBase64ToText');
 const convertPassword = require('../../../shared/util/convertBase64ToText');
 const getIdGetway = require('../../../shared/util/getIPGateWay');
 const cicTransSave = require('../../../InternalAPI/domain/cicTrans.save');
-const cicServiceRes = require('../../../InternalAPI/services/cicInternalRes.service');
 const cics37RSLTRes = require('../../domain/CIC_S37_RSLT.response');
 
 const io = require('socket.io-client');
@@ -132,7 +130,7 @@ exports.cics37Rqst = function (req, res) {
                         var fnData = new cicB1003Req(req.body, defaultValue, decryptPW, fullNiceKey);
                         console.log('request data:', fnData);
 
-                        axios.post(URI.cicInternalJson, fnData, config)
+                        httpClient.superagentPost(URI.cicInternalJson, fnData)
                             .then((body) => {
                                 console.log('body:', body.data);
 

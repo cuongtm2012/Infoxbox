@@ -44,15 +44,15 @@ router.post('/OKF_SCO_RQST', nonFinancialScoreOKController.nonFinancialScoreOk);
 router.post('/OKF_SPL_RQST', okFVNController.okf_SPL_RQST);
 router.post('/RCS_M01_RQST', mainScoreController.rcs_M01_RQST);
 
-router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 , multipartMiddleware, function (req, res, next){
-    fptDigitalizeIDController.fptDigitalizeID(req,res);
-});
+// router.post('/KYC_F01_RQST', checkRequest.checkRequestV01orV02 ,function (req, res, next){
+//     fptDigitalizeIDController.fptDigitalizeID(req,res);
+// });
 
-router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02, multipartMiddleware, function (req, res, next){
-    fptFaceMatchingController.fptFaceMatching(req,res);
-});
+// router.post('/KYC_F02_RQST',checkRequest.checkRequestV01orV02,function (req, res, next){
+//     fptFaceMatchingController.fptFaceMatching(req,res);
+// });
 
-router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, multipartMiddleware, function (req, res, next){
+router.post('/KYC_FI1_RQST',checkRequest.checkRequestV01AndV02, function (req, res, next){
     fptDigitalizeIDAndFaceMatchingController.fptDigitalizeIdAndFaceMatching(req,res);
 });
 

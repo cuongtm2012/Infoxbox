@@ -14,19 +14,15 @@ const BodyPostRiskScore = require('../../domain/body_Post_RiskScore.body');
 const cicExternalService = require('../../services/cicExternal.service');
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
-const axios = require('axios');
+const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
+const logger = require('../../config/logger');
 exports.vmgRiskScore = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         //checking parameter
         let rsCheck = validRequest.checkParamRequest(req.body);
         let preResponse, responseData, dataInqLogSave, dataScoreEx;
+        logger.info(req.body);
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.VMG_RISK_SCORE.code + niceSessionKey;
@@ -36,6 +32,7 @@ exports.vmgRiskScore = function (req, res) {
                 //    update INQLOG
                 dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
                 cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
+                logger.info(req.responseData);
                 return res.status(200).json(responseData);
             }
             validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.VMG_RISK_SCORE.code).then(dataFICode => {
@@ -45,10 +42,12 @@ exports.vmgRiskScore = function (req, res) {
                     // update INQLOG
                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, responseData);
                     cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
+                    logger.info(req.responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
                     preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
                     responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
+                    logger.info(req.responseData);
                     return res.status(500).json(responseData);
                 }
                 //    end check params
@@ -57,9 +56,11 @@ exports.vmgRiskScore = function (req, res) {
                 cicExternalService.insertDataRiskScoreToSCRPLOG(dataInsertScrapLog).then(
                     result => {
                         let bodyGetRiskScore = new BodyPostRiskScore(req.body);
+                        logger.info(bodyGetRiskScore);
                     //    get RiskScore
-                        axios.post(URI.URL_VMG_PROD, bodyGetRiskScore, config).then(
+                        httpClient.superagentPost(URI.URL_VMG_DEV, bodyGetRiskScore).then(
                             resultGetRiskScore => {
+                                logger.info(resultGetRiskScore);
                                 if (resultGetRiskScore.data.error_code === 0) {
                                 //    update when have success result P000
                                     preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
@@ -69,6 +70,7 @@ exports.vmgRiskScore = function (req, res) {
                                     cicExternalService.insertDataRiskScoreToExtScore(dataScoreEx).then();
                                     cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else if (resultGetRiskScore.data.error_code === 4) {
                                     //    update scraplog & response F052
@@ -77,6 +79,7 @@ exports.vmgRiskScore = function (req, res) {
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
                                     cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else if (resultGetRiskScore.data.error_code === 11) {
                                     //    update scraplog & response F049
@@ -85,6 +88,7 @@ exports.vmgRiskScore = function (req, res) {
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
                                     cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
@@ -93,6 +97,7 @@ exports.vmgRiskScore = function (req, res) {
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
                                     cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                                     cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 }
                             }
@@ -104,6 +109,7 @@ exports.vmgRiskScore = function (req, res) {
                                 dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
                                 cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                logger.info(responseData);
                                 return res.status(200).json(responseData);
                             }
                         );

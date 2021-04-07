@@ -12,20 +12,13 @@ const _ = require('lodash');
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const dataSendingDataFptContractSaveToScrapLog = require('../../domain/dataSendingDataFptContractSaveToScrapLog.save');
-const axios = require('axios');
 const URI = require('../../../shared/URI');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body')
-const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body')
-
+const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body');
+const httpClient = require('../../services/httpClient.service');
 
 exports.sendingContractData = function (req, res) {
     try {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000
-        }
         let rsCheck = validRequest.checkParamRequest(req.body);
         logger.info(req.body);
         let preResponse, responseData, dataInqLogSave;
@@ -64,19 +57,13 @@ exports.sendingContractData = function (req, res) {
                     result => {
                         //    getAuthAccess
                         let bodyGetAuth = new bodyGetAuthEContract();
-                        axios.post(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth, config).then(
-                            resultfetAuthAccess => {
-                                if (!_.isEmpty(resultfetAuthAccess.data.access_token)) {
+                        httpClient.superagentPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_PROD, bodyGetAuth).then(
+                            resultGetAuthAccess => {
+                                if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
                                     //    Submit information
                                     let bodySubmitInfo = new bodySendInformationEContract(req.body);
-                                    let configSubmitInfo = {
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'Authorization': `Bearer ${resultfetAuthAccess.data.access_token}`
-                                        },
-                                        timeout: 60 * 1000
-                                    }
-                                    axios.post(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_PROD, bodySubmitInfo, configSubmitInfo).then(
+                                    let token = `Bearer ${resultGetAuthAccess.data.access_token}`;
+                                    httpClient.superagentPost(URI.URL_E_CONTRACT_SUBMIT_INFORMATION_PROD, bodySubmitInfo, token).then(
                                         resultSubmitInfo => {
                                             if (resultSubmitInfo.status === 200 && !_.isEmpty(resultSubmitInfo.data)) {
                                                 //    update scraplog & response P000
@@ -91,7 +78,7 @@ exports.sendingContractData = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             } else if (resultSubmitInfo.status === 500) {
                                                 //    update scraplog & response F070
-                                                console.log('errSubmitInfo: ', resultfetAuthAccess);
+                                                console.log('errSubmitInfo: ', resultGetAuthAccess);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -101,7 +88,7 @@ exports.sendingContractData = function (req, res) {
                                                 return res.status(200).json(responseData);
                                             } else {
                                                 //    update scraplog & response F048
-                                                console.log('errSubmitInfo: ', resultfetAuthAccess);
+                                                console.log('errSubmitInfo: ', resultGetAuthAccess);
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -112,17 +99,18 @@ exports.sendingContractData = function (req, res) {
                                             }
                                         }).catch(reason => {
                                         console.log('errSubmitInfo: ', reason.toString());
-                                        if (reason.response && reason.response.status === 500) {
+                                        if (reason.res && reason.res.statusCode === 500) {
                                             //    update scraplog & response F070
+                                            console.log('errSubmitInfo500: ', reason.res.statusMessage, reason.res.statusCode);
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
                                             logger.info(responseData);
-                                            logger.info(reason.toString());
+                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
-                                        }  else if (reason.message === 'timeout of 60000ms exceeded') {
+                                        }  else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -142,9 +130,9 @@ exports.sendingContractData = function (req, res) {
                                             return res.status(200).json(responseData);
                                         }
                                     })
-                                } else if (resultfetAuthAccess.status === 500) {
+                                } else if (resultGetAuthAccess.status === 500) {
                                     //    update scraplog & response F070
-                                    console.log('errGetAuthAccess: ', resultfetAuthAccess.data);
+                                    console.log('errGetAuthAccess: ', resultGetAuthAccess.data);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                     responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -154,7 +142,7 @@ exports.sendingContractData = function (req, res) {
                                     return res.status(200).json(responseData);
                                 } else {
                                     //    update scraplog & response F048
-                                    console.log('errGetAuthAccess: ', resultfetAuthAccess.data);
+                                    console.log('errGetAuthAccess: ', resultGetAuthAccess.data);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -164,12 +152,10 @@ exports.sendingContractData = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                            if (reason.response) {
-                                console.log('errGetAuth: ', reason.response.data);
-                            }
-                            if (reason.response && reason.response.status === 500) {
+                                console.log('errGetAuth: ', reason.toString());
+                            if (reason.res && reason.res.statusCode === 500) {
                                 //    update scraplog & response F070
-                                console.log('errSubmitInfo: ', reason.toString());
+                                console.log('errGetAuth 500: ', reason.res.statusMessage, reason.res.statusCode);
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
@@ -177,7 +163,7 @@ exports.sendingContractData = function (req, res) {
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
-                            } else if (reason.message === 'timeout of 60000ms exceeded') {
+                            } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
