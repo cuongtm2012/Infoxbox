@@ -21,7 +21,7 @@ gracefulFs.gracefulify(fss);
 async function ensureDirSync(dirpath) {
     try {
 
-        if (fss.existsSync(dirpath)){
+        if (fss.existsSync(dirpath)) {
             return console.log('dir is exist');
         } else {
             return fs.mkdirSync(dirpath)
@@ -39,7 +39,7 @@ async function ensureFileSync(filePath) {
             return fs.writeFileSync(filePath, '');
         }
     } catch (err) {
-       console.log(err.toString());
+        console.log(err.toString());
     }
 }
 
@@ -56,8 +56,8 @@ var winstonLogger = winston.createLogger({
         winston.format.printf(
             log => {
                 // nếu log là error hiển thị stack trace còn không hiển thị message của log
-                if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
-                return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+                if (log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                return `[${log.timestamp}] [${log.level}] ${log.message}`;
             },
         ),
     ),
@@ -95,8 +95,8 @@ var winstonLoggerError = new winston.createLogger({
         winston.format.printf(
             log => {
                 // nếu log là error hiển thị stack trace còn không hiển thị message của log
-                if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
-                return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+                if (log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                return `[${log.timestamp}] [${log.level}] ${log.message}`;
             },
         ),
     ),
@@ -130,7 +130,7 @@ winstonLogger.stream = {
 // Wrap Winston logger to print reqId in each log
 var formatMessage = async function (message) {
     if (todayLogFile !== logfile_normal) {
-        console.log('created new logFile: ' +  moment(new Date()).format('YYYYMMDD'));
+        console.log('created new logFile: ' + moment(new Date()).format('YYYYMMDD'));
         todayLogFile = logfile_normal;
         await ensureDirSync(folderLogs);
         await ensureDirSync(folderName_External);
@@ -143,6 +143,7 @@ var formatMessage = async function (message) {
     message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
     return message;
 };
+
 function refreshDirNameAndFileName() {
     folderName_External = folderLogs + '/' + moment(new Date()).format('YYYYMM');
     folderName_normal = folderName_External + '/normal';
@@ -163,8 +164,8 @@ function refreshDirNameAndFileName() {
             winston.format.printf(
                 log => {
                     // nếu log là error hiển thị stack trace còn không hiển thị message của log
-                    if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
-                    return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+                    if (log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                    return `[${log.timestamp}] [${log.level}] ${log.message}`;
                 },
             ),
         ),
@@ -202,8 +203,8 @@ function refreshDirNameAndFileName() {
             winston.format.printf(
                 log => {
                     // nếu log là error hiển thị stack trace còn không hiển thị message của log
-                    if(log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
-                    return  `[${log.timestamp}] [${log.level}] ${log.message}`;
+                    if (log.stack) return `[${log.timestamp}] [${log.level}] ${log.stack}`;
+                    return `[${log.timestamp}] [${log.level}] ${log.message}`;
                 },
             ),
         ),
@@ -228,34 +229,42 @@ function refreshDirNameAndFileName() {
         exitOnError: false
     });
 }
+
 var logger = {
     log: async function (level, message) {
         refreshDirNameAndFileName();
         winstonLogger.log(level, await formatMessage(message));
+        winstonLogger.close();
     },
     error: async function (message) {
         refreshDirNameAndFileName();
         winstonLoggerError.error(await formatMessage(message));
+        winstonLoggerError.close();
     },
     warn: async function (message) {
         refreshDirNameAndFileName()
         winstonLogger.warn(await formatMessage(message));
+        winstonLogger.close();
     },
     verbose: async function (message) {
         refreshDirNameAndFileName();
         winstonLogger.verbose(await formatMessage(message));
+        winstonLogger.close();
     },
     info: async function (message) {
         refreshDirNameAndFileName();
         winstonLogger.info(await formatMessage(message));
+        winstonLogger.close();
     },
     debug: async function (message) {
         refreshDirNameAndFileName();
         winstonLogger.debug(await formatMessage(message));
+        winstonLogger.close();
     },
     silly: async function (message) {
         refreshDirNameAndFileName();
         winstonLogger.silly(await formatMessage(message));
+        winstonLogger.close();
     }
 };
 
