@@ -45,6 +45,10 @@ var URI = {
     URL_E_CONTRACT_DOWNLOAD_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
 
     URL_VMG_PROD: 'https://api-v2.infosky.vn/app/info_sky_v2/api/request',
+
+    URL_FPT_PROD_GetAuth: 'https://api.trandata.io/account/unauth/v1/login',
+    URL_FPT_PROD_V01: 'https://api.trandata.io/aggregator/api/v1/verification/v01_id',
+    URL_FPT_PROD_V02: 'https://api.trandata.io/aggregator/api/v1/verification/v02_facematching',
 };
 
 module.exports = URI;
