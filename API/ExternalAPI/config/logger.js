@@ -233,38 +233,31 @@ function refreshDirNameAndFileName() {
 var logger = {
     log: async function (level, message) {
         refreshDirNameAndFileName();
-        winstonLogger.log(level, await formatMessage(message));
-        winstonLogger.close();
+        winstonLogger.log(level, await formatMessage(message)).close();
     },
     error: async function (message) {
         refreshDirNameAndFileName();
-        winstonLoggerError.error(await formatMessage(message));
-        winstonLoggerError.close();
+        winstonLoggerError.error(await formatMessage(message)).close();
     },
     warn: async function (message) {
         refreshDirNameAndFileName()
-        winstonLogger.warn(await formatMessage(message));
-        winstonLogger.close();
+        winstonLogger.warn(await formatMessage(message)).close();
     },
     verbose: async function (message) {
         refreshDirNameAndFileName();
-        winstonLogger.verbose(await formatMessage(message));
-        winstonLogger.close();
+        winstonLogger.verbose(await formatMessage(message)).close();
     },
     info: async function (message) {
         refreshDirNameAndFileName();
-        winstonLogger.info(await formatMessage(message));
-        winstonLogger.close();
+        winstonLogger.info(await formatMessage(message)).close();
     },
     debug: async function (message) {
         refreshDirNameAndFileName();
-        winstonLogger.debug(await formatMessage(message));
-        winstonLogger.close();
+        winstonLogger.debug(await formatMessage(message)).close();
     },
     silly: async function (message) {
         refreshDirNameAndFileName();
-        winstonLogger.silly(await formatMessage(message));
-        winstonLogger.close();
+        winstonLogger.silly(await formatMessage(message)).close();
     }
 };
 
