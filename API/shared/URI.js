@@ -19,7 +19,7 @@ var URI = {
     URL_FPT_DEV_V01: 'https://api.uat.trandata.io/aggregator/api/v1/verification/v01_id',
     URL_FPT_DEV_V02: 'https://api.uat.trandata.io/aggregator/api/v1/verification/v02_facematching',
 
-    URL_RCLIPS_DEVELOP: 'http://103.112.124.153:18082/online/rclips/json',
+    URL_RCLIPS_DEVELOP: 'http://localhost:18082/online/rclips/json',
 
     URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV: 'https://demo.econtract.fpt.com.vn/app/v1/client-auth/login',
 
@@ -45,6 +45,10 @@ var URI = {
     URL_E_CONTRACT_DOWNLOAD_API_PROD: 'https://econtract.fpt.com.vn/app/services/envelope/api/external/v1/doc/content/',
 
     URL_VMG_PROD: 'https://api-v2.infosky.vn/app/info_sky_v2/api/request',
+
+    URL_FPT_PROD_GetAuth: 'https://api.trandata.io/account/unauth/v1/login',
+    URL_FPT_PROD_V01: 'https://api.trandata.io/aggregator/api/v1/verification/v01_id',
+    URL_FPT_PROD_V02: 'https://api.trandata.io/aggregator/api/v1/verification/v02_facematching',
 };
 
 module.exports = URI;
