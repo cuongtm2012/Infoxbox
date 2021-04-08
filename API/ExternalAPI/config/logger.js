@@ -39,7 +39,7 @@ async function ensureFileSync(filePath) {
             return fs.writeFileSync(filePath, '');
         }
     } catch (err) {
-       console.log(err.toString());
+        console.log(err.toString());
     }
 }
 
