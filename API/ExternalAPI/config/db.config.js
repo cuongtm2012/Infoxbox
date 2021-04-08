@@ -38,7 +38,6 @@ async function initialize() {
                             {
                                 outFormat: oracledb.OUT_FORMAT_OBJECT
                             });
-                        console.log(result.rows[0].COUNT);
                         c.release();
                     });
                 }, 30000);
@@ -47,7 +46,7 @@ async function initialize() {
         );//end oracledb.createpool
     } catch (e) {
         if (poolInfo) {
-            poolInfo.close();
+            await poolInfo.close();
         }
         await initialize();
         console.log(e.toString());
