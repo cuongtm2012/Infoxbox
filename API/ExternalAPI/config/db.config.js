@@ -28,6 +28,9 @@ async function initialize() {
 
                 setInterval(async function () {
                     pool.getConnection(async function (e, c) {
+                        if (err) {
+                            throw err
+                        }
                         let result = await c.execute(
                             // The statement to execute
                             SQL,
@@ -35,7 +38,6 @@ async function initialize() {
                             {
                                 outFormat: oracledb.OUT_FORMAT_OBJECT
                             });
-                        console.log(result.rows[0].COUNT);
                         c.release();
                     });
                 }, 30000);
@@ -44,7 +46,7 @@ async function initialize() {
         );//end oracledb.createpool
     } catch (e) {
         if (poolInfo) {
-            poolInfo.close();
+            await poolInfo.close();
         }
         await initialize();
         console.log(e.toString());
