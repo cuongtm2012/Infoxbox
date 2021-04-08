@@ -28,6 +28,9 @@ async function initialize() {
 
                 setInterval(async function () {
                     pool.getConnection(async function (e, c) {
+                        if (err) {
+                            throw err
+                        }
                         let result = await c.execute(
                             // The statement to execute
                             SQL,
