@@ -2,7 +2,7 @@ const oracledb = require('oracledb');
 const config = require('../config/config');
 const dateutil = require('../util/dateutil');
 const getIdGetway = require('../../shared/util/getIPGateWay');
-
+const database = require('../config/db.config');
 async function insertS37Detail(req) {
     let connection;
 
@@ -10,7 +10,7 @@ async function insertS37Detail(req) {
         let sql, sqlInsertCICRPTMain, result, resultCicrptMain;
         let sysDtim = dateutil.timeStamp();
         const workID = getIdGetway.getIPGateWay();
-
+        database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
         //TB CICCRPT MAIN
@@ -83,6 +83,7 @@ async function insertS37Detail(req) {
 
     } catch (err) {
         console.log(err);
+        return null;
         // return res.status(400);
     } finally {
         if (connection) {
