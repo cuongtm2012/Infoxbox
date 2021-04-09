@@ -50,7 +50,7 @@ function superagentPost(url, body, Authorization) {
                 .end((err, response) => {
                     if (err)
                          reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                        if (response.text)
                            data = response.text;
                        if (!_.isEmpty(response.body))
@@ -83,7 +83,7 @@ function superagentGetAcceptEncoding(url, query, Authorization) {
                 .end((err, response) => {
                     if (err)
                          reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
@@ -118,7 +118,7 @@ function superagentGetStreamType(url, query, Authorization) {
                 .end((err, response) => {
                     if (err)
                          reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
@@ -151,7 +151,7 @@ function superagentPostZaloEncodeUrl(url, body, clientId) {
                 .end((err, response) => {
                     if (err)
                          reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
@@ -187,7 +187,7 @@ function superagentPostMultipartV01(url, authorization, requestId, type, frontIm
                 .end((err, response) => {
                     if (err)
                          reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
@@ -223,7 +223,7 @@ function superagentPostMultipartV02(url, authorization, requestId, targetImage, 
                 .end((err, response) => {
                     if (err)
                          reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
