@@ -211,14 +211,20 @@ function deleteFile(req) {
     if (!_.isEmpty(req.files)) {
         if (!_.isEmpty(req.files.sourceImage)) {
             fs.unlink(req.files.sourceImage.path, function (err) {
-                if (err) throw err;
+                if (err){
+	            	console.log("throw error:");
+	            	console.log(err);
+				} //throw error;
                 console.log('deleted sourceImage ')
             });
         }
 
         if (!_.isEmpty(req.files.targetImage)) {
             fs.unlink(req.files.targetImage.path, function (err) {
-                if (err) throw err;
+                if (err){
+	            	console.log("throw error:");
+	            	console.log(err);
+				} //throw error;
                 console.log('deleted targetImage ')
             });
         }

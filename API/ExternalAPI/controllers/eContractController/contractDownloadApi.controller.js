@@ -63,7 +63,10 @@ exports.contractDownloadApi = function (req, res) {
                                                 logger.info(responseData);
                                                 filename = fullNiceKey + '.pdf';
                                                 fs.writeFile(filename, resultDownload.data, 'binary', (error) => {
-                                                    if (error) throw error;
+                                                    if (error){
+                                                    	console.log("throw error:");
+                                                    	console.log(error);
+													} //throw error;
                                                     console.log("Doc saved!");
                                                     convertPdfToBase64(filename).then(
                                                         resultConvertBase64 => {
@@ -191,7 +194,10 @@ async function convertPdfToBase64(filename) {
 function deleteFile(file) {
     if (!_.isEmpty(file)) {
         fs.unlink(file, function (err) {
-            if (err) throw err;
+            if (err){
+            	console.log("throw error:");
+            	console.log(err);
+			} //throw error;
             console.log('deleted fdf file')
         });
     }
