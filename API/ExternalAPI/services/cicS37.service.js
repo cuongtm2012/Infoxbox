@@ -1,12 +1,13 @@
 const oracledb = require('oracledb');
 const config = require('../config/config');
 const _ = require('lodash');
-
+const database = require('../config/db.config');
 async function selectCicS37DetailReport(req) {
     let connection;
 
     try {
         //Connection db
+database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
         let resultScrpTranlog, outputScrpTranlog, resultS37Detail, outputS37Detail;

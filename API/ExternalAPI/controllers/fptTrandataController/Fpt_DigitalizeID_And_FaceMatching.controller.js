@@ -329,20 +329,29 @@ function deleteFile(req) {
     if (!_.isEmpty(req.files)) {
         if (!_.isEmpty(req.files.frontImage)) {
             fs.unlink(req.files.frontImage.path, function (err) {
-                if (err) throw err;
+                if (err){
+	            	console.log("throw error:");
+	            	console.log(err);
+				} //throw error;
                 console.log('deleted frontImage ')
             });
         }
 
         if (!_.isEmpty(req.files.rearImage)) {
             fs.unlink(req.files.rearImage.path, function (err) {
-                if (err) throw err;
+                if (err){
+	            	console.log("throw error:");
+	            	console.log(err);
+				} //throw error;
                 console.log('deleted rearImage ')
             });
         }
         if (!_.isEmpty(req.files.selfieImage)) {
             fs.unlink(req.files.selfieImage.path, function (err) {
-                if (err) throw err;
+                if (err){
+	            	console.log("throw error:");
+	            	console.log(err);
+				} //throw error;
                 console.log('deleted selfieImage ')
             });
         }

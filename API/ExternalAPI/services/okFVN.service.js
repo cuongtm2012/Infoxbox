@@ -2,7 +2,6 @@ const moment = require('moment');
 const _ = require('lodash');
 
 async function getSimpleLimit(req) {
-    let connection;
 
     try {
         let less3Y = 1.2
@@ -43,13 +42,7 @@ async function getSimpleLimit(req) {
         console.log(err);
         // return res.status(400);
     } finally {
-        if (connection) {
-            try {
-                await connection.close();
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        
     }
 }
 
