@@ -6,7 +6,7 @@ const nicekey = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 const niceGoodCode = require('../../shared/util/niceGoodCode');
 const _ = require('lodash');
-
+const database = require('../config/db.config');
 
 async function insertSCRPLOG(req, res) {
     let connection;
@@ -18,7 +18,7 @@ async function insertSCRPLOG(req, res) {
 
         let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
-
+        database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `INSERT INTO TB_SCRPLOG(
@@ -89,6 +89,7 @@ async function selectCicMobileDetailReport(req) {
 
     try {
         //Connection db
+        database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
         let result;
