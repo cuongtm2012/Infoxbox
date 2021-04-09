@@ -4,7 +4,7 @@
   "description": "Project for CIC Scraping",
   "main": "app.js",
   "scripts": {
-    "start": "export  UV_THREADPOOL_SIZE=128 && node app.js",
+    "start": "SET  UV_THREADPOOL_SIZE=128 && node app.js",
     "lint": "tslint"
   },
   "author": "InfoPlusVN",
@@ -40,7 +40,7 @@
     "multer": "^1.4.2",
     "node-cron": "^2.0.3",
     "node-uuid": "^1.4.8",
-    "oracledb": "^5.1.0",
+    "oracledb": "^4.1.0",
     "qs": "^6.9.6",
     "socket.io-client": "^2.3.0",
     "superagent": "^6.1.0",
