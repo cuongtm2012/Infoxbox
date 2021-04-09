@@ -232,12 +232,12 @@ var logger = {
     log: async function (level, message) {
         //refreshDirNameAndFileName();
         //winstonLogger.log(level, await formatMessage(message));
-		console.log("logger:log::" + level + "---->" + message )
+		console.log("logger:log::" + level + "---->" + message.toString() )
     },
     error: async function (message) {
         //refreshDirNameAndFileName();
         //winstonLoggerError.error(await formatMessage(message));
-		console.log("logger:error::" + message )
+		console.log("logger:error::" + message.toString() )
     },
     warn: async function (message) {
         //refreshDirNameAndFileName()
@@ -247,22 +247,22 @@ var logger = {
     verbose: async function (message) {
         //refreshDirNameAndFileName();
         //winstonLogger.verbose(await formatMessage(message));
-		console.log("logger:verbose::" + message )
+		console.log("logger:verbose::" + message.toString() )
     },
     info: async function (message) {
         //refreshDirNameAndFileName();
         //winstonLogger.info(await formatMessage(message));
-		console.log("logger:info::" + message )
+		console.log("logger:info::" + message.toString() )
     },
     debug: async function (message) {
         //refreshDirNameAndFileName();
         //winstonLogger.debug(await formatMessage(message));
-		console.log("logger:debug::" + message )
+		console.log("logger:debug::" + message.toString() )
     },
     silly: async function (message) {
         //refreshDirNameAndFileName();
         //winstonLogger.silly(await formatMessage(message));
-		console.log("logger:silly::" + message )
+		console.log("logger:silly::" + message.toString() )
     }
 };
 
