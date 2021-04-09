@@ -1,13 +1,13 @@
 
 const oracledb = require('oracledb');
 const config = require('../config/config');
-
+const database = require('../config/db.config');
 async function getSequence() {
     let connection;
 
     try {
         let sql, result;
-
+        database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `SELECT SUBSTR(concat('0000', to_char(SEQ_INQLOG.nextval)), -5) as seq  FROM dual`;
@@ -28,13 +28,19 @@ async function getSequence() {
 
 
     } catch (err) {
-        console.log(err); throw err;
+        console.log(err);
+        //throw err;
         // return res.status(400);
     } finally {
         if (connection) {
             try {
+                console.log("getSequence: connection.close 1");
+                console.log(database.poolInfoFnc());
                 await connection.close();
+                console.log("getSequence: connection.close 2");
+                console.log(database.poolInfoFnc());
             } catch (error) {
+                console.log("getSequence: connection.close error");
                 console.log(error);
             }
         }
