@@ -1,6 +1,6 @@
 var winston = require('winston');
 const config = require('./config');
-
+const moment = require('moment');
 var getNamespace = require('continuation-local-storage').getNamespace;
 
 var fs = require('file-system');
@@ -55,26 +55,26 @@ var formatMessage = function (message) {
 };
 
 var logger = {
-    log: function (level, message) {
-        winstonLogger.log(level, formatMessage(message));
+    log: async function (level, message) {
+        console.log('log: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
-    error: function (message) {
-        winstonLogger.error(formatMessage(message));
+    error: async function (message) {
+        console.log('error: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
-    warn: function (message) {
-        winstonLogger.warn(formatMessage(message));
+    warn: async function (message) {
+        console.log('warn: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
-    verbose: function (message) {
-        winstonLogger.verbose(formatMessage(message));
+    verbose: async function (message) {
+        console.log('verbose: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
-    info: function (message) {
-        winstonLogger.info(formatMessage(message));
+    info: async function (message) {
+        console.log('info: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
-    debug: function (message) {
-        winstonLogger.debug(formatMessage(message));
+    debug: async function (message) {
+        console.log('debug: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
-    silly: function (message) {
-        winstonLogger.silly(formatMessage(message));
+    silly: async function (message) {
+        console.log('silly: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     }
 };
 
