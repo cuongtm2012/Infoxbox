@@ -2,13 +2,13 @@
 const oracledb = require('oracledb');
 const config = require('../config/config');
 const _ = require('lodash');
-
+const database = require('../config/db.config');
 async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, niceCode) {
     let connection;
 
     try {
         let sql, result;
-
+        database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
 
@@ -36,8 +36,13 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     } finally {
         if (connection) {
             try {
+                console.log("updateScrpStatCdErrorResponseCodeScraping: connection.close 1");
+                console.log(database.poolInfoFnc());
                 await connection.close();
+                console.log("updateScrpStatCdErrorResponseCodeScraping: connection.close 2");
+                console.log(database.poolInfoFnc());
             } catch (error) {
+                console.log("updateScrpStatCdErrorResponseCodeScraping: connection.close error");
                 console.log(error);
             }
         }

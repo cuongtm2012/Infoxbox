@@ -2,6 +2,7 @@ const config = require('../config/config');
 const superagent = require('superagent');
 var binaryParser = require('superagent-binary-parser');
 const _ = require('lodash');
+
 function superagentGet(url, query, Authorization) {
     return new Promise((resolve, reject) => {
         try {
@@ -16,20 +17,20 @@ function superagentGet(url, query, Authorization) {
                 })
                 .end((err, response) => {
                     if (err)
-                         reject(err);
+                        return reject(err);
                     if (response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                         reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }
@@ -49,20 +50,20 @@ function superagentPost(url, body, Authorization) {
                 })
                 .end((err, response) => {
                     if (err)
-                         reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
-                       if (response.text)
-                           data = response.text;
-                       if (!_.isEmpty(response.body))
-                           data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
+                        if (response.text)
+                            data = response.text;
+                        if (!_.isEmpty(response.body))
+                            data = response.body;
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                         reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }
@@ -82,20 +83,20 @@ function superagentGetAcceptEncoding(url, query, Authorization) {
                 })
                 .end((err, response) => {
                     if (err)
-                         reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                         reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }
@@ -117,20 +118,20 @@ function superagentGetStreamType(url, query, Authorization) {
                 .buffer()
                 .end((err, response) => {
                     if (err)
-                         reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                        reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }
@@ -150,23 +151,24 @@ function superagentPostZaloEncodeUrl(url, body, clientId) {
                 })
                 .end((err, response) => {
                     if (err)
-                         reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                         reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }
+
 function superagentPostMultipartV01(url, authorization, requestId, type, frontImage, backImage) {
     return new Promise((resolve, reject) => {
         try {
@@ -186,20 +188,20 @@ function superagentPostMultipartV01(url, authorization, requestId, type, frontIm
                 })
                 .end((err, response) => {
                     if (err)
-                         reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                         reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }
@@ -222,20 +224,20 @@ function superagentPostMultipartV02(url, authorization, requestId, targetImage, 
                 })
                 .end((err, response) => {
                     if (err)
-                         reject(err);
-                    if (response.statusCode !== undefined && response.statusCode === 200) {
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
                         if (response.text)
                             data = response.text;
                         if (!_.isEmpty(response.body))
                             data = response.body;
-                         resolve({status: response.statusCode, data: data});
+                        return resolve({status: response.statusCode, data: data});
                     } else {
-                         reject(response);
+                        return reject(response);
                     }
                 });
         } catch (err) {
             console.log(err.toString());
-             reject(err)
+            return reject(err)
         }
     })
 }

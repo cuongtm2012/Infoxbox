@@ -1,7 +1,7 @@
 const oracledb = require('oracledb');
 const config = require('../config/config');
 const dateUtil = require('../util/dateutil');
-
+const database = require('../config/db.config');
 /*
 ** select FI code(CUST_CD)
 */
@@ -10,8 +10,8 @@ async function selectFiCode(fiCode, goodCode) {
 
     try {
         //Connection db
-        connection = await oracledb.getConnection(config.poolAlias);
-
+        database.initialize().then();
+        connection = await oracledb.getConnection(config.poolAlias)
         let currentDate = dateUtil.getCurrentInquiryDate();
 
         let sqlCusLookup = `select T.CUST_CD, T.GDS_CD from TB_ITCTRT T 
@@ -41,8 +41,13 @@ async function selectFiCode(fiCode, goodCode) {
     } finally {
         if (connection) {
             try {
+                console.log("selectFiCode: connection.close 1");
+                console.log(database.poolInfoFnc());
                 await connection.close();
+                console.log("selectFiCode: connection.close 2");
+                console.log(database.poolInfoFnc());
             } catch (error) {
+                console.log("selectFiCode: connection.close error");
                 console.log(error);
             }
         }

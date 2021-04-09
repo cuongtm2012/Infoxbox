@@ -230,32 +230,25 @@ function refreshDirNameAndFileName() {
 }
 var logger = {
     log: async function (level, message) {
-        refreshDirNameAndFileName();
-        winstonLogger.log(level, await formatMessage(message));
+        console.log('log: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
     error: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLoggerError.error(await formatMessage(message));
+        console.log('error: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
     warn: async function (message) {
-        refreshDirNameAndFileName()
-        winstonLogger.warn(await formatMessage(message));
+        console.log('warn: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
     verbose: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.verbose(await formatMessage(message));
+        console.log('verbose: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
     info: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.info(await formatMessage(message));
+        console.log('info: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
     debug: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.debug(await formatMessage(message));
+        console.log('debug: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     },
     silly: async function (message) {
-        refreshDirNameAndFileName();
-        winstonLogger.silly(await formatMessage(message));
+        console.log('silly: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
     }
 };
 

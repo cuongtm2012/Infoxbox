@@ -16,8 +16,8 @@ module.exports = function bodyZaloPost(token, phoneNumber) {
     this.score_version = 2;
 
     function encodePhoneNumberAES_CBC_PKCS5PADDING(phoneNumber) {
-        let binaryEncryptionKey = new Buffer(encryptionKey, "base64");
-        let binaryIV = new Buffer(initializationVector, "base64");
+        let binaryEncryptionKey = Buffer.from(encryptionKey, "base64");
+        let binaryIV = Buffer.from(initializationVector, "base64");
         let cipher = crypto.createCipheriv("AES-128-CBC", binaryEncryptionKey, binaryIV);
         return (
             cipher.update(phoneNumber, "utf8", "base64") +
