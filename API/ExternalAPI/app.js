@@ -15,13 +15,13 @@ const fss = require('fs');
 const __dad = path.join(__dirname, '..');
 const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
-// create oracle pool.
-const database = require('./config/db.config');
-database.startInit().then();
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // increase Threads db
-process.env.UV_THREADPOOL_SIZE = 128;
+process.env.UV_THREADPOOL_SIZE = 10;
+// create oracle pool.
+const database = require('./config/db.config');
+database.startInit().then();
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
