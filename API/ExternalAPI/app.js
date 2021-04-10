@@ -17,8 +17,8 @@ const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-// increase Threads db
-process.env.UV_THREADPOOL_SIZE = 10;
+// // increase Threads db
+// process.env.UV_THREADPOOL_SIZE = 10;
 // create oracle pool.
 const database = require('./config/db.config');
 database.startInit().then();

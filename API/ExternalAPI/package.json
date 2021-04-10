@@ -4,7 +4,7 @@
   "description": "Project for CIC Scraping",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "export UV_THREADPOOL_SIZE=10 && node app.js",
     "lint": "tslint"
   },
   "author": "InfoPlusVN",
