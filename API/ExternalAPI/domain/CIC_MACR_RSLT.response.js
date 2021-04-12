@@ -23,7 +23,15 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
         GRADE,
         BASE_DATE,
         CC_BAL,
-        REL_OGZ_LIST
+        REL_OGZ_LIST,
+        TOT_LOAN_VND,
+        TOT_LOAN_USD,
+        TOT_BAD_VND,
+        TOT_BAD_USD,
+        TOT_OTR_BAD_VND,
+        TOT_OTR_BAD_USD,
+        CC_BAD,
+        VAMC,
     } = dataRes;
 
     const {
@@ -57,5 +65,13 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.baseDate = util.convertDateType(BASE_DATE);
     this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
     this.relatedFiName = REL_OGZ_LIST;
+    this.totalDebtVnd = TOT_LOAN_VND;
+    this.totalDebtUsd = TOT_LOAN_USD;
+    this.totalBadDebtVnd = TOT_BAD_VND;
+    this.totalBadDebtUsd = TOT_BAD_USD;
+    this.totalBadDebtVndOther = TOT_OTR_BAD_VND;
+    this.totalBadDebtUsdOther = TOT_OTR_BAD_USD;
+    this.badDebtCredit = CC_BAD;
+    this.vamc = VAMC;
 };
 
