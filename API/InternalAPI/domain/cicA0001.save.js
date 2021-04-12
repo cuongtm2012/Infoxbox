@@ -12,7 +12,15 @@ module.exports = function (params, request) {
         level,
         scoredDate,
         debtCredit,
-        banks
+        banks,
+        totalDebtVnd,
+        totalDebtUsd,
+        totalBadDebtVnd,
+        totalBadDebtUsd,
+        totalBadDebtVndOther,
+        totalBadDebtUsdOther,
+        badDebtCredit,
+        vamc,
     } = params;
 
     const {
@@ -33,6 +41,14 @@ module.exports = function (params, request) {
     this.relatedFiName = banks ? banks : null;
     this.inquiryDate = inquiryDate ? inquiryDate : null;
     this.niceSessionKey = niceSessionKey;
+    this.totalDebtVnd = totalDebtVnd ? totalDebtVnd : null;
+    this.totalDebtUsd = totalDebtUsd ? totalDebtUsd : null;
+    this.totalBadDebtVnd = totalBadDebtVnd ? totalBadDebtVnd : null;
+    this.totalBadDebtUsd = totalBadDebtUsd ? totalBadDebtUsd : null;
+    this.totalBadDebtVndOther = totalBadDebtVndOther ? totalBadDebtVndOther : null;
+    this.totalBadDebtUsdOther = totalBadDebtUsdOther ? totalBadDebtUsdOther : null;
+    this.badDebtCredit = badDebtCredit ? badDebtCredit : null;
+    this.vamc = vamc ? vamc : null;
 }
 
 function convertDate(date) {
