@@ -64,6 +64,7 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.creditGrade = GRADE;
     this.baseDate = util.convertDateType(BASE_DATE);
     this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
+    this.relatedFiName = REL_OGZ_LIST;
     this.totalDebtVnd = TOT_LOAN_VND;
     this.totalDebtUsd = TOT_LOAN_USD;
     this.totalBadDebtVnd = TOT_BAD_VND;
@@ -72,6 +73,5 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.totalBadDebtUsdOther = TOT_OTR_BAD_USD;
     this.badDebtCredit = CC_BAD;
     this.vamc = VAMC;
-    this.relatedFiName = REL_OGZ_LIST;
 };
 
