@@ -2,7 +2,7 @@ const httpClient = require('../services/httpClient.service');
 module.exports.start = function () {
     setInterval(() => {
         cronFunction();
-    }, 3000);
+    }, 180000);
 }
 
 function cronFunction() {
