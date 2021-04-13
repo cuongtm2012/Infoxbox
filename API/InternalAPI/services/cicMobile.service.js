@@ -50,22 +50,6 @@ async function insertMobileReportA0001(req) {
 
         console.log("insertMobileReportA0001 main updated::", resultMain.rowsAffected);
 
-        console.log('dataSaveCIC_TB_CIC_MRPT',{
-            NICE_SSIN_ID: { val: req.niceSessionKey },
-            SCORE: { val: req.creditScore },
-            GRADE: { val: req.creditGrade },
-            BASE_DATE: { val: req.baseDate },
-            CC_BAL: { val: req.creditCardBalance },
-            REL_OGZ_LIST: { val: req.relatedFiName },
-            TOT_LOAN_VND: { val: req.totalDebtVnd },
-            TOT_LOAN_USD: { val: req.totalDebtUsd },
-            TOT_BAD_VND: { val: req.totalBadDebtVnd },
-            TOT_BAD_USD: { val: req.totalBadDebtUsd },
-            TOT_OTR_BAD_VND: { val: req.totalBadDebtVndOther },
-            TOT_OTR_BAD_USD: { val: req.totalBadDebtUsdOther },
-            CC_BAD: { val: req.badDebtCredit },
-            VAMC: { val: req.vamc }
-        });
         // tb_cic_mrpt
         sqlInsertMrpt = `INSERT INTO TB_CIC_MRPT(
             NICE_SSIN_ID,
