@@ -87,7 +87,7 @@ async function insertMobileReportA0001(req) {
                 :GRADE,
                 :BASE_DATE,
                 :CC_BAL,
-                :REL_OGZ_LIST
+                :REL_OGZ_LIST,
                 :TOT_LOAN_VND,
                 :TOT_LOAN_USD,
                 :TOT_BAD_VND,
