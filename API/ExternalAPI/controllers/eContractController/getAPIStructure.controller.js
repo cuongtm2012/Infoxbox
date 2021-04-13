@@ -75,14 +75,12 @@ exports.getStructureAPI = function (req, res) {
                                             }
                                         }).catch(reason => {
                                         console.log('errGetStructureContract: ',  reason.toString());
-                                        if (reason.res && reason.statusCode === 500) {
+                                        if (reason && reason.status === 500) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractTemplateForInputAlias.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractTemplateForInputAlias.code);
                                             responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            console.log('errGetStructureContract: ',  reason.res.statusMessage);
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
                                         } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
@@ -106,7 +104,14 @@ exports.getStructureAPI = function (req, res) {
                             }
                         ).catch(reason => {
                             console.log('errGetAuth: ', reason.toString());
-                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
+                            if (reason && reason.status === 500) {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NoContractTemplateForInputAlias.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractTemplateForInputAlias.code);
+                                responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new getApiStructureResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);

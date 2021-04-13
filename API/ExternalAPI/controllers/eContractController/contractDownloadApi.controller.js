@@ -102,13 +102,12 @@ exports.contractDownloadApi = function (req, res) {
                                         }).catch(reason => {
                                         console.log('errResultDownload: ', reason.toString());
                                         deleteFile(filename);
-                                        if (reason.res && reason.res.statusCode === 500) {
+                                        if (reason && reason.status=== 500) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
                                             return res.status(200).json(responseData);
                                         } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
@@ -141,7 +140,14 @@ exports.contractDownloadApi = function (req, res) {
                                 }
                             }).catch(reason => {
                             console.log('errGetAuthAccess: ', reason.toString());
-                            if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
+                            if (reason && reason.status=== 500) {
+                                preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
+                                responseData = new responseContractDownloadApi(req.query, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);

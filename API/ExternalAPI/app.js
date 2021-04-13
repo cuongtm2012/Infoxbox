@@ -17,7 +17,7 @@ const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 // create oracle pool.
 const database = require('./config/db.config');
-database.startInit().then();
+database.initialize().then();
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // increase Threads db
@@ -148,3 +148,6 @@ const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
+
+const cronBatch = require('./controllers/crontap.controller');
+cronBatch.start();
