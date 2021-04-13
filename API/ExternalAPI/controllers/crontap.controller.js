@@ -33,9 +33,16 @@ function cronFunction(oncomplete) {
             cronFunction();
         } else {
             count = 0;
-            oncomplete(1,1);
+            return oncomplete(1,1);
         }
     }).catch(error => {
         console.log(error.toString());
+        count++;
+        if (count < 3) {
+            cronFunction();
+        } else {
+            count = 0;
+            return oncomplete(1,1);
+        }
     });
 }
