@@ -1,17 +1,11 @@
 const httpClient = require('../services/httpClient.service');
-let count = 0;
 module.exports.start = function () {
-    setTimeout(() => {
-        cronFunction((current, max) => {
-            if (current == max) {
-                console.log('ok');
-                this.start();
-            }
-        });
+    setInterval(() => {
+        cronFunction();
     }, 180000);
 }
 
-function cronFunction(oncomplete) {
+function cronFunction() {
     let url = 'https://localhost:3000/external/OKF_SPL_RQST';
     let body = {
         "fiSessionKey": "SPL2021020800002",
@@ -27,22 +21,7 @@ function cronFunction(oncomplete) {
         "infoProvConcent": "Y"
     }
 
-    httpClient.superagentPost(url, body, '').then(value => {
-        count++;
-        if (count < 3) {
-            cronFunction();
-        } else {
-            count = 0;
-            return oncomplete(1,1);
-        }
-    }).catch(error => {
-        console.log(error.toString());
-        count++;
-        if (count < 3) {
-            cronFunction();
-        } else {
-            count = 0;
-            return oncomplete(1,1);
-        }
-    });
+    httpClient.superagentPost(url, body, '').then();
+    httpClient.superagentPost(url, body, '').then();
+    httpClient.superagentPost(url, body, '').then();
 }
