@@ -1,4 +1,5 @@
 const httpClient = require('../services/httpClient.service');
+let count = 0;
 module.exports.start = function () {
     setTimeout(() => {
         cronFunction((current, max) => {
@@ -11,7 +12,6 @@ module.exports.start = function () {
 }
 
 function cronFunction(oncomplete) {
-    let count = 0;
     let url = 'https://localhost:3000/external/OKF_SPL_RQST';
     let body = {
         "fiSessionKey": "SPL2021020800002",
