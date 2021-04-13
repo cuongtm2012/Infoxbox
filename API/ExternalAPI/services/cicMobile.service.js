@@ -6,7 +6,7 @@ const nicekey = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 const niceGoodCode = require('../../shared/util/niceGoodCode');
 const _ = require('lodash');
-const database = require('../config/db.config');
+
 
 async function insertSCRPLOG(req, res) {
     let connection;
@@ -18,7 +18,7 @@ async function insertSCRPLOG(req, res) {
 
         let producCode = nicekey.niceProductCode(req.taskCode);
         let niceSessionKey = req.niceSessionKey;
-        database.initialize().then();
+
         connection = await oracledb.getConnection(config.poolAlias);
 
         sql = `INSERT INTO TB_SCRPLOG(
@@ -89,7 +89,6 @@ async function selectCicMobileDetailReport(req) {
 
     try {
         //Connection db
-        database.initialize().then();
         connection = await oracledb.getConnection(config.poolAlias);
 
         let result;
@@ -109,7 +108,7 @@ async function selectCicMobileDetailReport(req) {
             _inquiryDate = req.inquiryDate;
 
         let sql = `SELECT a.S_REQ_STATUS, b.SCRP_STAT_CD, b.INQ_DTIM , b.SYS_DTIM, c.PSN_NM,c.BIRTH_YMD,c.CIC_ID,c.PSN_ADDR,c.NATL_ID, c.TEL_NO_MOBILE
-                            , d.SCORE, d.GRADE, d.BASE_DATE, d.CC_BAL, d.REL_OGZ_LIST, d.TOT_LOAN_VND, d.TOT_LOAN_USD, d.TOT_BAD_VND, d.TOT_BAD_USD, d.TOT_OTR_BAD_VND, d.TOT_OTR_BAD_USD, d.CC_BAD, d.VAMC   
+                            , d.SCORE, d.GRADE, d.BASE_DATE, d.CC_BAL, d.REL_OGZ_LIST
                        FROM TB_SCRP_TRLOG a 
                        inner join tb_scrplog b on  a.nice_ssin_id = b.nice_ssin_id
                        inner join tb_cicrpt_main c on b.nice_ssin_id = c.nice_ssin_id
