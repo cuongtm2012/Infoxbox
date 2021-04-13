@@ -19,6 +19,7 @@ const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'u
 const database = require('./config/db.config');
 database.initialize().then();
 //Turn of SSL SSL certificate verification
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 // increase Threads db
 process.env.UV_THREADPOOL_SIZE = 128;
 var app = express();
@@ -147,3 +148,6 @@ const httpsServer = https.createServer(credentials, app);
 httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
+
+const cronBatch = require('./controllers/crontap.controller');
+cronBatch.start();
