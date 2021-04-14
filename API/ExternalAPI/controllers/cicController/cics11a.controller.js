@@ -20,7 +20,7 @@ const utilFunction = require('../../../shared/util/util');
 
 const validS11AService = require('../../services/validS11A.service');
 const PreResponse = require('../../domain/preResponse.response');
-const DataInqLogSave = require('../../domain/INQLOG.save');
+const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
 const io = require('socket.io-client');
 const URI = require('../../../shared/URI');
 
@@ -35,44 +35,8 @@ exports.cics11aRQST = function (req, res, next) {
 		* Checking parameters request
 		* Request data
 		*/
-		let rsCheck = validRequest.checkParamRequest(req.body);
-		let preResponse, responseData, dataInqLogSave;
-		if (!_.isEmpty(rsCheck)) {
-			preResponse = new PreResponse(rsCheck.responseMessage, '', dateutil.timeStamp(), rsCheck.responseCode);
-
-			responseData = new cics11aRQSTRes(req.body, preResponse);
-
-			// update INQLOG
-			dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-			cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-				console.log('insert INQLOG:', r);
-			});
-			logger.info(responseData);
-			return res.status(200).json(responseData);
-		}
-		validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
-			if (_.isEmpty(dataFICode)) {
-				preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
-
-				responseData = new cics11aRQSTRes(req.body, preResponse);
-				// update INQLOG
-				dataInqLogSave = new DataInqLogSave(req.body, responseData.responseCode);
-				cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
-					console.log('insert INQLOG:', r);
-				});
-				logger.info(responseData);
-				return res.status(200).json(responseData);
-			}
-			else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
-				preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
-
-				responseData = new cics11aRQSTRes(req.body, preResponse);
-				logger.info(responseData);
-				return res.status(500).json(responseData);
-			}
-			//End check params request
 			common_service.getSequence().then(resSeq => {
-				niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
+				niceSessionKey = responCode.NiceProductCode.S11A.code + util.timeStamp2() + resSeq[0].SEQ;
 				const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
 
 				console.log("getdataReq =", getdataReq);
@@ -80,22 +44,57 @@ exports.cics11aRQST = function (req, res, next) {
 				//Logging request
 				logger.debug('Log request parameters from routes after manage request');
 				logger.info(getdataReq);
+				let rsCheck = validRequest.checkParamRequest(req.body);
+				let preResponse, responseData, dataInqLogSave;
+				if (!_.isEmpty(rsCheck)) {
+					preResponse = new PreResponse(rsCheck.responseMessage, niceSessionKey, dateutil.timeStamp(), rsCheck.responseCode);
 
+					responseData = new cics11aRQSTRes(req.body, preResponse);
+
+					// update INQLOG
+					dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+					cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
+						console.log('insert INQLOG:', r);
+					});
+					logger.info(responseData);
+					return res.status(200).json(responseData);
+				}
+				validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
+					if (_.isEmpty(dataFICode)) {
+						preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
+
+						responseData = new cics11aRQSTRes(req.body, preResponse);
+						// update INQLOG
+						dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+						cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
+							console.log('insert INQLOG:', r);
+						});
+						logger.info(responseData);
+						return res.status(200).json(responseData);
+					}
+					else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
+						preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
+
+						responseData = new cics11aRQSTRes(req.body, preResponse);
+						logger.info(responseData);
+						return res.status(500).json(responseData);
+					}
+					// End check params request
 				cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
 					console.log("result cics11aRQST: ", niceSessionK);
-					if (!_.isEmpty(niceSessionK)) {
-						let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionK, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+					if (niceSessionK === 1) {
+						let responseSuccess = new PreResponse(responCode.RESCODEEXT.NORMAL.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseSuccess);
 					} else {
-						let responseUnknow = new PreResponse(responCode.RESCODEEXT.OtherInternalDBError.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.OtherInternalDBError.code);
+						let responseUnknow = new PreResponse(responCode.RESCODEEXT.OtherInternalDBError.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.OtherInternalDBError.code);
 						responseData = new cics11aRQSTRes(getdataReq, responseUnknow);
 					}
 					//TODO
 					// call directly to scrapping service
 
 					// update INQLOG
-					dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+					dataInqLogSave = new DataSaveToInqLog(getdataReq, responseData);
+					cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
 						console.log('insert INQLOG:', r);
 					});
 					logger.info(responseData);
@@ -169,8 +168,8 @@ exports.cics11aRSLT = function (req, res) {
 
 			}
 			// update INQLOG
-			dataInqLogSave = new DataInqLogSave(getdataReq, preResponse.responseCode);
-			cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+			dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
+			cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
 				console.log('insert INQLOG:', r);
 			});
 			logger.info(preResponse);
@@ -178,12 +177,12 @@ exports.cics11aRSLT = function (req, res) {
 		}
 		validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
 			if (_.isEmpty(dataFICode)) {
-				preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
+				preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, getdataReq.niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
 				responseData = new cics11aRQSTRes(getdataReq, preResponse);
 				// update INQLOG
-				dataInqLogSave = new DataInqLogSave(getdataReq, responseData.responseCode);
-				cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+				dataInqLogSave = new DataSaveToInqLog(getdataReq, responseData);
+				cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
 					console.log('insert INQLOG:', r);
 				});
 				logger.info(responseData);
@@ -340,7 +339,7 @@ exports.cics11aRSLT = function (req, res) {
 							arrCusLookup.push(new cusLookup(el));
 						});
 					}
-					let response = new PreResponse(responCode.RESCODEEXT.NORMAL.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+					let response = new PreResponse(responCode.RESCODEEXT.NORMAL.name, getdataReq.niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
 
 					responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
 						, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
@@ -371,8 +370,8 @@ exports.cics11aRSLT = function (req, res) {
 						, lenghResMessage, responseData.tnlv000001, responseData.tclv000001, responseData.tflv000001, responseData.tdlv000001, responseData.telv000001, responseData.tlv0000001, responseData.tblv000001);
 
 					// update INQLOG
-					dataInqLogSave = new DataInqLogSave(getdataReq, response.responseCode);
-					cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+					dataInqLogSave = new DataSaveToInqLog(getdataReq, response);
+					cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
 						console.log('insert INQLOG:', r);
 					});
 					//Logging response
@@ -396,8 +395,8 @@ exports.cics11aRSLT = function (req, res) {
 								responseMessage: responCode.RESCODEEXT.NOTEXIST.name
 							}
 							//update INQLog
-							dataInqLogSave = new DataInqLogSave(getdataReq, responseUnknow.responseCode);
-							cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+							dataInqLogSave = new DataSaveToInqLog(getdataReq, responseUnknow);
+							cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
 								console.log('insert INQLOG:', r);
 							});
 							logger.info(responseUnknow);
@@ -452,8 +451,8 @@ exports.cics11aRSLT = function (req, res) {
 								scrapingStatusCode: result
 							}
 							//update INQLog
-							dataInqLogSave = new DataInqLogSave(getdataReq, responseSrapingStatus.responseCode);
-							cicExternalService.insertINQLOG(dataInqLogSave).then((r) => {
+							dataInqLogSave = new DataSaveToInqLog(getdataReq, responseSrapingStatus);
+							cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
 								console.log('insert INQLOG:', r);
 							});
 							//Logging response
