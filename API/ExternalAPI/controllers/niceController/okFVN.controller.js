@@ -76,7 +76,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 cicExternalService.insertDataSimpleLimitToSCRPLOG(dataSaveToScrapLog).then(
                     result => {
                         //call Rclips
-                        let bodyRclipsSimpleLimit = new simpleLimitPostBody(req.body.mobilePhoneNumber, req.body.natId, req.body.joinYearMonth, req.body.salary);
+                        let bodyRclipsSimpleLimit = new simpleLimitPostBody(req.body.fiCode, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, req.body.joinYearMonth, req.body.salary);
                         logger.info(bodyRclipsSimpleLimit);
                         httpClient.superagentPost(URI.URL_RCLIPS_DEVELOP, bodyRclipsSimpleLimit).then(
                             resultRclipsSPL => {
