@@ -50,7 +50,7 @@ async function insertSCRPLOG(req, res) {
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: { val: producCode + niceSessionKey },
+                NICE_SSIN_ID: { val: niceSessionKey },
                 CUST_SSID_ID: { val: req.fiSessionKey },
                 CUST_CD: { val: req.fiCode },
                 GDS_CD: { val: producCode },
@@ -67,7 +67,7 @@ async function insertSCRPLOG(req, res) {
 
         console.log("row insert insertSCRPLOG::", result.rowsAffected);
 
-        return producCode + niceSessionKey;
+        return result.rowsAffected;
 
 
     } catch (err) {
