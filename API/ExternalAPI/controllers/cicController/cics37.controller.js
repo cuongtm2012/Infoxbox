@@ -130,7 +130,7 @@ exports.cics37Rqst = function (req, res) {
                         var fnData = new cicB1003Req(req.body, defaultValue, decryptPW, fullNiceKey);
                         console.log('request data:', fnData);
 
-                        httpClient.superagentPost(URI.cicInternalJson, fnData)
+                        httpClient.superagentPostS37(URI.cicInternalJson, fnData)
                             .then((body) => {
                                 console.log('body:', body.data);
 

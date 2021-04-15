@@ -242,7 +242,38 @@ function superagentPostMultipartV02(url, authorization, requestId, targetImage, 
     }
 }
 
-
+function superagentPostS37(url, body, Authorization) {
+    try {
+        return new Promise((resolve, reject) => {
+            let data;
+            superagent
+                .post(url)
+                .send(body) // query string
+                .set('Authorization', Authorization ? Authorization : '')
+                .set('Content-Type', 'application/json')
+                .timeout({
+                    response: 120000,  // Wait 5 seconds for the server to start sending,
+                    deadline: 120000, // but allow 1 minute for the file to finish loading.
+                })
+                .end((err, response) => {
+                    if (err)
+                        return reject(err);
+                    if (response && response.statusCode !== undefined && response.statusCode === 200) {
+                        if (response.text)
+                            data = response.text;
+                        if (!_.isEmpty(response.body))
+                            data = response.body;
+                        return resolve({status: response.statusCode, data: data});
+                    } else {
+                        return reject(response);
+                    }
+                });
+        });
+    } catch (err) {
+        console.log(err.toString());
+        return err;
+    }
+}
 module.exports.superagentPost = superagentPost;
 module.exports.superagentGet = superagentGet;
 module.exports.superagentGetAcceptEncoding = superagentGetAcceptEncoding;
@@ -250,3 +281,4 @@ module.exports.superagentGetStreamType = superagentGetStreamType;
 module.exports.superagentPostZaloEncodeUrl = superagentPostZaloEncodeUrl;
 module.exports.superagentPostMultipartV01 = superagentPostMultipartV01;
 module.exports.superagentPostMultipartV02 = superagentPostMultipartV02;
+module.exports.superagentPostS37 = superagentPostS37;
