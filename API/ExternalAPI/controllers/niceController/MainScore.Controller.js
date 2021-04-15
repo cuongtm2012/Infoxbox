@@ -90,7 +90,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                     totalInComeMonth = "";
                                                                 }
                                                             }
-                                                            bodyRclipsReq = new bodyPostRclips(req.body.fiCode, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            bodyRclipsReq = new bodyPostRclips(req.body.natId, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
                                                             logger.info(bodyRclipsReq);
                                                             //    call Rclips
                                                             httpClient.superagentPost(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq).then(

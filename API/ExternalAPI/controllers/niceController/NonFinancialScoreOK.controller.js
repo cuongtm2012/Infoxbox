@@ -113,7 +113,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                 cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
                                                             }
                                                             //    Call Rclips
-                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.fiCode, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, ZaloScore);
+                                                            let bodyRclispNfScore = new bodyPostNfScore(req.body.natId, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, ZaloScore);
                                                             logger.info(bodyRclispNfScore);
                                                             httpClient.superagentPost(URI.URL_RCLIPS_DEVELOP, bodyRclispNfScore).then(
                                                                 resultRclipsNF => {
