@@ -230,25 +230,25 @@ function refreshDirNameAndFileName() {
 }
 var logger = {
     log: async function (level, message) {
-        console.log('log: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log('[',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),']','log: ', message);
     },
     error: async function (message) {
-        console.log('error: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log("\x1b[31m", '[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + ']' + ' error: ', message);
     },
     warn: async function (message) {
-        console.log('warn: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log('[',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),']','warn: ', message);
     },
     verbose: async function (message) {
-        console.log('verbose: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log('[',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),']','verbose: ', message);
     },
     info: async function (message) {
-        console.log('info: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log('\x1b[36m%s\x1b[0m','[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + ']' + ' info: ', message);
     },
     debug: async function (message) {
-        console.log('debug: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log('[',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),']','debug: ', message);
     },
     silly: async function (message) {
-        console.log('silly: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+        console.log('[',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),']','silly: ', message);
     }
 };
 

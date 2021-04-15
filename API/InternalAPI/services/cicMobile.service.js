@@ -57,13 +57,29 @@ async function insertMobileReportA0001(req) {
             GRADE,
             BASE_DATE,
             CC_BAL,
-            REL_OGZ_LIST) VALUES (
+            REL_OGZ_LIST,
+            TOT_LOAN_VND,
+            TOT_LOAN_USD,
+            TOT_BAD_VND,
+            TOT_BAD_USD,
+            TOT_OTR_BAD_VND,
+            TOT_OTR_BAD_USD,
+            CC_BAD,
+            VAMC) VALUES (
                 :NICE_SSIN_ID,
                 :SCORE,
                 :GRADE,
                 :BASE_DATE,
                 :CC_BAL,
-                :REL_OGZ_LIST )`;
+                :REL_OGZ_LIST,
+                :TOT_LOAN_VND,
+                :TOT_LOAN_USD,
+                :TOT_BAD_VND,
+                :TOT_BAD_USD,
+                :TOT_OTR_BAD_VND,
+                :TOT_OTR_BAD_USD,
+                :CC_BAD,
+                :VAMC)`;
 
         resultMrpt = await connection.execute(
             // The statement to execute
@@ -74,7 +90,15 @@ async function insertMobileReportA0001(req) {
                 GRADE: { val: req.creditGrade },
                 BASE_DATE: { val: req.baseDate },
                 CC_BAL: { val: req.creditCardBalance },
-                REL_OGZ_LIST: { val: req.relatedFiName }
+                REL_OGZ_LIST: { val: req.relatedFiName },
+                TOT_LOAN_VND: { val: req.totalDebtVnd },
+                TOT_LOAN_USD: { val: req.totalDebtUsd },
+                TOT_BAD_VND: { val: req.totalBadDebtVnd },
+                TOT_BAD_USD: { val: req.totalBadDebtUsd },
+                TOT_OTR_BAD_VND: { val: req.totalBadDebtVndOther },
+                TOT_OTR_BAD_USD: { val: req.totalBadDebtUsdOther },
+                CC_BAD: { val: req.badDebtCredit },
+                VAMC: { val: req.vamc }
             },
             { autoCommit: true }
         );

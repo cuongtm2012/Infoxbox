@@ -12,7 +12,6 @@ module.exports = function CICA0001(params, defaultParams, loginID, decryptPW) {
     } = defaultParams;
 
     this.appCd = appCd;
-    this.iftUrl = iftUrl;
     this.orgCd = orgCd;
     this.svcCd = 'A0001';
     this.userId = loginID;

@@ -100,16 +100,15 @@ exports.statusOfContract = function (req, res) {
                                         }
                                     ).catch(reason => {
                                         console.log('errGetStatus: ', reason.toString());
-                                        if (reason.res && reason.res.statusCode === 500) {
+                                        if (reason.status === 500) {
                                             //    update scraplog & response F072
-                                            console.log('errGetStatus: ', reason.res.statusMessage);
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                             logger.info(responseData);
-                                            logger.info(reason.res.statusMessage);
+                                            logger.info(reason.toString());
                                             return res.status(200).json(responseData);
                                         } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
@@ -156,16 +155,16 @@ exports.statusOfContract = function (req, res) {
                                 }
                             }).catch(reason => {
                             console.log('errGetAuth: ', reason.toString());
-                            if (reason.res && reason.res.statusCode === 500) {
+                            if (reason.status === 500) {
                                 //    update scraplog & response F072
-                                console.log('errGetAuth: ', reason.res.statusMessage);
+                                console.log('errGetAuth: ', reason.toString());
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
                                 logger.info(responseData);
-                                logger.info(reason.res.statusMessage);
+                                logger.info(reason.toString());
                                 return res.status(200).json(responseData);
                             } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);

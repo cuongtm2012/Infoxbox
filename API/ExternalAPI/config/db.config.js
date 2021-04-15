@@ -14,53 +14,22 @@ const dbOption = {
 }
 let poolInfo;
 
-
-async function startInit() {
+async function initialize() {
+    //create oracle connection pool
     try {
         await oracledb.createPool(
             dbOption,
             function (err, pool) {
                 if (err) {
-                    console.error("DB Config initialize createPool() error: " + err.message);
-                    //throw err;
+                    console.error("createPool() error: " + err.message);
+                    throw err;
                 }
                 poolInfo = pool;
             }
         );//end oracledb.createpool
-
     } catch (e) {
-        console.log("DB Config initialize catch:");
-        if (poolInfo) {
-            await poolInfo.close();
-        }
-        //await initialize();
         console.log(e.toString());
-    } finally {
-
-    }
-}
-
-async function initialize() {
-    //create oracle connection pool
-    try {
-        let checkPool = oracledb.getPool(config.poolAlias);
-        console.log("DB Config initialize check Pool:");
-        console.log(checkPool);
-        if(!checkPool){
-            startInit()
-        }else{
-            console.log("DB Config initialize check Pool already exists:");
-            checkPool._logStats();
-        }
-    } catch (e) {
-        console.log("DB Config initialize catch:");
-        if (poolInfo) {
-            await poolInfo.close();
-        }
-        //await initialize();
-        console.log(e.toString());
-    } finally {
-
+        throw e;
     }
 }
 
@@ -68,6 +37,5 @@ function poolInfoFnc() {
     console.log(poolInfo._logStats());
 }
 
-module.exports.startInit = startInit;
 module.exports.initialize = initialize;
 module.exports.poolInfoFnc = poolInfoFnc;

@@ -1,8 +1,8 @@
 const dateutil = require('../util/dateutil');
-module.exports = function simpleLimitPostBody(phoneNumber, natID, joinDate, salary) {
+module.exports = function simpleLimitPostBody(fiCode, niceSsKey, phoneNumber, natID, joinDate, salary) {
     this.serviceName = 'OKF_CSS_ASS';
-    this.custNo = dateutil.getCurrentInquiryDate();
-    this.recvNo = dateutil.timeStamp();
+    this.custNo = fiCode;
+    this.recvNo = niceSsKey;
     this.listInput = {
         A0001: phoneNumber,
         A0002: natID,

@@ -1,9 +1,9 @@
 const dateutil = require('../util/dateutil');
 const config = require('../config/config');
-module.exports = function bodyPostRclips(custNo,phoneNumber, NationId, Review_type, Financial_type, VMG_Score, VMG_Grade_Telco_Grade, Zalo_Score, CIC_Score, Grade_IB_CB_Grade, VMG_Monthly_Income) {
+module.exports = function bodyPostRclips(custNo,niceSsKey,phoneNumber, NationId, Review_type, Financial_type, VMG_Score, VMG_Grade_Telco_Grade, Zalo_Score, CIC_Score, Grade_IB_CB_Grade, VMG_Monthly_Income) {
     this.serviceName = config.serviceNameOKF;
     this.custNo = custNo;
-    this.recvNo = dateutil.timeStamp();
+    this.recvNo = niceSsKey;
     this.listInput = {
         A0001: phoneNumber,
         A0002: NationId,
