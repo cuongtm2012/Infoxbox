@@ -5,7 +5,7 @@ const config = require('../config/config');
 module.exports.start = function () {
     setInterval(() => {
         cronFunction().catch();
-    }, 60 * 60 * 10000);
+    }, 60 * 60 * 1000);
 }
 
 async function cronFunction() {
