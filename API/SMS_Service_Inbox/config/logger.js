@@ -1,85 +1,26 @@
-const winston = require('winston');
-const config = require('./config');
 const moment = require('moment');
-const appRoot = require('app-root-path');
-var getNamespace = require('continuation-local-storage').getNamespace;
 
-var fs = require('file-system');
-
-let folderLogs = appRoot + '/logs';
-let folderName_SMS = folderLogs + '/' + moment(new Date()).format('YYYYMM');
-let logfile_name = folderName_SMS + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-
-function ensureDirSync(dirpath) {
-    try {
-        return fs.mkdirSync(dirpath)
-    } catch (err) {
-        if (err.code !== 'EEXIST') throw err
-    }
-}
-
-var winstonLogger = winston.createLogger({
-    transports: [
-        new winston.transports.File({
-            level: 'debug',
-            filename: logfile_name,
-            handleExceptions: true,
-            json: true,
-            maxsize: 5242880, // 5MB
-            maxFiles: 5,
-            colorize: false,
-            timestamp: true
-        }),
-        new winston.transports.Console({
-            level: 'debug',
-            handleExceptions: true,
-            json: false,
-            colorize: true,
-            timestamp: true
-        })
-    ],
-    exitOnError: false
-});
-
-winstonLogger.stream = {
-    write: function (message, encoding) {
-        winstonLogger.info(message);
-    }
-};
-
-// Wrap Winston logger to print reqId in each log
-var formatMessage = function (message) {
-    folderLogs = appRoot + '/logs';
-    folderName_SMS = folderLogs + '/' + moment(new Date()).format('YYYYMM');
-    logfile_name = folderName_SMS + '/' + moment(new Date()).format('YYYY-MM-DD') + '.log';
-    ensureDirSync(folderLogs);
-    ensureDirSync(folderName_SMS);
-    var myRequest = getNamespace('my request');
-    message = myRequest && myRequest.get('reqId') ? JSON.stringify(message) + " reqId: " + myRequest.get('reqId') : message;
-    return message;
-};
-
-var logger = {
-    log: async function (level, message) {
-        console.log('log: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+const logger = {
+    log: function (level, message) {
+        console.log('[', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ']', 'log: ', message);
     },
-    error: async function (message) {
-        console.log('error: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+    error: function (message) {
+        console.log("\x1b[31m", '[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + ']' + ' error: ', message);
     },
-    warn: async function (message) {
-        console.log('warn: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+    warn: function (message) {
+        console.log('[', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ']', 'warn: ', message);
     },
-    verbose: async function (message) {
-        console.log('verbose: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+    verbose: function (message) {
+        console.log('[', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ']', 'verbose: ', message);
     },
-    info: async function (message) {
-        console.log('info: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+    info: function (message) {
+        console.log('\x1b[36m%s\x1b[0m', '[' + moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + ']' + ' info: ', message);
     },
-    debug: async function (message) {
-        console.log('debug: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+    debug: function (message) {
+        console.log('[', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ']', 'debug: ', message);
     },
-    silly: async function (message) {
-        console.log('silly: ',moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ' ', message);
+    silly: function (message) {
+        console.log('[', moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), ']', 'silly: ', message);
     }
 };
 

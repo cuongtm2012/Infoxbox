@@ -206,14 +206,14 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 ).catch(
                                                     errGetRiskScore => {
                                                         if (errGetRiskScore.code === 'ETIMEDOUT' || errGetRiskScore.errno === 'ETIMEDOUT') {
-                                                            console.log('errRclips', reason.toString());
+                                                            console.log('errRclips', errGetRiskScore.toString());
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
                                                             cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
                                                             logger.info(responseData);
-                                                            logger.info(reason.toString());
+                                                            logger.info(errGetRiskScore.toString());
                                                             return res.status(200).json(responseData);
                                                         } else {
                                                             //    update scraplog & response F048
