@@ -1,31 +1,32 @@
-const httpClient = require('../services/httpClient.service');
+
+let oracledb = require('oracledb');
+const config = require('../config/config');
+
 module.exports.start = function () {
     setInterval(() => {
-        cronFunction();
-    }, 180000);
+        cronFunction().catch();
+    }, 60 * 60 * 10000);
 }
 
-function cronFunction() {
+async function cronFunction() {
+    let connection;
     try {
-        let url = 'https://localhost:3000/external/OKF_SPL_RQST';
-        let body = {
-            "fiSessionKey": "TEST",
-            "fiCode": "B100000011",
-            "taskCode": "OKF_SPL_RQST",
-            "customerNumber": "TEST",
-            "name": "TEST",
-            "sex": "F",
-            "mobilePhoneNumber": "0964785596",
-            "natId": "012345678",
-            "salary": "5000000",
-            "joinYearMonth": "202005",
-            "infoProvConcent": "Y"
+        connection = await oracledb.getConnection(config.poolAlias);
+        let sql = "select 1 from dual";
+        let result = await connection.execute(sql);
+        console.log("connection!", result);
+    } catch (err) {
+        console.log(err);
+    } finally {
+        console.log("finally1");
+        if (connection) {
+            console.log("finally2");
+            try {
+                console.log("finally3");
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
         }
-
-        httpClient.superagentPost(url, body, '').then();
-        httpClient.superagentPost(url, body, '').then();
-        httpClient.superagentPost(url, body, '').then();
-    } catch (e) {
-        console.log(e.toString());
     }
 }
