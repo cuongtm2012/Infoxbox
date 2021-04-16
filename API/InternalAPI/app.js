@@ -3,7 +3,7 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 // create oracle pool.
 const database = require('./config/db.config');
-database.initialize().then();
+database.initialize().then().catch();
 //
 var logger = require('./config/logger');
 var morgan = require('morgan');

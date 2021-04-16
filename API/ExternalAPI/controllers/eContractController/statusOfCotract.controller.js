@@ -29,7 +29,7 @@ exports.statusOfContract = function (req, res) {
                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             }
@@ -40,7 +40,7 @@ exports.statusOfContract = function (req, res) {
                     responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.query, responseData);
-                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -69,8 +69,8 @@ exports.statusOfContract = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                                 responseData = new statusOfContractResponseResult(req.query, preResponse, resultGetStatus.data);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
                                                 logger.info(responseData);
                                                 logger.info({resultFromFpt: resultGetStatus.data});
                                                 return res.status(200).json(responseData);
@@ -80,8 +80,8 @@ exports.statusOfContract = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then().catch();
                                                 logger.info(responseData);
                                                 logger.info(resultGetStatus.data);
                                                 return res.status(200).json(responseData);
@@ -91,8 +91,8 @@ exports.statusOfContract = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                 logger.info(responseData);
                                                 logger.info(resultGetStatus.data);
                                                 return res.status(200).json(responseData);
@@ -105,8 +105,8 @@ exports.statusOfContract = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTSTATUS.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTSTATUS.code);
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -115,7 +115,7 @@ exports.statusOfContract = function (req, res) {
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -124,7 +124,7 @@ exports.statusOfContract = function (req, res) {
                                             responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                             cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -137,7 +137,7 @@ exports.statusOfContract = function (req, res) {
                                     responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTSTATUS.code).then().catch();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
@@ -148,7 +148,7 @@ exports.statusOfContract = function (req, res) {
                                     responseData = new statusOfContractResponseWithoutResult(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
                                     cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);

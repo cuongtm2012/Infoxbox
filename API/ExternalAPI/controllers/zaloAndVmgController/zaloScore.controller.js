@@ -36,7 +36,7 @@ exports.zaloScore = function (req, res) {
                 responseData = new ResponseWithoutScore(req.body, preResponse);
                 //    update INQLOG
                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
-                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
                 logger.info(responseData);
                 return res.status(200).json(responseData);
             }
@@ -47,7 +47,7 @@ exports.zaloScore = function (req, res) {
                     responseData = new ResponseWithoutScore(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, responseData);
-                    cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -80,9 +80,9 @@ exports.zaloScore = function (req, res) {
                                                 responseData = new ResponseWithScore(req.body, preResponse, resultGetScore.data.data.score, resultGetScore.data.data.request_id)
                                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
                                                 dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey,resultGetScore.data.data.score,resultGetScore.data.data.request_id);
-                                                cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
-                                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                cicExternalService.insertDataZaloToExtScore(dataScoreEx).then().catch();
+                                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else {
@@ -91,8 +91,8 @@ exports.zaloScore = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
-                                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             }
@@ -104,8 +104,8 @@ exports.zaloScore = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new ResponseWithoutScore(req.body, preResponse);
                                             dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
-                                            cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(errorGetScore);
                                             return res.status(200).json(responseData);
@@ -116,8 +116,8 @@ exports.zaloScore = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new ResponseWithoutScore(req.body, preResponse);
                                     dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
-                                    cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 }
@@ -128,8 +128,8 @@ exports.zaloScore = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                 responseData = new ResponseWithoutScore(req.body, preResponse);
                                 dataInqLogSave = new DataZaloSaveToInqlog(req.body, preResponse);
-                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                cicExternalService.insertDataZaloINQLOG(dataInqLogSave).then().catch();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                 logger.info(responseData);
                                 logger.info(errorGetAuth);
                                 return res.status(200).json(responseData);

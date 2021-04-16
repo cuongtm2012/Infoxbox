@@ -30,7 +30,7 @@ exports.sendingContractData = function (req, res) {
                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                 logger.info(req.body);
                 return res.status(200).send(responseData);
             }
@@ -41,7 +41,7 @@ exports.sendingContractData = function (req, res) {
                     responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                     logger.info(req.body);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -71,8 +71,8 @@ exports.sendingContractData = function (req, res) {
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                                 responseData.id = resultSubmitInfo.data;
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
                                                 logger.info(responseData);
                                                 logger.info({resultFromFpt: resultSubmitInfo.data});
                                                 return res.status(200).json(responseData);
@@ -82,8 +82,8 @@ exports.sendingContractData = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then().catch();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             } else {
@@ -92,8 +92,8 @@ exports.sendingContractData = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                 logger.info(responseData);
                                                 return res.status(200).json(responseData);
                                             }
@@ -104,24 +104,24 @@ exports.sendingContractData = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then().catch();
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
                                         }  else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
                                         } else {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -133,8 +133,8 @@ exports.sendingContractData = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                     responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {

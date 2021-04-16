@@ -39,7 +39,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                 responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             }
@@ -50,7 +50,7 @@ exports.nonFinancialScoreOk = function (req, res) {
                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -83,12 +83,12 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 if (resultGetZaloScore.data.code === 0) {
                                                     ZaloScore = resultGetZaloScore.data.data.score;
                                                     dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, resultGetZaloScore.data.data.score, resultGetZaloScore.data.data.request_id);
-                                                    cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
+                                                    cicExternalService.insertDataZaloToExtScore(dataScoreEx).then().catch();
                                                 } else {
                                                     logger.info(resultGetZaloScore.data);
                                                     ZaloScore = DEFAULT_SCORE;
                                                     dataScoreEx = new DataZaloSaveToExtScore(req.body, fullNiceKey, DEFAULT_SCORE, resultGetZaloScore.data.data.request_id);
-                                                    cicExternalService.insertDataZaloToExtScore(dataScoreEx).then();
+                                                    cicExternalService.insertDataZaloToExtScore(dataScoreEx).then().catch();
                                                 }
                                                 //    prepare call VMG Risk Score
                                                 let bodyGetRiskScore = new BodyPostRiskScore(req.body);
@@ -105,12 +105,12 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                 VmgScore = resultGetRiskScore.data.result.nice_score.RSK_SCORE;
                                                                 VmgGrade = resultGetRiskScore.data.result.nice_score.RSK_GRADE;
                                                                 let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score, req.body.mobilePhoneNumber);
-                                                                cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
+                                                                cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then().catch();
                                                             } else {
                                                                 VmgScore = DEFAULT_SCORE;
                                                                 VmgGrade = DEFAULT_SCORE;
                                                                 let dataRiskSaveToScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, {}, req.body.mobilePhoneNumber);
-                                                                cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then();
+                                                                cicExternalService.insertDataRiskScoreToExtScore(dataRiskSaveToScoreEx).then().catch();
                                                             }
                                                             //    Call Rclips
                                                             let bodyRclispNfScore = new bodyPostNfScore(req.body.natId, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, VmgScore, VmgGrade, ZaloScore);
@@ -124,9 +124,9 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                         responseData = new NFScoreResponseWithResult(req.body, preResponse, resultRclipsNF.data);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         let dataSaveToExtScore = new dataNfScoreRclipsSaveToExtScore(fullNiceKey, resultRclipsNF.data.listResult, req.body.mobilePhoneNumber);
-                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                                                        cicExternalService.insertDataToExtScore(dataSaveToExtScore).then();
+                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
+                                                                        cicExternalService.insertDataToExtScore(dataSaveToExtScore).then().catch();
                                                                         logger.info(resultRclipsNF.data.listResult);
                                                                         logger.info(responseData);
                                                                         return res.status(200).json(responseData);
@@ -137,8 +137,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                                         responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                                        cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                                         logger.info(responseData);
                                                                         logger.info(resultRclipsNF.data);
                                                                         return res.status(200).json(responseData);
@@ -150,8 +150,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                                                     logger.info(responseData);
                                                                     logger.info(reason.toString());
                                                                     return res.status(200).json(responseData);
@@ -161,8 +161,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                                     logger.info(responseData);
                                                                     logger.info(reason.toString());
                                                                     return res.status(200).json(responseData);
@@ -174,8 +174,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.NODATAEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NODATAEXIST.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then().catch();
                                                             logger.info(responseData);
                                                             logger.info(resultGetRiskScore.data.error_msg);
                                                             return res.status(200).json(responseData);
@@ -185,8 +185,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                                             logger.info(responseData);
                                                             logger.info(resultGetRiskScore.data.error_msg);
                                                             return res.status(200).json(responseData);
@@ -196,8 +196,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                             logger.info(responseData);
                                                             logger.info(resultGetRiskScore.data.error_msg);
                                                             return res.status(200).json(responseData);
@@ -206,14 +206,14 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 ).catch(
                                                     errGetRiskScore => {
                                                         if (errGetRiskScore.code === 'ETIMEDOUT' || errGetRiskScore.errno === 'ETIMEDOUT') {
-                                                            console.log('errRclips', reason.toString());
+                                                            console.log('errRclips', errGetRiskScore.toString());
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                                             logger.info(responseData);
-                                                            logger.info(reason.toString());
+                                                            logger.info(errGetRiskScore.toString());
                                                             return res.status(200).json(responseData);
                                                         } else {
                                                             //    update scraplog & response F048
@@ -221,8 +221,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                             logger.info(responseData);
                                                             logger.info(errGetRiskScore.toString());
                                                             return res.status(200).json(responseData);
@@ -235,8 +235,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                                 logger.info(responseData);
                                                 logger.info(resultGetZaloScore.data.message);
                                                 return res.status(200).json(responseData);
@@ -248,8 +248,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -259,8 +259,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -272,8 +272,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(responseData);
                                     logger.info(resultTokenAuth.data);
                                     return res.status(200).json(responseData);
@@ -286,8 +286,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                     logger.info(responseData);
                                     logger.info(errorGetAuth.toString());
                                     return res.status(200).json(responseData);
@@ -296,8 +296,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(responseData);
                                     logger.info(errorGetAuth.toString());
                                     return res.status(200).json(responseData);

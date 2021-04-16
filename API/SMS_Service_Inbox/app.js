@@ -9,7 +9,7 @@ let CronJob = require('cron').CronJob;
 const logic = require('./logic');
 // create oracle pool.
 const database = require('./config/db.config');
-database.initialize().then();
+database.initialize().then().catch();
 //
 let job = new CronJob('* * * * * *', async function(){
     job.stop();

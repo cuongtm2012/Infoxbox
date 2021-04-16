@@ -11,7 +11,6 @@ const logger = require('../../config/logger');
 const responseContractDownloadApi = require('../../domain/responseContractDownloadApi.response')
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
-const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDownloadSaveToScrapLog.save');
 const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
@@ -29,7 +28,7 @@ exports.contractDownloadApi = function (req, res) {
                 responseData = new responseContractDownloadApi(req.query, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             } else {
@@ -39,7 +38,7 @@ exports.contractDownloadApi = function (req, res) {
                         responseData = new responseContractDownloadApi(req.query, preResponse);
                         // update INQLOG
                         dataInqLogSave = new DataSaveToInqLog(req.query, responseData);
-                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                         logger.info(responseData);
                         return res.status(200).json(responseData);
                     } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -68,7 +67,7 @@ exports.contractDownloadApi = function (req, res) {
                                                     convertPdfToBase64(filename).then(
                                                         resultConvertBase64 => {
                                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                                             logger.info(responseData);
                                                             responseData.contractContent = resultConvertBase64;
                                                             deleteFile(filename);
@@ -82,7 +81,7 @@ exports.contractDownloadApi = function (req, res) {
                                                         preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                         responseData = new responseContractDownloadApi(req.query, preResponse);
                                                         dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                                         logger.info(responseData);
                                                         logger.info(resultDownload.data);
                                                         return res.status(200).json(responseData);
@@ -94,7 +93,7 @@ exports.contractDownloadApi = function (req, res) {
                                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                                 logger.info(responseData);
                                                 logger.info(resultDownload.data);
                                                 return res.status(200).json(responseData);
@@ -106,14 +105,14 @@ exports.contractDownloadApi = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
                                         } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -121,7 +120,7 @@ exports.contractDownloadApi = function (req, res) {
                                             preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                             responseData = new responseContractDownloadApi(req.query, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                             logger.info(responseData);
                                             logger.info(reason.toString());
                                             return res.status(200).json(responseData);
@@ -133,7 +132,7 @@ exports.contractDownloadApi = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new responseContractDownloadApi(req.query, preResponse);
                                     dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                     logger.info(responseData);
                                     logger.info(resultGetAuthAccess.data);
                                     return res.status(200).json(responseData);
@@ -144,14 +143,14 @@ exports.contractDownloadApi = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.NoContractForInputId.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.NoContractForInputId.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
                             } else if (reason.code === 'ETIMEDOUT' || reason.errno === 'ETIMEDOUT') {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -159,7 +158,7 @@ exports.contractDownloadApi = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, '', dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                 responseData = new responseContractDownloadApi(req.query, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.query, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -184,21 +183,30 @@ exports.contractDownloadApi = function (req, res) {
 }
 
 async function convertPdfToBase64(filename) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(filename, function read(err, data) {
-            if (err) {
-                reject();
-            }
-            resolve(data.toString("base64"));
+    try {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filename, function read(err, data) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(data.toString("base64"));
+            });
         });
-    });
+    } catch (e) {
+        logger.error(e);
+        return e;
+    }
 }
 
 function deleteFile(file) {
-    if (!_.isEmpty(file)) {
-        fs.unlink(file, function (err) {
-            if (err) throw err;
-            console.log('deleted fdf file')
-        });
+    try {
+        if (!_.isEmpty(file)) {
+            fs.unlink(file, function (err) {
+                if (err) throw err;
+                console.log('deleted fdf file')
+            });
+        }
+    } catch (e) {
+        console.log(e)
     }
 }
