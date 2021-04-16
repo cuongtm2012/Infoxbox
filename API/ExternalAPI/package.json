@@ -4,7 +4,7 @@
   "description": "Project for CIC Scraping",
   "main": "app.js",
   "scripts": {
-    "start": "SET UV_THREADPOOL_SIZE=128 && node --unhandled-rejections=strict app.js",
+    "start": "SET UV_THREADPOOL_SIZE=128 && node --unhandled-rejections=strict --trace-warnings app.js",
     "lint": "tslint"
   },
   "author": "InfoPlusVN",
