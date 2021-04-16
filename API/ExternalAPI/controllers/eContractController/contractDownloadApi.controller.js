@@ -11,7 +11,6 @@ const logger = require('../../config/logger');
 const responseContractDownloadApi = require('../../domain/responseContractDownloadApi.response')
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
-const dataContractDownloadSaveToScrapLog = require('../../domain/dataContractDownloadSaveToScrapLog.save');
 const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
@@ -184,21 +183,30 @@ exports.contractDownloadApi = function (req, res) {
 }
 
 async function convertPdfToBase64(filename) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(filename, function read(err, data) {
-            if (err) {
-                reject();
-            }
-            resolve(data.toString("base64"));
+    try {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filename, function read(err, data) {
+                if (err) {
+                    reject(err);
+                }
+                resolve(data.toString("base64"));
+            });
         });
-    });
+    } catch (e) {
+        logger.error(e);
+        return e;
+    }
 }
 
 function deleteFile(file) {
-    if (!_.isEmpty(file)) {
-        fs.unlink(file, function (err) {
-            if (err) throw err;
-            console.log('deleted fdf file')
-        });
+    try {
+        if (!_.isEmpty(file)) {
+            fs.unlink(file, function (err) {
+                if (err) throw err;
+                console.log('deleted fdf file')
+            });
+        }
+    } catch (e) {
+        console.log(e)
     }
 }
