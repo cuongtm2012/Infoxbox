@@ -31,7 +31,7 @@ exports.vmgRiskScore = function (req, res) {
                 responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
                 //    update INQLOG
                 dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
-                cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
                 logger.info(req.responseData);
                 return res.status(200).json(responseData);
             }
@@ -41,7 +41,7 @@ exports.vmgRiskScore = function (req, res) {
                     responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, responseData);
-                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
                     logger.info(req.responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -67,9 +67,9 @@ exports.vmgRiskScore = function (req, res) {
                                     responseData = new ResponseRiskScoreWithScore(req.body, preResponse, resultGetRiskScore.data.result.nice_score);
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
                                     dataScoreEx = new DataRiskScoreSaveToExtScore(fullNiceKey, resultGetRiskScore.data.requestid, resultGetRiskScore.data.result.nice_score);
-                                    cicExternalService.insertDataRiskScoreToExtScore(dataScoreEx).then();
-                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
+                                    cicExternalService.insertDataRiskScoreToExtScore(dataScoreEx).then().catch();
+                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else if (resultGetRiskScore.data.error_code === 4) {
@@ -77,8 +77,8 @@ exports.vmgRiskScore = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.NODATAEXIST.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NODATAEXIST.code);
                                     responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
-                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then();
+                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NODATAEXIST.code).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else if (resultGetRiskScore.data.error_code === 11) {
@@ -86,8 +86,8 @@ exports.vmgRiskScore = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                     responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
-                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {
@@ -95,8 +95,8 @@ exports.vmgRiskScore = function (req, res) {
                                     preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFERR.code);
                                     responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
                                     dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
-                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 }
@@ -107,8 +107,8 @@ exports.vmgRiskScore = function (req, res) {
                                 preResponse = new PreResponse(responCode.RESCODEEXT.EXTITFTIMEOUTERR.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.EXTITFTIMEOUTERR.code);
                                 responseData = new ResponseRiskScoreWithoutScore(req.body, preResponse);
                                 dataInqLogSave = new DataRiskScoreSaveToInqlog(req.body, preResponse);
-                                cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                cicExternalService.insertDataRiskScoreToINQLOG(dataInqLogSave).then().catch();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
                             }

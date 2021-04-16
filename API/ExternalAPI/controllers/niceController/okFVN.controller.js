@@ -50,7 +50,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch()
                 logger.info(responseData);
                 return res.status(200).json(responseData);
             }
@@ -60,7 +60,7 @@ exports.okf_SPL_RQST = function (req, res, next) {
                     responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -88,9 +88,9 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     // update INQLOG
                                     dataInqLogSave = new DataSaveToInqLog(getdataReq, preResponse);
                                     let dataSaveToExtScore = new dataSimpleLimitRclipsSaveToExtScore(fullNiceKey, resultRclipsSPL.data.listResult, req.body.mobilePhoneNumber);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then();
-                                    cicExternalService.insertDataToExtScore(dataSaveToExtScore).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
+                                    cicExternalService.insertDataToExtScore(dataSaveToExtScore).then().catch();
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
                                 } else {
@@ -100,8 +100,8 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                     responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                                     // update INQLOG
                                     dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(responseData);
                                     logger.info(resultRclipsSPL.data);
                                     return res.status(200).json(responseData);
@@ -113,8 +113,8 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -123,8 +123,8 @@ exports.okf_SPL_RQST = function (req, res, next) {
                                 responseData = new OKF_SPL_RQSTRes(req.body, preResponse);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);

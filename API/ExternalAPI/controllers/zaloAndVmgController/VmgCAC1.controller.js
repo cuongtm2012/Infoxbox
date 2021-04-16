@@ -38,7 +38,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                 responseData = new bodyResponse(req.body, preResponse);
                 // save Inqlog
                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                 logger.info(responseData);
                 return res.status(200).send(responseData);
             }
@@ -49,7 +49,7 @@ exports.KYC_VC1_RQST = function (req, res) {
                     responseData = new bodyResponse(req.body, preResponse);
                     // update INQLOG
                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                     logger.info(responseData);
                     return res.status(200).json(responseData);
                 } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -72,26 +72,26 @@ exports.KYC_VC1_RQST = function (req, res) {
                                         case 0:
                                             dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
                                             dataSaveToVmgAddress = new dataCAC1SaveToVmgAddress(fullNiceKey, resultCAC1.data);
-                                            cicExternalService.insertDataToVmgLocPct(dataSaveToVmgLocPct).then();
-                                            cicExternalService.insertDataToVmgAddress(dataSaveToVmgAddress).then();
+                                            cicExternalService.insertDataToVmgLocPct(dataSaveToVmgLocPct).then().catch();
+                                            cicExternalService.insertDataToVmgAddress(dataSaveToVmgAddress).then().catch();
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                             responseData = new bodyResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Complete.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Complete.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
                                         case 20:
                                             dataSaveToVmgLocPct = new dataCAC1SaveToVmgLocPct(fullNiceKey, resultCAC1.data);
                                             dataSaveToVmgAddress = new dataCAC1SaveToVmgAddress(fullNiceKey, resultCAC1.data);
-                                            cicExternalService.insertDataToVmgLocPct(dataSaveToVmgLocPct).then();
-                                            cicExternalService.insertDataToVmgAddress(dataSaveToVmgAddress).then();
+                                            cicExternalService.insertDataToVmgLocPct(dataSaveToVmgLocPct).then().catch();
+                                            cicExternalService.insertDataToVmgAddress(dataSaveToVmgAddress).then().catch();
                                             preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
                                             responseData = new bodyResponse(req.body, preResponse);
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Data_Provided_Already.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Data_Provided_Already.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -104,8 +104,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                             responseData = new bodyResponse(req.body, preResponse);
                                             // update INQLOG
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Application_Error.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Application_Error.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -114,8 +114,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                             responseData = new bodyResponse(req.body, preResponse);
                                             // update INQLOG
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.No_Data_Provide.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.No_Data_Provide.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -132,8 +132,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                             responseData = new bodyResponse(req.body, preResponse);
                                             // update INQLOG
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Other_Error.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Other_Error.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -142,8 +142,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                             responseData = new bodyResponse(req.body, preResponse);
                                             // update INQLOG
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.VMG_InProcessing.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.VMG_InProcessing.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -155,8 +155,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                             responseData = new bodyResponse(req.body, preResponse);
                                             // update INQLOG
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Telco_Interface_Error.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdAndStatusCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code, responCode.ScrapingStatusCode.Telco_Interface_Error.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -165,8 +165,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                             responseData = new bodyResponse(req.body, preResponse);
                                             // update INQLOG
                                             dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                            cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                             logger.info(resultCAC1.data);
                                             logger.info(responseData);
                                             return res.status(200).json(responseData);
@@ -176,8 +176,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                     responseData = new bodyResponse(req.body, preResponse);
                                     // update INQLOG
                                     dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                    cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                    cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                     logger.info(resultCAC1.data);
                                     logger.info(responseData);
                                     return res.status(200).json(responseData);
@@ -188,8 +188,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                 responseData = new bodyResponse(req.body, preResponse);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFTIMEOUTERR.code).then().catch();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -198,8 +198,8 @@ exports.KYC_VC1_RQST = function (req, res) {
                                 responseData = new bodyResponse(req.body, preResponse);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.EXTITFERR.code).then().catch();
                                 logger.info(responseData);
                                 logger.info(reason.toString());
                                 return res.status(200).json(responseData);
@@ -238,7 +238,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
             responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
             // save Inqlog
             dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
-            cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+            cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
             logger.info(responseData);
             return res.status(200).send(responseData);
         }
@@ -249,7 +249,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                 responseData = new KYC_VC1_RSLTResponseWithoutResult(req.body, preResponse);
                 // update INQLOG
                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                 logger.info(responseData);
                 return res.status(200).json(responseData);
             } else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
@@ -272,7 +272,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                         result.ADDR_REFER, result.LAT_REFER, result.LONG_REFER, result.TEL_COMPANY);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
                             case responCode.ScrapingStatusCode.Complete.code:
@@ -283,7 +283,7 @@ exports.KYC_VC1_RSLT = function (req, res) {
                                         result.ADDR_REFER, result.LAT_REFER, result.LONG_REFER, result.TEL_COMPANY);
                                 // update INQLOG
                                 dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
                             case responCode.ScrapingStatusCode.VMG_InProcessing.code:
