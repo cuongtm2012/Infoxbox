@@ -9,8 +9,7 @@ const dbOption = {
     poolAlias: config.poolAlias,
     poolMax: 10,
     poolMin: 10,
-    poolIncrement: 0,
-    poolTimeout: 0
+    poolIncrement: 0
 }
 let poolInfo;
 
