@@ -20,8 +20,6 @@ const database = require('./config/db.config');
 database.initialize().then().catch();
 //Turn of SSL SSL certificate verification
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-// increase Threads db
-process.env.UV_THREADPOOL_SIZE = 128;
 var app = express();
 app.use(cors());
 app.use(express.static('public'));
