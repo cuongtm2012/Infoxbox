@@ -23,12 +23,6 @@ exports.sendingContractData_TMP = function (req, res) {
         logger.info(req.body);
         let preResponse, responseData, dataInqLogSave;
         // get password
-        let decryptPW;
-        let _decryptPW = convertBase64.convertBase64ToText(req.body.loginPw);
-        if (14 < _decryptPW.length)
-            decryptPW = _decryptPW.substr(14);
-        else
-            decryptPW = _decryptPW;
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.FTN_SCD_RQST.code + niceSessionKey;
@@ -63,6 +57,12 @@ exports.sendingContractData_TMP = function (req, res) {
                 cicExternalService.insertDataFPTContractToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         //    getAuthAccess
+                        let decryptPW;
+                        let _decryptPW = convertBase64.convertBase64ToText(req.body.loginPw);
+                        if (14 < _decryptPW.length)
+                            decryptPW = _decryptPW.substr(14);
+                        else
+                            decryptPW = _decryptPW;
                         let bodyGetAuth = new bodyGetAuthEContract(req.body.loginId, decryptPW);
                         httpClient.superagentPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth).then(
                             resultGetAuthAccess => {
@@ -160,11 +160,11 @@ exports.sendingContractData_TMP = function (req, res) {
                             console.log('errGetAuth: ', reason.toString());
                             if (reason && reason.status === 401) {
                                 //    update scraplog & response login fail
-                                preResponse = new PreResponse(responCode.SCRAPPINGERRORCODE.LogInError.name, fullNiceKey, dateutil.timeStamp(), responCode.SCRAPPINGERRORCODE.LogInError.code);
+                                preResponse = new PreResponse(responCode.RESCODEEXT.LoginFailure.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.LoginFailure.code);
                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
-                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.SCRAPPINGERRORCODE.LogInError.code).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.LoginFailure.code).then();
                                 logger.info(responseData);
                                 return res.status(200).json(responseData);
                             } else if (reason && reason.status === 500) {
