@@ -7,9 +7,9 @@ const dbOption = {
     password: dbconfig.password,
     connectString: dbconfig.connectString,
     poolAlias: config.poolAlias,
-    poolIncrement : 0,
+    poolIncrement : 1,
     poolMax       : 4,
-    poolMin       : 4
+    poolMin       : 0
 }
 let poolInfo;
 
