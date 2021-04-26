@@ -36,7 +36,7 @@ module.exports = {
             }
             return response;
         }
-        if (!_.isEqual(responcodeEXT.TaskCode.FTN_GAS_RQST.code, getDataReq.taskCode)) {
+        if (!_.isEqual(responcodeEXT.TaskCode.FTN_CCS_RQST.code, getDataReq.taskCode)) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.InvalidTaskCode.name,
                 responseCode: responcodeEXT.RESCODEEXT.InvalidTaskCode.code
@@ -73,11 +73,11 @@ module.exports = {
             }
             return response;
         }
-        //    alias
-        if (_.isEmpty(getDataReq.alias)) {
+        //    TemplateID
+        if (_.isEmpty(getDataReq.id)) {
             response = {
-                responseMessage: responcodeEXT.RESCODEEXT.NIALIAS.name,
-                responseCode: responcodeEXT.RESCODEEXT.NIALIAS.code
+                responseMessage: responcodeEXT.RESCODEEXT.NIIDOFCONTRACT.name,
+                responseCode: responcodeEXT.RESCODEEXT.NIIDOFCONTRACT.code
             }
             return response;
         }

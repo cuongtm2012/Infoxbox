@@ -8,6 +8,7 @@ const contractDownloadApiController = require('../controllers/eContractControlle
 const sendingDataContractFPTController_TMP = require('../controllers/eContractController/sendingContractData_TMP.controller');
 const contractDownloadApiController_TMP = require('../controllers/eContractController/contractDowloadApi_TMP.controller');
 const getStructureAPIController_TMP = require('../controllers/eContractController/getAPIStructure_TMP.controller');
+const statusContractFPTController_TMP = require('../controllers/eContractController/statusOfContract_TMP.controller');
 
 
 router.post('/FTN_SCD_RQST', sendingDataContractFPTController.sendingContractData);
@@ -23,5 +24,7 @@ router.post('/FTN_SCD_RQST_TMP', sendingDataContractFPTController_TMP.sendingCon
 router.get('/FTN_GCT_RQST_TMP', contractDownloadApiController_TMP.contractDownloadApi_TMP);
 
 router.get('/FTN_GAS_RQST_TMP', getStructureAPIController_TMP.getStructureAPI_TMP);
+
+router.get('/FTN_CCS_RQST_TMP', statusContractFPTController_TMP.statusOfContract_TMP);
 
 module.exports = router;
