@@ -5,14 +5,14 @@ const PreResponse = require('../../domain/preResponse.response');
 const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
 const cicExternalService = require('../../services/cicExternal.service');
 const dateutil = require('../../util/dateutil');
-const getApiStructureResponseWithoutResult = require('../../domain/getApiStructureReponseWithoutResult.response')
+const getApiStructureResponseWithoutResult = require('../../domain/getApiStructure_TMP_ResponseWithoutResult.response')
 const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const _ = require('lodash');
 const bodyGetAuthEContract = require('../../domain/bodyGetTokenEcontract.body');
 const httpClient = require('../../services/httpClient.service');
 const URI = require('../../../shared/URI');
-const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApiWithResult.response');
+const responseGetApiStructureResponseWithResult = require('../../domain/responseGetStructureApi_TMP_WithResult.response');
 const convertBase64 = require('../../../shared/util/convertBase64ToText');
 exports.getStructureAPI_TMP = function (req, res) {
     try {

@@ -73,7 +73,8 @@ var RESCODEEXT = {
     NODATAEXISTFORPHONENFICODE: { value: 73, name: "No result for input NF Score NICE session key", code: "F073" },
     NoContractTemplateForInputAlias: { value: 74, name: "No contract template for input alias", code: "F074" },
     NoContractForInputId: { value: 75, name: "No contract for input id", code: "F075" },
-    LoginFailure: { value: 78, name: "Login failure", code: "F078" }
+    LoginFailure: { value: 78, name: "Login failure", code: "F078" },
+    Overdue: { value: 79, name: "Overdue", code: "F079" }
 };
 
 const OracleError = {
