@@ -10,6 +10,10 @@ module.exports = function DataFptSaveToFptId(req, niceSessionKey, data, resultCo
     } else {
         this.REAR_IMAGE = req.body.rearImage ? req.body.rearImage : convertImageToBase64(req.files.rearImage.path);
     }
+
+    if(data.frontImage.address_entities === undefined || data.frontImage.address_entities === null || _.isEmpty(data.frontImage.address_entities) || !data.frontImage.address_entities) {
+        data.frontImage.address_entities = {};
+    }
     this.NICE_SSIN_ID = niceSessionKey;
     this.REQUEST_ID = requestId;
     this.RESULT_CODE = resultCode;
