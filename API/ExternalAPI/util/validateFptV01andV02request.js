@@ -115,7 +115,29 @@ module.exports = {
             }
             return response;
         }
+        //base 64 length
+        if (!_.isEmpty(getDataReq.frontImage) && getDataReq.frontImage.length > MAX_SIZE) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
+                responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
+            }
+            return response;
+        }
         if (!_.isEmpty(formData.rearImage) && formData.rearImage.size > MAX_SIZE) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
+                responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
+            }
+            return response;
+        }
+        if (!_.isEmpty(getDataReq.rearImage) && getDataReq.rearImage.length > MAX_SIZE) {
+            response = {
+                responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
+                responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
+            }
+            return response;
+        }
+        if (!_.isEmpty(getDataReq.selfieImage) && getDataReq.selfieImage.length > MAX_SIZE) {
             response = {
                 responseMessage: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.name,
                 responseCode: responcodeEXT.RESCODEEXT.RQOUTOFSIZE.code
