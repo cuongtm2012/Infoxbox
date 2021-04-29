@@ -16,7 +16,7 @@ const URI = require('../../../shared/URI');
 const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
 const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body');
 const httpClient = require('../../services/httpClient.service');
-
+const dataSaveToFptContract = require('../../domain/dataSaveToFptContract.save');
 exports.sendingContractData = function (req, res) {
     try {
         let rsCheck = validRequest.checkParamRequest(req.body);
@@ -71,6 +71,8 @@ exports.sendingContractData = function (req, res) {
                                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
                                                 responseData.id = resultSubmitInfo.data;
                                                 dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                                let dataFptContractSave = new dataSaveToFptContract(fullNiceKey, resultSubmitInfo.data, req.body.fiCode);
+                                                cicExternalService.insertDataToFPTeContract(dataFptContractSave).then().catch();
                                                 cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                                                 cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.NORMAL.code).then().catch();
                                                 logger.info(responseData);
