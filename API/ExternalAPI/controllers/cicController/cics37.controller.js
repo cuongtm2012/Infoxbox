@@ -102,7 +102,7 @@ exports.cics37Rqst = function (req, res) {
                     }
                     if (req.body.fiCode === 'B100000015') {
                         let fixedRs = {
-                            "fiSessionKey": req.body.req.body.fiSessionKey,
+                            "fiSessionKey": req.body.fiSessionKey,
                             "fiCode": req.body.fiCode,
                             "taskCode": "CIC_S37_RQST",
                             "loginId": "",
