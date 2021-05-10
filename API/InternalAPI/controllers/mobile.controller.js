@@ -32,7 +32,7 @@ exports.mobileCicController = function (req, res, next) {
 
                 //Logging response
                 logger.debug('Log response parameters from scrapping service B0002');
-                logger.info(body.data);
+                logger.info(body.data.toString());
 
                 if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
@@ -41,7 +41,7 @@ exports.mobileCicController = function (req, res, next) {
                     return res.status(200).json({ imgBase64, dataStep });
                 }
                 else if (!_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
-                    if (!_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
+                    if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && !_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
                         _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
                         console.log(_dataReport);
                         logger.info(_dataReport);
@@ -165,7 +165,7 @@ exports.mobileCicController = function (req, res, next) {
                 //Update ScrpModCd 00
                 cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey, res).then(() => {
                     console.log("update SCRP_MOD_CD = 06 ");
-                    return next();
+                    return res.status(500).json({ error: error.toString() });
                 });
             });
 
