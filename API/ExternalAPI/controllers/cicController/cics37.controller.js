@@ -100,6 +100,39 @@ exports.cics37Rqst = function (req, res) {
                         logger.info(responseData);
                         return res.status(500).json(responseData);
                     }
+                    if (req.body.fiCode === 'B100000015') {
+                        let fixedRs = {
+                            "fiSessionKey": req.body.req.body.fiSessionKey,
+                            "fiCode": req.body.fiCode,
+                            "taskCode": "CIC_S37_RQST",
+                            "loginId": "",
+                            "taxCode": "",
+                            "natId": "001183002211",
+                            "oldNatId": null,
+                            "passportNumber": null,
+                            "cicId": "",
+                            "inquiryDate": "20210510",
+                            "infoProvConcent": "Y",
+                            "niceSessionKey": fullNiceKey,
+                            "responseTime": dateutil.timeStamp(),
+                            "responseCode": "P000",
+                            "responseMessage": "Normal",
+                            "scrapingStatusCode": "10",
+                            "cicReportRequestDate": "20210510",
+                            "cicReportResponseDate": "20210510",
+                            "cicReportInquiryUserId": "1",
+                            "name": "NGUYỄN VĂN A",
+                            "cicIdReport": "0134228145",
+                            "address": "., THANH VÂN, X. THANH LÂM, H. MÊ LINH, HÀ NỘI",
+                            "numberOfFi": 1,
+                            "cautiousLoan": "N",
+                            "badLoan": "N",
+                            "baseDate": "20210331",
+                            "warningGrade": null,
+                            "reportComment": "Khách hàng hiện đang quan hệ tại 1 TCTD, không có nợ cần chú ý và không có nợ xấu tại thời điểm cuối tháng 31/03/2021"
+                        }
+                        return res.status(200).send(fixedRs);
+                    } else {
                     //End check params request
                 cicExternalService.insertSCRPLOG(getdataReq).then(niceSessionK => {
                     console.log("result cics11aRQST: ", niceSessionK);
@@ -480,6 +513,7 @@ exports.cics37Rqst = function (req, res) {
                     logger.error(reason.toString());
                     return res.status(500).json({error: reason.toString()});
                 });
+                    }
             }).catch(reason => {
                 console.log(reason.toString());
                 logger.error(reason.toString());
