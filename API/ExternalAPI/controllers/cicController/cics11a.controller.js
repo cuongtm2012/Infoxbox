@@ -35,22 +35,35 @@ exports.cics11aRQST = function (req, res, next) {
 		* Checking parameters request
 		* Request data
 		*/
-			common_service.getSequence().then(resSeq => {
-				niceSessionKey = responCode.NiceProductCode.S11A.code + util.timeStamp2() + resSeq[0].SEQ;
-				const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
+		common_service.getSequence().then(resSeq => {
+			niceSessionKey = responCode.NiceProductCode.S11A.code + util.timeStamp2() + resSeq[0].SEQ;
+			const getdataReq = new cics11aRQSTReq(req.body, password, niceSessionKey);
 
-				console.log("getdataReq =", getdataReq);
+			console.log("getdataReq =", getdataReq);
 
-				//Logging request
-				logger.debug('Log request parameters from routes after manage request');
-				logger.info(getdataReq);
-				let rsCheck = validRequest.checkParamRequest(req.body);
-				let preResponse, responseData, dataInqLogSave;
-				if (!_.isEmpty(rsCheck)) {
-					preResponse = new PreResponse(rsCheck.responseMessage, niceSessionKey, dateutil.timeStamp(), rsCheck.responseCode);
+			//Logging request
+			logger.debug('Log request parameters from routes after manage request');
+			logger.info(getdataReq);
+			let rsCheck = validRequest.checkParamRequest(req.body);
+			let preResponse, responseData, dataInqLogSave;
+			if (!_.isEmpty(rsCheck)) {
+				preResponse = new PreResponse(rsCheck.responseMessage, niceSessionKey, dateutil.timeStamp(), rsCheck.responseCode);
+
+				responseData = new cics11aRQSTRes(req.body, preResponse);
+
+				// update INQLOG
+				dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
+				cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
+					console.log('insert INQLOG:', r);
+				});
+				logger.info(responseData);
+				return res.status(200).json(responseData);
+			}
+			validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
+				if (_.isEmpty(dataFICode)) {
+					preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
 
 					responseData = new cics11aRQSTRes(req.body, preResponse);
-
 					// update INQLOG
 					dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
 					cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
@@ -59,27 +72,14 @@ exports.cics11aRQST = function (req, res, next) {
 					logger.info(responseData);
 					return res.status(200).json(responseData);
 				}
-				validS11AService.selectFiCode(req.body.fiCode, responCode.NiceProductCode.S11A.code).then(dataFICode => {
-					if (_.isEmpty(dataFICode)) {
-						preResponse = new PreResponse(responCode.RESCODEEXT.InvalidNiceProductCode.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.InvalidNiceProductCode.code);
+				else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
+					preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
 
-						responseData = new cics11aRQSTRes(req.body, preResponse);
-						// update INQLOG
-						dataInqLogSave = new DataSaveToInqLog(req.body, responseData);
-						cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
-							console.log('insert INQLOG:', r);
-						});
-						logger.info(responseData);
-						return res.status(200).json(responseData);
-					}
-					else if (_.isEmpty(dataFICode[0]) && utilFunction.checkStatusCodeScraping(responCode.OracleError, utilFunction.getOracleCode(dataFICode))) {
-						preResponse = new PreResponse(responCode.RESCODEEXT.ErrorDatabaseConnection.name, niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.ErrorDatabaseConnection.code);
-
-						responseData = new cics11aRQSTRes(req.body, preResponse);
-						logger.info(responseData);
-						return res.status(500).json(responseData);
-					}
-					// End check params request
+					responseData = new cics11aRQSTRes(req.body, preResponse);
+					logger.info(responseData);
+					return res.status(500).json(responseData);
+				}
+				// End check params request
 				cicExternalService.insertSCRPLOG(getdataReq, res).then(niceSessionK => {
 					console.log("result cics11aRQST: ", niceSessionK);
 					if (niceSessionK === 1) {
@@ -196,465 +196,281 @@ exports.cics11aRSLT = function (req, res) {
 				return res.status(500).json(responseData);
 			}
 			//End check params request
-			if (req.body.fiCode === 'B100000015') {
-				let fixedRs = {
-					"fiSessionKey": req.body.fiSessionKey,
-					"fiCode": req.body.fiCode,
-					"taskCode": "CIC_S11A_RSLT",
-					"niceSessionKey": req.body.niceSessionKey,
-					"inquiryDate": "",
-					"responseTime": dateutil.timeStamp(),
-					"responseCode": "P000",
-					"responseMessage": "Normal",
-					"scrapingStatusCode": "10",
-					"cicReportRequestDate": "20210506",
-					"cicReportResponseDate": "20210506",
-					"cicReportInquiryUserId": "1",
-					"lengthOfResponse": 4284,
-					"cicInquiryFiName": "Ngân hàng TNHH MTV Woori Việt Nam",
-					"cicInquiryFiAddress": "Tầng 34, Tòa nhà Keangnam Hanoi Landmark Tower, E6, Đường Phạm Hùng, Nam Từ Liêm, Hà Nội",
-					"cicUserName": "Trần Khánh Hòa",
-					"cicInquiryCode": "1",
-					"cicReportInquiryDateTime": "202105061412",
-					"cicReportResultDateTime": "202105061432",
-					"commentOnCustomer": null,
-					"name": "BUI TUNG LAM",
-					"cicId": "3832920984",
-					"address": "THI TRAN CANH NANG,H.BA THUOC,THANH HOA",
-					"nationalId": "174273307",
-					"docIdEvidance": null,
-					"commentOnLoanInfo": null,
-					"tlv0000001": null,
-					"tnlv000001": null,
-					"tclv000001": null,
-					"tflv000001": null,
-					"tdlv000001": null,
-					"telv000001": null,
-					"tblv000001": null,
-					"commentOnLoanDetail": "Hiện tại khách hàng không có dư nợ vay tại các TCTD",
-					"creditCardTotalLimit": 10000000,
-					"creditCardTotalBalance": 9000000,
-					"creditCardTotalArrears": 0,
-					"numberOfCreditCard": 1,
-					"creditCardIssueCompany": "1.Ngân hàng TNHH MTV Woori Việt Nam",
-					"commentOnVAMCDisposalLoan": "Hiện tại, khách hàng không có dư nợ đã bán cho VAMC",
-					"loanChangeNode": [
-						{
-							"baseMonth": "202104",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 9000000,
-							"baseMonthSum": 9000000
-						},
-						{
-							"baseMonth": "202103",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 8000000,
-							"baseMonthSum": 8000000
-						},
-						{
-							"baseMonth": "202102",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 8000000,
-							"baseMonthSum": 8000000
-						},
-						{
-							"baseMonth": "202101",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 8000000,
-							"baseMonthSum": 8000000
-						},
-						{
-							"baseMonth": "202012",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 8000000,
-							"baseMonthSum": 8000000
-						},
-						{
-							"baseMonth": "202011",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 8000000,
-							"baseMonthSum": 8000000
-						},
-						{
-							"baseMonth": "202010",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 8000000,
-							"baseMonthSum": 8000000
-						},
-						{
-							"baseMonth": "202009",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 9000000,
-							"baseMonthSum": 9000000
-						},
-						{
-							"baseMonth": "202008",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 9000000,
-							"baseMonthSum": 9000000
-						},
-						{
-							"baseMonth": "202007",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 6000000,
-							"baseMonthSum": 6000000
-						},
-						{
-							"baseMonth": "202006",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 4000000,
-							"baseMonthSum": 4000000
-						},
-						{
-							"baseMonth": "202005",
-							"baseMonthLoanBalance": null,
-							"baseMonthCreditCardBalance": 4000000,
-							"baseMonthSum": 4000000
-						}
-					],
-					"nplNode": [],
-					"commentOnNPL5Years": "",
-					"commentOnCreditCard3Years": "",
-					"commentOnCautiousLoan12Month": "Khách hàng không có nợ cần chú ý trong 12 tháng gần nhất",
-					"gurAmountOfAssetBackedLoan": "Không có",
-					"numberOfCollateral": null,
-					"numberOfFiWithCollateral": null,
-					"commentOnFinancialContract": "Hiện CIC không có thông tin về hợp đồng tín dụng của khách hàng này",
-					"customerInquiryNode": [
-						{
-							"fiName": "  79339002.Ngân hàng TM TNHH MTV Xây dựng Việt Nam - Chi nhánh Lam Giang",
-							"cicFiCode": "79339002",
-							"inquiryProduct": "QHTD",
-							"inquiryDate": "20210201",
-							"inquiryTime": "090243"
-						},
-						{
-							"fiName": "  79339002.Ngân hàng TM TNHH MTV Xây dựng Việt Nam - Chi nhánh Lam Giang",
-							"cicFiCode": "79339002",
-							"inquiryProduct": "Thẻ TD",
-							"inquiryDate": "20210201",
-							"inquiryTime": "100534"
-						},
-						{
-							"fiName": "  Ngân hàng TMCP Quốc tế Việt Nam",
-							"cicFiCode": "01314001",
-							"inquiryProduct": "QHTD",
-							"inquiryDate": "20210309",
-							"inquiryTime": "105956"
-						},
-						{
-							"fiName": "  Ngân hàng TMCP Quốc tế Việt Nam",
-							"cicFiCode": "01314001",
-							"inquiryProduct": "Thẻ TD",
-							"inquiryDate": "20210309",
-							"inquiryTime": "105957"
-						},
-						{
-							"fiName": "  Ngân hàng TNHH MTV Woori Việt Nam",
-							"cicFiCode": "01663001",
-							"inquiryProduct": "QHTD",
-							"inquiryDate": "20210427",
-							"inquiryTime": "161532"
-						},
-						{
-							"fiName": "  Ngân hàng TNHH MTV Woori Việt Nam",
-							"cicFiCode": "01663001",
-							"inquiryProduct": "Thẻ TD",
-							"inquiryDate": "20210427",
-							"inquiryTime": "161916"
-						},
-						{
-							"fiName": "  Ngân hàng TNHH MTV Woori Việt Nam",
-							"cicFiCode": "01663001",
-							"inquiryProduct": "QHTD",
-							"inquiryDate": "20210503",
-							"inquiryTime": "102924"
-						},
-						{
-							"fiName": "  Ngân hàng TNHH MTV Woori Việt Nam",
-							"cicFiCode": "01663001",
-							"inquiryProduct": "QHTD",
-							"inquiryDate": "20210504",
-							"inquiryTime": "162722"
-						},
-						{
-							"fiName": "  Ngân hàng TNHH MTV Woori Việt Nam",
-							"cicFiCode": "01663001",
-							"inquiryProduct": "QHTD",
-							"inquiryDate": "20210506",
-							"inquiryTime": "141223"
-						}
-					]
-				}
-				return res.status(200).send(fixedRs);
-			} else {
-				cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
-					console.log("result selectCICS11aRSLT: ", reslt);
 
-					if (!_.isEmpty(reslt)) {
-						let responseData;
-						const arrloanDetailNode = [];
-						const arrVamcLoanInfo = [];
-						const arrLoan12MInfo = [];
-						const arrNPL5YLoan = [];
-						const arrLoan12MonCat = [];
-						const arrFinancialContract = [];
-						const arrCusLookup = [];
-						var totalFiLoanVND, totalFiLoanUSD;
-						var cmtLoanDetaiInfo, cmtCreditCard, cmtVmacDisposalLoan, cmtLoan12MInfo, cmtNPL5YearLoan,
-							cmtLoan12MCat, cmtFinancialContract, cmtCard3Year;
-						var creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard,
-							creditCardIssueCompany;
-						var gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral;
-						var borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount;
+			cicExternalService.selectCICS11aRSLT(getdataReq, res).then(reslt => {
+				console.log("result selectCICS11aRSLT: ", reslt);
+
+				if (!_.isEmpty(reslt)) {
+					let responseData;
+					const arrloanDetailNode = [];
+					const arrVamcLoanInfo = [];
+					const arrLoan12MInfo = [];
+					const arrNPL5YLoan = [];
+					const arrLoan12MonCat = [];
+					const arrFinancialContract = [];
+					const arrCusLookup = [];
+					var totalFiLoanVND, totalFiLoanUSD;
+					var cmtLoanDetaiInfo, cmtCreditCard, cmtVmacDisposalLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat, cmtFinancialContract, cmtCard3Year;
+					var creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany;
+					var gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral;
+					var borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount;
 
 
-						// 2.1 Loan detail infor
-						if (!_.isEmpty(reslt.outputLoanDetailinfo) && _.isEmpty(cmtLoanDetaiInfo)) {
-							reslt.outputLoanDetailinfo.forEach(em => {
-								arrloanDetailNode.push(new loanDetailNode(em));
-								totalFiLoanVND = convertMilionUnit.milionUnit(em.SUM_TOT_OGZ_VND);
-								totalFiLoanUSD = convertMilionUnit.milionUnit(em.SUM_TOT_OGZ_USD);
-							});
-						} else {
-							if (_.includes(reslt.cmtLoanDetailInfo, '.'))
-								cmtLoanDetaiInfo = reslt.cmtLoanDetailInfo.split('.')[0];
-							else
-								cmtLoanDetaiInfo = reslt.cmtLoanDetailInfo;
-						}
-
-						// 2.2 Credit card infor
-						if (!_.isEmpty(reslt.outputCreditCardInfo) && _.isEmpty(cmtCreditCard)) {
-							creditCardTotalLimit = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_LMT);
-							creditCardTotalBalance = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_SETL_AMT);
-							creditCardTotalArrears = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_ARR_AMT);
-							numberOfCreditCard = convertMilionUnit.convertNumber(reslt.outputCreditCardInfo[0].CARD_CNT);
-							creditCardIssueCompany = reslt.outputCreditCardInfo[0].CARD_ISU_OGZ;
-
-						} else {
-							if (_.includes(reslt.cmtCreditCard, '.'))
-								cmtCreditCard = reslt.cmtCreditCard.split('.')[0];
-							else
-								cmtCreditCard = reslt.cmtCreditCard;
-						}
-
-						// 2.3 VAMC Loan infor
-						if (!_.isEmpty(reslt.outputVamcLoan) && _.isEmpty(reslt.cmtVamcLoan)) {
-							reslt.outputVamcLoan.forEach(el => {
-								arrVamcLoanInfo.push(new disposalLoanNode(el));
-							});
-						} else {
-							if (_.includes(reslt.cmtVamcLoan, '.'))
-								cmtVmacDisposalLoan = reslt.cmtVamcLoan.split('.')[0];
-							else
-								cmtVmacDisposalLoan = reslt.cmtVamcLoan;
-						}
-
-						// 2.4 Loan 12Month infor
-						if (!_.isEmpty(reslt.outputLoan12MInfo) && _.isEmpty(reslt.cmtLoan12MInfo)) {
-							reslt.outputLoan12MInfo.forEach(el => {
-								arrLoan12MInfo.push(new loan12MInfor(el));
-							});
-						} else {
-							if (_.includes(reslt.cmtLoan12MInfo, '.'))
-								cmtLoan12MInfo = reslt.cmtLoan12MInfo.split('.')[0];
-							else
-								cmtLoan12MInfo = reslt.cmtLoan12MInfo;
-						}
-
-						// 2.5 NPL Loan 5 Year infor
-						if (!_.isEmpty(reslt.outputNPL5YLoan) && _.isEmpty(reslt.cmtNPL5YearLoan)) {
-							reslt.outputNPL5YLoan.forEach(el => {
-								arrNPL5YLoan.push(new npl5YLoan(el));
-							});
-						} else {
-							if (_.includes(reslt.cmtNPL5YearLoan, '.'))
-								cmtNPL5YearLoan = reslt.cmtNPL5YearLoan.split('.')[0];
-							else
-								cmtNPL5YearLoan = reslt.cmtNPL5YearLoan;
-						}
-
-						// 2.6 Card 3 year infor
-						if (!_.isEmpty(reslt.outputCard3year) && _.isEmpty(reslt.cmtCard3Year)) {
-							borrowCreditCardArrear = convertBorrowCreditCard3Years(reslt.outputCard3year[0].CARD_ARR_PSN_YN);
-							creditCardLongestArrearDays = reslt.outputCard3year[0].CARD_ARR_LGST_DAYS;
-							creditCardArrearCount = reslt.outputCard3year[0].CARD_ARR_CNT;
-
-						} else {
-							if (_.includes(reslt.cmtCard3Year, '.'))
-								cmtCard3Year = reslt.cmtCard3Year.split('.')[0];
-							else
-								cmtCard3Year = reslt.cmtCard3Year;
-						}
-
-						// 2.7 Loan 12M Cautios infor
-						if (!_.isEmpty(reslt.outputloan12MCat) && _.isEmpty(reslt.cmtLoan12MCat)) {
-							reslt.outputloan12MCat.forEach(el => {
-								arrLoan12MonCat.push(new loan12MCat(el));
-							});
-						} else {
-							if (_.includes(reslt.cmtLoan12MCat, '.'))
-								cmtLoan12MCat = reslt.cmtLoan12MCat.split('.')[0];
-							else
-								cmtLoan12MCat = reslt.cmtLoan12MCat;
-						}
-
-						// 3.1 Collateral infor
-						if (!_.isEmpty(reslt.outputCollateral)) {
-							gurAmountOfAssetBackedLoan = reslt.outputCollateral[0].AST_SCRT_LOAN_GURT_AMT;
-							numberOfCollateral = reslt.outputCollateral[0].SCRT_AST_CNT;
-							numberOfFiWithCollateral = reslt.outputCollateral[0].SCRT_AST_OGZ_CNT;
-
-						}
-
-						// 3.2 Financial contract
-						if (!_.isEmpty(reslt.outputFinanCialContract) && _.isEmpty(reslt.cmtFinancialContract)) {
-							reslt.outputFinanCialContract.forEach(el => {
-								arrFinancialContract.push(new financialContract(el));
-							});
-						} else {
-							if (_.includes(reslt.cmtFinancialContract, '.'))
-								cmtFinancialContract = reslt.cmtFinancialContract.split('.')[0];
-							else
-								cmtFinancialContract = reslt.cmtFinancialContract;
-						}
-
-						// 3.3 Customer lookup info
-						if (!_.isEmpty(reslt.outputCusLookup)) {
-							reslt.outputCusLookup.forEach(el => {
-								arrCusLookup.push(new cusLookup(el));
-							});
-						}
-						let response = new PreResponse(responCode.RESCODEEXT.NORMAL.name, getdataReq.niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-
-						responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
-							, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
-							, arrVamcLoanInfo, cmtVmacDisposalLoan
-							, arrLoan12MInfo, cmtLoan12MInfo
-							, arrNPL5YLoan, cmtNPL5YearLoan
-							, arrLoan12MonCat, cmtLoan12MCat
-							, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
-							, arrFinancialContract, cmtFinancialContract
-							, arrCusLookup
-							, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year);
-
-						// add length response mesaage
-						let lenghResMessage = JSON.stringify({
-							responseData
-						}).length;
-
-						responseData = new cics11aRSLTResLength(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
-							, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
-							, arrVamcLoanInfo, cmtVmacDisposalLoan
-							, arrLoan12MInfo, cmtLoan12MInfo
-							, arrNPL5YLoan, cmtNPL5YearLoan
-							, arrLoan12MonCat, cmtLoan12MCat
-							, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
-							, arrFinancialContract, cmtFinancialContract
-							, arrCusLookup
-							, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year
-							, lenghResMessage, responseData.tnlv000001, responseData.tclv000001, responseData.tflv000001, responseData.tdlv000001, responseData.telv000001, responseData.tlv0000001, responseData.tblv000001);
-
-						// update INQLOG
-						dataInqLogSave = new DataSaveToInqLog(getdataReq, response);
-						cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
-							console.log('insert INQLOG:', r);
+					// 2.1 Loan detail infor
+					if (!_.isEmpty(reslt.outputLoanDetailinfo) && _.isEmpty(cmtLoanDetaiInfo)) {
+						reslt.outputLoanDetailinfo.forEach(em => {
+							arrloanDetailNode.push(new loanDetailNode(em));
+							totalFiLoanVND = convertMilionUnit.milionUnit(em.SUM_TOT_OGZ_VND);
+							totalFiLoanUSD = convertMilionUnit.milionUnit(em.SUM_TOT_OGZ_USD);
 						});
-						//Logging response
-						logger.info(responseData);
-
-						return res.status(200).json(responseData);
 					} else {
-						// select in SCRPLOG check SCRP_STAT_CD
-						cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+						if (_.includes(reslt.cmtLoanDetailInfo, '.'))
+							cmtLoanDetaiInfo = reslt.cmtLoanDetailInfo.split('.')[0];
+						else
+							cmtLoanDetaiInfo = reslt.cmtLoanDetailInfo;
+					}
 
-							if (_.isEmpty(rslt)) {
-								let responseUnknow = {
+					// 2.2 Credit card infor
+					if (!_.isEmpty(reslt.outputCreditCardInfo) && _.isEmpty(cmtCreditCard)) {
+						creditCardTotalLimit = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_LMT);
+						creditCardTotalBalance = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_SETL_AMT);
+						creditCardTotalArrears = convertMilionUnit.milionUnit(reslt.outputCreditCardInfo[0].CARD_TOT_ARR_AMT);
+						numberOfCreditCard = convertMilionUnit.convertNumber(reslt.outputCreditCardInfo[0].CARD_CNT);
+						creditCardIssueCompany = reslt.outputCreditCardInfo[0].CARD_ISU_OGZ;
 
-									fiSessionKey: getdataReq.fiSessionKey,
-									fiCode: getdataReq.fiCode,
-									taskCode: getdataReq.taskCode,
-									niceSessionKey: getdataReq.niceSessionKey,
-									inquiryDate: getdataReq.inquiryDate,
-									responseTime: dateutil.timeStamp(),
-									responseCode: responCode.RESCODEEXT.NOTEXIST.code,
-									responseMessage: responCode.RESCODEEXT.NOTEXIST.name
-								}
-								//update INQLog
-								dataInqLogSave = new DataSaveToInqLog(getdataReq, responseUnknow);
-								cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
-									console.log('insert INQLOG:', r);
-								});
-								logger.info(responseUnknow);
-								return res.status(200).json(responseUnknow);
-							} else {
-								const result = rslt[0].SCRP_STAT_CD;
-								let rsp_cd = rslt[0].RSP_CD;
-								let responseMessage, responseCode;
+					}
+					else {
+						if (_.includes(reslt.cmtCreditCard, '.'))
+							cmtCreditCard = reslt.cmtCreditCard.split('.')[0];
+						else
+							cmtCreditCard = reslt.cmtCreditCard;
+					}
 
-								if (!_.isEmpty(rsp_cd)) {
-									_.forEach(responCode.RESCODEEXT, res => {
-										_.forEach(res, (val, key) => {
-											if (_.isEqual(val, rsp_cd)) {
-												console.log('response nice code:', res.code + '-' + res.name);
-												responseMessage = res.name;
-												responseCode = res.code;
-											}
-										});
-									});
-								} else {
-
-									if (_.isEqual(parseInt(result), 20)) {
-										responseMessage = responCode.RESCODEEXT.CICSiteLoginFailure.name;
-										responseCode = responCode.RESCODEEXT.CICSiteLoginFailure.code;
-									} else if (_.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22)) {
-										responseMessage = responCode.RESCODEEXT.CICReportInqFailure.name;
-										responseCode = responCode.RESCODEEXT.CICReportInqFailure.code;
-									} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
-										responseMessage = responCode.RESCODEEXT.CICReportInqFailureTimeout.name;
-										responseCode = responCode.RESCODEEXT.CICReportInqFailureTimeout.code;
-									} else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
-										responseMessage = responCode.RESCODEEXT.INPROCESS.name;
-										responseCode = responCode.RESCODEEXT.INPROCESS.code;
-									} else {
-										responseMessage = responCode.RESCODEEXT.ETCError.name;
-										responseCode = responCode.RESCODEEXT.ETCError.code;
-									}
-								}
-
-								let responseSrapingStatus = {
-									fiSessionKey: getdataReq.fiSessionKey,
-									fiCode: getdataReq.fiCode,
-									taskCode: getdataReq.taskCode,
-									niceSessionKey: getdataReq.niceSessionKey,
-									inquiryDate: getdataReq.inquiryDate,
-									responseTime: dateutil.timeStamp(),
-									responseCode: responseCode,
-									responseMessage: responseMessage,
-									scrapingStatusCode: result
-								}
-								//update INQLog
-								dataInqLogSave = new DataSaveToInqLog(getdataReq, responseSrapingStatus);
-								cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
-									console.log('insert INQLOG:', r);
-								});
-								//Logging response
-								logger.info(responseSrapingStatus);
-
-								return res.status(200).json(responseSrapingStatus);
-							}
-						}).catch(reason => {
-							console.log(reason.toString());
-							logger.error(reason.toString());
-							return res.status(500).json({error: reason.toString()});
+					// 2.3 VAMC Loan infor
+					if (!_.isEmpty(reslt.outputVamcLoan) && _.isEmpty(reslt.cmtVamcLoan)) {
+						reslt.outputVamcLoan.forEach(el => {
+							arrVamcLoanInfo.push(new disposalLoanNode(el));
 						});
 					}
-				}).catch(reason => {
-					console.log(reason.toString());
-					logger.error(reason.toString());
-					return res.status(500).json({error: reason.toString()});
-				});
-			}
+					else {
+						if (_.includes(reslt.cmtVamcLoan, '.'))
+							cmtVmacDisposalLoan = reslt.cmtVamcLoan.split('.')[0];
+						else
+							cmtVmacDisposalLoan = reslt.cmtVamcLoan;
+					}
+
+					// 2.4 Loan 12Month infor
+					if (!_.isEmpty(reslt.outputLoan12MInfo) && _.isEmpty(reslt.cmtLoan12MInfo)) {
+						reslt.outputLoan12MInfo.forEach(el => {
+							arrLoan12MInfo.push(new loan12MInfor(el));
+						});
+					}
+					else {
+						if (_.includes(reslt.cmtLoan12MInfo, '.'))
+							cmtLoan12MInfo = reslt.cmtLoan12MInfo.split('.')[0];
+						else
+							cmtLoan12MInfo = reslt.cmtLoan12MInfo;
+					}
+
+					// 2.5 NPL Loan 5 Year infor
+					if (!_.isEmpty(reslt.outputNPL5YLoan) && _.isEmpty(reslt.cmtNPL5YearLoan)) {
+						reslt.outputNPL5YLoan.forEach(el => {
+							arrNPL5YLoan.push(new npl5YLoan(el));
+						});
+					}
+					else {
+						if (_.includes(reslt.cmtNPL5YearLoan, '.'))
+							cmtNPL5YearLoan = reslt.cmtNPL5YearLoan.split('.')[0];
+						else
+							cmtNPL5YearLoan = reslt.cmtNPL5YearLoan;
+					}
+
+					// 2.6 Card 3 year infor
+					if (!_.isEmpty(reslt.outputCard3year) && _.isEmpty(reslt.cmtCard3Year)) {
+						borrowCreditCardArrear = convertBorrowCreditCard3Years(reslt.outputCard3year[0].CARD_ARR_PSN_YN);
+						creditCardLongestArrearDays = reslt.outputCard3year[0].CARD_ARR_LGST_DAYS;
+						creditCardArrearCount = reslt.outputCard3year[0].CARD_ARR_CNT;
+
+					}
+					else {
+						if (_.includes(reslt.cmtCard3Year, '.'))
+							cmtCard3Year = reslt.cmtCard3Year.split('.')[0];
+						else
+							cmtCard3Year = reslt.cmtCard3Year;
+					}
+
+					// 2.7 Loan 12M Cautios infor
+					if (!_.isEmpty(reslt.outputloan12MCat) && _.isEmpty(reslt.cmtLoan12MCat)) {
+						reslt.outputloan12MCat.forEach(el => {
+							arrLoan12MonCat.push(new loan12MCat(el));
+						});
+					}
+					else {
+						if (_.includes(reslt.cmtLoan12MCat, '.'))
+							cmtLoan12MCat = reslt.cmtLoan12MCat.split('.')[0];
+						else
+							cmtLoan12MCat = reslt.cmtLoan12MCat;
+					}
+
+					// 3.1 Collateral infor
+					if (!_.isEmpty(reslt.outputCollateral)) {
+						gurAmountOfAssetBackedLoan = reslt.outputCollateral[0].AST_SCRT_LOAN_GURT_AMT;
+						numberOfCollateral = reslt.outputCollateral[0].SCRT_AST_CNT;
+						numberOfFiWithCollateral = reslt.outputCollateral[0].SCRT_AST_OGZ_CNT;
+
+					}
+
+					// 3.2 Financial contract
+					if (!_.isEmpty(reslt.outputFinanCialContract) && _.isEmpty(reslt.cmtFinancialContract)) {
+						reslt.outputFinanCialContract.forEach(el => {
+							arrFinancialContract.push(new financialContract(el));
+						});
+					}
+					else {
+						if (_.includes(reslt.cmtFinancialContract, '.'))
+							cmtFinancialContract = reslt.cmtFinancialContract.split('.')[0];
+						else
+							cmtFinancialContract = reslt.cmtFinancialContract;
+					}
+
+					// 3.3 Customer lookup info
+					if (!_.isEmpty(reslt.outputCusLookup)) {
+						reslt.outputCusLookup.forEach(el => {
+							arrCusLookup.push(new cusLookup(el));
+						});
+					}
+					let response = new PreResponse(responCode.RESCODEEXT.NORMAL.name, getdataReq.niceSessionKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
+
+					responseData = new cics11aRSLTRes(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+						, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
+						, arrVamcLoanInfo, cmtVmacDisposalLoan
+						, arrLoan12MInfo, cmtLoan12MInfo
+						, arrNPL5YLoan, cmtNPL5YearLoan
+						, arrLoan12MonCat, cmtLoan12MCat
+						, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
+						, arrFinancialContract, cmtFinancialContract
+						, arrCusLookup
+						, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year);
+
+					// add length response mesaage
+					let lenghResMessage = JSON.stringify({
+						responseData
+					}).length;
+
+					responseData = new cics11aRSLTResLength(getdataReq, response, reslt.outputScrpTranlog[0], reslt.outputCicrptMain[0], arrloanDetailNode, totalFiLoanVND, totalFiLoanUSD, cmtLoanDetaiInfo
+						, creditCardTotalLimit, creditCardTotalBalance, creditCardTotalArrears, numberOfCreditCard, creditCardIssueCompany, cmtCreditCard
+						, arrVamcLoanInfo, cmtVmacDisposalLoan
+						, arrLoan12MInfo, cmtLoan12MInfo
+						, arrNPL5YLoan, cmtNPL5YearLoan
+						, arrLoan12MonCat, cmtLoan12MCat
+						, gurAmountOfAssetBackedLoan, numberOfCollateral, numberOfFiWithCollateral
+						, arrFinancialContract, cmtFinancialContract
+						, arrCusLookup
+						, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year
+						, lenghResMessage, responseData.tnlv000001, responseData.tclv000001, responseData.tflv000001, responseData.tdlv000001, responseData.telv000001, responseData.tlv0000001, responseData.tblv000001, reslt.cicScore[0]);
+
+					// update INQLOG
+					dataInqLogSave = new DataSaveToInqLog(getdataReq, response);
+					cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
+						console.log('insert INQLOG:', r);
+					});
+					//Logging response
+					logger.info(responseData);
+
+					return res.status(200).json(responseData);
+				} else {
+					// select in SCRPLOG check SCRP_STAT_CD
+					cicExternalService.selectScrapingStatusCodeSCRPLOG(getdataReq).then(rslt => {
+
+						if (_.isEmpty(rslt)) {
+							let responseUnknow = {
+
+								fiSessionKey: getdataReq.fiSessionKey,
+								fiCode: getdataReq.fiCode,
+								taskCode: getdataReq.taskCode,
+								niceSessionKey: getdataReq.niceSessionKey,
+								inquiryDate: getdataReq.inquiryDate,
+								responseTime: dateutil.timeStamp(),
+								responseCode: responCode.RESCODEEXT.NOTEXIST.code,
+								responseMessage: responCode.RESCODEEXT.NOTEXIST.name
+							}
+							//update INQLog
+							dataInqLogSave = new DataSaveToInqLog(getdataReq, responseUnknow);
+							cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
+								console.log('insert INQLOG:', r);
+							});
+							logger.info(responseUnknow);
+							return res.status(200).json(responseUnknow);
+						}
+						else {
+							const result = rslt[0].SCRP_STAT_CD;
+							let rsp_cd = rslt[0].RSP_CD;
+							let responseMessage, responseCode;
+
+							if (!_.isEmpty(rsp_cd)) {
+								_.forEach(responCode.RESCODEEXT, res => {
+									_.forEach(res, (val, key) => {
+										if (_.isEqual(val, rsp_cd)) {
+											console.log('response nice code:', res.code + '-' + res.name);
+											responseMessage = res.name;
+											responseCode = res.code;
+										}
+									});
+								});
+							} else {
+
+								if (_.isEqual(parseInt(result), 20)) {
+									responseMessage = responCode.RESCODEEXT.CICSiteLoginFailure.name;
+									responseCode = responCode.RESCODEEXT.CICSiteLoginFailure.code;
+								} else if (_.isEqual(parseInt(result), 21) || _.isEqual(parseInt(result), 22)) {
+									responseMessage = responCode.RESCODEEXT.CICReportInqFailure.name;
+									responseCode = responCode.RESCODEEXT.CICReportInqFailure.code;
+								} else if (_.isEqual(parseInt(result), 23) || _.isEqual(parseInt(result), 24)) {
+									responseMessage = responCode.RESCODEEXT.CICReportInqFailureTimeout.name;
+									responseCode = responCode.RESCODEEXT.CICReportInqFailureTimeout.code;
+								}
+								else if (_.isEqual(parseInt(result), 1) || _.isEqual(parseInt(result), 4)) {
+									responseMessage = responCode.RESCODEEXT.INPROCESS.name;
+									responseCode = responCode.RESCODEEXT.INPROCESS.code;
+								}
+								else {
+									responseMessage = responCode.RESCODEEXT.ETCError.name;
+									responseCode = responCode.RESCODEEXT.ETCError.code;
+								}
+							}
+
+							let responseSrapingStatus = {
+								fiSessionKey: getdataReq.fiSessionKey,
+								fiCode: getdataReq.fiCode,
+								taskCode: getdataReq.taskCode,
+								niceSessionKey: getdataReq.niceSessionKey,
+								inquiryDate: getdataReq.inquiryDate,
+								responseTime: dateutil.timeStamp(),
+								responseCode: responseCode,
+								responseMessage: responseMessage,
+								scrapingStatusCode: result
+							}
+							//update INQLog
+							dataInqLogSave = new DataSaveToInqLog(getdataReq, responseSrapingStatus);
+							cicExternalService.insertDataToINQLOG(dataInqLogSave).then((r) => {
+								console.log('insert INQLOG:', r);
+							});
+							//Logging response
+							logger.info(responseSrapingStatus);
+
+							return res.status(200).json(responseSrapingStatus);
+						}
+					}).catch(reason => {
+						console.log(reason.toString());
+						logger.error(reason.toString());
+						return res.status(500).json({error: reason.toString()});
+					});
+				}
+			}).catch(reason => {
+				console.log(reason.toString());
+				logger.error(reason.toString());
+				return res.status(500).json({error: reason.toString()});
+			});
 		}).catch(reason => {
 			console.log(reason.toString());
 			logger.error(reason.toString());
