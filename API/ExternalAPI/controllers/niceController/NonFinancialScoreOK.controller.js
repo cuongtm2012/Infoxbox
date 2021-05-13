@@ -53,6 +53,8 @@ exports.nonFinancialScoreOk = function (req, res) {
                         responseData = new NFScoreResponseWithoutResult(req.body, preResponse);
                         responseData.nfGrade = rsCheckDuplicate.nfGrade;
                         responseData.cutoffResult = rsCheckDuplicate.cutoffResult;
+                        dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                        cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
                         logger.info(responseData);
                         return res.status(200).json(responseData);
                     } else {
