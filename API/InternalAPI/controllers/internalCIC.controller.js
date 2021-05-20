@@ -266,6 +266,7 @@ const cicS37Service = require('../../ExternalAPI/services/cicInternalS37.service
 const cicDelayReportService = require('../services/cicDelayReport.service');
 
 const calBetweenDate = require('../util/calBetweenDate');
+const dataCreditScoreInfo = require('../domain/creditScoreInfo.save');
 
 exports.internalCICB0003 = function (req, res, next) {
     try {
@@ -344,7 +345,12 @@ exports.internalCICB0003 = function (req, res, next) {
                                     /* 
                                       ** Excute insert
                                     */
-
+                                    // creditScoreInfo
+                                    let creditScoreInfo = list.reportS11A.creditScoreInfo;
+                                    let objectCreditScoreInfo = {};
+                                    if (!_.isEmpty(creditScoreInfo)) {
+                                        objectCreditScoreInfo = new dataCreditScoreInfo(niceSessionKey, creditScoreInfo, 'S11A');
+                                    }
                                     // 2.1.Loan detail infor
                                     let listLoanDetail = list.reportS11A.loanDetailInfo.list;
                                     let bindsLoanDetailInfor = [];
@@ -536,7 +542,7 @@ exports.internalCICB0003 = function (req, res, next) {
                                     ** Insert Scraping service
                                     */
 
-                                    excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, objCollateralInfo, objCard3YearInfo).then(resultMSG => {
+                                    excuteInsert.insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, objCollateralInfo, objCard3YearInfo, objectCreditScoreInfo).then(resultMSG => {
                                         console.log('insert Scraping MSG:', resultMSG);
                                         if (!_.isEmpty(resultMSG)) {
                                             // update complete cic report inquiry status 10

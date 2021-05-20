@@ -6,7 +6,7 @@ const dateutil = require('../util/dateutil');
 
 const _ = require('lodash');
 
-async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, objCollateralInfo, objCard3YearInfo) {
+async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bindlistloan12monInfo, objciccptmain, objCreditcardinfor, bindlistVamcLoanInfo, bindlistloanAtt12monInfo, bindlistCreditContractInfo, bindlistcusLookupInfo, objCollateralInfo, objCard3YearInfo, objectCreditScoreInfo) {
     let connection;
 
     try {
@@ -14,7 +14,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
         connection = await oracledb.getConnection(config.poolAlias);
 
         // result for insert
-        let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo, resultCard3yearInfo;
+        let resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo, resultCard3yearInfo, resultCreditScore;
 
         const sysDtim = dateutil.timeStamp();
         const workID = getIdGetway.getIPGateWay();
@@ -500,7 +500,43 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             );
         }
         console.log("Result ColletaralLoanSecuInfo is:", resultColletaralLoanSecuInfo);
+        // CreditScoreInfo
+        if (!_.isEmpty(objectCreditScoreInfo)) {
+            const sqlInsertCicScore = `INSERT INTO TB_CIC_SCORE  (
+                NICE_SSIN_ID,
+                RPT_NAME,
+                SCORE,
+                GRADE,
+                BASE_DATE,
+                PERCENTILE,
+                SYS_DTIM,
+                WORK_ID)VALUES (
+                 :NICE_SSIN_ID,
+                 :RPT_NAME,
+                 :SCORE,
+                 :GRADE,
+                 :BASE_DATE,
+                 :PERCENTILE,
+                 :SYS_DTIM,
+                 :WORK_ID)`;
 
+            resultCreditScore = await connection.execute(
+                // The statement to execute
+                sqlInsertCicScore,
+                {
+                    NICE_SSIN_ID: { val: objectCreditScoreInfo.NICE_SSIN_ID },
+                    RPT_NAME: { val: objectCreditScoreInfo.RPT_NAME },
+                    SCORE: { val: objectCreditScoreInfo.SCORE },
+                    GRADE: { val: objectCreditScoreInfo.GRADE },
+                    BASE_DATE: { val: objectCreditScoreInfo.BASE_DATE },
+                    PERCENTILE: { val: objectCreditScoreInfo.PERCENTILE },
+                    SYS_DTIM: { val: objectCreditScoreInfo.SYS_DTIM },
+                    WORK_ID: { val: objectCreditScoreInfo.WORK_ID }
+                },
+                { autoCommit: false }
+            );
+        }
+        console.log("insert tb_cic_score::", resultCreditScore);
         // CICRPT main
         if (!_.isEmpty(objciccptmain)) {
             const sqlInsertCICRPTMain = `INSERT INTO TB_CICRPT_MAIN (NICE_SSIN_ID,
@@ -593,7 +629,6 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             );
         }
         console.log("updated cicrpt main updated::", resultCicrptMain);
-
         // Besure alway commit data in case crpt_main null
         let resultFinal = await connection.execute(`select 1 from dual`,
             {},
@@ -603,7 +638,7 @@ async function insertScrapingMSG(bindsLoanDetailInfor, bindlistloan5YearInfo, bi
             });
         console.log("resultFinal: " + resultFinal);
 
-        return { resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo, resultCard3yearInfo };
+        return { resultLoanDetailInfor, resultLoan5Year, resultLoan12MonInfor, resultCicrptMain, resultCreditCardInfor, resultVamcLoanInfo, resultloanAtt12monInfo, resultCreditContractInfo, resultCusLookupInfo, resultColletaralLoanSecuInfo, resultCard3yearInfo, resultCreditScore };
         // return Promise.all(result.rowsAffected);
     } catch (err) {
         console.log(err);

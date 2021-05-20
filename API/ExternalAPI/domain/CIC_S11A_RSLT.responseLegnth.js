@@ -11,7 +11,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     , arrFinancialContract, cmtFinancialContract
     , arrCusLookup
     , borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year
-    , lenghResMessage, tnlv000001, tclv000001, tflv000001, tdlv000001, telv000001, tlv0000001, tblv000001) {
+    , lenghResMessage, tnlv000001, tclv000001, tflv000001, tdlv000001, telv000001, tlv0000001, tblv000001, cicScore) {
 
     const {
         fiSessionKey,
@@ -143,6 +143,11 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     if (_.isEmpty(arrFinancialContract))
         this.commentOnFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
     this.customerInquiryNode = arrCusLookup ? arrCusLookup : '';
-
+    this.creditScoreInfo = {
+        score: cicScore.SCORE,
+        class: cicScore.GRADE,
+        date: cicScore.BASE_DATE,
+        rate: cicScore.PERCENTILE
+    }
 };
 
