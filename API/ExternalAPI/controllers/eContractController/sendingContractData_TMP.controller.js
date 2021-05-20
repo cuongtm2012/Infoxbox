@@ -1,11 +1,11 @@
-const validRequest = require('../../util/validateRequestSendingDataContractFPT');
+const validRequest = require('../../util/validateFTN_SCD_RQST_TMP.request');
 const common_service = require('../../services/common.service');
 const responCode = require('../../../shared/constant/responseCodeExternal');
 const PreResponse = require('../../domain/preResponse.response');
 const DataSaveToInqLog = require('../../domain/data_FptId_Save_To_InqLog.save');
 const cicExternalService = require('../../services/cicExternal.service');
 const logger = require('../../config/logger');
-const sendingDataFPTContractResponse = require('../../domain/sendingContractFPT.response')
+const sendingDataFPTContractResponse = require('../../domain/sendingContractFPT_TMP.response')
 const dateutil = require('../../util/dateutil');
 const util = require('../../util/dateutil');
 const _ = require('lodash');
@@ -13,15 +13,17 @@ const validS11AService = require('../../services/validS11A.service');
 const utilFunction = require('../../../shared/util/util');
 const dataSendingDataFptContractSaveToScrapLog = require('../../domain/dataSendingDataFptContractSaveToScrapLog.save');
 const URI = require('../../../shared/URI');
-const bodyGetAuthEContract = require('../../domain/bodyGetAuthEContract.body');
+const bodyGetAuthEContract = require('../../domain/bodyGetTokenEcontract.body');
 const bodySendInformationEContract = require('../../domain/bodySubmitInformationEContract.body');
 const httpClient = require('../../services/httpClient.service');
+const convertBase64 = require('../../../shared/util/convertBase64ToText');
 const dataSaveToFptContract = require('../../domain/dataSaveToFptContract.save');
-exports.sendingContractData = function (req, res) {
+exports.sendingContractData_TMP = function (req, res) {
     try {
         let rsCheck = validRequest.checkParamRequest(req.body);
         logger.info(req.body);
         let preResponse, responseData, dataInqLogSave;
+        // get password
         common_service.getSequence().then(resSeq => {
             let niceSessionKey = util.timeStamp2() + resSeq[0].SEQ;
             let fullNiceKey = responCode.NiceProductCode.FTN_SCD_RQST.code + niceSessionKey;
@@ -56,7 +58,13 @@ exports.sendingContractData = function (req, res) {
                 cicExternalService.insertDataFPTContractToSCRPLOG(dataInsertToScrapLog).then(
                     result => {
                         //    getAuthAccess
-                        let bodyGetAuth = new bodyGetAuthEContract();
+                        let decryptPW;
+                        let _decryptPW = convertBase64.convertBase64ToText(req.body.loginPw);
+                        if (14 < _decryptPW.length)
+                            decryptPW = _decryptPW.substr(14);
+                        else
+                            decryptPW = _decryptPW;
+                        let bodyGetAuth = new bodyGetAuthEContract(req.body.loginId, decryptPW);
                         httpClient.superagentPost(URI.URL_E_CONTRACT_GET_TOKEN_ACCESS_DEV, bodyGetAuth).then(
                             resultGetAuthAccess => {
                                 if (!_.isEmpty(resultGetAuthAccess.data.access_token)) {
@@ -129,7 +137,8 @@ exports.sendingContractData = function (req, res) {
                                             return res.status(200).json(responseData);
                                         }
                                     })
-                                } else if (resultGetAuthAccess.status === 500) {
+                                }
+                                else if (resultGetAuthAccess.status === 401) {
                                     //    update scraplog & response F070
                                     console.log('errGetAuthAccess: ', resultGetAuthAccess.data);
                                     preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
@@ -151,8 +160,17 @@ exports.sendingContractData = function (req, res) {
                                     return res.status(200).json(responseData);
                                 }
                             }).catch(reason => {
-                                console.log('errGetAuth: ', reason.toString());
-                            if (reason && reason.status === 500) {
+                            console.log('errGetAuth: ', reason.toString());
+                            if (reason && reason.status === 401) {
+                                //    update scraplog & response login fail
+                                preResponse = new PreResponse(responCode.RESCODEEXT.LoginFailure.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.LoginFailure.code);
+                                responseData = new sendingDataFPTContractResponse(req.body, preResponse);
+                                dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
+                                cicExternalService.insertDataToINQLOG(dataInqLogSave).then();
+                                cicExternalService.updateRspCdScrapLogAfterGetResult(fullNiceKey, responCode.RESCODEEXT.LoginFailure.code).then();
+                                logger.info(responseData);
+                                return res.status(200).json(responseData);
+                            } else if (reason && reason.status === 500) {
                                 //    update scraplog & response F070
                                 preResponse = new PreResponse(responCode.RESCODEEXT.ERRCONTRACTDATASENDING.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.ERRCONTRACTDATASENDING.code);
                                 responseData = new sendingDataFPTContractResponse(req.body, preResponse);
