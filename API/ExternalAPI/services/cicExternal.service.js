@@ -500,7 +500,10 @@ async function selectCICS11aRSLT(req) {
                 });
 
             console.log("CicScore rows:", resultCicScore.rows.length);
-            cicScore = resultCicScore.rows;
+            if (resultCicScore.rows[0] !== undefined)
+                cicScore = resultCicScore.rows[0];
+            else
+                cicScore = {};
 
             return {
                 outputScrpTranlog,

@@ -69,9 +69,6 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.totalDebtUsd = TOT_LOAN_USD;
     this.totalBadDebtVnd = TOT_BAD_VND;
     this.totalBadDebtUsd = TOT_BAD_USD;
-    this.totalBadDebtVndOther = TOT_OTR_BAD_VND;
-    this.totalBadDebtUsdOther = TOT_OTR_BAD_USD;
     this.badDebtCredit = CC_BAD;
-    this.vamc = VAMC;
 };
 
