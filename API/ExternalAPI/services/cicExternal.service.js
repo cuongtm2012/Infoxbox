@@ -6,6 +6,7 @@ const niceGoodCode = require('../../shared/util/niceGoodCode');
 const ipGateWay = require('../../shared/util/getIPGateWay');
 const _ = require('lodash');
 const responCode = require('../../shared/constant/responseCodeExternal');
+const moment = require('moment');
 async function insertSCRPLOG(req) {
     let connection;
 
@@ -1952,6 +1953,104 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     }
 }
 
+async function insertDataToFPTeContract(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(config.poolAlias);
+
+        sql = `INSERT INTO TB_FPT_ECONTRACT(NICE_SSIN_ID, ID, CUST_CD, SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :ID, :CUST_CD, :SYS_DTIM)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: {val: req.NICE_SSIN_ID},
+                ID: {val: req.ID},
+                CUST_CD: {val: req.CUST_CD},
+                SYS_DTIM: {val: req.SYS_DTIM}
+            },
+            {autoCommit: true}
+        );
+        console.log("insertDataToFPTeContract:", result.rowsAffected);
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
+async function selectRecordDuplicateIn24h(phoneNumber,nationalId) {
+    let connection;
+
+    try {
+        let timeGetRequest = moment().format('YYYYMMDDHHmmss')
+        let yesterday = moment().subtract(1, 'days').format('YYYYMMDDHHmmss');
+        let objResult = {};
+        let sql, result;
+
+        connection = await oracledb.getConnection(config.poolAlias);
+
+
+        sql = `SELECT a.*
+               FROM tb_ext_score a
+                        INNER JOIN tb_inqlog b on a.tel_no_mobile = b.tel_no_mobile
+               Where a.tel_no_mobile = :phoneNumber
+                 and b.natl_id = :nationalId
+                 and a.score_cd = 'NOK100_001'
+                 and b.rsp_cd = 'P000'
+                 and a.system_dtim BETWEEN (:yesterday) and (:timeGetRequest)
+               order by a.system_dtim DESC
+                   FETCH NEXT 1 ROWS ONLY`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                phoneNumber: { val: phoneNumber },
+                nationalId: { val: nationalId },
+                yesterday: { val: yesterday },
+                timeGetRequest: { val: timeGetRequest }
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT},
+        );
+        console.log(result.rows);
+        if (result.rows[0]) {
+            result.rows.forEach(
+                element => {
+                    objResult.niceSessionKey = element.NICE_SSIN_ID;
+                    objResult.nfGrade = element.GRADE;
+                    objResult.cutoffResult = element.FINAL_APPROVAL;
+                });
+            return objResult;
+        } else {
+            return {}
+        }
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -1984,3 +2083,5 @@ module.exports.insertDataToExtScore = insertDataToExtScore;
 module.exports.updateScrapingTranslog = updateScrapingTranslog;
 module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted;
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
+module.exports.insertDataToFPTeContract = insertDataToFPTeContract;
+module.exports.selectRecordDuplicateIn24h = selectRecordDuplicateIn24h;
