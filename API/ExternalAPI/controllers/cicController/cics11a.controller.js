@@ -367,7 +367,7 @@ exports.cics11aRSLT = function (req, res) {
 						, arrFinancialContract, cmtFinancialContract
 						, arrCusLookup
 						, borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year
-						, lenghResMessage, responseData.tnlv000001, responseData.tclv000001, responseData.tflv000001, responseData.tdlv000001, responseData.telv000001, responseData.tlv0000001, responseData.tblv000001);
+						, lenghResMessage, responseData.tnlv000001, responseData.tclv000001, responseData.tflv000001, responseData.tdlv000001, responseData.telv000001, responseData.tlv0000001, responseData.tblv000001, reslt.cicScore[0]);
 
 					// update INQLOG
 					dataInqLogSave = new DataSaveToInqLog(getdataReq, response);
