@@ -1953,6 +1953,43 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     }
 }
 
+async function insertDataToFPTeContract(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(config.poolAlias);
+
+        sql = `INSERT INTO TB_FPT_ECONTRACT(NICE_SSIN_ID, ID, CUST_CD, SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :ID, :CUST_CD, :SYS_DTIM)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: {val: req.NICE_SSIN_ID},
+                ID: {val: req.ID},
+                CUST_CD: {val: req.CUST_CD},
+                SYS_DTIM: {val: req.SYS_DTIM}
+            },
+            {autoCommit: true}
+        );
+        console.log("insertDataToFPTeContract:", result.rowsAffected);
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 async function selectRecordDuplicateIn24h(phoneNumber,nationalId) {
     let connection;
 
@@ -2046,4 +2083,5 @@ module.exports.insertDataToExtScore = insertDataToExtScore;
 module.exports.updateScrapingTranslog = updateScrapingTranslog;
 module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted;
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
+module.exports.insertDataToFPTeContract = insertDataToFPTeContract;
 module.exports.selectRecordDuplicateIn24h = selectRecordDuplicateIn24h;
