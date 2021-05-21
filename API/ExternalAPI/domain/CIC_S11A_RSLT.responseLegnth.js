@@ -11,7 +11,7 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     , arrFinancialContract, cmtFinancialContract
     , arrCusLookup
     , borrowCreditCardArrear, creditCardLongestArrearDays, creditCardArrearCount, cmtCard3Year
-    , lenghResMessage, tnlv000001, tclv000001, tflv000001, tdlv000001, telv000001, tlv0000001, tblv000001) {
+    , lenghResMessage, tnlv000001, tclv000001, tflv000001, tdlv000001, telv000001, tlv0000001, tblv000001, cicScore) {
 
     const {
         fiSessionKey,
@@ -79,6 +79,10 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     this.nationalId = NATL_ID;
     this.docIdEvidance = OTR_IDEN_EVD;
     this.commentOnLoanInfo = LOAN_CMT;
+    this.creditScore = cicScore.SCORE;
+    this.creditGrade = cicScore.GRADE;
+    this.baseDate = cicScore.BASE_DATE;
+    this.percentileRank = cicScore.PERCENTILE;
     if (_.isEmpty(cmtLoanDetaiInfo)) {
         //add 8 fields 21/05/2020
         this.tlv0000001 = tlv0000001;
@@ -143,6 +147,5 @@ module.exports = function CIC_S11A_RSLTResponse(requestParams, response, outputS
     if (_.isEmpty(arrFinancialContract))
         this.commentOnFinancialContract = cmtFinancialContract ? cmtFinancialContract : '';
     this.customerInquiryNode = arrCusLookup ? arrCusLookup : '';
-
 };
 

@@ -137,10 +137,10 @@ async function selectCICS11aRSLT(req) {
     try {
         let resultScrpTranlog, resultCicrptMain, resultLoanDetailInfo, resultCreditCardInfo, resultVamcLoan,
             resultLoan12MInfo, resultNPL5YLoan, resultLoan12MCat, resultCollateral, resultFinancialContract,
-            resultCusLookup, resultCard3Year;
+            resultCusLookup, resultCard3Year, resultCicScore;
         let outputCicrptMain, outputScrpTranlog, outputLoanDetailinfo, outputCreditCardInfo, outputVamcLoan,
             outputLoan12MInfo, outputNPL5YLoan, outputloan12MCat, outputCollateral, outputFinanCialContract,
-            outputCusLookup, outputCard3year;
+            outputCusLookup, outputCard3year, cicScore;
         var cmtLoanDetailInfo, cmtCreditCard, cmtVamcLoan, cmtLoan12MInfo, cmtNPL5YearLoan, cmtLoan12MCat,
             cmtFinancialContract, cmtCard3Year;
 
@@ -485,7 +485,25 @@ async function selectCICS11aRSLT(req) {
 
             console.log("resultCusLookup rows:", resultCusLookup.rows.length);
             outputCusLookup = resultCusLookup.rows;
+            // get CIC score
+            let sqlGetCicScore = `SELECT * FROM TB_CIC_SCORE T
+                            where T.NICE_SSIN_ID = :niceSessionKey`;
 
+            resultCicScore = await connection.execute(
+                // The statement to execute
+                sqlGetCicScore,
+                {
+                    niceSessionKey: {val: req.niceSessionKey}
+                },
+                {
+                    outFormat: oracledb.OUT_FORMAT_OBJECT
+                });
+
+            console.log("CicScore rows:", resultCicScore.rows.length);
+            if (resultCicScore.rows[0] !== undefined)
+                cicScore = resultCicScore.rows[0];
+            else
+                cicScore = {};
 
             return {
                 outputScrpTranlog,
@@ -507,7 +525,8 @@ async function selectCICS11aRSLT(req) {
                 cmtFinancialContract,
                 outputCusLookup,
                 outputCard3year,
-                cmtCard3Year
+                cmtCard3Year,
+                cicScore
             };
         }
     } catch (err) {
