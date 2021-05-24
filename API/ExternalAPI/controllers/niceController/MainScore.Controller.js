@@ -70,10 +70,9 @@ exports.rcs_M01_RQST = function (req, res) {
                                                 // pre-check vmgIncome request
                                                 cicExternalService.selectRecordVmgIncomeDuplicateIn24h(req.body.natId).then(
                                                     vmgIncome => {
-                                                        if(vmgIncome !== null) {
+                                                        if(vmgIncome.totalIncome) {
                                                             console.log('have vmg duplicate: ', vmgIncome);
-                                                            totalInComeMonth = vmgIncome;
-                                                            bodyRclipsReq = new bodyPostRclips(req.body.natId, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE),totalInComeMonth);
+                                                            bodyRclipsReq = new bodyPostRclips(req.body.natId, fullNiceKey, req.body.mobilePhoneNumber, req.body.natId, '3', '1', resultZaloVmg.vmgScore, resultZaloVmg.vmgGrade, resultZaloVmg.zaloScore, parseFloat(resultCICScore.SCORE), parseFloat(resultCICScore.GRADE), vmgIncome.totalIncome);
                                                             logger.info(bodyRclipsReq);
                                                             //    call Rclips
                                                             httpClient.superagentPost(URI.URL_RCLIPS_DEVELOP, bodyRclipsReq).then(
@@ -82,7 +81,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                                         //    success get data Rclips
                                                                         logger.info(resultRclips.data.listResult);
                                                                         preResponse = new PreResponse(responCode.RESCODEEXT.NORMAL.name, fullNiceKey, dateutil.timeStamp(), responCode.RESCODEEXT.NORMAL.code);
-                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, resultKYC2.data);
+                                                                        responseData = new RCS_M01_RQSTRes_With_Result(req.body, preResponse, resultRclips.data.listResult, vmgIncome);
                                                                         dataInqLogSave = new DataSaveToInqLog(req.body, preResponse);
                                                                         let dataExtScore = new dataMainScoreRclipsSaveToExtScore(fullNiceKey,resultRclips.data.listResult,req.body.mobilePhoneNumber)
                                                                         cicExternalService.insertDataToINQLOG(dataInqLogSave).then().catch();
