@@ -2092,7 +2092,7 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
                  and b.TX_GB_CD = 'RCS_M01_RQST'
                  and b.SYS_DTIM BETWEEN (:yesterday) and (:timeGetRequest)
                order by b.SYS_DTIM DESC
-                   FETCH NEXT 1 ROWS ONLY;`;
+                   FETCH NEXT 1 ROWS ONLY`;
 
         result = await connection.execute(
             // The statement to execute
