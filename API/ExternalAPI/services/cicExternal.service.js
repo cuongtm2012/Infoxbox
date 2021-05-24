@@ -2078,7 +2078,7 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
     try {
         let timeGetRequest = moment().format('YYYYMMDDHHmmss')
         let yesterday = moment().subtract(1, 'days').format('YYYYMMDDHHmmss');
-        let objResult = {};
+        let objResult = {error_code: 20, result: {}, totalIncome: null};
         let sql, result, totalIncome;
 
         connection = await oracledb.getConnection(config.poolAlias);
@@ -2110,17 +2110,20 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
                 element => {
                     console.log(element);
                     if(element.TOTAL_INCOME_3)
-                        totalIncome = parseFloat(element.TOTAL_INCOME_3) / 12;
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_3) / 12;
                     else if(element.TOTAL_INCOME_2)
-                        totalIncome = parseFloat(element.TOTAL_INCOME_2) / 12;
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_2) / 12;
                     else if(element.TOTAL_INCOME_1)
-                        totalIncome = parseFloat(element.TOTAL_INCOME_1) / 12;
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_1) / 12;
                     else
-                        totalIncome = null;
+                        objResult.totalIncome = null;
+                    if (element.INCOME_3) {
+                        objResult.result.income_3 = JSON.parse(element.INCOME_3);
+                    }
                 });
-            return totalIncome;
+            return objResult;
         } else {
-            return null;
+            return {};
         }
     } catch (err) {
         console.log(err);
