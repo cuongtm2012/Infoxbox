@@ -1556,8 +1556,8 @@ async function insertDataToVmgIncome(req) {
         let sql, result;
         connection = await oracledb.getConnection(config.poolAlias);
 
-        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1) 
-        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1)`;
+        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1, SCORE) 
+        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1, :SCORE)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -1570,7 +1570,8 @@ async function insertDataToVmgIncome(req) {
                 INCOME_3: req.INCOME_3,
                 TOTAL_INCOME_3: req.TOTAL_INCOME_3,
                 TOTAL_INCOME_2: req.TOTAL_INCOME_2,
-                TOTAL_INCOME_1: req.TOTAL_INCOME_1
+                TOTAL_INCOME_1: req.TOTAL_INCOME_1,
+                SCORE: req.SCORE
             },
             {autoCommit: true}
         );
