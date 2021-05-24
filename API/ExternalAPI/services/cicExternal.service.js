@@ -2108,6 +2108,7 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
         if (result.rows[0]) {
             result.rows.forEach(
                 element => {
+                    console.log(element);
                     if(element.TOTAL_INCOME_3)
                         totalIncome = parseFloat(element.TOTAL_INCOME_3) / 12;
                     else if(element.TOTAL_INCOME_2)
