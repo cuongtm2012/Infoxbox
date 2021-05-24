@@ -1556,8 +1556,8 @@ async function insertDataToVmgIncome(req) {
         let sql, result;
         connection = await oracledb.getConnection(config.poolAlias);
 
-        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1, SCORE) 
-        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1, :SCORE)`;
+        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1) 
+        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -1570,8 +1570,8 @@ async function insertDataToVmgIncome(req) {
                 INCOME_3: req.INCOME_3,
                 TOTAL_INCOME_3: req.TOTAL_INCOME_3,
                 TOTAL_INCOME_2: req.TOTAL_INCOME_2,
-                TOTAL_INCOME_1: req.TOTAL_INCOME_1,
-                SCORE: req.SCORE
+                TOTAL_INCOME_1: req.TOTAL_INCOME_1
+                // SCORE: req.SCORE
             },
             {autoCommit: true}
         );
@@ -2071,6 +2071,71 @@ async function selectRecordDuplicateIn24h(phoneNumber,nationalId) {
     }
 }
 
+
+async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
+    let connection;
+
+    try {
+        let timeGetRequest = moment().format('YYYYMMDDHHmmss')
+        let yesterday = moment().subtract(1, 'days').format('YYYYMMDDHHmmss');
+        let objResult = {};
+        let sql, result, totalIncome;
+
+        connection = await oracledb.getConnection(config.poolAlias);
+
+
+        sql = `SELECT a.*, b.SYS_DTIM
+               FROM tb_vmg_income a
+                        INNER JOIN tb_inqlog b on a.NICE_SSIN_ID = b.NICE_SSIN_ID
+               Where
+                   b.natl_id = :nationalId
+                 and b.TX_GB_CD = 'RCS_M01_RQST'
+                 and b.SYS_DTIM BETWEEN (:yesterday) and (:timeGetRequest)
+               order by b.SYS_DTIM DESC
+                   FETCH NEXT 1 ROWS ONLY;`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                nationalId: { val: nationalId },
+                yesterday: { val: yesterday },
+                timeGetRequest: { val: timeGetRequest }
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT},
+        );
+        console.log(result.rows);
+        if (result.rows[0]) {
+            result.rows.forEach(
+                element => {
+                    if(element.TOTAL_INCOME_3)
+                        totalIncome = parseFloat(element.TOTAL_INCOME_3) / 12;
+                    else if(element.TOTAL_INCOME_2)
+                        totalIncome = parseFloat(element.TOTAL_INCOME_2) / 12;
+                    else if(element.TOTAL_INCOME_1)
+                        totalIncome = parseFloat(element.TOTAL_INCOME_1) / 12;
+                    else
+                        totalIncome = null;
+                });
+            return totalIncome;
+        } else {
+            return null;
+        }
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -2105,3 +2170,4 @@ module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
 module.exports.insertDataToFPTeContract = insertDataToFPTeContract;
 module.exports.selectRecordDuplicateIn24h = selectRecordDuplicateIn24h;
+module.exports.selectRecordVmgIncomeDuplicateIn24h = selectRecordVmgIncomeDuplicateIn24h;
