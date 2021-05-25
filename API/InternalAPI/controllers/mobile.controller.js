@@ -34,13 +34,13 @@ exports.mobileCicController = function (req, res, next) {
                 logger.debug('Log response parameters from scrapping service B0002');
                 logger.info(body.data.toString());
 
-                if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                if (body.data && body.data.outJson && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
                     return res.status(200).json({ imgBase64, dataStep });
                 }
-                else if (!_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
+                else if (body.data && body.data.outJson && !_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
                     if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && !_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
                         _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
                         console.log(_dataReport);
@@ -161,7 +161,7 @@ exports.mobileCicController = function (req, res, next) {
 
                 return res.status(200).json(body.data);
             }).catch((error) => {
-                console.log("error scraping service A0001~~", error);
+                logger.error("error scraping service A0001~~", error.toString());
                 //Update ScrpModCd 00
                 cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey, res).then(() => {
                     console.log("update SCRP_MOD_CD = 06 ");
@@ -170,7 +170,7 @@ exports.mobileCicController = function (req, res, next) {
             });
 
     } catch (err) {
-        console.log("error internalCICA0001", err);
+        logger.error("error internalCICA0001", err.toString());
         return res.status(500).json({ error: err.toString() });
     }
 }
