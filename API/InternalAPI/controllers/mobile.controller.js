@@ -23,8 +23,8 @@ exports.mobileCicController = function (req, res, next) {
             timeout: 2 * 60 * 1000
         }
         //Logging request
-        logger.debug('Log request parameters send from internal Mobile');
-        logger.info('BodyA0001: ', req.body)
+        logger.info('Log request parameters send from internal Mobile');
+        logger.info(req.body)
 
         axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
