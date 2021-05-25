@@ -100,7 +100,7 @@ exports.cics37Rqst = function (req, res) {
                         logger.info(responseData);
                         return res.status(500).json(responseData);
                     }
-                    if (req.body.fiCode === 'B100000015' || req.body.fiCode === 'FN10000011') {
+                    if (req.body.fiCode === 'B100000015' || req.body.fiCode === 'B100000016') {
                         let fixedRs = {
                             "fiSessionKey": req.body.fiSessionKey,
                             "fiCode": req.body.fiCode,
