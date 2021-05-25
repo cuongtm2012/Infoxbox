@@ -34,13 +34,13 @@ exports.mobileCicController = function (req, res, next) {
                 logger.debug('Log response parameters from scrapping service B0002');
                 logger.info(body.data);
 
-                if (body.data && body.data.outJson && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                if (body.data && body.data.outJson && body.data.outJson.errMsg && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
                     return res.status(200).json({ imgBase64, dataStep });
                 }
-                else if (body.data && body.data.outJson && !_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
+                else if (body.data && body.data.outJson && body.data.outJson.outA0001.errYn && !_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
                     if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && !_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
                         _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
                         console.log(_dataReport);
