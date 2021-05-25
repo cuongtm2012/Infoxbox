@@ -34,7 +34,7 @@ exports.mobileCicController = function (req, res, next) {
                 logger.debug('Log response parameters from scrapping service B0002');
                 logger.info(body.data);
 
-                if (body.data && body.data.outJson && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                if (body.data && body.data.outJson && body.data.outJson.errMsg && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
