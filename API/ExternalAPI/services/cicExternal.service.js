@@ -500,7 +500,10 @@ async function selectCICS11aRSLT(req) {
                 });
 
             console.log("CicScore rows:", resultCicScore.rows.length);
-            cicScore = resultCicScore.rows;
+            if (resultCicScore.rows[0] !== undefined)
+                cicScore = resultCicScore.rows[0];
+            else
+                cicScore = {};
 
             return {
                 outputScrpTranlog,
@@ -1568,6 +1571,7 @@ async function insertDataToVmgIncome(req) {
                 TOTAL_INCOME_3: req.TOTAL_INCOME_3,
                 TOTAL_INCOME_2: req.TOTAL_INCOME_2,
                 TOTAL_INCOME_1: req.TOTAL_INCOME_1
+                // SCORE: req.SCORE
             },
             {autoCommit: true}
         );
@@ -1969,6 +1973,43 @@ async function updateScrpStatCdErrorResponseCodeScraping(niceSessionKey, code, n
     }
 }
 
+async function insertDataToFPTeContract(req) {
+    let connection;
+
+    try {
+        let sql, result;
+        connection = await oracledb.getConnection(config.poolAlias);
+
+        sql = `INSERT INTO TB_FPT_ECONTRACT(NICE_SSIN_ID, ID, CUST_CD, SYS_DTIM) 
+        VALUES (:NICE_SSIN_ID, :ID, :CUST_CD, :SYS_DTIM)`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                NICE_SSIN_ID: {val: req.NICE_SSIN_ID},
+                ID: {val: req.ID},
+                CUST_CD: {val: req.CUST_CD},
+                SYS_DTIM: {val: req.SYS_DTIM}
+            },
+            {autoCommit: true}
+        );
+        console.log("insertDataToFPTeContract:", result.rowsAffected);
+        return result.rowsAffected;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 async function selectRecordDuplicateIn24h(phoneNumber,nationalId) {
     let connection;
 
@@ -2030,32 +2071,66 @@ async function selectRecordDuplicateIn24h(phoneNumber,nationalId) {
     }
 }
 
-async function insertDataToFPTeContract(req) {
+
+async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
     let connection;
 
     try {
-        let sql, result;
+        let timeGetRequest = moment().format('YYYYMMDDHHmmss')
+        let yesterday = moment().subtract(1, 'days').format('YYYYMMDDHHmmss');
+        let objResult = {error_code: 20, result: {}, totalIncome: null};
+        let sql, result, totalIncome;
+
         connection = await oracledb.getConnection(config.poolAlias);
 
-        sql = `INSERT INTO TB_FPT_ECONTRACT(NICE_SSIN_ID, ID, CUST_CD, SYS_DTIM) 
-        VALUES (:NICE_SSIN_ID, :ID, :CUST_CD, :SYS_DTIM)`;
+
+        sql = `SELECT a.*, b.SYS_DTIM
+               FROM tb_vmg_income a
+                        INNER JOIN tb_inqlog b on a.NICE_SSIN_ID = b.NICE_SSIN_ID
+               Where
+                   b.natl_id = :nationalId
+                 and b.TX_GB_CD = 'RCS_M01_RQST'
+                 and b.SYS_DTIM BETWEEN (:yesterday) and (:timeGetRequest)
+               order by b.SYS_DTIM DESC
+                   FETCH NEXT 1 ROWS ONLY`;
 
         result = await connection.execute(
             // The statement to execute
             sql,
             {
-                NICE_SSIN_ID: {val: req.NICE_SSIN_ID},
-                ID: {val: req.ID},
-                CUST_CD: {val: req.CUST_CD},
-                SYS_DTIM: {val: req.SYS_DTIM}
+                nationalId: { val: nationalId },
+                yesterday: { val: yesterday },
+                timeGetRequest: { val: timeGetRequest }
             },
-            {autoCommit: true}
+            {outFormat: oracledb.OUT_FORMAT_OBJECT},
         );
-        console.log("insertDataToFPTeContract:", result.rowsAffected);
-        return result.rowsAffected;
+        console.log(result.rows);
+        if (result.rows[0]) {
+            result.rows.forEach(
+                element => {
+                    console.log(element);
+                    if(element.TOTAL_INCOME_3)
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_3) / 12;
+                    else if(element.TOTAL_INCOME_2)
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_2) / 12;
+                    else if(element.TOTAL_INCOME_1)
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_1) / 12;
+                    else
+                        objResult.totalIncome = null;
+                    if (element.INCOME_3) {
+                        objResult.result.income_3 = JSON.parse(element.INCOME_3);
+                        objResult.result.totalIncome_3 = element.TOTAL_INCOME_3;
+                    }
+                    objResult.result.score = element.SCORE ? element.SCORE : "";
+                });
+            return objResult;
+        } else {
+            return {};
+        }
     } catch (err) {
         console.log(err);
         throw err;
+        // return res.status(400);
     } finally {
         if (connection) {
             try {
@@ -2101,3 +2176,4 @@ module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
 module.exports.insertDataToFPTeContract = insertDataToFPTeContract;
 module.exports.selectRecordDuplicateIn24h = selectRecordDuplicateIn24h;
+module.exports.selectRecordVmgIncomeDuplicateIn24h = selectRecordVmgIncomeDuplicateIn24h;
