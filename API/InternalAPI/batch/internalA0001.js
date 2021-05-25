@@ -18,7 +18,7 @@ module.exports = class internalJob {
             headers: {
                 'Content-Type': 'application/json'
             }
-            , timeout: 60 * 3 * 1000
+            , timeout: 60 * 2 * 1000
         }
 
         cicService.selectExcuteA0001().then(data => {
