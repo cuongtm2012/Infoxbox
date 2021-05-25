@@ -23,7 +23,7 @@ exports.mobileCicController = function (req, res, next) {
             timeout: 2 * 60 * 1000
         }
         //Logging request
-        logger.info('Log request parameters send from internal Mobile');
+        logger.info('Log request parameters request to Scrap');
         logger.info(req.body)
 
         axios.post(URI.cicInternalJson, req.body, config)
@@ -31,7 +31,7 @@ exports.mobileCicController = function (req, res, next) {
                 let _dataReport, dataReportSave;
 
                 //Logging response
-                logger.debug('Log response parameters from scrapping service B0002');
+                logger.debug('Log response from scrapping service B0002');
                 logger.info(body.data);
 
                 if (body.data && body.data.outJson && body.data.outJson.errMsg && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
@@ -40,7 +40,7 @@ exports.mobileCicController = function (req, res, next) {
 
                     return res.status(200).json({ imgBase64, dataStep });
                 }
-                else if (body.data && body.data.outJson && body.data.outJson.outA0001.errYn && !_.isEmpty(body.data.outJson.outA0001) && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
+                else if (body.data && body.data.outJson && body.data.outJson.outA0001 && body.data.outJson.outA0001.errYn && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
                     if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && !_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
                         _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
                         console.log(_dataReport);
@@ -161,7 +161,8 @@ exports.mobileCicController = function (req, res, next) {
 
                 return res.status(200).json(body.data);
             }).catch((error) => {
-                logger.error("error scraping service A0001~~", error);
+                logger.error("error scraping service A0001~~");
+                console.log(error);
                 //Update ScrpModCd 00
                 cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey, res).then(() => {
                     console.log("update SCRP_MOD_CD = 06 ");

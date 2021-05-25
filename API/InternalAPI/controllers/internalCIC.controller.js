@@ -297,7 +297,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 // get nice session key to update scrapping fail status
                 let niceSessionKeyUpdateStatus = req.body.niceSessionKey;
 
-                if (body.data && body.data.outJson && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                if (body.data && body.data.outJson && body.data.outJson.errMsg && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
@@ -305,7 +305,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 }
 
                 // update process status = 10 update process completed
-                else if (body.data && body.data.outJson && body.data.outJson.outB0003.errYn && !_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {
+                else if (body.data && body.data.outJson && !_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn  && body.data.outJson.outB0003.errYn == "N") {
                     //update process status = 10, sucecssful recieve response from scraping service
 
                     if (_.isEmpty(body.data.outJson.outB0003.list)) {
