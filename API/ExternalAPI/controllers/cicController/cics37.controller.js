@@ -100,12 +100,12 @@ exports.cics37Rqst = function (req, res) {
                         logger.info(responseData);
                         return res.status(500).json(responseData);
                     }
-                    if (req.body.fiCode === 'B100000015') {
+                    if (req.body.fiCode === 'B100000015' || req.body.fiCode === 'FN10000011') {
                         let fixedRs = {
                             "fiSessionKey": req.body.fiSessionKey,
                             "fiCode": req.body.fiCode,
                             "taskCode": "CIC_S37_RQST",
-                            "loginId": "",
+                            "loginId": req.body.loginId,
                             "taxCode": "",
                             "natId": "001183002211",
                             "oldNatId": null,
