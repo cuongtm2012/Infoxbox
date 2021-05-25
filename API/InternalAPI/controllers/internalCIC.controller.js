@@ -297,7 +297,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 // get nice session key to update scrapping fail status
                 let niceSessionKeyUpdateStatus = req.body.niceSessionKey;
 
-                if (_.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
+                if (body.data && body.data.outJson && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
                     let imgBase64 = body.data.outJson.step_img;
 
@@ -305,7 +305,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 }
 
                 // update process status = 10 update process completed
-                else if (!_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {
+                else if (body.data && body.data.outJson && !_.isEmpty(body.data.outJson.outB0003) && body.data.outJson.outB0003.errYn == "N") {
                     //update process status = 10, sucecssful recieve response from scraping service
 
                     if (_.isEmpty(body.data.outJson.outB0003.list)) {
@@ -615,7 +615,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 }
 
                 // start B10003
-                else if (!_.isEmpty(body.data.outJson.outB1003) && body.data.outJson.outB1003.errYn == "N" && _.isEmpty(body.data.outJson.outB1003.errMsg)) {
+                else if (body.data && body.data.outJson && !_.isEmpty(body.data.outJson.outB1003) && body.data.outJson.outB1003.errYn == "N" && _.isEmpty(body.data.outJson.outB1003.errMsg)) {
                     let dataB1003 = body.data.outJson.outB1003;
                     // convert nice session key for B1003 process
                     let niceKey = req.body.niceSessionKey[0];
@@ -657,7 +657,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 }
                 // End B1003
 
-                else if (_.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list)) {
+                else if (body.data && body.data.outJson && _.isEqual(body.data.outJson.outB0003.errMsg, 'rowCount = 0') && _.isEmpty(body.data.outJson.outB0003.list)) {
                     //Update ScrpModCd 00
                     cicService.updateCICReportInquiryReadyToRequestScraping(req.body.niceSessionKey).then(() => {
                         console.log(" B0003 rowCount = 0 update SCRP_MOD_CD = 00 ");
@@ -763,7 +763,7 @@ exports.internalCICB0003 = function (req, res, next) {
                 return res.status(200).json(body.data);
 
             }).catch((error) => {
-                console.log("error scraping service B0003~~", error);
+                logger.error("error scraping service B0003~~", error.toString());
                 //Update ScrpModCd 00
                 cicService.updateCICReportInquiryReadyToRequestScraping(req.body.niceSessionKey).then(() => {
                     console.log(" B0003 update SCRP_MOD_CD = 00 ");
@@ -772,7 +772,7 @@ exports.internalCICB0003 = function (req, res, next) {
             });
 
     } catch (err) {
-        console.log("error internalCICB0003", err);
+        logger.error("error internal_CICB0003", err.toString());
         return res.status(500).json({ error: err.toString() });
     }
 };

@@ -1571,6 +1571,7 @@ async function insertDataToVmgIncome(req) {
                 TOTAL_INCOME_3: req.TOTAL_INCOME_3,
                 TOTAL_INCOME_2: req.TOTAL_INCOME_2,
                 TOTAL_INCOME_1: req.TOTAL_INCOME_1
+                // SCORE: req.SCORE
             },
             {autoCommit: true}
         );
@@ -2070,6 +2071,77 @@ async function selectRecordDuplicateIn24h(phoneNumber,nationalId) {
     }
 }
 
+
+async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
+    let connection;
+
+    try {
+        let timeGetRequest = moment().format('YYYYMMDDHHmmss')
+        let yesterday = moment().subtract(1, 'days').format('YYYYMMDDHHmmss');
+        let objResult = {error_code: 20, result: {}, totalIncome: null};
+        let sql, result, totalIncome;
+
+        connection = await oracledb.getConnection(config.poolAlias);
+
+
+        sql = `SELECT a.*, b.SYS_DTIM
+               FROM tb_vmg_income a
+                        INNER JOIN tb_inqlog b on a.NICE_SSIN_ID = b.NICE_SSIN_ID
+               Where
+                   b.natl_id = :nationalId
+                 and b.TX_GB_CD = 'RCS_M01_RQST'
+                 and b.SYS_DTIM BETWEEN (:yesterday) and (:timeGetRequest)
+               order by b.SYS_DTIM DESC
+                   FETCH NEXT 1 ROWS ONLY`;
+
+        result = await connection.execute(
+            // The statement to execute
+            sql,
+            {
+                nationalId: { val: nationalId },
+                yesterday: { val: yesterday },
+                timeGetRequest: { val: timeGetRequest }
+            },
+            {outFormat: oracledb.OUT_FORMAT_OBJECT},
+        );
+        console.log(result.rows);
+        if (result.rows[0]) {
+            result.rows.forEach(
+                element => {
+                    console.log(element);
+                    if(element.TOTAL_INCOME_3)
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_3) / 12;
+                    else if(element.TOTAL_INCOME_2)
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_2) / 12;
+                    else if(element.TOTAL_INCOME_1)
+                        objResult.totalIncome = parseFloat(element.TOTAL_INCOME_1) / 12;
+                    else
+                        objResult.totalIncome = null;
+                    if (element.INCOME_3) {
+                        objResult.result.income_3 = JSON.parse(element.INCOME_3);
+                        objResult.result.totalIncome_3 = element.TOTAL_INCOME_3;
+                    }
+                    objResult.result.score = element.SCORE ? element.SCORE : "";
+                });
+            return objResult;
+        } else {
+            return {};
+        }
+    } catch (err) {
+        console.log(err);
+        throw err;
+        // return res.status(400);
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+}
+
 module.exports.insertSCRPLOG = insertSCRPLOG;
 module.exports.insertINQLOG = insertINQLOG;
 module.exports.selectCICS11aRSLT = selectCICS11aRSLT;
@@ -2104,3 +2176,4 @@ module.exports.updateCICReportInquiryCompleted = updateCICReportInquiryCompleted
 module.exports.updateScrpStatCdErrorResponseCodeScraping = updateScrpStatCdErrorResponseCodeScraping;
 module.exports.insertDataToFPTeContract = insertDataToFPTeContract;
 module.exports.selectRecordDuplicateIn24h = selectRecordDuplicateIn24h;
+module.exports.selectRecordVmgIncomeDuplicateIn24h = selectRecordVmgIncomeDuplicateIn24h;
