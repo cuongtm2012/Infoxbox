@@ -24,15 +24,15 @@ exports.mobileCicController = function (req, res, next) {
         }
         //Logging request
         logger.debug('Log request parameters send from internal Mobile');
-        logger.info(req.body);
+        logger.info(JSON.parse(req.body));
 
-        axios.post(URI.cicInternalJson, req.body, config)
+        axios.post(URI.cicInternalJson, JSON.parse(req.body), config)
             .then((body) => {
                 let _dataReport, dataReportSave;
 
                 //Logging response
                 logger.debug('Log response parameters from scrapping service B0002');
-                logger.info(body.data.toString());
+                logger.info(body.data);
 
                 if (body.data && body.data.outJson && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
                     let dataStep = body.data.outJson.step_data;
