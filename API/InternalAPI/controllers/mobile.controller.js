@@ -20,7 +20,7 @@ exports.mobileCicController = function (req, res, next) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 1 * 60 * 1000
+            timeout: 2 * 60 * 1000
         }
         //Logging request
         logger.debug('Log request parameters send from internal Mobile');
