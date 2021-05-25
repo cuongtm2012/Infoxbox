@@ -97,7 +97,7 @@ exports.mobileCicController = function (req, res, next) {
                 }
                 else {
                     // Log in error
-                    if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
+                    if (body.data.outJson && body.data.outJson.errMsg && utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeLoginFailure, body.data.outJson.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeLoginFailure.LoginFail1.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.LoginInError.code, responCode.RESCODEEXT.CICMobileAppLoginFailure.code).then(rslt => {
                                 if (1 <= rslt) {
@@ -126,7 +126,7 @@ exports.mobileCicController = function (req, res, next) {
                             });
                         }
 
-                    } else if (utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicMobilerror, body.data.outJson.outA0001.errMsg)) {
+                    } else if (body.data.outJson && body.data.outJson.outA0001 && body.data.outJson.outA0001.errMsg && utilFunction.checkStatusCodeScraping(responCode.ScrappingResponseCodeCicMobilerror, body.data.outJson.outA0001.errMsg)) {
                         if (0 <= _.indexOf([responCode.ScrappingResponseCodeCicMobilerror.CicIdINQError999.code], utilFunction.getStatusScrappingCode(body.data.outJson.errMsg))) {
                             cicService.updateScrpStatCdErrorResponseCodeScraping(req.body.niceSessionKey, responCode.ScrapingStatusCode.CicReportResultInqError.code, responCode.RESCODEEXT.ETCError.code).then(rslt => {
                                 if (1 <= rslt) {
