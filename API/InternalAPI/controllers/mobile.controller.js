@@ -24,10 +24,9 @@ exports.mobileCicController = function (req, res, next) {
         }
         //Logging request
         logger.debug('Log request parameters send from internal Mobile');
-        let bodyParser = JSON.parse(req.body);
+        logger.info('BodyA0001: ', req.body)
 
-        logger.info('BodyA0001: ', bodyParser)
-        axios.post(URI.cicInternalJson, bodyParser, config)
+        axios.post(URI.cicInternalJson, req.body, config)
             .then((body) => {
                 let _dataReport, dataReportSave;
 
