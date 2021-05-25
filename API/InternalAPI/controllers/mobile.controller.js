@@ -161,7 +161,7 @@ exports.mobileCicController = function (req, res, next) {
 
                 return res.status(200).json(body.data);
             }).catch((error) => {
-                logger.error("error scraping service A0001~~", error.toString());
+                logger.error("error scraping service A0001~~", error);
                 //Update ScrpModCd 00
                 cicMobileService.updateScrpModCdTryCntHasNoResponseFromScraping06(req.body.niceSessionKey, res).then(() => {
                     console.log("update SCRP_MOD_CD = 06 ");
@@ -170,7 +170,7 @@ exports.mobileCicController = function (req, res, next) {
             });
 
     } catch (err) {
-        logger.error("error internalCICA0001", err.toString());
+        logger.error("error internalCICA0001", err);
         return res.status(500).json({ error: err.toString() });
     }
 }
