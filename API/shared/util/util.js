@@ -3,7 +3,8 @@ const validation = require('./validation');
 module.exports = {
     checkStatusCodeScraping: function (checkedObject, msg) {
         let result = false;
-
+        if (msg === undefined || msg === null || msg === "")
+            return result;
         for (var i in checkedObject) {
             if (msg.split(']')[0].split('[')[1] === checkedObject[i].code) {
                 result = true;

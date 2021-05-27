@@ -1556,8 +1556,8 @@ async function insertDataToVmgIncome(req) {
         let sql, result;
         connection = await oracledb.getConnection(config.poolAlias);
 
-        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1) 
-        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1)`;
+        sql = `INSERT INTO TB_VMG_INCOME(NICE_SSIN_ID, REQ_ID, INCOME_1, INCOME_2, INCOME_3, TOTAL_INCOME_3, TOTAL_INCOME_2, TOTAL_INCOME_1, SCORE) 
+        VALUES (:NICE_SSIN_ID, :REQ_ID, :INCOME_1, :INCOME_2, :INCOME_3, :TOTAL_INCOME_3, :TOTAL_INCOME_2, :TOTAL_INCOME_1, :SCORE)`;
 
         result = await connection.execute(
             // The statement to execute
@@ -1570,8 +1570,8 @@ async function insertDataToVmgIncome(req) {
                 INCOME_3: req.INCOME_3,
                 TOTAL_INCOME_3: req.TOTAL_INCOME_3,
                 TOTAL_INCOME_2: req.TOTAL_INCOME_2,
-                TOTAL_INCOME_1: req.TOTAL_INCOME_1
-                // SCORE: req.SCORE
+                TOTAL_INCOME_1: req.TOTAL_INCOME_1,
+                SCORE: req.SCORE
             },
             {autoCommit: true}
         );
@@ -2079,7 +2079,7 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
         let timeGetRequest = moment().format('YYYYMMDDHHmmss')
         let yesterday = moment().subtract(1, 'days').format('YYYYMMDDHHmmss');
         let objResult = {error_code: 20, result: {}, totalIncome: null};
-        let sql, result, totalIncome;
+        let sql, result;
 
         connection = await oracledb.getConnection(config.poolAlias);
 
@@ -2121,7 +2121,7 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
                         objResult.result.income_3 = JSON.parse(element.INCOME_3);
                         objResult.result.totalIncome_3 = element.TOTAL_INCOME_3;
                     }
-                    objResult.result.score = element.SCORE ? element.SCORE : "";
+                    objResult.score = element.SCORE ? element.SCORE : "";
                 });
             return objResult;
         } else {
