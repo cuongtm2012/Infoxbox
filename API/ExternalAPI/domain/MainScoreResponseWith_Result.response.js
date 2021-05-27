@@ -41,7 +41,7 @@ module.exports = function mainScoreResponseWithResult(RCS_M01_RQSTRequest, preRe
     if ((resultVmgK2.error_code === 20 || resultVmgK2.error_code === 0) && resultVmgK2.result) {
         this.baseYear1 = resultVmgK2.result.income_3 ? resultVmgK2.result.income_3[0].year.toString() : "";
         this.totalIncome1 = resultVmgK2.result.totalIncome_3 ? resultVmgK2.result.totalIncome_3 : "";
-        this.incomeScore = resultVmgK2.result.score ? resultVmgK2.result.score : "";
+        this.incomeScore = resultVmgK2.score ? resultVmgK2.score : "";
     } else {
         this.baseYear1 = "";
         this.totalIncome1 = "";

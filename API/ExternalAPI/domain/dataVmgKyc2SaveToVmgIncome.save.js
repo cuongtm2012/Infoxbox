@@ -7,5 +7,5 @@ module.exports = function dataVmgKyc2SaveToVmgIncome(niceSessionKey, resultKyc2)
     this.TOTAL_INCOME_3 = resultKyc2.result.totalIncome_3;
     this.TOTAL_INCOME_2 = resultKyc2.result.totalIncome_2;
     this.TOTAL_INCOME_1 = resultKyc2.result.totalIncome_1;
-    // this.SCORE = resultKyc2.result.score;
+    this.SCORE = resultKyc2.score;
 }
