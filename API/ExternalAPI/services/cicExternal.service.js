@@ -2121,7 +2121,7 @@ async function selectRecordVmgIncomeDuplicateIn24h(nationalId) {
                         objResult.result.income_3 = JSON.parse(element.INCOME_3);
                         objResult.result.totalIncome_3 = element.TOTAL_INCOME_3;
                     }
-                    objResult.score = element.SCORE ? parseInt(element.SCORE) : "";
+                    objResult.score = element.SCORE ? element.SCORE : "";
                 });
             return objResult;
         } else {
