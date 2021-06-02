@@ -32,6 +32,7 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
         TOT_OTR_BAD_USD,
         CC_BAD,
         VAMC,
+        PERCENTILE
     } = dataRes;
 
     const {
@@ -63,12 +64,13 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.creditScore = SCORE
     this.creditGrade = GRADE;
     this.baseDate = util.convertDateType(BASE_DATE);
-    this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
+    this.percentileRank = PERCENTILE;
     this.relatedFiName = REL_OGZ_LIST;
     this.totalDebtVnd = TOT_LOAN_VND;
     this.totalDebtUsd = TOT_LOAN_USD;
     this.totalBadDebtVnd = TOT_BAD_VND;
     this.totalBadDebtUsd = TOT_BAD_USD;
+    this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
     this.badDebtCredit = CC_BAD;
 };
 

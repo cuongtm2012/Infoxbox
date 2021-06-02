@@ -6,6 +6,7 @@ const cicService = require('../services/cicInternal.service');
 const cicServiceRes = require('../services/cicInternalRes.service');
 const cicTransA001Save = require('../domain/cicTransA0001.save');
 const CicA0001Save = require('../domain/cicA0001.save');
+const CicA0001SaveV2_0 = require('../domain/cicA0001v2.save');
 const utilFunction = require('../../shared/util/util');
 const responCode = require('../../shared/constant/responseCodeExternal');
 const io = require('socket.io-client');
@@ -31,7 +32,7 @@ exports.mobileCicController = function (req, res, next) {
                 let _dataReport, dataReportSave;
 
                 //Logging response
-                logger.debug('Log response from scrapping service B0002');
+                logger.debug('Log response from scrapping service');
                 logger.info(body.data);
 
                 if (body.data && body.data.outJson && body.data.outJson.errMsg && _.isEqual('input captcha image', body.data.outJson.errMsg.toLowerCase())) {
@@ -41,11 +42,13 @@ exports.mobileCicController = function (req, res, next) {
                     return res.status(200).json({ imgBase64, dataStep });
                 }
                 else if (body.data && body.data.outJson && body.data.outJson.outA0001 && body.data.outJson.outA0001.errYn && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
-                    if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && !_.isEmpty(body.data.outJson.outA0001.list[0].dataReport)) {
-                        _dataReport = JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
-                        console.log(_dataReport);
+                    if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && (!_.isEmpty(body.data.outJson.outA0001.list[0].dataReport) || !_.isEmpty(body.data.outJson.outA0001.list[0].dataReportNew))) {
+                        _dataReport = body.data.outJson.outA0001.list[0].dataReportNew ? JSON.parse(body.data.outJson.outA0001.list[0].dataReportNew) : JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
                         logger.info(_dataReport);
-                        dataReportSave = new CicA0001Save(_dataReport, req.body);
+                        if (body.data.outJson.outA0001.list[0].dataReportNew)
+                            dataReportSave = new CicA0001SaveV2_0(_dataReport, req.body);
+                        else
+                            dataReportSave = new CicA0001Save(_dataReport, req.body);
                         logger.info(dataReportSave);
                         cicMobileService.insertMobileReportA0001(dataReportSave).then(rowInsert => {
                             if (1 < rowInsert) {
