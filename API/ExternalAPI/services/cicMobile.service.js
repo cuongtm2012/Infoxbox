@@ -108,7 +108,7 @@ async function selectCicMobileDetailReport(req) {
             _inquiryDate = req.inquiryDate;
 
         let sql = `SELECT a.S_REQ_STATUS, b.SCRP_STAT_CD, b.INQ_DTIM , b.SYS_DTIM, c.PSN_NM,c.BIRTH_YMD,c.CIC_ID,c.PSN_ADDR,c.NATL_ID, c.TEL_NO_MOBILE
-                            , d.SCORE, d.GRADE, d.BASE_DATE, d.CC_BAL, d.REL_OGZ_LIST, d.TOT_LOAN_VND, d.TOT_LOAN_USD, d.TOT_BAD_VND, d.TOT_BAD_USD, d.TOT_OTR_BAD_VND, d.TOT_OTR_BAD_USD, d.CC_BAD, d.VAMC
+                            , d.SCORE, d.GRADE, d.BASE_DATE, d.CC_BAL, d.REL_OGZ_LIST, d.TOT_LOAN_VND, d.TOT_LOAN_USD, d.TOT_BAD_VND, d.TOT_BAD_USD, d.TOT_OTR_BAD_VND, d.TOT_OTR_BAD_USD, d.CC_BAD, d.VAMC, d.PERCENTILE
                        FROM TB_SCRP_TRLOG a 
                        inner join tb_scrplog b on  a.nice_ssin_id = b.nice_ssin_id
                        inner join tb_cicrpt_main c on b.nice_ssin_id = c.nice_ssin_id
