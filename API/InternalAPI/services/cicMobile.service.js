@@ -65,7 +65,8 @@ async function insertMobileReportA0001(req) {
             TOT_OTR_BAD_VND,
             TOT_OTR_BAD_USD,
             CC_BAD,
-            VAMC) VALUES (
+            VAMC,
+            PERCENTILE) VALUES (
                 :NICE_SSIN_ID,
                 :SCORE,
                 :GRADE,
@@ -79,7 +80,8 @@ async function insertMobileReportA0001(req) {
                 :TOT_OTR_BAD_VND,
                 :TOT_OTR_BAD_USD,
                 :CC_BAD,
-                :VAMC)`;
+                :VAMC,
+                :PERCENTILE)`;
 
         resultMrpt = await connection.execute(
             // The statement to execute
@@ -98,7 +100,8 @@ async function insertMobileReportA0001(req) {
                 TOT_OTR_BAD_VND: { val: req.totalBadDebtVndOther },
                 TOT_OTR_BAD_USD: { val: req.totalBadDebtUsdOther },
                 CC_BAD: { val: req.badDebtCredit },
-                VAMC: { val: req.vamc }
+                VAMC: { val: req.vamc },
+                PERCENTILE: { val: req.percentile }
             },
             { autoCommit: true }
         );

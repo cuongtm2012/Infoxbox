@@ -11,16 +11,9 @@ module.exports = function (params, request) {
         point,
         level,
         scoredDate,
-        debtCredit,
-        banks,
-        totalDebtVnd,
-        totalDebtUsd,
-        totalBadDebtVnd,
-        totalBadDebtUsd,
-        totalBadDebtVndOther,
-        totalBadDebtUsdOther,
-        badDebtCredit,
         vamc,
+        detailKhaiThacDTOS,
+        ratings
     } = params;
 
     const {
@@ -28,6 +21,7 @@ module.exports = function (params, request) {
         niceSessionKey
     } = request;
 
+    this.niceSessionKey = niceSessionKey;
     this.name = fullName ? fullName : null;
     this.dateOfBirth = dateOfBirth ? convertDate(dateOfBirth) : null;
     this.cicId = cicCode ? cicCode : null;
@@ -37,19 +31,18 @@ module.exports = function (params, request) {
     this.creditScore = point ? point : null;
     this.creditGrade = level ? level : null;
     this.baseDate = scoredDate ? convertDate(scoredDate) : null;
-    this.creditCardBalance = debtCredit ? debtCredit : null;
-    this.relatedFiName = banks ? banks : null;
+    this.relatedFiName = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].tenTCTD : null;
     this.inquiryDate = inquiryDate ? inquiryDate : null;
-    this.niceSessionKey = niceSessionKey;
-    this.totalDebtVnd = totalDebtVnd ? totalDebtVnd : null;
-    this.totalDebtUsd = totalDebtUsd ? totalDebtUsd : null;
-    this.totalBadDebtVnd = totalBadDebtVnd ? totalBadDebtVnd : null;
-    this.totalBadDebtUsd = totalBadDebtUsd ? totalBadDebtUsd : null;
-    this.totalBadDebtVndOther = totalBadDebtVndOther ? totalBadDebtVndOther : null;
-    this.totalBadDebtUsdOther = totalBadDebtUsdOther ? totalBadDebtUsdOther : null;
-    this.badDebtCredit = badDebtCredit ? badDebtCredit : null;
+    this.totalDebtVnd = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].tongDuNoVnd : null;
+    this.totalDebtUsd = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].tongDuNoUsd : null;
+    this.totalBadDebtVnd = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].noXauVnd : null;
+    this.totalBadDebtUsd = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].noXauUsd : null;
+    this.totalBadDebtVndOther = null;
+    this.totalBadDebtUsdOther = null;
+    this.creditCardBalance = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].duNoThe : null;
+    this.badDebtCredit = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].duNoTheChamtt : null;
     this.vamc = vamc ? vamc : null;
-    this.percentile =  null;
+    this.percentile = ratings ? ratings : null;
 }
 
 function convertDate(date) {
