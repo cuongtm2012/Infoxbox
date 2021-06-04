@@ -130,6 +130,7 @@ exports.rcs_M01_RQST = function (req, res) {
                                                             httpClient.superagentPost(URI.URL_VMG_DEV, bodyVmgKyc2).then(
                                                                 resultKYC2 => {
                                                                     if (resultKYC2.data.error_code.toString()) {
+                                                                        logger.info(resultKYC2.data);
                                                                         if ((resultKYC2.data.error_code === 0 || resultKYC2.data.error_code === 20) && resultKYC2.data.result) {
                                                                             // store data KYC2 to DB
                                                                             let dataSaveToVmgIncome = new dataVmgKyc2SaveToVmgIncome(fullNiceKey, resultKYC2.data);
