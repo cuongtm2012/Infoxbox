@@ -12,6 +12,7 @@ module.exports = function (params, request) {
         level,
         scoredDate,
         vamc,
+        debtCredit,
         detailKhaiThacDTOS,
         ratings
     } = params;
@@ -39,7 +40,7 @@ module.exports = function (params, request) {
     this.totalBadDebtUsd = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].noXauUsd : null;
     this.totalBadDebtVndOther = null;
     this.totalBadDebtUsdOther = null;
-    this.creditCardBalance = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].duNoThe : null;
+    this.creditCardBalance = debtCredit ? debtCredit : null;
     this.badDebtCredit = detailKhaiThacDTOS[0] ? detailKhaiThacDTOS[0].duNoTheChamtt : null;
     this.vamc = vamc ? vamc : null;
     this.percentile = ratings ? ratings : null;
