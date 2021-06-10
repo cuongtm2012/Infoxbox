@@ -34,6 +34,7 @@ module.exports = class internalJob {
 
                 data.forEach(element => {
                     const listNiceSessionKey = [];
+                    console.log(element);
                     listNiceSessionKey.push(element.NICE_SSIN_ID);
 
                     let defaultValue = defaultParams.defaultParams('', '', '', '', '');
