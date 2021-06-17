@@ -1,60 +1,6 @@
 const _ = require('lodash');
 
 module.exports = function (params, request) {
-    params = {
-        "userType": "3",
-        "dateProvide": "",
-        "dateOfBirth": "01/07/1999",
-        "identification": "272668558",
-        "point": "487",
-        "level": "7",
-        "scoredDate": "21/05/2021",
-        "classification": "S03",
-        "ratings": "8",
-        "fullName": "nguyễn huy thịnh",
-        "cicCode": "7532681720",
-        "address": "AN BINH TRUNG HOA TRANG BOM DONG NAI, XÃ TRUNG HOÀ, HUYỆN TRẢNG BOM, TỈNH ĐỒNG NAI",
-        "phoneNumber": "0944216427",
-        "debtCredit": "19",
-        "badDebtCredit": "0",
-        "type": "1",
-        "detailKhaiThacDTOS": [
-            {
-                "code": "7532681720",
-                "tenTCTD": "Ngân hàng TMCP Phát triển thành phố Hồ Chí Minh - Chi nhánh Đồng Nai",
-                "maTCTD": "75321001",
-                "ngayBaoCaoGanNhat": "10/05/2021",
-                "tongDuNoVnd": "20",
-                "tongDuNoUsd": "10",
-                "noXauVnd": "2",
-                "noXauUsd": "20",
-                "duNoThe": "20",
-                "duNoTheChamtt": "11",
-                "index": "0",
-                "type": "0"
-            },
-            {
-                "code": "7532681720",
-                "tenTCTD": "Công ty Tài chính Cổ phần Tín Việt",
-                "maTCTD": "01828001",
-                "ngayBaoCaoGanNhat": "30/04/2021",
-                "tongDuNoVnd": "20",
-                "tongDuNoUsd": "11",
-                "noXauVnd": "12",
-                "noXauUsd": "13",
-                "duNoThe": "19",
-                "duNoTheChamtt": "",
-                "index": "1",
-                "type": "0"
-            },
-            {
-                "code": "7532681720",
-                "index": "1",
-                "trangThaiTS": "Không có",
-                "type": "2"
-            }
-        ]
-    }
     const {
         fullName,
         dateOfBirth,
