@@ -12,7 +12,6 @@ module.exports = function (params, request) {
         level,
         scoredDate,
         vamc,
-        debtCredit,
         detailKhaiThacDTOS,
         ratings
     } = params;
@@ -21,7 +20,26 @@ module.exports = function (params, request) {
         inquiryDate,
         niceSessionKey
     } = request;
-
+    let relatedFiName = '', totalDebtVnd = 0, totalDebtUsd = 0,
+        totalBadDebtVnd = 0, totalBadDebtUsd = 0, creditCardBalance = 0, badDebtCredit = 0;
+    if (detailKhaiThacDTOS[0]) {
+        for (const element of detailKhaiThacDTOS) {
+            if(element.tenTCTD)
+                relatedFiName += element.tenTCTD + ', ';
+            if (element.tongDuNoVnd)
+                totalDebtVnd += parseFloat(element.tongDuNoVnd);
+            if (element.tongDuNoUsd)
+                totalDebtUsd += parseFloat(element.tongDuNoUsd);
+            if (element.noXauVnd)
+                totalBadDebtVnd += parseFloat(element.noXauVnd);
+            if (element.noXauUsd)
+                totalBadDebtUsd += parseFloat(element.noXauUsd);
+            if (element.duNoThe)
+                creditCardBalance += parseFloat(element.duNoThe);
+            if (element.duNoTheChamtt)
+                badDebtCredit += parseFloat(element.duNoTheChamtt);
+        }
+    }
     this.niceSessionKey = niceSessionKey;
     this.name = fullName ? fullName : null;
     this.dateOfBirth = dateOfBirth ? convertDate(dateOfBirth) : null;
@@ -32,16 +50,16 @@ module.exports = function (params, request) {
     this.creditScore = point ? point : null;
     this.creditGrade = level ? level : null;
     this.baseDate = scoredDate ? convertDate(scoredDate) : null;
-    this.relatedFiName = detailKhaiThacDTOS[0] && detailKhaiThacDTOS[0].tenTCTD ? detailKhaiThacDTOS[0].tenTCTD : null;
+    this.relatedFiName = relatedFiName;
     this.inquiryDate = inquiryDate ? inquiryDate : null;
-    this.totalDebtVnd = detailKhaiThacDTOS[0] && detailKhaiThacDTOS[0].tongDuNoVnd ? detailKhaiThacDTOS[0].tongDuNoVnd : null;
-    this.totalDebtUsd = detailKhaiThacDTOS[0] && detailKhaiThacDTOS[0].tongDuNoUsd ? detailKhaiThacDTOS[0].tongDuNoUsd : null;
-    this.totalBadDebtVnd = detailKhaiThacDTOS[0] && detailKhaiThacDTOS[0].noXauVnd ? detailKhaiThacDTOS[0].noXauVnd : null;
-    this.totalBadDebtUsd = detailKhaiThacDTOS[0] && detailKhaiThacDTOS[0].noXauUsd ? detailKhaiThacDTOS[0].noXauUsd : null;
+    this.totalDebtVnd = totalDebtVnd;
+    this.totalDebtUsd = totalDebtUsd;
+    this.totalBadDebtVnd = totalBadDebtVnd;
+    this.totalBadDebtUsd = totalBadDebtUsd;
     this.totalBadDebtVndOther = null;
     this.totalBadDebtUsdOther = null;
-    this.creditCardBalance = debtCredit ? debtCredit : null;
-    this.badDebtCredit = detailKhaiThacDTOS[0] && detailKhaiThacDTOS[0].duNoTheChamtt ? detailKhaiThacDTOS[0].duNoTheChamtt : null;
+    this.creditCardBalance = creditCardBalance;
+    this.badDebtCredit = badDebtCredit;
     this.vamc = vamc ? vamc : null;
     this.percentile = ratings ? ratings : null;
 }

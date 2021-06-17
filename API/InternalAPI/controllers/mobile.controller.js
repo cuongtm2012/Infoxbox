@@ -42,6 +42,7 @@ exports.mobileCicController = function (req, res, next) {
                     return res.status(200).json({ imgBase64, dataStep });
                 }
                 else if (body.data && body.data.outJson && body.data.outJson.outA0001 && body.data.outJson.outA0001.errYn && _.isEqual('N', (body.data.outJson.outA0001.errYn))) {
+                    console.log('result A0001 Mobile report :', body.data.outJson.outA0001.list)
                     if (!_.isEmpty(body.data.outJson.outA0001.list[0]) && (!_.isEmpty(body.data.outJson.outA0001.list[0].dataReport) || !_.isEmpty(body.data.outJson.outA0001.list[0].dataReportNew))) {
                         _dataReport = body.data.outJson.outA0001.list[0].dataReportNew ? JSON.parse(body.data.outJson.outA0001.list[0].dataReportNew) : JSON.parse(body.data.outJson.outA0001.list[0].dataReport);
                         logger.info(_dataReport);
