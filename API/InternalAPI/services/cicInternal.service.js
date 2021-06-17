@@ -647,7 +647,8 @@ async function selectExcuteA0001() {
                 and a.GDS_CD = 'S1003'
                 and a.AGR_FG = 'Y'
                 and a.LOGIN_PW is not null
-                and ROWNUM <= 20
+                and a.LOGIN_ID is not null
+                and ROWNUM = 1
             ORDER BY a.SYS_DTIM ASC`;
         // and (round((to_number(to_char(to_date(substr(:currentTimeStamp,9,14), 'hh24:mi:ss'),'sssss'))- to_number(to_char(to_date(substr(a.sys_dtim,9,14), 'hh24:mi:ss'),'sssss')))/60,0)) <= 30 
 
