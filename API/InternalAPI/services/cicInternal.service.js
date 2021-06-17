@@ -237,7 +237,7 @@ async function updateScrapingTargetRepostNotExist(req) {
     }
 }
 
-async function updateScrpModCdPreRequestToScraping(req) {
+async function updateScrpModCdPreRequestToScraping(NICE_SSIN_ID) {
     let connection;
 
     try {
@@ -248,12 +248,14 @@ async function updateScrpModCdPreRequestToScraping(req) {
 
             sql = `UPDATE TB_SCRPLOG
                 SET SCRP_MOD_CD  = '01'
-                WHERE NICE_SSIN_ID in (${req.map((name, index) => `'${name}'`).join(", ")})`;
+                WHERE NICE_SSIN_ID = :NICE_SSIN_ID`;
 
             result = await connection.execute(
                 // The statement to execute
                 sql,
-                {},
+                {
+                    NICE_SSIN_ID: { val: NICE_SSIN_ID }
+                },
                 { autoCommit: true },
             );
 
