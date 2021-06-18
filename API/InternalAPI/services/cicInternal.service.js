@@ -242,7 +242,7 @@ async function updateScrpModCdPreRequestToScraping(NICE_SSIN_ID) {
 
     try {
         let sql, result;
-        if (!_.isEmpty(req)) {
+        if (!_.isEmpty(NICE_SSIN_ID)) {
             connection = await oracledb.getConnection(config.poolAlias);
 
 
