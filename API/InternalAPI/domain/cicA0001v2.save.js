@@ -23,9 +23,12 @@ module.exports = function (params, request) {
     let relatedFiName = '', totalDebtVnd = 0, totalDebtUsd = 0,
         totalBadDebtVnd = 0, totalBadDebtUsd = 0, creditCardBalance = 0, badDebtCredit = 0;
     if (detailKhaiThacDTOS[0]) {
-        for (const element of detailKhaiThacDTOS) {
-            if(element.tenTCTD)
-                relatedFiName += element.tenTCTD + ', ';
+        for (const [index, element] of detailKhaiThacDTOS.entries()) {
+            if (element.tenTCTD)
+                if (index + 2 === detailKhaiThacDTOS.length)
+                    relatedFiName += element.tenTCTD
+                else
+                    relatedFiName += element.tenTCTD + ', ';
             if (element.tongDuNoVnd)
                 totalDebtVnd += parseFloat(element.tongDuNoVnd);
             if (element.tongDuNoUsd)
