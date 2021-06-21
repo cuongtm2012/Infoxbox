@@ -27,16 +27,11 @@ module.exports = class internalJob {
                 // console.log('No request!');
                 oncomplete(0, 0);
             } else {
-
                 var count = 0;
                 var maxLength = data.length;
                 console.log("maxLength11~~~", maxLength);
-
                 data.forEach(element => {
-                    const listNiceSessionKey = [];
                     console.log(element);
-                    listNiceSessionKey.push(element.NICE_SSIN_ID);
-
                     let defaultValue = defaultParams.defaultParams('', '', '', '', '');
 
                     //Convert data to format cic site
@@ -53,19 +48,15 @@ module.exports = class internalJob {
                     var fnData = new CICA0001Request(element, defaultValue, loginID, decryptPW);
                     console.log('request to scrap params:', fnData);
 
-                    cicService.updateScrpModCdPreRequestToScraping(listNiceSessionKey).then(() => {
-
+                    cicService.updateScrpModCdPreRequestToScraping(element.NICE_SSIN_ID).then(() => {
                         axios.post(URI.internal_cicMobile, fnData, config)
                             .then((body) => {
                                 console.log("body resultA0001!", body.data);
-
                                 count++;
                                 // next process until data ending
-                                oncomplete(count, maxLength);
-
+                                return oncomplete(count, maxLength);
                             }).catch((error) => {
                                 console.log("error call to internal_cic url A0001!", error);
-
                                 //conneciton socket
                                 const socket = io.connect(URI.socket_url, { secure: true, rejectUnauthorized: false });
                                 // emit socket
