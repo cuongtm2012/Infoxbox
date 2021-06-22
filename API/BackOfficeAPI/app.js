@@ -18,16 +18,16 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 app.use(bodyParser.json());
-const http = require('http').Server(app);
-// const https = require('https');
+
+const https = require('https');
 const fss = require('fs');
 var path = require('path');
 const __dad = path.join(__dirname, './');
 const privateKey = fss.readFileSync(path.join(__dad, 'sslcert', 'key.pem'), 'utf8');
 const certificate = fss.readFileSync(path.join(__dad, 'sslcert', 'cert.pem'), 'utf8');
 
-// const credentials = { key: privateKey, cert: certificate };
-// const httpsServer = https.createServer(credentials, app);
+const credentials = { key: privateKey, cert: certificate };
+const httpsServer = https.createServer(credentials, app);
 
 var auth = require('./routes/auth.route');
 var chart = require('./routes/chart.route');
@@ -115,7 +115,7 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 	res.render('error');
 });
-http.listen(config.server.port, function () {
+httpsServer.listen(config.server.port, function () {
 	console.log('Server running at port', config.server.port);
 });
 
@@ -126,7 +126,7 @@ http.listen(config.server.port, function () {
 // let server = https.createServer(credentials, app);
 //socket.io instantiation
 let socketIO = require('socket.io');
-let io = socketIO.listen(http, { log: false, origins: '*:*' });
+let io = socketIO.listen(httpsServer, { log: false, origins: '*:*' });
 //listen on every connection
 io.on('connection', (socket) => {
 	console.log('socket connected')
