@@ -66,11 +66,11 @@ module.exports = function CIC_MACR_RSLTResponse(cicMacrRSLTRequest, response, da
     this.baseDate = util.convertDateType(BASE_DATE);
     this.percentileRank = PERCENTILE;
     this.relatedFiName = REL_OGZ_LIST;
-    this.totalDebtVnd = TOT_LOAN_VND;
-    this.totalDebtUsd = TOT_LOAN_USD;
-    this.totalBadDebtVnd = TOT_BAD_VND;
-    this.totalBadDebtUsd = TOT_BAD_USD;
+    this.totalDebtVnd = convertMilionUnit.milionUnit(TOT_LOAN_VND);
+    this.totalDebtUsd = convertMilionUnit.milionUnit(TOT_LOAN_USD);
+    this.totalBadDebtVnd = convertMilionUnit.milionUnit(TOT_BAD_VND);
+    this.totalBadDebtUsd = convertMilionUnit.milionUnit(TOT_BAD_USD);
     this.creditCardBalance = convertMilionUnit.milionUnit(CC_BAL);
-    this.badDebtCredit = CC_BAD;
+    this.badDebtCredit = convertMilionUnit.milionUnit(CC_BAD);
 };
 
